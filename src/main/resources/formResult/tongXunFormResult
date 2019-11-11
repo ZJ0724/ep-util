@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<!-- 编辑使用 XMLSpy v2006 U (http://www.altova.com) 由 any (any) -->
+<DxpMsg xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="http://www.chinaport.gov.cn/dxp" ver="1.0" Id="ID01">
+	<TransInfo>
+		<CopMsgId>201800000244340801</CopMsgId>
+		<SenderId>DXPDSWDECCUSSH11</SenderId>
+		<ReceiverIds>
+			<ReceiverId>DXPESW0000003618</ReceiverId>
+		</ReceiverIds>
+		<CreatTime>2019-02-12T22:53:20.704+08:00</CreatTime>
+		<MsgType>DECCUSSH1</MsgType>
+	</TransInfo>
+	<Data>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/Pgo8RGVjSW1wb3J0UmVzcG9uc2UgeG1sbnM9Imh0dHA6Ly93d3cuY2hpbmFwb3J0Lmdvdi5jbi9kZWMiPgoJPFJlc3BvbnNlQ29kZT4wPC9SZXNwb25zZUNvZGU+Cgk8RXJyb3JNZXNzYWdlPuS/oeaBrzwvRXJyb3JNZXNzYWdlPgoJPENsaWVudFNlcU5vPkVESTE5QzkwMDAwMDAwMDU0NjwvQ2xpZW50U2VxTm8+Cgk8U2VxTm8+RTAwMDAwMDAwMDAwMDA1NDY8L1NlcU5vPgoJPFRyblByZUlkPjwvVHJuUHJlSWQ+CjwvRGVjSW1wb3J0UmVzcG9uc2U+</Data>
+	<AddInfo>
+		<FileName>CUS3508H2K350820181227224850101657788.xml</FileName>
+		<IcCard>1</IcCard>
+		<BizKey>
+			<Key name="RetType">1</Key>
+			<Key name="DealFlag">1</Key>
+		</BizKey>
+	</AddInfo>
+</DxpMsg>

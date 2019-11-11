@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DxpMsg xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns="http://www.chinaport.gov.cn/dxp" ver="1.0" Id="ID01">
+	<TransInfo>
+		<CopMsgId>201900000000919977</CopMsgId>
+		<SenderId>DXPDSWCUS101SH01</SenderId>
+		<ReceiverIds>
+			<ReceiverId>DXPESW0000005625</ReceiverId>
+		</ReceiverIds>
+		<CreatTime>2019-02-25T15:07:52.841+08:00</CreatTime>
+		<MsgType>DECCUS101</MsgType>
+	</TransInfo>
+	<Data>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxEZWNNb2RTYXZlUmVzcG9uc2UgeG1sbnM9Imh0dHA6Ly93d3cuY2hpbmFwb3J0Lmdvdi5jbi9kZWMiPjxEZWNNb2RTZXFObz4wMDAwMDAwMDAwMDAwMDkxNzI8L0RlY01vZFNlcU5vPjxSZXN1bHRNZXNzYWdlPjDlm57miac8L1Jlc3VsdE1lc3NhZ2U+PFJlc3VsdENvZGU+MDwvUmVzdWx0Q29kZT48L0RlY01vZFNhdmVSZXNwb25zZT4=</Data>
+	<AddInfo>
+		<FileName>CUS221700000000009172.XML</FileName>
+		<IcCard>1</IcCard>
+		<BizKey>
+			<Key name="RetType">1</Key>
+			<Key name="DealFlag">1</Key>
+		</BizKey>
+	</AddInfo>
+</DxpMsg>
