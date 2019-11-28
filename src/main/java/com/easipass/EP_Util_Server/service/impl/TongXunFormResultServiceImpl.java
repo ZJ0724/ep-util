@@ -30,13 +30,6 @@ public class TongXunFormResultServiceImpl implements FormResultService {
     @Override
     public void upload() {
 
-        //连接SFTP83
-        try {
-            SftpUtil.connect(Application_properties.sftp_83_url,Application_properties.sftp_83_port,Application_properties.sftp_83_username,Application_properties.sftp_83_password);
-        }catch (JSchException e){
-            throw new TipException("sftp:"+Application_properties.sftp_83_url+"未连接");
-        }
-
         //获取回执原document
         Document document=null;
         try {
@@ -90,13 +83,17 @@ public class TongXunFormResultServiceImpl implements FormResultService {
 
         //上传到sftp
         try {
-            SftpUtil.uploadFile(Application_properties.uploadPath,new ByteArrayInputStream(document.asXML().getBytes()),"tongXunFormResult-"+this.tongXunFormResultBean.getSeqNo()+"-"+ DateUtil.getTime());
-        }catch (SftpException|IOException e){
-            throw new BugException(e.getMessage());
+            SftpUtil.uploadFile(
+                    Application_properties.sftp_83_url,
+                    Application_properties.sftp_83_port,
+                    Application_properties.sftp_83_username,
+                    Application_properties.sftp_83_password,
+                    Application_properties.uploadPath,
+                    new ByteArrayInputStream(document.asXML().getBytes()),
+                    "tongXunFormResult-"+this.tongXunFormResultBean.getSeqNo()+"-"+ DateUtil.getTime());
+        }catch (SftpException e){
+            throw new TipException("sftp:"+Application_properties.sftp_83_url+"连接失败");
         }
-
-        //关闭sftp
-        SftpUtil.closeSFTP();
 
         //run
         try {
