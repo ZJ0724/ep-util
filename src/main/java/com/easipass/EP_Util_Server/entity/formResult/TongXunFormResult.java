@@ -3,7 +3,7 @@ package com.easipass.EP_Util_Server.entity.formResult;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class TongXunFormResultBean {
+public class TongXunFormResult {
 
     private String responseCode;
     private String errorMessage;
@@ -49,6 +49,21 @@ public class TongXunFormResultBean {
 
     public void setTrnPreId(String trnPreId) {
         this.trnPreId = trnPreId;
+    }
+
+    /**
+     * 检查参数
+     * */
+    public boolean check(){
+        if(responseCode==null||
+                errorMessage==null||
+                clientSeqNo==null||
+                seqNo==null||
+                trnPreId==null
+        ){
+            return false;
+        }
+        return true;
     }
 
 }

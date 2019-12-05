@@ -1,6 +1,6 @@
 package com.easipass.EP_Util_Server.entity.decModResult;
 
-public class YeWuDecModResultBean {
+public class YeWuDecModResultData {
 
     private String destResourceId;
     private String feedbackResults;
@@ -28,6 +28,17 @@ public class YeWuDecModResultBean {
 
     public void setResultNote(String resultNote) {
         this.resultNote = resultNote;
+    }
+
+    /**
+     * 校验
+     * */
+    public boolean check(){
+        if(destResourceId==null||feedbackResults==null||resultNote==null){
+            return false;
+        }else{
+            return true;
+        }
     }
 
 }

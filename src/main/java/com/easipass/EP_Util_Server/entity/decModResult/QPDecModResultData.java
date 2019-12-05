@@ -1,8 +1,6 @@
 package com.easipass.EP_Util_Server.entity.decModResult;
 
-import org.springframework.stereotype.Controller;
-
-public class QPDecModResultBean {
+public class QPDecModResultData {
 
     private String decModSeqNo;
     private String resultMessage;
@@ -30,6 +28,16 @@ public class QPDecModResultBean {
 
     public void setResultCode(String resultCode) {
         this.resultCode = resultCode;
+    }
+
+    /**
+     * 检查
+     */
+    public boolean check(){
+        if(decModSeqNo==null||resultMessage==null||resultCode==null){
+            return false;
+        }
+        return true;
     }
 
 }

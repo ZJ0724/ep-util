@@ -1,9 +1,10 @@
 package com.easipass.EP_Util_Server.entity.formResult;
 
+import com.easipass.EP_Util_Server.util.DateUtil;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class YeWuFormResultBean {
+public class YeWuFormResult {
 
     private String cus_ciq_no;
     private String entry_id;
@@ -76,6 +77,23 @@ public class YeWuFormResultBean {
 
     public void setD_date(String d_date) {
         this.d_date = d_date;
+    }
+
+    /**
+     * 检查参数
+     * */
+    public boolean check(){
+        if(cus_ciq_no==null||
+                entry_id==null||
+                notice_date==null||
+                channel==null||
+                note==null||
+                custom_master==null||
+                i_e_date==null||
+                d_date==null|| !DateUtil.checkParse("yyyy-MM-dd'T'HH:mm:ss",notice_date)){
+            return false;
+        }
+        return true;
     }
 
 }
