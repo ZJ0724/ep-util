@@ -38,7 +38,7 @@ public class YeWuFormResultServiceImpl implements YeWuFormResultService {
         }
 
         //获取回执原document
-        Document document=XmlUtil.getDocument(TongXunFormResultServiceImpl.class.getResourceAsStream("/formResult/YeWuFormResult"));
+        Document document=XmlUtil.getDocument(TongXunFormResultServiceImpl.class.getResourceAsStream("/formResult/yeWuFormResult"));
 
         //document根节点
         Element documentRootElement=document.getRootElement();
