@@ -15,6 +15,10 @@
         <version>2.2.1.RELEASE</version>
     </parent>
 
+    <properties>
+        <buildPath>${project.build.directory}/buildPath/${project.artifactId}-${project.version}</buildPath>
+    </properties>
+
     <!--依赖-->
     <dependencies>
         <dependency>
@@ -59,6 +63,15 @@
                 </includes>
                 <targetPath>BOOT-INF/lib/</targetPath>
             </resource>
+            <resource>
+                <directory>${project.basedir}</directory>
+                <includes>
+                    <include>application.properties</include>
+                    <include>chromeDriver/*</include>
+                    <include>run.bat</include>
+                </includes>
+                <targetPath>${buildPath}</targetPath>
+            </resource>
         </resources>
         <plugins>
             <plugin>
@@ -88,6 +101,7 @@
                 <configuration>
                     <fork>true</fork>
                     <mainClass>com.easipass.EP_Util_Server.Application</mainClass>
+                    <outputDirectory>${buildPath}</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>
