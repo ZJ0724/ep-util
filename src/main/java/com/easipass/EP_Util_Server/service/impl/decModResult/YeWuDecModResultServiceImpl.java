@@ -1,6 +1,5 @@
 package com.easipass.EP_Util_Server.service.impl.decModResult;
 
-import com.easipass.EP_Util_Server.entity.ChromeDriver;
 import com.easipass.EP_Util_Server.entity.Sftp83;
 import com.easipass.EP_Util_Server.entity.decModResult.YeWuDecModResultData;
 import com.easipass.EP_Util_Server.exception.TipException;
@@ -23,9 +22,6 @@ public class YeWuDecModResultServiceImpl implements YeWuDecModResultService {
 
     @Autowired
     Sftp83 sftp83;
-
-    @Autowired
-    ChromeDriver chromeDriver;
 
     @Override
     public void upload(YeWuDecModResultData yeWuDecModResultData, String fileName) {
@@ -82,7 +78,7 @@ public class YeWuDecModResultServiceImpl implements YeWuDecModResultService {
         sftpUtil.closeSFTP();
 
         //run
-        EPMSUtil.run(new File(System.getProperty("user.dir"), ChromeDriver.getChromeDriverPath(chromeDriver.getVersion())));
+        EPMSUtil.run(ChromeDriverUtil.getChromeDriverFile());
     }
 
 }

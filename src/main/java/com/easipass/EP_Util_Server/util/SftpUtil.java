@@ -14,7 +14,7 @@ public class SftpUtil {
     private String password;
     private ChannelSftp channelSftp;
     private Session session;
-    private boolean isConnect=false;
+    private boolean isConnect = false;
 
     public SftpUtil(String url, int port, String username, String password) {
         this.url = url;

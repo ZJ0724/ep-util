@@ -1,6 +1,5 @@
 package com.easipass.EP_Util_Server.service.impl.formResult;
 
-import com.easipass.EP_Util_Server.entity.ChromeDriver;
 import com.easipass.EP_Util_Server.entity.Sftp83;
 import com.easipass.EP_Util_Server.entity.formResult.TongXunFormResult;
 import com.easipass.EP_Util_Server.exception.TipException;
@@ -13,7 +12,6 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 
 @Service
 public class TongXunFormResultServiceImpl implements TongXunFormResultService {
@@ -22,9 +20,6 @@ public class TongXunFormResultServiceImpl implements TongXunFormResultService {
 
     @Autowired
     Sftp83 sftp83;
-
-    @Autowired
-    ChromeDriver chromeDriver;
 
     @Override
     public void upload(TongXunFormResult tongXunFormResult) {
@@ -80,7 +75,7 @@ public class TongXunFormResultServiceImpl implements TongXunFormResultService {
         sftpUtil.closeSFTP();
 
         //run
-        EPMSUtil.run(new File(System.getProperty("user.dir"), ChromeDriver.getChromeDriverPath(chromeDriver.getVersion())));
+        EPMSUtil.run(ChromeDriverUtil.getChromeDriverFile());
     }
 
 }

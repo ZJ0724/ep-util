@@ -1,6 +1,5 @@
 package com.easipass.EP_Util_Server.service.impl.formResult;
 
-import com.easipass.EP_Util_Server.entity.ChromeDriver;
 import com.easipass.EP_Util_Server.entity.Sftp83;
 import com.easipass.EP_Util_Server.entity.formResult.YeWuFormResult;
 import com.easipass.EP_Util_Server.exception.TipException;
@@ -22,9 +21,6 @@ public class YeWuFormResultServiceImpl implements YeWuFormResultService {
 
     @Autowired
     Sftp83 sftp83;
-
-    @Autowired
-    ChromeDriver chromeDriver;
 
     @Override
     public void upload(YeWuFormResult yeWuFormResult) {
@@ -79,7 +75,7 @@ public class YeWuFormResultServiceImpl implements YeWuFormResultService {
                 "yeWuFormResult-"+yeWuFormResult.getCus_ciq_no()+"-"+ DateUtil.getTime());
 
         //run
-        EPMSUtil.run(new File(System.getProperty("user.dir"), ChromeDriver.getChromeDriverPath(chromeDriver.getVersion())));
+        EPMSUtil.run(ChromeDriverUtil.getChromeDriverFile());
     }
 
 }

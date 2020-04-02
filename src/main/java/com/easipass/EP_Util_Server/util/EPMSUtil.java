@@ -11,7 +11,7 @@ public class EPMSUtil {
     /**
      * 点击job.swgdRecv.run
      * */
-    public static void run(File chromeDriver){
+    public static void run(File chromeDriver) {
         try {
             Step step=new UiStep(chromeDriver);
             step.openWebDriver();

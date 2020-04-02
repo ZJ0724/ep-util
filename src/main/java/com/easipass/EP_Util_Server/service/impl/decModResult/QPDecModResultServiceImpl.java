@@ -1,6 +1,5 @@
 package com.easipass.EP_Util_Server.service.impl.decModResult;
 
-import com.easipass.EP_Util_Server.entity.ChromeDriver;
 import com.easipass.EP_Util_Server.entity.Sftp83;
 import com.easipass.EP_Util_Server.entity.decModResult.QPDecModResultData;
 import com.easipass.EP_Util_Server.exception.TipException;
@@ -14,7 +13,6 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 
 @Service
 public class QPDecModResultServiceImpl implements QPDecModResultService {
@@ -23,9 +21,6 @@ public class QPDecModResultServiceImpl implements QPDecModResultService {
 
     @Autowired
     Sftp83 sftp83;
-
-    @Autowired
-    ChromeDriver chromeDriver;
 
     @Override
     public void upload(QPDecModResultData qpDecModResultData, String fileName) {
@@ -81,7 +76,7 @@ public class QPDecModResultServiceImpl implements QPDecModResultService {
         sftpUtil.closeSFTP();
 
         //run
-        EPMSUtil.run(new File(System.getProperty("user.dir"), ChromeDriver.getChromeDriverPath(chromeDriver.getVersion())));
+        EPMSUtil.run(ChromeDriverUtil.getChromeDriverFile());
     }
 
 }
