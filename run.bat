@@ -1,1 +1,0 @@
-java -jar EP_Util_Server.jar
