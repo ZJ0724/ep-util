@@ -6,7 +6,7 @@
 
     <groupId>com.easipass</groupId>
     <artifactId>EpUtilServer</artifactId>
-    <version>3.0.1</version>
+    <version>3.0.2</version>
     <packaging>jar</packaging>
 
     <parent>
@@ -68,7 +68,8 @@
                 <includes>
                     <include>application.properties</include>
                     <include>chromeDriver/*</include>
-                    <include>bin/*</include>
+                    <include>config/*</include>
+                    <include>EpUtilServer.exe</include>
                 </includes>
                 <targetPath>${buildPath}</targetPath>
             </resource>
@@ -101,7 +102,7 @@
                 <configuration>
                     <fork>true</fork>
                     <mainClass>com.easipass.EpUtilServer.Main</mainClass>
-                    <outputDirectory>${buildPath}</outputDirectory>
+                    <outputDirectory>${buildPath}/lib/</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>
