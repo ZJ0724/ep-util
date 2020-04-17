@@ -1,51 +1,44 @@
 package com.easipass.EpUtilServer.service.impl.formResult;
 
-import com.easipass.EpUtilServer.config.Sftp83Config;
+import com.easipass.EpUtilServer.config.ResourcePathConfig;
 import com.easipass.EpUtilServer.entity.DTO.ResultDTO;
-import com.easipass.EpUtilServer.entity.Log;
+import com.easipass.EpUtilServer.entity.DTO.UploadMoreDTO;
 import com.easipass.EpUtilServer.entity.Response;
 import com.easipass.EpUtilServer.entity.Sftp;
+import com.easipass.EpUtilServer.enumeration.ResponseEnum;
+import com.easipass.EpUtilServer.service.BaseService;
 import com.easipass.EpUtilServer.service.FormResultService;
 import com.easipass.EpUtilServer.util.*;
+import com.zj0724.StepWebDriver.entity.StepWebDriver;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import pers.ZJ.UiAuto.Step;
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
-@Service("tongXun")
+@Service("TongXunFormResultServiceImpl")
 public class TongXunFormResultServiceImpl implements FormResultService {
 
     @Resource
-    private Sftp83Config sftp83Config;
+    private BaseService baseService;
 
     @Resource
-    @Qualifier("yeWu")
-    private FormResultService formResultService;
+    @Qualifier("BaseFormResultServiceImpl")
+    private FormResultService baseFormResultService;
 
     @Override
-    public Response upload(String ediNo, ResultDTO formResultDTO, boolean isDisposable, Sftp sftp, Step step) {
-        Log.info("<---- 上传报关单通讯回执 ---->");
-
-        if (!isDisposable) {
-            //连接sftp
-            sftp = new Sftp(
-                    sftp83Config.getUrl(),
-                    sftp83Config.getPort(),
-                    sftp83Config.getUsername(),
-                    sftp83Config.getPassword()
-            );
-            if (!sftp.connect()) {
-                Log.info("sftp连接失败");
-                return Response.returnFalse("", "sftp连接失败");
-            }
+    public Response upload(String ediNo, ResultDTO formResultDTO, boolean isDisposable, Sftp sftp, StepWebDriver stepWebDriver) {
+        // 前置操作
+        Response response = baseService.before(isDisposable, sftp);
+        if (response.getFlag().equals(ResponseEnum.FALSE.getFlag())) {
+            return response;
         }
+        sftp = (Sftp) response.getData();
 
         //获取回执原document
-        Document document = XmlUtil.getDocument(TongXunFormResultServiceImpl.class.getResourceAsStream("/formResult/tongXunFormResult"));
+        Document document = XmlUtil.getDocument(TongXunFormResultServiceImpl.class.getResourceAsStream(ResourcePathConfig.TONG_XUN_FORM_RESULT_PATH));
 
         //document根节点
         Element documentRootElement = document.getRootElement();
@@ -68,7 +61,6 @@ public class TongXunFormResultServiceImpl implements FormResultService {
         dataDocumentRootElement.element("ClientSeqNo").setText(ediNo);
         dataDocumentRootElement.element("SeqNo").setText(ResultDTO.getSeqNo(ediNo));
         data = dataDocument.asXML();
-        Log.info(data);
 
         //加密
         data=Base64Util.encode(data);
@@ -76,35 +68,18 @@ public class TongXunFormResultServiceImpl implements FormResultService {
         //替换原document的data节点
         documentRootElement.element("Data").setText(data);
 
-        //上传到sftp
-        sftp.uploadFile(
-                sftp83Config.getUploadPath(),
-                "tongXunFormResult-" + ResultDTO.getSeqNo(ediNo) + "-" + DateUtil.getTime(),
-                new ByteArrayInputStream(document.asXML().getBytes())
-        );
-
-        if (!isDisposable) {
-            // 关闭sftp
-            sftp.close();
-
-            // run
-            EPMSUtil.run();
-        } else {
-            EPMSUtil.runOfStep(step);
-        }
-
-        Log.info("<---- success ---->");
-        return Response.returnTrue(null);
+        // 后置操作
+        return baseService.after(document, "tongXunFormResult-" + ResultDTO.getSeqNo(ediNo) + "-" + DateUtil.getTime(), isDisposable, sftp, stepWebDriver);
     }
 
     @Override
     public Response disposableUpload(String ediNo, ResultDTO formResultDTO) {
-        return formResultService.disposableUpload(ediNo, formResultDTO);
+        return baseFormResultService.disposableUpload(ediNo, formResultDTO);
     }
 
     @Override
-    public Response uploadMore(String ediNo, List<ResultDTO> resultDTOS) {
-        return formResultService.uploadMore(ediNo, resultDTOS);
+    public Response uploadMore(List<UploadMoreDTO> uploadMoreDTOS) {
+        return baseFormResultService.uploadMore(uploadMoreDTOS);
     }
 
 }

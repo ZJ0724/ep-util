@@ -1,6 +1,7 @@
 package com.easipass.EpUtilServer.controller;
 
 import com.easipass.EpUtilServer.entity.DTO.ResultDTO;
+import com.easipass.EpUtilServer.entity.DTO.UploadMoreDTO;
 import com.easipass.EpUtilServer.entity.Response;
 import com.easipass.EpUtilServer.service.FormResultService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,43 +16,36 @@ import java.util.List;
 public class FormResultController {
 
     @Resource
-    @Qualifier("tongXun")
-    private FormResultService tongXun;
+    @Qualifier("TongXunFormResultServiceImpl")
+    private FormResultService tongXunFormResultService;
 
     @Resource
-    @Qualifier("yeWu")
-    private FormResultService yeWu;
+    @Qualifier("YeWuFormResultServiceImpl")
+    private FormResultService yeWuFormResultService;
 
-    /**
-     * 上传通讯回执
-     * */
+    @Resource
+    @Qualifier("BaseFormResultServiceImpl")
+    private FormResultService baseFormResultService;
+
+
     @RequestMapping(value = "upload/tongXun", method = RequestMethod.POST)
     public Response uploadTongXun(@RequestParam String ediNo, @RequestBody ResultDTO formResultDTO) {
-        return tongXun.upload(ediNo, formResultDTO, false, null, null);
+        return tongXunFormResultService.upload(ediNo, formResultDTO, false, null, null);
     }
 
-    /**
-     * 上传业务回执
-     * */
     @RequestMapping(value = "upload/yeWu", method = RequestMethod.POST)
     public Response uploadYeWu(@RequestParam String ediNo, @RequestBody ResultDTO formResultDTO) {
-        return yeWu.upload(ediNo, formResultDTO, false, null, null);
+        return yeWuFormResultService.upload(ediNo, formResultDTO, false, null, null);
     }
 
-    /**
-     * 一次性上传回执
-     * */
     @RequestMapping(value = "disposableUpload", method = RequestMethod.POST)
     public Response disposableUpload(@RequestParam String ediNo, @RequestBody ResultDTO formResultDTO) {
-        return yeWu.disposableUpload(ediNo, formResultDTO);
+        return baseFormResultService.disposableUpload(ediNo, formResultDTO);
     }
 
-    /**
-     * 批量上传
-     * */
     @RequestMapping(value = "uploadMore", method = RequestMethod.POST)
-    public Response uploadMore(@RequestParam String ediNo, @RequestBody List<ResultDTO> resultDTOS) {
-        return yeWu.uploadMore(ediNo, resultDTOS);
+    public Response uploadMore(@RequestBody List<UploadMoreDTO> uploadMoreDTOS) {
+        return baseFormResultService.uploadMore(uploadMoreDTOS);
     }
 
 }

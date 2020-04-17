@@ -1,14 +1,14 @@
 package com.easipass.EpUtilServer.service.impl.decModResult;
 
-import com.easipass.EpUtilServer.config.Sftp83Config;
-import com.easipass.EpUtilServer.entity.Log;
+import com.easipass.EpUtilServer.config.ResourcePathConfig;
 import com.easipass.EpUtilServer.entity.Response;
 import com.easipass.EpUtilServer.entity.DTO.ResultDTO;
 import com.easipass.EpUtilServer.entity.Sftp;
+import com.easipass.EpUtilServer.enumeration.ResponseEnum;
+import com.easipass.EpUtilServer.service.BaseService;
 import com.easipass.EpUtilServer.service.DecModResultService;
 import com.easipass.EpUtilServer.util.Base64Util;
 import com.easipass.EpUtilServer.util.DateUtil;
-import com.easipass.EpUtilServer.util.EPMSUtil;
 import com.easipass.EpUtilServer.util.XmlUtil;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -21,35 +21,28 @@ import java.io.ByteArrayInputStream;
 public class YeWuDecModResultServiceImpl implements DecModResultService {
 
     @Resource
-    @Qualifier("QPDecModResultServiceImpl")
-    private DecModResultService decModResultService;
+    @Qualifier("BaseDecModResultServiceImpl")
+    private DecModResultService baseDecModResultService;
 
     @Resource
-    private Sftp83Config sftp83Config;
+    private BaseService baseService;
 
     @Override
     public Response setFileName(String preEntryId) {
-        return decModResultService.setFileName(preEntryId);
+        return baseDecModResultService.setFileName(preEntryId);
     }
 
     @Override
     public Response upload(String preEntryId, ResultDTO resultDTO) {
-        Log.info("<---- 上传修撤单业务回执 ---->");
-
-        //连接sftp
-        Sftp sftp = new Sftp(
-                sftp83Config.getUrl(),
-                sftp83Config.getPort(),
-                sftp83Config.getUsername(),
-                sftp83Config.getPassword()
-        );
-        if (!sftp.connect()) {
-            Log.info("sftp连接失败");
-            return Response.returnFalse("", "sftp连接失败");
+        // 前置操作
+        Response response = baseService.before(false, null);
+        if (response.getFlag().equals(ResponseEnum.FALSE.getFlag())) {
+            return response;
         }
+        Sftp sftp = (Sftp) response.getData();
 
         //获取回执原document
-        Document document = XmlUtil.getDocument(QPDecModResultServiceImpl.class.getResourceAsStream("/decModResult/yeWuDecModResult"));
+        Document document = XmlUtil.getDocument(QPDecModResultServiceImpl.class.getResourceAsStream(ResourcePathConfig.YE_WU_DEC_MOD_RESULT_PATH));
 
         //document根节点
         Element documentRootElement = document.getRootElement();
@@ -74,7 +67,6 @@ public class YeWuDecModResultServiceImpl implements DecModResultService {
         HzApprovalResultElement.element("FeedbackResults").setText(resultDTO.getChannel());
         HzApprovalResultElement.element("ResultNote").setText(resultDTO.getNote());
         data = dataDocument.asXML();
-        Log.info(data);
 
         //加密
         data = Base64Util.encode(data);
@@ -84,21 +76,8 @@ public class YeWuDecModResultServiceImpl implements DecModResultService {
         //替换FileName
         documentRootElement.element("AddInfo").element("FileName").setText(ResultDTO.getFileName(preEntryId));
 
-        //上传到sftp
-        sftp.uploadFile(
-                sftp83Config.getUploadPath(),
-                "QPDecModResult-" + ResultDTO.getDecModSeqNo(preEntryId) + "-" + DateUtil.getTime(),
-                new ByteArrayInputStream(document.asXML().getBytes())
-        );
-
-        //关闭sftp
-        sftp.close();
-
-        //run
-        EPMSUtil.run();
-
-        Log.info("<---- success ---->");
-        return Response.returnTrue(null);
+        // 后置操作
+        return baseService.after(document, "yeWuDecModResult-" + ResultDTO.getDecModSeqNo(preEntryId) + "-" + DateUtil.getTime(), false, sftp, null);
     }
 
 }

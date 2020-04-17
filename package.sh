@@ -4,13 +4,12 @@ releasePath="release"
 packageName=""
 
 # --- #
+mvn clean package
 
 for dirName in $(ls target/buildPath)
 do
   packageName="${dirName}"
 done
-
-mvn clean package
 
 rm -rf ${releasePath}
 
