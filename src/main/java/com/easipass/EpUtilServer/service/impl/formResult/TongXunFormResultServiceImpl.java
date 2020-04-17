@@ -2,6 +2,7 @@ package com.easipass.EpUtilServer.service.impl.formResult;
 
 import com.easipass.EpUtilServer.config.ResourcePathConfig;
 import com.easipass.EpUtilServer.entity.DTO.ResultDTO;
+import com.easipass.EpUtilServer.entity.DTO.UploadMoreDTO;
 import com.easipass.EpUtilServer.entity.Response;
 import com.easipass.EpUtilServer.entity.Sftp;
 import com.easipass.EpUtilServer.enumeration.ResponseEnum;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
+import java.util.List;
 
 @Service("TongXunFormResultServiceImpl")
 public class TongXunFormResultServiceImpl implements FormResultService {
@@ -73,6 +75,11 @@ public class TongXunFormResultServiceImpl implements FormResultService {
     @Override
     public Response disposableUpload(String ediNo, ResultDTO formResultDTO) {
         return baseFormResultService.disposableUpload(ediNo, formResultDTO);
+    }
+
+    @Override
+    public Response uploadMore(List<UploadMoreDTO> uploadMoreDTOS) {
+        return baseFormResultService.uploadMore(uploadMoreDTOS);
     }
 
 }

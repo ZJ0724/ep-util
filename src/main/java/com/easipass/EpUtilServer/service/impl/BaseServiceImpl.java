@@ -21,7 +21,6 @@ public class BaseServiceImpl implements BaseService {
         }
 
         if (!sftp.isConnect()) {
-            System.out.println("开启一个sftp");
             if (!sftp.connect()) {
                 return Response.returnFalse("", "Sftp：" + sftp.getUrl() + " 连接失败");
             }
@@ -38,12 +37,9 @@ public class BaseServiceImpl implements BaseService {
         // run
         if (!isDisposable) {
             stepWebDriver = StepWebDriverUtil.getStepWebDriver();
-            System.out.println("开启一个stepWebDriver");
             EPMSUtil.run(stepWebDriver);
             sftp.close();
-            System.out.println("关闭一个sftp");
             stepWebDriver.close();
-            System.out.println("关闭一个stepWebDriver");
         } else {
             EPMSUtil.run(stepWebDriver);
         }

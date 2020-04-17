@@ -25,25 +25,16 @@ public class DecModResultController {
     @Qualifier("YeWuDecModResultServiceImpl")
     private DecModResultService YeWuDecModResultService;
 
-    /**
-     * 设置文件名
-     * */
     @RequestMapping(value = "setFileName", method = RequestMethod.POST)
     public Response setFileName(@RequestParam String preEntryId) {
         return baseDecModResultService.setFileName(preEntryId);
     }
 
-    /**
-     * 上传QP回执
-     * */
     @RequestMapping(value = "upload/QP", method = RequestMethod.POST)
     public Response uploadQP(@RequestParam String preEntryId, @RequestBody ResultDTO resultDTO) {
         return QPDecModResultService.upload(preEntryId, resultDTO);
     }
 
-    /**
-     * 上传业务回执
-     * */
     @RequestMapping(value = "upload/yeWu", method = RequestMethod.POST)
     public Response uploadYeWu(@RequestParam String preEntryId, @RequestBody ResultDTO resultDTO) {
         return YeWuDecModResultService.upload(preEntryId, resultDTO);
