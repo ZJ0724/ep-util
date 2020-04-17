@@ -15,6 +15,13 @@ public class ResultDTO {
      * */
     private String note;
 
+    public ResultDTO() {}
+
+    public ResultDTO(String channel, String note) {
+        this.channel = channel;
+        this.note = note;
+    }
+
     public String getChannel() {
         return channel;
     }
@@ -57,6 +64,13 @@ public class ResultDTO {
      * */
     public static String getDecModSeqNo(String preEntryId) {
         return "decModSeqNo00" + preEntryId.substring(preEntryId.length() - 5);
+    }
+
+    /**
+     * 获取代理委托编号
+     * */
+    public static String getAgentSeqNo(String ediNo) {
+        return "agentSeqNo000" + ediNo.substring(ediNo.length() - 5);
     }
 
 }

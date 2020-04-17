@@ -4,20 +4,22 @@ public class ErrorException extends RuntimeException {
 
     private String message;
 
-    public ErrorException(){
-
-    }
-    public ErrorException(String message){
-        this.message=message;
+    public ErrorException(String message) {
+        super(message);
     }
 
-    @Override
-    public String getMessage() {
-        return message;
+    /**
+     * 获取错误异常
+     * */
+    public static ErrorException getErrorException() {
+        return new ErrorException("error");
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    /**
+     * 获取错误异常
+     * */
+    public static ErrorException getErrorException(String errorMsg) {
+        return new ErrorException("bug:" + errorMsg);
     }
 
 }

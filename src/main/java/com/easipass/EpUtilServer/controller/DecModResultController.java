@@ -14,35 +14,30 @@ import javax.annotation.Resource;
 public class DecModResultController {
 
     @Resource
+    @Qualifier("BaseDecModResultServiceImpl")
+    private DecModResultService baseDecModResultService;
+
+    @Resource
     @Qualifier("QPDecModResultServiceImpl")
-    private DecModResultService QPDecMOdResult;
+    private DecModResultService QPDecModResultService;
 
     @Resource
     @Qualifier("YeWuDecModResultServiceImpl")
-    private DecModResultService YeWuDecMOdResult;
+    private DecModResultService YeWuDecModResultService;
 
-    /**
-     * 设置文件名
-     * */
     @RequestMapping(value = "setFileName", method = RequestMethod.POST)
     public Response setFileName(@RequestParam String preEntryId) {
-        return QPDecMOdResult.setFileName(preEntryId);
+        return baseDecModResultService.setFileName(preEntryId);
     }
 
-    /**
-     * 上传QP回执
-     * */
     @RequestMapping(value = "upload/QP", method = RequestMethod.POST)
     public Response uploadQP(@RequestParam String preEntryId, @RequestBody ResultDTO resultDTO) {
-        return QPDecMOdResult.upload(preEntryId, resultDTO);
+        return QPDecModResultService.upload(preEntryId, resultDTO);
     }
 
-    /**
-     * 上传业务回执
-     * */
     @RequestMapping(value = "upload/yeWu", method = RequestMethod.POST)
     public Response uploadYeWu(@RequestParam String preEntryId, @RequestBody ResultDTO resultDTO) {
-        return YeWuDecMOdResult.upload(preEntryId, resultDTO);
+        return YeWuDecModResultService.upload(preEntryId, resultDTO);
     }
 
 }

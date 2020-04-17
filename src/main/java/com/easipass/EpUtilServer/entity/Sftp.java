@@ -1,5 +1,6 @@
 package com.easipass.EpUtilServer.entity;
 
+import com.easipass.EpUtilServer.config.Sftp83Config;
 import com.easipass.EpUtilServer.exception.ErrorException;
 import com.jcraft.jsch.*;
 import java.io.InputStream;
@@ -10,43 +11,67 @@ public class Sftp {
     /**
      * 地址
      * */
-    private String url = "";
+    private String url;
 
     /**
      * 端口
      * */
-    private int port = 0;
+    private int port;
 
     /**
      * 用户名
      * */
-    private String username = "";
+    private String username;
 
     /**
      * 密码
      * */
-    private String password = "";
+    private String password;
 
     /**
      * sftp连接
      * */
-    private ChannelSftp channelSftp = null;
+    private ChannelSftp channelSftp;
 
     /**
      * session通道
      * */
-    private Session session = null;
+    private Session session;
 
     /**
      * 是否已连接
      * */
     private boolean isConnect = false;
 
+    public Sftp() {}
+
     public Sftp(String url, int port, String username, String password) {
         this.url = url;
         this.port = port;
         this.username = username;
         this.password = password;
+    }
+
+    /**
+     * 连接
+     * */
+    public boolean connect() {
+        try {
+            JSch jSch = new JSch();
+            this.session = jSch.getSession(username, url, port);
+            this.session.setPassword(password);
+            Properties properties = new Properties();
+            properties.put("StrictHostKeyChecking", "no");
+            this.session.setConfig(properties);
+            this.session.connect();
+            this.channelSftp = (ChannelSftp)session.openChannel("sftp");
+            this.channelSftp.connect();
+        }catch (JSchException e) {
+            return false;
+        }
+
+        this.isConnect = true;
+        return true;
     }
 
     public String getUrl() {
@@ -81,44 +106,6 @@ public class Sftp {
         this.password = password;
     }
 
-    public ChannelSftp getChannelSftp() {
-        return channelSftp;
-    }
-
-    public void setChannelSftp(ChannelSftp channelSftp) {
-        this.channelSftp = channelSftp;
-    }
-
-    public Session getSession() {
-        return session;
-    }
-
-    public void setSession(Session session) {
-        this.session = session;
-    }
-
-    /**
-     * 连接
-     * */
-    public boolean connect() {
-        try {
-            JSch jSch = new JSch();
-            this.session = jSch.getSession(username, url, port);
-            this.session.setPassword(password);
-            Properties properties = new Properties();
-            properties.put("StrictHostKeyChecking", "no");
-            this.session.setConfig(properties);
-            this.session.connect();
-            this.channelSftp = (ChannelSftp)session.openChannel("sftp");
-            this.channelSftp.connect();
-        }catch (JSchException e) {
-            return false;
-        }
-
-        this.isConnect = true;
-        return true;
-    }
-
     /**
      * 关闭
      * */
@@ -132,6 +119,8 @@ public class Sftp {
             this.channelSftp.disconnect();
             this.channelSftp = null;
         }
+
+        this.isConnect = false;
     }
 
     /**
@@ -152,6 +141,20 @@ public class Sftp {
         } catch (SftpException e) {
             throw new ErrorException(e.getMessage());
         }
+    }
+
+    /**
+     * 是否已连接
+     * */
+    public boolean isConnect() {
+        return this.isConnect;
+    }
+
+    /**
+     * 获取sftp83
+     * */
+    public static Sftp getSftp83() {
+        return new Sftp(Sftp83Config.url, Sftp83Config.port, Sftp83Config.username, Sftp83Config.password);
     }
 
 }
