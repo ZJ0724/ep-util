@@ -5,11 +5,15 @@ import com.easipass.EpUtilServer.exception.ErrorException;
 import com.easipass.EpUtilServer.service.InitService;
 import com.easipass.EpUtilServer.util.ConfigUtil;
 import com.easipass.EpUtilServer.util.FileUtil;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import java.io.*;
 import java.util.Properties;
 
+@Configuration
 public class InitServiceImpl implements InitService {
 
+    @Bean
     @Override
     public void loadConfigFile() {
         // 检查配置文件目录是否存在
@@ -40,6 +44,7 @@ public class InitServiceImpl implements InitService {
         ConfigUtil.load(config, KSDDBConfig.class);
     }
 
+    @Bean
     @Override
     public void checkChromeDriver() {
         // windows
