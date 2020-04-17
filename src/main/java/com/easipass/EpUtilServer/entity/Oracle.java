@@ -1,5 +1,7 @@
 package com.easipass.EpUtilServer.entity;
 
+import com.easipass.EpUtilServer.config.KSDDBConfig;
+import com.easipass.EpUtilServer.config.SWGDConfig;
 import com.easipass.EpUtilServer.exception.ErrorException;
 import java.sql.*;
 
@@ -8,27 +10,27 @@ public class Oracle {
     /**
      * 地址
      * */
-    private String url;
+    private final String url;
 
     /**
      * 端口
      * */
-    private int port;
+    private final int port;
 
     /**
      * sid
      * */
-    private String sid;
+    private final String sid;
 
     /**
      * 用户名
      * */
-    private String username;
+    private final String username;
 
     /**
      * 密码
      * */
-    private String password;
+    private final String password;
 
     /**
      * 连接
@@ -54,11 +56,11 @@ public class Oracle {
     }
 
     /**
-     * 初始化
+     * 基础方法
      * */
-    private void init() {
+    private void base() {
         if (!isConnect) {
-            throw new ErrorException("未连接");
+            throw ErrorException.getErrorException("数据库未连接");
         }
     }
 
@@ -95,13 +97,14 @@ public class Oracle {
         } catch (SQLException e) {
             throw new ErrorException(e.getMessage());
         }
+        this.isConnect = false;
     }
 
     /**
      * 增删改
      */
-    public boolean update(String sql, Object[] objects) {
-        this.init();
+    public void update(String sql, Object[] objects) {
+        this.base();
 
         try {
             this.preparedStatement = this.connection.prepareStatement(sql);
@@ -112,17 +115,15 @@ public class Oracle {
             }
             preparedStatement.execute();
         } catch (SQLException e) {
-            return false;
+            throw ErrorException.getErrorException("sql错误");
         }
-
-        return true;
     }
 
     /**
      * 查
      */
     public ResultSet query(String sql, Object[] objects) {
-        this.init();
+        this.base();
 
         try {
             this.preparedStatement = connection.prepareStatement(sql);
@@ -133,8 +134,22 @@ public class Oracle {
             }
             return preparedStatement.executeQuery();
         }catch (SQLException e){
-            return null;
+            throw ErrorException.getErrorException("sql错误");
         }
+    }
+
+    /**
+     * 获取SWGD数据库
+     * */
+    public static Oracle getSWGDOracle() {
+        return new Oracle(SWGDConfig.url, SWGDConfig.port, SWGDConfig.sid, SWGDConfig.username, SWGDConfig.password);
+    }
+
+    /**
+     * 获取KSDDB数据库
+     * */
+    public static Oracle getKSDDBOracle() {
+        return new Oracle(KSDDBConfig.url, KSDDBConfig.port, KSDDBConfig.sid, KSDDBConfig.username, KSDDBConfig.password);
     }
 
 }

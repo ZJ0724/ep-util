@@ -1,6 +1,6 @@
 package com.easipass.EpUtilServer.controller;
 
-import com.easipass.EpUtilServer.entity.DTO.AgentResultDTO;
+import com.easipass.EpUtilServer.entity.DTO.ResultDTO;
 import com.easipass.EpUtilServer.entity.Response;
 import com.easipass.EpUtilServer.service.AgentResultService;
 import org.springframework.stereotype.Controller;
@@ -16,8 +16,8 @@ public class AgentResultController {
     private AgentResultService agentResultService;
 
     @RequestMapping(value = "upload", method = RequestMethod.POST)
-    public Response upload(@RequestParam String ediNo, @RequestBody AgentResultDTO agentResult) {
-        return agentResultService.upload(ediNo, agentResult);
+    public Response upload(@RequestParam String ediNo, @RequestBody ResultDTO resultDTO) {
+        return agentResultService.upload(ediNo, resultDTO);
     }
 
 }

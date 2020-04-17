@@ -1,14 +1,14 @@
-import pers.ZJ.UiAuto.exception.ExecuteException;
+import com.easipass.EpUtilServer.config.BaseConfig;
+import com.zj0724.StepWebDriver.entity.StepWebDriver;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.io.File;
 
 public class Test {
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
 
-        DateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        System.out.println(dateFormat.parse("2019-03-14T22:49:37"));
+
+        StepWebDriver stepWebDriver1 = new StepWebDriver(new File("C:\\Users\\14762\\.EpUtilServer\\chromedriver.exe"));
 
     }
 

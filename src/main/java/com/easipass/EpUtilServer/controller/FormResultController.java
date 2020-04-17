@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
-import java.util.List;
 
 @Controller
 @RequestMapping("/formResult")
@@ -15,19 +14,23 @@ import java.util.List;
 public class FormResultController {
 
     @Resource
-    @Qualifier("tongXun")
-    private FormResultService tongXun;
+    @Qualifier("TongXunFormResultServiceImpl")
+    private FormResultService tongXunFormResultService;
 
     @Resource
-    @Qualifier("yeWu")
-    private FormResultService yeWu;
+    @Qualifier("YeWuFormResultServiceImpl")
+    private FormResultService yeWuFormResultService;
+
+    @Resource
+    @Qualifier("BaseFormResultServiceImpl")
+    private FormResultService baseFormResultService;
 
     /**
      * 上传通讯回执
      * */
     @RequestMapping(value = "upload/tongXun", method = RequestMethod.POST)
     public Response uploadTongXun(@RequestParam String ediNo, @RequestBody ResultDTO formResultDTO) {
-        return tongXun.upload(ediNo, formResultDTO, false, null, null);
+        return tongXunFormResultService.upload(ediNo, formResultDTO, false, null, null);
     }
 
     /**
@@ -35,7 +38,7 @@ public class FormResultController {
      * */
     @RequestMapping(value = "upload/yeWu", method = RequestMethod.POST)
     public Response uploadYeWu(@RequestParam String ediNo, @RequestBody ResultDTO formResultDTO) {
-        return yeWu.upload(ediNo, formResultDTO, false, null, null);
+        return yeWuFormResultService.upload(ediNo, formResultDTO, false, null, null);
     }
 
     /**
@@ -43,15 +46,7 @@ public class FormResultController {
      * */
     @RequestMapping(value = "disposableUpload", method = RequestMethod.POST)
     public Response disposableUpload(@RequestParam String ediNo, @RequestBody ResultDTO formResultDTO) {
-        return yeWu.disposableUpload(ediNo, formResultDTO);
-    }
-
-    /**
-     * 批量上传
-     * */
-    @RequestMapping(value = "uploadMore", method = RequestMethod.POST)
-    public Response uploadMore(@RequestParam String ediNo, @RequestBody List<ResultDTO> resultDTOS) {
-        return yeWu.uploadMore(ediNo, resultDTOS);
+        return baseFormResultService.disposableUpload(ediNo, formResultDTO);
     }
 
 }
