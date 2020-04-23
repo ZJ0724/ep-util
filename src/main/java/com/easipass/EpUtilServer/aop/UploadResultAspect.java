@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class UploadResultAspect {
 
+    private static final ThreadLocal<Boolean> isDisposableThreadLocal = new ThreadLocal<>();
+
     @Pointcut("@annotation(com.easipass.EpUtilServer.annotation.UploadResultAnnotation)")
     public void UploadResultAspect(){}
 
@@ -29,19 +31,19 @@ public class UploadResultAspect {
         UploadResultAnnotation uploadResultAnnotation = methodSignature.getMethod().getAnnotation(UploadResultAnnotation.class);
         boolean isDisposable = uploadResultAnnotation.isDisposable();
 
+        // 一次上传
         if (isDisposable) {
-
+            isDisposableThreadLocal.set(true);
         }
-        if (BaseService.SFTP_THREAD_LOCAL.get() == null) {
+
+        if ((isDisposableThreadLocal.get() == null && !isDisposable) || (isDisposableThreadLocal.get() && isDisposable)) {
             Sftp sftp = Sftp.getSftp83();
             System.out.println("连接sftp...");
             if (!sftp.connect()) {
                 throw new ResponseException("sftp:" + sftp.getUrl() + "连接失败");
             }
             BaseService.SFTP_THREAD_LOCAL.set(sftp);
-        }
 
-        if (BaseService.WEB_DRIVER_THREAD_LOCAL.get() == null) {
             WebDriver webDriver = new ChromeWebDriver(ProjectConfig.CHROME_DRIVER);
             System.out.println("创建webdriver");
             BaseService.WEB_DRIVER_THREAD_LOCAL.set(webDriver);
@@ -55,7 +57,7 @@ public class UploadResultAspect {
         UploadResultAnnotation uploadResultAnnotation = methodSignature.getMethod().getAnnotation(UploadResultAnnotation.class);
         boolean isDisposable = uploadResultAnnotation.isDisposable();
 
-        if (!isDisposable) {
+        if ((isDisposableThreadLocal.get() == null && !isDisposable) || (isDisposableThreadLocal.get() && isDisposable)) {
             BaseService.SFTP_THREAD_LOCAL.get().close();
             BaseService.WEB_DRIVER_THREAD_LOCAL.get().close();
             BaseService.SFTP_THREAD_LOCAL.set(null);
