@@ -5,7 +5,7 @@ import com.easipass.EpUtilServer.entity.DTO.ResultDTO;
 import com.easipass.EpUtilServer.entity.DTO.UploadMoreDTO;
 import com.easipass.EpUtilServer.entity.Response;
 import com.easipass.EpUtilServer.entity.Sftp;
-import com.easipass.EpUtilServer.enumeration.ResponseEnum;
+import com.easipass.EpUtilServer.enumeration.ResponseFlagEnum;
 import com.easipass.EpUtilServer.service.BaseService;
 import com.easipass.EpUtilServer.service.FormResultService;
 import com.easipass.EpUtilServer.util.Base64Util;
@@ -34,7 +34,7 @@ public class YeWuFormResultServiceImpl implements FormResultService {
     public Response upload(String ediNo, ResultDTO formResultDTO, boolean isDisposable, Sftp sftp, StepWebDriver stepWebDriver) {
         // 前置操作
         Response response = baseService.before(isDisposable, sftp);
-        if (response.getFlag().equals(ResponseEnum.FALSE.getFlag())) {
+        if (response.getFlag().equals(ResponseFlagEnum.FALSE.getFlag())) {
             return response;
         }
         sftp = (Sftp) response.getData();

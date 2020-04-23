@@ -1,6 +1,6 @@
 package com.easipass.EpUtilServer.enumeration;
 
-public enum ResponseEnum {
+public enum ResponseFlagEnum {
 
     // 响应正确
     TRUE("T"),
@@ -9,7 +9,7 @@ public enum ResponseEnum {
 
     private String flag;
 
-    ResponseEnum(String flag) {
+    ResponseFlagEnum(String flag) {
         this.flag = flag;
     }
 

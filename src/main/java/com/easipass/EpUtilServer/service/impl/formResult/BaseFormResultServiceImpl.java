@@ -4,7 +4,7 @@ import com.easipass.EpUtilServer.entity.DTO.ResultDTO;
 import com.easipass.EpUtilServer.entity.DTO.UploadMoreDTO;
 import com.easipass.EpUtilServer.entity.Response;
 import com.easipass.EpUtilServer.entity.Sftp;
-import com.easipass.EpUtilServer.enumeration.ResponseEnum;
+import com.easipass.EpUtilServer.enumeration.ResponseFlagEnum;
 import com.easipass.EpUtilServer.exception.ErrorException;
 import com.easipass.EpUtilServer.service.FormResultService;
 import com.easipass.EpUtilServer.util.StepWebDriverUtil;
@@ -38,7 +38,7 @@ public class BaseFormResultServiceImpl implements FormResultService {
 
         // 通讯回执
         Response response = tongXun.upload(ediNo, new ResultDTO("0", "通讯回执上传成功"), true, sftp, stepWebDriver);
-        if (response.getFlag().equals(ResponseEnum.FALSE.getFlag())) {
+        if (response.getFlag().equals(ResponseFlagEnum.FALSE.getFlag())) {
             return response;
         }
 
@@ -68,7 +68,7 @@ public class BaseFormResultServiceImpl implements FormResultService {
         for (UploadMoreDTO uploadMoreDTO : uploadMoreDTOS) {
             // 上传通讯回执
             response = tongXun.upload(uploadMoreDTO.getEdiNo(), new ResultDTO("0", "通讯回执上传成功"), true, sftp, stepWebDriver);
-            if (response.getFlag().equals(ResponseEnum.FALSE.getFlag())) {
+            if (response.getFlag().equals(ResponseFlagEnum.FALSE.getFlag())) {
                 return response;
             }
 

@@ -3,7 +3,7 @@ package com.easipass.EpUtilServer.service.impl.decModResult;
 import com.easipass.EpUtilServer.config.ResourcePathConfig;
 import com.easipass.EpUtilServer.entity.*;
 import com.easipass.EpUtilServer.entity.DTO.ResultDTO;
-import com.easipass.EpUtilServer.enumeration.ResponseEnum;
+import com.easipass.EpUtilServer.enumeration.ResponseFlagEnum;
 import com.easipass.EpUtilServer.service.BaseService;
 import com.easipass.EpUtilServer.service.DecModResultService;
 import com.easipass.EpUtilServer.util.Base64Util;
@@ -35,7 +35,7 @@ public class QPDecModResultServiceImpl implements DecModResultService {
     public Response upload(String preEntryId, ResultDTO resultDTO) {
         // 前置操作
         Response response = baseService.before(false, null);
-        if (response.getFlag().equals(ResponseEnum.FALSE.getFlag())) {
+        if (response.getFlag().equals(ResponseFlagEnum.FALSE.getFlag())) {
             return response;
         }
         Sftp sftp = (Sftp) response.getData();

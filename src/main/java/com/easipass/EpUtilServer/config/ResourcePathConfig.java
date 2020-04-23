@@ -3,17 +3,17 @@ package com.easipass.EpUtilServer.config;
 public class ResourcePathConfig {
 
     /**
-     * 默认配置文件路径
+     * 配置文件路径
      * */
     public final static String CONFIG_PATH = "/config";
 
     /**
-     * 默认windows版谷歌驱动路径
+     * windows版谷歌驱动路径
      * */
     public final static String WINDOWS_CHROME_DRIVER_PATH = "/chromeDriver/windows/chromedriver.exe";
 
     /**
-     * 默认linux版谷歌驱动路径
+     * linux版谷歌驱动路径
      * */
     public final static String LINUX_CHROME_DRIVER_PATH = "/chromeDriver/linux/chromedriver";
 

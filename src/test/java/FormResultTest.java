@@ -2,7 +2,7 @@ import com.easipass.EpUtilServer.Main;
 import com.easipass.EpUtilServer.entity.DTO.ResultDTO;
 import com.easipass.EpUtilServer.entity.DTO.UploadMoreDTO;
 import com.easipass.EpUtilServer.entity.Response;
-import com.easipass.EpUtilServer.enumeration.ResponseEnum;
+import com.easipass.EpUtilServer.enumeration.ResponseFlagEnum;
 import com.easipass.EpUtilServer.service.FormResultService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class FormResultTest {
                 null
         );
 
-        Assert.assertEquals(response.getFlag(), ResponseEnum.TRUE.getFlag());
+        Assert.assertEquals(response.getFlag(), ResponseFlagEnum.TRUE.getFlag());
     }
 
     /**
@@ -59,7 +59,7 @@ public class FormResultTest {
                 null
         );
 
-        Assert.assertEquals(response.getFlag(), ResponseEnum.TRUE.getFlag());
+        Assert.assertEquals(response.getFlag(), ResponseFlagEnum.TRUE.getFlag());
     }
 
     /**
@@ -71,7 +71,7 @@ public class FormResultTest {
 
         Response response = baseFormResultService.disposableUpload("EDI208000001745771", resultDTO);
 
-        Assert.assertEquals(response.getFlag(), ResponseEnum.TRUE.getFlag());
+        Assert.assertEquals(response.getFlag(), ResponseFlagEnum.TRUE.getFlag());
     }
 
     /**
@@ -86,7 +86,7 @@ public class FormResultTest {
 
         Response response = baseFormResultService.uploadMore(uploadMoreDTOS);
 
-        Assert.assertEquals(response.getFlag(), ResponseEnum.TRUE.getFlag());
+        Assert.assertEquals(response.getFlag(), ResponseFlagEnum.TRUE.getFlag());
     }
 
 }
