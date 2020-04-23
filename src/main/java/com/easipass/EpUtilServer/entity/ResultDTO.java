@@ -1,4 +1,4 @@
-package com.easipass.EpUtilServer.entity.DTO;
+package com.easipass.EpUtilServer.entity;
 
 import org.springframework.stereotype.Component;
 

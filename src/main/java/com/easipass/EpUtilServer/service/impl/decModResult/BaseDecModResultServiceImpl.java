@@ -1,6 +1,6 @@
 package com.easipass.EpUtilServer.service.impl.decModResult;
 
-import com.easipass.EpUtilServer.entity.DTO.ResultDTO;
+import com.easipass.EpUtilServer.entity.ResultDTO;
 import com.easipass.EpUtilServer.entity.Oracle;
 import com.easipass.EpUtilServer.entity.Response;
 import com.easipass.EpUtilServer.exception.ErrorException;
@@ -17,7 +17,7 @@ public class BaseDecModResultServiceImpl implements DecModResultService {
         //连接数据库
         Oracle oracle = Oracle.getSWGDOracle();
         if (!oracle.connect()) {
-            return Response.returnFalse("", "数据库连接失败");
+            return Response.returnFalse("数据库连接失败");
         }
 
         //修改文件名

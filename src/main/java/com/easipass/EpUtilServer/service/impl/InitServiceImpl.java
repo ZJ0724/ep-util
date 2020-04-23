@@ -18,21 +18,21 @@ public class InitServiceImpl implements InitService {
     @Override
     public void init() {
         // 检查配置文件目录是否存在
-        File configDir = new File(projectConfig.CONFIG_DIR);
+        File configDir = new File(ProjectConfig.CONFIG_DIR);
         // 不存在就创建目录
         if (!configDir.exists()) {
             configDir.mkdirs();
         }
 
         // 检查配置文件
-        if (!projectConfig.CONFIG_FILE.exists()) {
+        if (!ProjectConfig.CONFIG_FILE.exists()) {
             // 不存在创建默认配置文件
-            FileUtil.copyTextFile(InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.CONFIG_PATH), projectConfig.CONFIG_FILE);
+            FileUtil.copyTextFile(InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.CONFIG_PATH), ProjectConfig.CONFIG_FILE);
         }
         // 加载配置文件
         Properties config = new Properties();
         try {
-            config.load(new FileReader(projectConfig.CONFIG_FILE));
+            config.load(new FileReader(ProjectConfig.CONFIG_FILE));
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
@@ -42,16 +42,16 @@ public class InitServiceImpl implements InitService {
 
         // 检查谷歌驱动
         // windows
-        if (projectConfig.SYSTEM_OS_ENUM == SystemOSEnum.windows) {
-            if (!projectConfig.WINDOWS_CHROME_DRIVER.exists()) {
-                FileUtil.copyOtherFile(InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.WINDOWS_CHROME_DRIVER_PATH), projectConfig.WINDOWS_CHROME_DRIVER);
+        if (ProjectConfig.SYSTEM_OS_ENUM == SystemOSEnum.windows) {
+            if (!ProjectConfig.WINDOWS_CHROME_DRIVER.exists()) {
+                FileUtil.copyOtherFile(InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.WINDOWS_CHROME_DRIVER_PATH), ProjectConfig.WINDOWS_CHROME_DRIVER);
             }
-        } else if (projectConfig.SYSTEM_OS_ENUM == SystemOSEnum.linux) {
-            if (!projectConfig.LINUX_CHROME_DRIVER.exists()) {
-                FileUtil.copyOtherFile(InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.LINUX_CHROME_DRIVER_PATH), projectConfig.LINUX_CHROME_DRIVER);
+        } else if (ProjectConfig.SYSTEM_OS_ENUM == SystemOSEnum.linux) {
+            if (!ProjectConfig.LINUX_CHROME_DRIVER.exists()) {
+                FileUtil.copyOtherFile(InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.LINUX_CHROME_DRIVER_PATH), ProjectConfig.LINUX_CHROME_DRIVER);
                 try {
                     // 修改权限
-                    Runtime.getRuntime().exec("chmod 777 " + projectConfig.LINUX_CHROME_DRIVER.getAbsolutePath());
+                    Runtime.getRuntime().exec("chmod 777 " + ProjectConfig.LINUX_CHROME_DRIVER.getAbsolutePath());
                 } catch (IOException e) {
                     throw new ErrorException(e.getMessage());
                 }

@@ -1,10 +1,9 @@
 package com.easipass.EpUtilServer.config;
 
 import com.easipass.EpUtilServer.enumeration.SystemOSEnum;
-
 import java.io.File;
 
-public class projectConfig {
+public class ProjectConfig {
 
     /**
      * 项目名
@@ -40,5 +39,10 @@ public class projectConfig {
      * 谷歌驱动linux版文件名
      * */
     public final static File LINUX_CHROME_DRIVER = new File(CONFIG_DIR, "chromedriver");
+
+    /**
+     * 当前使用的驱动
+     * */
+    public final static File CHROME_DRIVER = SYSTEM_OS_ENUM == SystemOSEnum.windows ? WINDOWS_CHROME_DRIVER : LINUX_CHROME_DRIVER;
 
 }
