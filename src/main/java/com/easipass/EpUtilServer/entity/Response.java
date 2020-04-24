@@ -1,5 +1,8 @@
 package com.easipass.EpUtilServer.entity;
 
+import com.easipass.EpUtilServer.enumeration.ResponseEnum;
+import com.easipass.EpUtilServer.enumeration.ResponseFlagEnum;
+
 public class Response {
 
     private Object flag;
@@ -50,14 +53,28 @@ public class Response {
      * 返回正确
      * */
     public static Response returnTrue(Object data) {
-        return new Response("T", "", "", data);
+        return new Response(ResponseFlagEnum.TRUE.getFlag(), "", "", data);
     }
 
     /**
      * 返回错误
      * */
-    public static Response returnFalse(Object errorCode, Object errorMsg) {
-        return new Response("F", errorCode, errorMsg, null);
+    public static Response returnFalse(Object errorMsg) {
+        return new Response(ResponseFlagEnum.FALSE.getFlag(), "", errorMsg, null);
+    }
+
+    /**
+     * 返回错误
+     * */
+    public static Response returnFalse(ResponseEnum responseEnum) {
+        return new Response(ResponseFlagEnum.FALSE.getFlag(), responseEnum.getErrorCode(), responseEnum.getErrorMsg(), null);
+    }
+
+    /**
+     * 返回错误
+     * */
+    public static Response returnFalse(ResponseEnum responseEnum, String errorMsg) {
+        return new Response(ResponseFlagEnum.FALSE.getFlag(), responseEnum.getErrorCode(), errorMsg, null);
     }
 
 }

@@ -1,6 +1,10 @@
-package com.easipass.EpUtilServer.entity.DTO;
+package com.easipass.EpUtilServer.entity;
 
+import com.easipass.EpUtilServer.annotation.NotNull;
+import com.easipass.EpUtilServer.exception.ResponseException;
 import org.springframework.stereotype.Component;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @Component
 public class ResultDTO {
@@ -8,11 +12,13 @@ public class ResultDTO {
     /**
      * 状态
      * */
+    @NotNull(errorMsg = "channel参数缺失")
     private String channel;
 
     /**
      * 备注
      * */
+    @NotNull(errorMsg = "note参数缺失")
     private String note;
 
     public ResultDTO() {}
@@ -42,7 +48,20 @@ public class ResultDTO {
      * 获取报关单号
      * */
     public static String getPreEntryId(String ediNo) {
-        return "2217000000000" + ediNo.substring(ediNo.length() - 5);
+        String declPort;
+        Oracle oracle = Oracle.getSWGDOracle();
+        if (!oracle.connect()) {
+            throw new ResponseException("数据库：" + oracle.getUrl() + "连接失败");
+        }
+        ResultSet resultSet = oracle.query("SELECT DECL_PORT FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?", new Object[]{ediNo});
+        try {
+            resultSet.next();
+            declPort = resultSet.getString("DECL_PORT");
+        } catch (SQLException e) {
+            throw new ResponseException("未找到报关单数据");
+        }
+        oracle.close();
+        return declPort + "000000000" + ediNo.substring(ediNo.length() - 5);
     }
 
     /**

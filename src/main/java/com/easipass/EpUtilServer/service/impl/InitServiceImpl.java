@@ -1,80 +1,63 @@
 package com.easipass.EpUtilServer.service.impl;
 
+import com.easipass.EpUtilServer.annotation.ConfigAnnotation;
 import com.easipass.EpUtilServer.config.*;
+import com.easipass.EpUtilServer.enumeration.SystemOSEnum;
 import com.easipass.EpUtilServer.exception.ErrorException;
 import com.easipass.EpUtilServer.service.InitService;
-import com.easipass.EpUtilServer.util.ConfigUtil;
 import com.easipass.EpUtilServer.util.FileUtil;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import java.io.*;
 import java.util.Properties;
 
+@Configuration
 public class InitServiceImpl implements InitService {
 
+    @Bean
     @Override
-    public void loadConfigFile() {
+    public void init() {
         // 检查配置文件目录是否存在
-        File configDir = new File(BaseConfig.CONFIG_DIR);
+        File configDir = new File(ProjectConfig.CONFIG_DIR);
         // 不存在就创建目录
         if (!configDir.exists()) {
-            if (!configDir.mkdirs()) {
-                throw new ErrorException("创建配置文件目录出错");
-            }
+            configDir.mkdirs();
         }
 
-        // 检查配置文件是否存在
-        File configFile = new File(configDir.getAbsolutePath(), BaseConfig.CONFIG_FILE_NAME);
-        if (!configFile.exists()) {
+        // 检查配置文件
+        if (!ProjectConfig.CONFIG_FILE.exists()) {
             // 不存在创建默认配置文件
-            FileUtil.copyTextFile(InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.CONFIG_PATH), BaseConfig.CONFIG_DIR, BaseConfig.CONFIG_FILE_NAME);
+            FileUtil.copyTextFile(InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.CONFIG_PATH), ProjectConfig.CONFIG_FILE);
         }
-
         // 加载配置文件
         Properties config = new Properties();
         try {
-            config.load(InitServiceImpl.class.getResourceAsStream("/" + BaseConfig.CONFIG_FILE_NAME));
+            config.load(new FileReader(ProjectConfig.CONFIG_FILE));
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
-        ConfigUtil.load(config, SWGDConfig.class);
-        ConfigUtil.load(config, Sftp83Config.class);
-        ConfigUtil.load(config, KSDDBConfig.class);
-    }
+        ConfigAnnotation.Method.load(config, SWGDConfig.class);
+        ConfigAnnotation.Method.load(config, Sftp83Config.class);
+        ConfigAnnotation.Method.load(config, KSDDBConfig.class);
 
-    @Override
-    public void checkChromeDriver() {
+        // 检查谷歌驱动
         // windows
-        if (BaseConfig.SYSTEM_TYPE.contains("Windows")) {
-            File chromeFile = new File(BaseConfig.CONFIG_DIR, BaseConfig.WINDOWS_CHROME_DRIVER_NAME);
-            if (!chromeFile.exists()) {
-                FileUtil.copyOtherFile(InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.WINDOWS_CHROME_DRIVER_PATH), BaseConfig.CONFIG_DIR, BaseConfig.WINDOWS_CHROME_DRIVER_NAME);
+        if (ProjectConfig.SYSTEM_OS_ENUM == SystemOSEnum.windows) {
+            if (!ProjectConfig.WINDOWS_CHROME_DRIVER.exists()) {
+                FileUtil.copyOtherFile(InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.WINDOWS_CHROME_DRIVER_PATH), ProjectConfig.WINDOWS_CHROME_DRIVER);
             }
-        }
-
-        // linux
-        if (BaseConfig.SYSTEM_TYPE.contains("Linux")) {
-            File chromeFile = new File(BaseConfig.CONFIG_DIR, BaseConfig.LINUX_CHROME_DRIVER_NAME);
-            if (!chromeFile.exists()) {
-                FileUtil.copyOtherFile(InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.LINUX_CHROME_DRIVER_PATH), BaseConfig.CONFIG_DIR, BaseConfig.LINUX_CHROME_DRIVER_NAME);
+        } else if (ProjectConfig.SYSTEM_OS_ENUM == SystemOSEnum.linux) {
+            if (!ProjectConfig.LINUX_CHROME_DRIVER.exists()) {
+                FileUtil.copyOtherFile(InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.LINUX_CHROME_DRIVER_PATH), ProjectConfig.LINUX_CHROME_DRIVER);
                 try {
                     // 修改权限
-                    Runtime.getRuntime().exec("chmod 777 " + chromeFile.getAbsolutePath());
+                    Runtime.getRuntime().exec("chmod 777 " + ProjectConfig.LINUX_CHROME_DRIVER.getAbsolutePath());
                 } catch (IOException e) {
                     throw new ErrorException(e.getMessage());
                 }
             }
-
-            // 创建软连接
-            File chromeFileLnk = new File(BaseConfig.LINUX_CHROME_DRIVER_LNK_PATH, BaseConfig.LINUX_CHROME_DRIVER_NAME);
-            if (chromeFileLnk.exists()) {
-                if (!chromeFileLnk.delete()) {
-                    throw new ErrorException("删除软连接失败");
-                }
-            }
-            try {
-                Runtime.getRuntime().exec("ln -s " + chromeFile.getAbsolutePath() + " " + chromeFileLnk.getAbsolutePath());
-            } catch (IOException e) {
-                throw new ErrorException(e.getMessage());
-            }
+        } else {
+            throw ErrorException.getErrorException("未找到系统类型");
         }
     }
 

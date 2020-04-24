@@ -1,9 +1,9 @@
 package com.easipass.EpUtilServer.service.impl.decModResult;
 
+import com.easipass.EpUtilServer.annotation.UploadResultAnnotation;
 import com.easipass.EpUtilServer.config.ResourcePathConfig;
 import com.easipass.EpUtilServer.entity.*;
-import com.easipass.EpUtilServer.entity.DTO.ResultDTO;
-import com.easipass.EpUtilServer.enumeration.ResponseEnum;
+import com.easipass.EpUtilServer.entity.ResultDTO;
 import com.easipass.EpUtilServer.service.BaseService;
 import com.easipass.EpUtilServer.service.DecModResultService;
 import com.easipass.EpUtilServer.util.Base64Util;
@@ -23,23 +23,14 @@ public class QPDecModResultServiceImpl implements DecModResultService {
     @Qualifier("BaseDecModResultServiceImpl")
     private DecModResultService baseDecModResultService;
 
-    @Resource
-    private BaseService baseService;
-
     @Override
     public Response setFileName(String preEntryId) {
         return baseDecModResultService.setFileName(preEntryId);
     }
 
     @Override
+    @UploadResultAnnotation
     public Response upload(String preEntryId, ResultDTO resultDTO) {
-        // 前置操作
-        Response response = baseService.before(false, null);
-        if (response.getFlag().equals(ResponseEnum.FALSE.getFlag())) {
-            return response;
-        }
-        Sftp sftp = (Sftp) response.getData();
-
         //获取回执原document
         Document document = XmlUtil.getDocument(QPDecModResultServiceImpl.class.getResourceAsStream(ResourcePathConfig.QP_DEC_MOD_RESULT_PATH));
 
@@ -72,8 +63,9 @@ public class QPDecModResultServiceImpl implements DecModResultService {
         //替换FileName
         documentRootElement.element("AddInfo").element("FileName").setText(ResultDTO.getFileName(preEntryId));
 
-        // 后置操作
-        return baseService.after(document, "QPDecModResult-" + ResultDTO.getDecModSeqNo(preEntryId) + "-" + DateUtil.getTime(), false, sftp, null);
+        BaseService.uploadResult(document, "QPDecModResult-" + ResultDTO.getDecModSeqNo(preEntryId) + "-" + DateUtil.getTime());
+
+        return Response.returnTrue(null);
     }
 
 }
