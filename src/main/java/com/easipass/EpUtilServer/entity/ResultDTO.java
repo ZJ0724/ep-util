@@ -1,5 +1,6 @@
 package com.easipass.EpUtilServer.entity;
 
+import com.easipass.EpUtilServer.annotation.NotNull;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -8,11 +9,13 @@ public class ResultDTO {
     /**
      * 状态
      * */
+    @NotNull(errorMsg = "channel参数缺失")
     private String channel;
 
     /**
      * 备注
      * */
+    @NotNull(errorMsg = "note参数缺失")
     private String note;
 
     public ResultDTO() {}

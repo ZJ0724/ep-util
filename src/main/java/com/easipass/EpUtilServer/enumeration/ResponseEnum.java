@@ -2,7 +2,8 @@ package com.easipass.EpUtilServer.enumeration;
 
 public enum ResponseEnum {
 
-    error(500, "后台错误");
+    ERROR(500, "后台错误"),
+    PARAM_ERROR(400, "请求参数有误或缺失");
 
     private Object errorCode;
 

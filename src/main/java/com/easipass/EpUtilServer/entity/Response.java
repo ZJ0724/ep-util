@@ -64,10 +64,17 @@ public class Response {
     }
 
     /**
-     * 后台错误
+     * 返回错误
      * */
-    public static Response error() {
-        return new Response(ResponseFlagEnum.FALSE.getFlag(), ResponseEnum.error.getErrorCode(), ResponseEnum.error.getErrorMsg(), null);
+    public static Response returnFalse(ResponseEnum responseEnum) {
+        return new Response(ResponseFlagEnum.FALSE.getFlag(), responseEnum.getErrorCode(), responseEnum.getErrorMsg(), null);
+    }
+
+    /**
+     * 返回错误
+     * */
+    public static Response returnFalse(ResponseEnum responseEnum, String errorMsg) {
+        return new Response(ResponseFlagEnum.FALSE.getFlag(), responseEnum.getErrorCode(), errorMsg, null);
     }
 
 }
