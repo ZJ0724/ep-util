@@ -47,6 +47,9 @@ public class Oracle {
      * */
     private boolean isConnect = false;
 
+    /**
+     * 构造函数
+     * */
     public Oracle(String url, int port, String sid, String username, String password) {
         this.url = url;
         this.port = port;
@@ -150,6 +153,13 @@ public class Oracle {
      * */
     public static Oracle getKSDDBOracle() {
         return new Oracle(KSDDBConfig.url, KSDDBConfig.port, KSDDBConfig.sid, KSDDBConfig.username, KSDDBConfig.password);
+    }
+
+    /**
+     * 获取数据库url
+     * */
+    public String getUrl() {
+        return url;
     }
 
 }
