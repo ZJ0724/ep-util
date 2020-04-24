@@ -47,7 +47,7 @@ public class YeWuFormResultServiceImpl implements FormResultService {
         //替换数据
         dataDocumentRootElement.element("CUS_CIQ_NO").setText(ResultDTO.getSeqNo(ediNo));
         dataDocumentRootElement.element("ENTRY_ID").setText(ResultDTO.getPreEntryId(ediNo));
-        dataDocumentRootElement.element("NOTICE_DATE").setText("2019-03-14T22:49:37");
+        dataDocumentRootElement.element("NOTICE_DATE").setText(DateUtil.getDate());
         dataDocumentRootElement.element("CHANNEL").setText(formResultDTO.getChannel());
         dataDocumentRootElement.element("NOTE").setText(formResultDTO.getNote());
         data = dataDocument.asXML();

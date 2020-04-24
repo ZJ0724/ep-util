@@ -55,6 +55,9 @@ public class TongXunFormResultServiceImpl implements FormResultService {
         //替换原document的data节点
         documentRootElement.element("Data").setText(data);
 
+        // 设置创建时间
+        documentRootElement.element("TransInfo").element("CreatTime").setText(DateUtil.getDate());
+
         BaseService.uploadResult(document, "tongXunFormResult-" + ResultDTO.getSeqNo(ediNo) + "-" + DateUtil.getTime());
         return Response.returnTrue(null);
     }
