@@ -62,6 +62,7 @@ public class UploadResultAspect {
             BaseService.WEB_DRIVER_THREAD_LOCAL.get().close();
             BaseService.SFTP_THREAD_LOCAL.set(null);
             BaseService.WEB_DRIVER_THREAD_LOCAL.set(null);
+            isDisposableThreadLocal.set(null);
             System.out.println("sftp已关闭");
             System.out.println("webdriver已关闭");
         }

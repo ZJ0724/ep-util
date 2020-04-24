@@ -17,6 +17,7 @@
 
     <properties>
         <buildPath>${project.build.directory}/buildPath/${project.artifactId}-${project.version}</buildPath>
+        <skipTests>true</skipTests>
     </properties>
 
     <!--依赖-->
