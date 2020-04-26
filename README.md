@@ -1,4 +1,4 @@
-EpUtilServer
+# EpUtilServer
 
 Ep工具服务
 
@@ -58,12 +58,13 @@ Ep工具服务
 
 + **windows**
 
-  双击 `bin` 文件夹下的 `EpUtilServer.run.bat` 即可启动
+  双击 `bin` 文件夹下的 `run.bat` 即可启动
 
 + **linux**
 
   ```sh
-  ./bin/EpUtilServer.run.sh
+  cd bin
+  ./run.sh
   ```
 
 
