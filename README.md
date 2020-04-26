@@ -63,3 +63,9 @@ sftp83.uploadPath=/gcchome/winx/cus/cfg_c2e
   ```sh
   ./bin/EpUtilServer.run.sh
   ```
+
+
+
+## 接口地址
+
+[接口地址]([https://github.com/ZJ0724/EpUtilServer/wiki/%E6%8E%A5%E5%8F%A3%E5%9C%B0%E5%9D%80](https://github.com/ZJ0724/EpUtilServer/wiki/接口地址))
