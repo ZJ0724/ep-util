@@ -1,29 +1,30 @@
-## EpUtilServer
+# EpUtilServer
 
-> Ep工具服务
+Ep工具服务
 
-### 服务端口设置
+## 端口设置
 
-> 默认端口为：`8001`
+默认端口为：`8001`
 
-> 修改端口：修改  `config` 文件下的 `application.properties` 文件
->```java
-> # 端口号
-> server.port=8001
->```
+修改端口：修改  `config` 文件下的 `application.properties` 文件
 
-### 响应参数说明
+```java
+# 端口号
+server.port=8001
+```
 
-> **样例：**
->
-> ```json
-> {
-> 	"falg": "",
->	"errorCode": "",
->	"errorMsg": "",
->	"data": ""
-> }
-> ```
+## 响应参数说明
+
+**样例：**
+
+```json
+{
+	"falg": "",
+	"errorCode": "",
+	"errorMsg": "",
+	"data": ""
+}
+```
 
 > **参数说明：**
 >
