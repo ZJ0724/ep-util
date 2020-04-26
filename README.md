@@ -6,14 +6,15 @@ Ep工具服务
 
 ## 端口设置
 
-默认端口为：`8001`
+> 默认端口为：`8001`
 
-修改端口：修改  `config` 文件下的 `application.properties` 文件
-
-```properties
-# 端口号
-server.port=8001
-```
+> 修改端口：修改  `config` 文件下的 `application.properties` 文件
+>
+> ```properties
+> # 端口号
+> server.port=8001
+> ```
+>
 
 
 
@@ -91,7 +92,7 @@ sftp83.uploadPath=/gcchome/winx/cus/cfg_c2e
 |   data    |                   返回的数据                   |
 
 
----
+
 ### 上传报关单通讯回执
 
 **url**：/formResult/upload/tongXun?ediNo=?
@@ -116,7 +117,7 @@ sftp83.uploadPath=/gcchome/winx/cus/cfg_c2e
 | note    | 是       | 备注      |
 
 
----
+
 ### 上传报关单业务回执
 
 **url**：/formResult/upload/yeWu?ediNo=?
@@ -140,7 +141,7 @@ sftp83.uploadPath=/gcchome/winx/cus/cfg_c2e
 | note    | 是       | 备注      |
 
 
----
+
 ### 一次性上传通讯、业务回执
 
 > 一次上传的通讯回执默认channel为：0，note为：通讯回执上传成功。
@@ -166,7 +167,7 @@ sftp83.uploadPath=/gcchome/winx/cus/cfg_c2e
 | note    | 是       | 备注      |
 
 
----
+
 ### 上传修撤单QP回执
 
 **url**：/decModResult/upload/QP?ediNo=?
@@ -191,7 +192,7 @@ sftp83.uploadPath=/gcchome/winx/cus/cfg_c2e
 | note    | 是       | 备注      |
 
 
----
+
 ### 上传修撤单业务回执
 
 **url**：/decModResult/upload/yeWu?ediNo=?
@@ -216,26 +217,26 @@ sftp83.uploadPath=/gcchome/winx/cus/cfg_c2e
 | note    | 是       | 备注      |
 
 
----
+
 ### 上传代理委托回执
 
-**url**：/agentResult/upload?ediNo=?
-
-**type**：POST
-
-请求样例：
-
-```json
-{
-	"channel": "",
-	"note": ""
-}
-```
-
-**参数说明：**
-
-| 节点名  | 是否必填 | 说明      |
-| ------- | -------- | --------- |
-| ediNo   | 是       | ediNo编号 |
-| channel | 是       | 回执类型  |
-| note    | 是       | 备注      |
+> **url**：/agentResult/upload?ediNo=?
+>
+> **type**：POST
+>
+> 请求样例：
+>
+> ```json
+> {
+> 	"channel": "",
+> 	"note": ""
+> }
+> ```
+>
+> 参数说明：
+>
+> | 节点名  | 是否必填 | 说明      |
+> | ------- | -------- | --------- |
+> | ediNo   | 是       | ediNo编号 |
+> | channel | 是       | 回执类型  |
+> | note    | 是       | 备注      |
