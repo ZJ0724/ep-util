@@ -1,7 +1,7 @@
 package com.easipass.EpUtilServer.handler;
 
 import com.easipass.EpUtilServer.entity.Response;
-import com.easipass.EpUtilServer.enumeration.ResponseEnum;
+import com.easipass.EpUtilServer.enumeration.ErrorCodeEnum;
 import com.easipass.EpUtilServer.exception.ErrorException;
 import com.easipass.EpUtilServer.exception.ParamException;
 import com.easipass.EpUtilServer.exception.ResponseException;
@@ -19,7 +19,7 @@ public class ExceptionHandler {
      * */
     @org.springframework.web.bind.annotation.ExceptionHandler(ErrorException.class)
     public Response error(Exception e) {
-        return Response.returnFalse(ResponseEnum.ERROR, e.getMessage());
+        return Response.returnFalse(ErrorCodeEnum.ERROR, e.getMessage());
     }
 
     /**
@@ -35,7 +35,7 @@ public class ExceptionHandler {
      * */
     @org.springframework.web.bind.annotation.ExceptionHandler({MissingServletRequestParameterException.class, HttpMessageNotReadableException.class})
     public Response requestParamIsNull() {
-        return Response.returnFalse(ResponseEnum.PARAM_ERROR);
+        return Response.returnFalse(ErrorCodeEnum.PARAM_ERROR);
     }
 
     /**
@@ -43,7 +43,7 @@ public class ExceptionHandler {
      * */
     @org.springframework.web.bind.annotation.ExceptionHandler(ParamException.class)
     public Response paramException(Exception e) {
-        return Response.returnFalse(ResponseEnum.PARAM_ERROR, e.getMessage());
+        return Response.returnFalse(ErrorCodeEnum.PARAM_ERROR, e.getMessage());
     }
 
 }

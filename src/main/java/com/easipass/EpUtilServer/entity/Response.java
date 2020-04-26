@@ -1,6 +1,6 @@
 package com.easipass.EpUtilServer.entity;
 
-import com.easipass.EpUtilServer.enumeration.ResponseEnum;
+import com.easipass.EpUtilServer.enumeration.ErrorCodeEnum;
 import com.easipass.EpUtilServer.enumeration.ResponseFlagEnum;
 
 public class Response {
@@ -66,15 +66,15 @@ public class Response {
     /**
      * 返回错误
      * */
-    public static Response returnFalse(ResponseEnum responseEnum) {
-        return new Response(ResponseFlagEnum.FALSE.getFlag(), responseEnum.getErrorCode(), responseEnum.getErrorMsg(), null);
+    public static Response returnFalse(ErrorCodeEnum errorCodeEnum) {
+        return new Response(ResponseFlagEnum.FALSE.getFlag(), errorCodeEnum.getErrorCode(), errorCodeEnum.getErrorMsg(), null);
     }
 
     /**
      * 返回错误
      * */
-    public static Response returnFalse(ResponseEnum responseEnum, String errorMsg) {
-        return new Response(ResponseFlagEnum.FALSE.getFlag(), responseEnum.getErrorCode(), errorMsg, null);
+    public static Response returnFalse(ErrorCodeEnum errorCodeEnum, String errorMsg) {
+        return new Response(ResponseFlagEnum.FALSE.getFlag(), errorCodeEnum.getErrorCode(), errorMsg, null);
     }
 
 }
