@@ -63,3 +63,179 @@ sftp83.uploadPath=/gcchome/winx/cus/cfg_c2e
   ```sh
   ./bin/EpUtilServer.run.sh
   ```
+
+
+
+## 接口文档
+
+### 响应参数说明
+
+样例：
+
+```json
+{
+	"flag": "",
+	"errorCode": "",
+	"errorMsg": "",
+	"data": ""
+}
+```
+
+参数说明：
+
+|    节点名     |                      说明                      |
+| :-----------: | :--------------------------------------------: |
+|   flag   |        `T`：请求成功<br />`F`：请求失败        |
+| errorCode | `500`：后台错误<br />`400`：请求参数有误或缺失 |
+| errorMsg  |                    错误提示                    |
+|   data    |                   返回的数据                   |
+
+
+
+### 上传报关单通讯回执
+
+**url**：/formResult/upload/tongXun?ediNo=?
+
+**type**：POST
+
+**请求样例：**
+
+```json
+{
+	"channel": "",
+	"note": ""
+}
+```
+
+**参数说明：**
+
+| 节点名  | 是否必填 | 说明      |
+| ------- | -------- | --------- |
+| ediNo   | 是       | ediNo编号 |
+| channel | 是       | 回执类型  |
+| note    | 是       | 备注      |
+
+
+
+### 上传报关单业务回执
+
+**url**：/formResult/upload/yeWu?ediNo=?
+
+**type**：POST
+
+请求样例：
+
+```json
+{
+	"channel": "",
+	"note": ""
+}
+```
+
+**参数说明：**
+| 节点名  | 是否必填 | 说明      |
+| ------- | -------- | --------- |
+| ediNo   | 是       | ediNo编号 |
+| channel | 是       | 回执类型  |
+| note    | 是       | 备注      |
+
+
+
+### 一次性上传通讯、业务回执
+
+> 一次上传的通讯回执默认channel为：0，note为：通讯回执上传成功。
+
+**url**：/formResult/disposableUpload?ediNo=?
+
+**type**：POST
+
+请求样例：
+
+```json
+{
+	"channel": "",
+	"note": ""
+}
+```
+
+**参数说明：**
+| 节点名  | 是否必填 | 说明      |
+| ------- | -------- | --------- |
+| ediNo   | 是       | ediNo编号 |
+| channel | 是       | 回执类型  |
+| note    | 是       | 备注      |
+
+
+
+### 上传修撤单QP回执
+
+**url**：/decModResult/upload/QP?ediNo=?
+
+**type**：POST
+
+请求样例：
+
+```json
+{
+	"channel": "",
+	"note": ""
+}
+```
+
+**参数说明：**
+
+| 节点名  | 是否必填 | 说明      |
+| ------- | -------- | --------- |
+| ediNo   | 是       | ediNo编号 |
+| channel | 是       | 回执类型  |
+| note    | 是       | 备注      |
+
+
+
+### 上传修撤单业务回执
+
+**url**：/decModResult/upload/yeWu?ediNo=?
+
+**type**：POST
+
+请求样例：
+
+```json
+{
+	"channel": "",
+	"note": ""
+}
+```
+
+**参数说明：**
+
+| 节点名  | 是否必填 | 说明      |
+| ------- | -------- | --------- |
+| ediNo   | 是       | ediNo编号 |
+| channel | 是       | 回执类型  |
+| note    | 是       | 备注      |
+
+
+
+### 上传代理委托回执
+
+**url**：/agentResult/upload?ediNo=?
+
+**type**：POST
+
+请求样例：
+
+```json
+{
+	"channel": "",
+	"note": ""
+}
+```
+
+**参数说明：**
+
+| 节点名  | 是否必填 | 说明      |
+| ------- | -------- | --------- |
+| ediNo   | 是       | ediNo编号 |
+| channel | 是       | 回执类型  |
+| note    | 是       | 备注      |
