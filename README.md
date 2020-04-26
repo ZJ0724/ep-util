@@ -1,9 +1,6 @@
 ### 上传报关单通讯回执
-
 **url：**`/formResult/upload/tongXun?ediNo=?`
-
 **type：**`POST`
-
 **请求样例：**
 
 ```json
