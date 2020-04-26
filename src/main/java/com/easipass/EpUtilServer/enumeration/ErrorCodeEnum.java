@@ -1,6 +1,6 @@
 package com.easipass.EpUtilServer.enumeration;
 
-public enum ResponseEnum {
+public enum ErrorCodeEnum {
 
     ERROR(500, "后台错误"),
     PARAM_ERROR(400, "请求参数有误或缺失");
@@ -9,7 +9,7 @@ public enum ResponseEnum {
 
     private Object errorMsg;
 
-    ResponseEnum(Object errorCode, Object errorMsg) {
+    ErrorCodeEnum(Object errorCode, Object errorMsg) {
         this.errorCode = errorCode;
         this.errorMsg = errorMsg;
     }
