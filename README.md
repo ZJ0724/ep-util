@@ -19,9 +19,9 @@
 > ```json
 > {
 > 	"falg": "",
->    	"errorCode": "",
->    	"errorMsg": "",
->    	"data": ""
+>	"errorCode": "",
+>	"errorMsg": "",
+>	"data": ""
 > }
 > ```
 
@@ -34,77 +34,69 @@
 > | errorMsg | 错误提示 |
 > | data | 返回的数据 |
 
-### 上传报关单通讯回执
+### 接口说明
 
-**url：**`/formResult/upload/tongXun?ediNo=?`
+#### 上传报关单通讯回执
 
-**type：**`POST`
+> **url：**`/formResult/upload/tongXun?ediNo=?`
 
-**请求样例：**
+> **type：**`POST`
 
-```json
-{
-    "channel": "",
-    "note": ""
-}
-```
+>**请求样例：**
+> ```json
+> {
+> 	"channel": "",
+> 	"note": ""
+> }
+> ```
 
-**参数说明：**
+> **参数说明：**
+> |节点名|是否必填|说明|
+> |----|----|----|
+> |ediNo|是|ediNo编号|
+> |channel|是|回执类型|
+> |note|是|备注|
 
-|节点名|是否必填|说明|
-|----|----|----|
-|ediNo|是|ediNo编号|
-|channel|是|回执类型|
-|note|是|备注|
+#### 上传报关单业务回执
 
----
+> **url：**`/formResult/upload/yeWu?ediNo=?`
 
-### 上传报关单业务回执
+> **type：**`POST`
 
-**url：**`/formResult/upload/yeWu?ediNo=?`
+> **请求样例：**
+> ```json
+> {
+> 	"channel": "",
+> 	"note": ""
+> }
+> ```
 
-**type：**`POST`
+> **参数说明：**
+> |节点名|是否必填|说明|
+> |----|----|----|
+> |ediNo|是|ediNo编号|
+> |channel|是|回执类型|
+> |note|是|备注|
 
-**请求样例：**
-
-```json
-{
-    "channel": "",
-    "note": ""
-}
-```
-
-**参数说明：**
-
-|节点名|是否必填|说明|
-|----|----|----|
-|ediNo|是|ediNo编号|
-|channel|是|回执类型|
-|note|是|备注|
-
----
-
-### 一次性上传通讯、业务回执
+#### 一次性上传通讯、业务回执
 
 > 通讯回执默认channel为：0，note为：“通讯回执上传成功”
 
-**url：**`/formResult/disposableUpload?ediNo=?`
+> **url：**`/formResult/disposableUpload?ediNo=?`
 
-**type：**`POST`
+> **type：**`POST`
 
-**请求样例：**
+> **请求样例：**
+> ```json
+> {
+> 	"channel": "",
+> 	"note": ""
+> }
+> ```
 
-```json
-{
-    "channel": "",
-    "note": ""
-}
-```
-
-**参数说明：**
-
-|节点名|是否必填|说明|
-|----|----|----|
-|ediNo|是|ediNo编号|
-|channel|是|业务回执类型|
-|note|是|业务回执备注|
+> **参数说明：**
+> |节点名|是否必填|说明|
+> |----|----|----|
+> |ediNo|是|ediNo编号|
+> |channel|是|业务回执类型|
+> |note|是|业务回执备注|
