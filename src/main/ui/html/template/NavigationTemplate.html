@@ -1,0 +1,38 @@
+<div id="main" style="display: flex;">
+    <div style="width: 7%;background-color: #393D49;">
+        <div id="formResult" style="margin-top: 50px;" class="item">
+            报关单回执
+        </div>
+        <div id="decModResult" class="item">
+            修撤单回执
+        </div>
+    </div>
+    <div style="width: 93%;">
+        <div style="height: 2%;background-color: #393D49;"></div>
+        <div style="height: calc(98% - 40px);padding: 20px;"></div>
+    </div>
+
+    <script type="module">
+
+        import page from "../../js/page.js";
+
+        (() => {
+
+            let elements = {
+                formResult: document.getElementById("formResult"),
+                decModResult: document.getElementById("decModResult")
+            };
+
+            // 事件
+            elements.formResult.addEventListener("click", () => {
+                page.goToForResult();
+            });
+
+            elements.decModResult.addEventListener("click", () => {
+                page.goToDecModResult();
+            });
+
+        })();
+
+    </script>
+</div>
