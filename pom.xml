@@ -5,8 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.easipass</groupId>
-    <artifactId>EpUtilServer</artifactId>
-    <version>3.1.2</version>
+    <artifactId>epUtil</artifactId>
     <packaging>jar</packaging>
 
     <parent>
@@ -16,7 +15,7 @@
     </parent>
 
     <properties>
-        <buildPath>${project.build.directory}/buildPath/${project.artifactId}-${project.version}</buildPath>
+        <buildPath>${project.build.directory}/build/${project.artifactId}-${env}</buildPath>
         <skipTests>true</skipTests>
     </properties>
 
@@ -77,6 +76,24 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <env>beta</env>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>release</id>
+            <properties>
+                <env />
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <finalName>${project.artifactId}</finalName>
         <resources>
@@ -95,6 +112,7 @@
                 <includes>
                     <include>config/*</include>
                     <include>bin/*</include>
+                    <include>version</include>
                 </includes>
                 <targetPath>${buildPath}</targetPath>
             </resource>
@@ -126,7 +144,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <fork>true</fork>
-                    <mainClass>com.easipass.EpUtilServer.Main</mainClass>
+                    <mainClass>com.easipass.epUtil.Main</mainClass>
                     <outputDirectory>${buildPath}/lib/</outputDirectory>
                 </configuration>
                 <executions>
