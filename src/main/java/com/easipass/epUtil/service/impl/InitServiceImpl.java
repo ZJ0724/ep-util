@@ -8,47 +8,75 @@ import com.easipass.epUtil.service.InitService;
 import com.easipass.epUtil.util.FileUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import java.io.*;
 import java.util.Properties;
 
 @Configuration
 public class InitServiceImpl implements InitService {
 
-    @Bean
     @Override
-    public void init() {
-        // 检查配置文件目录是否存在
-        File configDir = new File(ProjectConfig.CONFIG_DIR);
-        // 不存在就创建目录
-        if (!configDir.exists()) {
-            configDir.mkdirs();
-        }
-
+    @Bean
+    @Order(1)
+    public void configLoad() {
         // 检查配置文件
         if (!ProjectConfig.CONFIG_FILE.exists()) {
             // 不存在创建默认配置文件
-            FileUtil.copyTextFile(InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.CONFIG_PATH), ProjectConfig.CONFIG_FILE);
+            InputStream inputStream = InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.CONFIG_PATH);
+            FileUtil.copyTextFile(inputStream, ProjectConfig.CONFIG_FILE);
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                throw new ErrorException(e.getMessage());
+            }
         }
+
         // 加载配置文件
         Properties config = new Properties();
         try {
-            config.load(new FileReader(ProjectConfig.CONFIG_FILE));
+            FileReader fileReader = new FileReader(ProjectConfig.CONFIG_FILE);
+            config.load(fileReader);
+            fileReader.close();
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
-        ConfigAnnotation.Method.load(config, SWGDConfig.class);
-        ConfigAnnotation.Method.load(config, Sftp83Config.class);
-        ConfigAnnotation.Method.load(config, KSDDBConfig.class);
 
+        // 自动装配配置文件，如果装配失败，将配置文件删除，重新生成
+        if (!ConfigAnnotation.Method.load(config, SWGDConfig.class) ||
+                !ConfigAnnotation.Method.load(config, Sftp83Config.class) ||
+                !ConfigAnnotation.Method.load(config, KSDDBConfig.class)) {
+            if (!ProjectConfig.CONFIG_FILE.delete()) {
+                throw new ErrorException("删除config失败");
+            }
+            configLoad();
+        }
+    }
+
+    @Override
+    @Bean
+    @Order(2)
+    public void chromeDriverLoad() {
         // 检查谷歌驱动
         // windows
         if (ProjectConfig.SYSTEM_OS_ENUM == SystemOSEnum.windows) {
             if (!ProjectConfig.WINDOWS_CHROME_DRIVER.exists()) {
-                FileUtil.copyOtherFile(InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.WINDOWS_CHROME_DRIVER_PATH), ProjectConfig.WINDOWS_CHROME_DRIVER);
+                InputStream inputStream = InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.WINDOWS_CHROME_DRIVER_PATH);
+                FileUtil.copyOtherFile(inputStream, ProjectConfig.WINDOWS_CHROME_DRIVER);
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    throw new ErrorException(e.getMessage());
+                }
             }
         } else if (ProjectConfig.SYSTEM_OS_ENUM == SystemOSEnum.linux) {
             if (!ProjectConfig.LINUX_CHROME_DRIVER.exists()) {
-                FileUtil.copyOtherFile(InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.LINUX_CHROME_DRIVER_PATH), ProjectConfig.LINUX_CHROME_DRIVER);
+                InputStream inputStream = InitServiceImpl.class.getResourceAsStream(ResourcePathConfig.LINUX_CHROME_DRIVER_PATH);
+                FileUtil.copyOtherFile(inputStream, ProjectConfig.LINUX_CHROME_DRIVER);
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    throw new ErrorException(e.getMessage());
+                }
                 try {
                     // 修改权限
                     Runtime.getRuntime().exec("chmod 777 " + ProjectConfig.LINUX_CHROME_DRIVER.getAbsolutePath());

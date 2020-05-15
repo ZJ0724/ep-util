@@ -8,7 +8,7 @@ public class ProjectConfig {
     /**
      * 项目名
      */
-    public final static String PROJECT_NAME = "EpUtilServer";
+    public final static String PROJECT_NAME = "epUtil";
 
     /**
      * 配置文件目录

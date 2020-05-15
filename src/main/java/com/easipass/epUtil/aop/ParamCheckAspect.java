@@ -25,6 +25,11 @@ public class ParamCheckAspect {
         // 获取参数
         Object[] objects = joinPoint.getArgs();
 
+        // 如果没有参数，直接跳过
+        if (objects.length == 0) {
+            return;
+        }
+
         // 只校验@RequestBody
         MethodSignature methodSignature = (MethodSignature)joinPoint.getSignature();
         int index = 0;

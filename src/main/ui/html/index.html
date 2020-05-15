@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>epUtil</title>
+    <script src="/main.js"></script>
+</head>
+<body>
+<div id="main" style="display: flex;">
+    <div style="width: 7%;background-color: #393D49;">
+        <div style="margin-top: 50px;" class="item">
+            报关单回执
+        </div>
+        <div class="item">
+            修撤单回执
+        </div>
+    </div>
+    <div style="width: 93%;">
+        <div style="height: 2%;background-color: #393D49;"></div>
+        <div style="height: calc(98% - 40px);padding: 20px;">
+            <blockquote class="layui-elem-quote">
+                <div class="title">
+                    上传
+                </div>
+                <div style="margin-top: 10px;">
+                    <div>
+                        ediNo：
+                    </div>
+
+                    <input type="text" class="layui-input input" />
+                    <div>
+                        chanel：
+                    </div>
+                    <input class="layui-input input" />
+                </div>
+            </blockquote>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<style>
+    .item {
+        color: white;
+        font-weight: bold;
+        background-color: #009688;
+        padding: 10px;
+        margin: 20px 0;
+        cursor: pointer;
+    }
+
+    .title {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .input {
+        height: 30px;
+    }
+</style>
