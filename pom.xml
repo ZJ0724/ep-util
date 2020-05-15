@@ -99,6 +99,7 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
+                <targetPath>resources</targetPath>
             </resource>
             <resource>
                 <directory>src/main/lib</directory>
@@ -115,6 +116,13 @@
                     <include>version</include>
                 </includes>
                 <targetPath>${buildPath}</targetPath>
+            </resource>
+            <resource>
+                <directory>src/main/ui</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+                <targetPath>static</targetPath>
             </resource>
         </resources>
         <plugins>
