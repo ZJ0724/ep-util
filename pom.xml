@@ -15,7 +15,7 @@
     </parent>
 
     <properties>
-        <buildPath>${project.build.directory}/build/${project.artifactId}-${env}</buildPath>
+        <buildPath>${project.build.directory}/build/${project.artifactId}${env}</buildPath>
         <skipTests>true</skipTests>
     </properties>
 
@@ -80,7 +80,7 @@
         <profile>
             <id>dev</id>
             <properties>
-                <env>beta</env>
+                <env>-beta</env>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
