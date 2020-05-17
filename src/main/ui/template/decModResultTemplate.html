@@ -1,0 +1,116 @@
+<div style="padding: 0 30%;">
+    <blockquote class="layui-elem-quote">
+        <div class="title">
+            上传QP回执
+        </div>
+        <div style="margin-top: 20px;">
+            <div>
+                <div>
+                    preEntryId：
+                </div>
+                <div style="margin-top: 10px">
+                    <input value-bind="QPDecModResult.preEntryId" type="text" class="layui-input" />
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    channel：
+                </div>
+                <div style="margin-top: 10px">
+                    <input value-bind="QPDecModResult.result.channel" type="text" class="layui-input" />
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    note：
+                </div>
+                <div style="margin-top: 10px">
+                    <input value-bind="QPDecModResult.result.note" type="text" class="layui-input" />
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <button id="uploadQPDecModResult" style="width: 100%;" class="layui-btn">上传</button>
+        </div>
+    </blockquote>
+
+    <blockquote class="layui-elem-quote" style="margin-top: 50px;">
+        <div class="title">
+            上传业务回执
+        </div>
+        <div style="margin-top: 20px;">
+            <div>
+                <div>
+                    preEntryId：
+                </div>
+                <div style="margin-top: 10px">
+                    <input value-bind="yeWuDecMOdResult.preEntryId" type="text" class="layui-input" />
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    channel：
+                </div>
+                <div style="margin-top: 10px">
+                    <input value-bind="yeWuDecMOdResult.result.channel" type="text" class="layui-input" />
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    note：
+                </div>
+                <div style="margin-top: 10px">
+                    <input value-bind="yeWuDecMOdResult.result.note" type="text" class="layui-input" />
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <button id="uploadYeWuDecMOdResult" style="width: 100%;" class="layui-btn">上传</button>
+        </div>
+    </blockquote>
+
+    <script type="module">
+
+        import DecModResult from "../entity/result/DecModResult.js";
+        import valueBindUtil from "../util/valueBindUtil.js";
+        import methodUtil from "../util/methodUtil.js";
+        import decModResultApi from "../api/decModResultApi.js";
+
+        (function () {
+
+            // 数据
+            let data = {
+                QPDecModResult: new DecModResult(),
+                yeWuDecMOdResult: new DecModResult()
+            },
+            // 元素
+            element = {
+                uploadQPDecModResultButton: document.getElementById("uploadQPDecModResult"),
+                uploadYeWuDecMOdResultButton: document.getElementById("uploadYeWuDecMOdResult")
+            };
+
+            // 绑定数据
+            valueBindUtil.bind(data);
+
+            // 事件
+            element.uploadQPDecModResultButton.addEventListener("click", function () {
+                let QPDecModResult = data.QPDecModResult;
+
+                console.log(QPDecModResult);
+
+                methodUtil.uploadResult(QPDecModResult, function () {
+                    return decModResultApi.uploadQP(QPDecModResult);
+                });
+            });
+            element.uploadYeWuDecMOdResultButton.addEventListener("click", function () {
+                let yeWuDecMOdResult = data.yeWuDecMOdResult;
+
+                methodUtil.uploadResult(yeWuDecMOdResult, function () {
+                    return decModResultApi.uploadYeWu(yeWuDecMOdResult);
+                });
+            });
+
+        })();
+
+    </script>
+</div>

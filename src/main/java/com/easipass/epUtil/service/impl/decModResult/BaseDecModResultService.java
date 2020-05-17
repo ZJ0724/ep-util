@@ -3,17 +3,13 @@ package com.easipass.epUtil.service.impl.decModResult;
 import com.easipass.epUtil.entity.ResultDTO;
 import com.easipass.epUtil.entity.Oracle;
 import com.easipass.epUtil.entity.Response;
-import com.easipass.epUtil.exception.ErrorException;
-import com.easipass.epUtil.service.DecModResultService;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 
-@Service
-@Qualifier("BaseDecModResultServiceImpl")
-public class BaseDecModResultServiceImpl implements DecModResultService {
+public class BaseDecModResultService {
 
-    @Override
-    public Response setFileName(String preEntryId) {
+    /**
+     * 设置文件名
+     * */
+    public static Response setFileName(String preEntryId) {
         //连接数据库
         Oracle oracle = Oracle.getSWGDOracle();
         if (!oracle.connect()) {
@@ -27,11 +23,6 @@ public class BaseDecModResultServiceImpl implements DecModResultService {
         oracle.close();
 
         return Response.returnTrue(null);
-    }
-
-    @Override
-    public Response upload(String preEntryId, ResultDTO resultDTO) {
-        throw  ErrorException.getErrorException();
     }
 
 }

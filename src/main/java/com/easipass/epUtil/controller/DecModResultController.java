@@ -14,21 +14,12 @@ import javax.annotation.Resource;
 public class DecModResultController {
 
     @Resource
-    @Qualifier("BaseDecModResultServiceImpl")
-    private DecModResultService baseDecModResultService;
-
-    @Resource
     @Qualifier("QPDecModResultServiceImpl")
     private DecModResultService QPDecModResultService;
 
     @Resource
     @Qualifier("YeWuDecModResultServiceImpl")
     private DecModResultService YeWuDecModResultService;
-
-    @RequestMapping(value = "setFileName", method = RequestMethod.POST)
-    public Response setFileName(@RequestParam String preEntryId) {
-        return baseDecModResultService.setFileName(preEntryId);
-    }
 
     @RequestMapping(value = "upload/QP", method = RequestMethod.POST)
     public Response uploadQP(@RequestParam String preEntryId, @RequestBody ResultDTO resultDTO) {

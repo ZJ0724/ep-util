@@ -58,13 +58,19 @@ public class UploadResultAspect {
         boolean isDisposable = uploadResultAnnotation.isDisposable();
 
         if ((isDisposableThreadLocal.get() == null && !isDisposable) || (isDisposableThreadLocal.get() && isDisposable)) {
-            BaseService.SFTP_THREAD_LOCAL.get().close();
-            BaseService.WEB_DRIVER_THREAD_LOCAL.get().close();
-            BaseService.SFTP_THREAD_LOCAL.set(null);
-            BaseService.WEB_DRIVER_THREAD_LOCAL.set(null);
+            Sftp sftp = BaseService.SFTP_THREAD_LOCAL.get();
+            WebDriver webDriver = BaseService.WEB_DRIVER_THREAD_LOCAL.get();
+            if (sftp != null) {
+                sftp.close();
+                BaseService.SFTP_THREAD_LOCAL.set(null);
+                System.out.println("sftp已关闭");
+            }
+            if (webDriver != null) {
+                webDriver.close();
+                BaseService.WEB_DRIVER_THREAD_LOCAL.set(null);
+                System.out.println("webdriver已关闭");
+            }
             isDisposableThreadLocal.set(null);
-            System.out.println("sftp已关闭");
-            System.out.println("webdriver已关闭");
         }
     }
 

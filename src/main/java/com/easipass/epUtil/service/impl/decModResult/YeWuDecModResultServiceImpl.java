@@ -11,26 +11,21 @@ import com.easipass.epUtil.util.DateUtil;
 import com.easipass.epUtil.util.XmlUtil;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 
 @Service("YeWuDecModResultServiceImpl")
 public class YeWuDecModResultServiceImpl implements DecModResultService {
 
-    @Resource
-    @Qualifier("BaseDecModResultServiceImpl")
-    private DecModResultService baseDecModResultService;
-
-    @Override
-    public Response setFileName(String preEntryId) {
-        return baseDecModResultService.setFileName(preEntryId);
-    }
-
     @Override
     @UploadResultAnnotation
     public Response upload(String preEntryId, ResultDTO resultDTO) {
+        // 设置文件名
+        Response response = BaseDecModResultService.setFileName(preEntryId);
+        if (!response.getFlag().equals("T")) {
+            return response;
+        }
+
         //获取回执原document
         Document document = XmlUtil.getDocument(QPDecModResultServiceImpl.class.getResourceAsStream(ResourcePathConfig.YE_WU_DEC_MOD_RESULT_PATH));
 

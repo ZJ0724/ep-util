@@ -1,5 +1,6 @@
 package com.easipass.epUtil.controller;
 
+import com.easipass.epUtil.config.ResourcePathConfig;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -11,7 +12,7 @@ public class PageController {
      * */
     @GetMapping("/")
     public String index() {
-        return "html/index.html";
+        return ResourcePathConfig.INDEX_HTML;
     }
 
 }
