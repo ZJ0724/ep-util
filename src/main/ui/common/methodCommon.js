@@ -1,21 +1,24 @@
-import maskUtil from "./maskCommon.js";
+import Loading from "../entity/Loading.js";
+import popupCommon from "./popupCommon.js";
 
 export default {
 
-    uploadResult(result, callback) {
+    uploadResult(result, callback, elementBlock) {
         let check = result.check();
 
         if (check !== true) {
-            alert(check);
+            popupCommon.openMsg(check);
             return;
         }
-        maskUtil.openMainMask();
+
+        let loading = new Loading(elementBlock);
+        loading.openLoading();
         callback().then(function () {
-            alert("上传成功");
+            popupCommon.openPopup("上传成功");
         }).catch(function (errorMsg) {
-            alert(errorMsg);
+            popupCommon.openPopup(errorMsg);
         }).finally(function () {
-            maskUtil.closeMainMask();
+            loading.closeLoading();
         });
     }
 

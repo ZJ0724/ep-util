@@ -1,5 +1,5 @@
 <div style="padding: 0 30%;">
-    <blockquote class="layui-elem-quote">
+    <blockquote class="layui-elem-quote" id="uploadQPDecModResultBlock">
         <div class="title">
             上传QP回执
         </div>
@@ -34,7 +34,7 @@
         </div>
     </blockquote>
 
-    <blockquote class="layui-elem-quote" style="margin-top: 50px;">
+    <blockquote class="layui-elem-quote" style="margin-top: 50px;" id="uploadYeWuDecMOdResultBlock">
         <div class="title">
             上传业务回执
         </div>
@@ -86,7 +86,11 @@
             // 元素
             element = {
                 uploadQPDecModResultButton: document.getElementById("uploadQPDecModResult"),
-                uploadYeWuDecMOdResultButton: document.getElementById("uploadYeWuDecMOdResult")
+                uploadYeWuDecMOdResultButton: document.getElementById("uploadYeWuDecMOdResult"),
+
+                // 面板
+                uploadQPDecModResultBlock: document.getElementById("uploadQPDecModResultBlock"),
+                uploadYeWuDecMOdResultBlock: document.getElementById("uploadYeWuDecMOdResultBlock")
             };
 
             // 绑定数据
@@ -96,18 +100,16 @@
             element.uploadQPDecModResultButton.addEventListener("click", function () {
                 let QPDecModResult = data.QPDecModResult;
 
-                console.log(QPDecModResult);
-
                 methodUtil.uploadResult(QPDecModResult, function () {
                     return decModResultApi.uploadQP(QPDecModResult);
-                });
+                }, element.uploadQPDecModResultBlock);
             });
             element.uploadYeWuDecMOdResultButton.addEventListener("click", function () {
                 let yeWuDecMOdResult = data.yeWuDecMOdResult;
 
                 methodUtil.uploadResult(yeWuDecMOdResult, function () {
                     return decModResultApi.uploadYeWu(yeWuDecMOdResult);
-                });
+                }, element.uploadYeWuDecMOdResultBlock);
             });
 
         })();

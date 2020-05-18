@@ -1,5 +1,5 @@
 <div style="padding: 0 30%;">
-    <blockquote class="layui-elem-quote" id="tongXunFormResultBlock" style="position: relative">
+    <blockquote class="layui-elem-quote" id="uploadTongXunFormResultBlock">
         <div class="title">
             上传通讯回执
         </div>
@@ -8,8 +8,11 @@
                 <div>
                     ediNo：
                 </div>
-                <div style="margin-top: 10px">
-                    <input value-bind="tongXunFormResult.ediNo" type="text" class="layui-input" />
+                <div style="margin-top: 10px;">
+                    <div style="position: relative;display: flex;">
+                        <input value-bind="tongXunFormResult.ediNo" type="text" class="layui-input" />
+                        <i class="layui-icon layui-icon-face-smile" style="position: absolute;right: 8px;top: 9px;"></i>
+                    </div>
                 </div>
             </div>
             <div style="margin-top: 10px">
@@ -34,7 +37,7 @@
         </div>
     </blockquote>
 
-    <blockquote class="layui-elem-quote" style="margin-top: 50px;">
+    <blockquote class="layui-elem-quote" style="margin-top: 50px;" id="uploadYeWuFormResultBlock">
         <div class="title">
             上传业务回执
         </div>
@@ -69,7 +72,7 @@
         </div>
     </blockquote>
 
-    <blockquote class="layui-elem-quote" style="margin-top: 50px;">
+    <blockquote class="layui-elem-quote" style="margin-top: 50px;" id="disposableUploadFormResultBlock">
         <div class="title">
             一次性上传回执
         </div>
@@ -110,7 +113,6 @@
         import formResultApi from "../api/formResultApi.js";
         import methodUtil from "../common/methodCommon.js";
         import FormResult from "../entity/result/FormResult.js";
-        import loadingCommon from "../common/loadingCommon.js";
 
         (function () {
 
@@ -127,7 +129,9 @@
                 disposableUploadFormResultButton: document.getElementById("disposableUploadFormResult"),
 
                 // 面板
-                tongXunFormResultBlock: document.getElementById("tongXunFormResultBlock")
+                uploadTongXunFormResultBlock: document.getElementById("uploadTongXunFormResultBlock"),
+                uploadYeWuFormResultBlock: document.getElementById("uploadYeWuFormResultBlock"),
+                disposableUploadFormResultBlock: document.getElementById("disposableUploadFormResultBlock")
             };
 
             // 绑定数据
@@ -137,10 +141,9 @@
             element.uploadTongXunFormResultButton.addEventListener("click", function () {
                 let tongXunFormResult = data.tongXunFormResult;
 
-                loadingCommon.openLoading(element.tongXunFormResultBlock);
-                // methodUtil.uploadResult(tongXunFormResult, function () {
-                //     return formResultApi.tongXunFormResultUpload(tongXunFormResult);
-                // });
+                methodUtil.uploadResult(tongXunFormResult, function () {
+                    return formResultApi.tongXunFormResultUpload(tongXunFormResult);
+                }, element.uploadTongXunFormResultBlock);
             });
 
             element.uploadYeWuFormResultButton.addEventListener("click", function () {
@@ -148,7 +151,7 @@
 
                 methodUtil.uploadResult(yeWuFormResult, function () {
                     return formResultApi.yeWuFormResultUpload(yeWuFormResult);
-                });
+                }, element.uploadYeWuFormResultBlock);
             });
 
             element.disposableUploadFormResultButton.addEventListener("click", function () {
@@ -156,7 +159,7 @@
 
                 methodUtil.uploadResult(disposableUploadFormResult, function () {
                     return formResultApi.disposableUpload(disposableUploadFormResult);
-                });
+                }, element.disposableUploadFormResultBlock);
             });
         })();
 
