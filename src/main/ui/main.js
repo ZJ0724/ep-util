@@ -1,4 +1,4 @@
-import baseRouter from "./util/routerUtil.js";
+import baseRouter from "./common/routerCommon.js";
 
 // 设置路由监听
 window.onhashchange = function () {

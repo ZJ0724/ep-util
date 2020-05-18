@@ -1,5 +1,5 @@
 <div style="padding: 0 30%;">
-    <blockquote class="layui-elem-quote">
+    <blockquote class="layui-elem-quote" id="tongXunFormResultBlock" style="position: relative">
         <div class="title">
             上传通讯回执
         </div>
@@ -106,10 +106,11 @@
 
     <script type="module">
 
-        import valueBindUtil from "../util/valueBindUtil.js";
+        import valueBindUtil from "../common/valueBindCommon.js";
         import formResultApi from "../api/formResultApi.js";
-        import methodUtil from "../util/methodUtil.js";
+        import methodUtil from "../common/methodCommon.js";
         import FormResult from "../entity/result/FormResult.js";
+        import loadingCommon from "../common/loadingCommon.js";
 
         (function () {
 
@@ -123,7 +124,10 @@
             element = {
                 uploadTongXunFormResultButton: document.getElementById("uploadTongXunFormResult"),
                 uploadYeWuFormResultButton: document.getElementById("uploadYeWuFormResult"),
-                disposableUploadFormResultButton: document.getElementById("disposableUploadFormResult")
+                disposableUploadFormResultButton: document.getElementById("disposableUploadFormResult"),
+
+                // 面板
+                tongXunFormResultBlock: document.getElementById("tongXunFormResultBlock")
             };
 
             // 绑定数据
@@ -133,9 +137,10 @@
             element.uploadTongXunFormResultButton.addEventListener("click", function () {
                 let tongXunFormResult = data.tongXunFormResult;
 
-                methodUtil.uploadResult(tongXunFormResult, function () {
-                    return formResultApi.tongXunFormResultUpload(tongXunFormResult);
-                });
+                loadingCommon.openLoading(element.tongXunFormResultBlock);
+                // methodUtil.uploadResult(tongXunFormResult, function () {
+                //     return formResultApi.tongXunFormResultUpload(tongXunFormResult);
+                // });
             });
 
             element.uploadYeWuFormResultButton.addEventListener("click", function () {

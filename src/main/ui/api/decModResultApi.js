@@ -1,4 +1,4 @@
-import httpUtil from "../util/httpUtil.js";
+import httpUtil from "./baseApi.js";
 
 export default {
 

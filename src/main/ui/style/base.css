@@ -27,3 +27,9 @@ html, body {
     font-size: 18px;
     font-weight: bold;
 }
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

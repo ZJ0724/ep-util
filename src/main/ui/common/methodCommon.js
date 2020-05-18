@@ -1,4 +1,4 @@
-import maskUtil from "./maskUtil.js";
+import maskUtil from "./maskCommon.js";
 
 export default {
 
