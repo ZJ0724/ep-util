@@ -1,4 +1,5 @@
 import routerConfig from "../config/routerConfig.js";
+import documentCommon from "./documentCommon.js";
 
 export default {
 
@@ -10,7 +11,10 @@ export default {
 
         for (let value of routerConfig) {
             if (value.hash === hash) {
-                $template.load(value.template);
+                $template.load(value.template, null, function () {
+                    // 重新加载input.js
+                    documentCommon.loadJs("/style/input.js");
+                });
                 return;
             }
         }

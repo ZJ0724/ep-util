@@ -33,3 +33,9 @@ html, body {
     justify-content: center;
     align-items: center;
 }
+
+/* label */
+label {
+    position: relative;
+    display: flex;
+}
