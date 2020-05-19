@@ -3,12 +3,14 @@ package com.easipass.epUtil.entity;
 import com.easipass.epUtil.enumeration.ErrorCodeEnum;
 import com.easipass.epUtil.enumeration.ResponseFlagEnum;
 
-public class Response {
+public class Response implements com.zj0724.springbootUtil.Response<Response> {
 
     private Object flag;
     private Object errorCode;
     private Object errorMsg;
     private Object data;
+
+    public Response() {}
 
     public Response(Object flag, Object errorCode, Object errorMsg, Object data) {
         this.flag = flag;
@@ -75,6 +77,11 @@ public class Response {
      * */
     public static Response returnFalse(ErrorCodeEnum errorCodeEnum, String errorMsg) {
         return new Response(ResponseFlagEnum.FALSE.getFlag(), errorCodeEnum.getErrorCode(), errorMsg, null);
+    }
+
+    @Override
+    public Response paramError(String s) {
+        return new Response(ResponseFlagEnum.FALSE.getFlag(), ErrorCodeEnum.PARAM_ERROR.getErrorCode(), s, null);
     }
 
 }

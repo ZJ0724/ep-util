@@ -1,0 +1,182 @@
+<div style="padding: 0 30%;">
+    <blockquote class="layui-elem-quote" id="uploadTongXunFormResultBlock">
+        <div class="title">
+            上传通讯回执
+        </div>
+        <div style="margin-top: 20px;">
+            <div>
+                <div>
+                    ediNo：
+                </div>
+                <div style="margin-top: 10px;">
+                    <label>
+                        <input value-bind="tongXunFormResult.ediNo" type="text" class="layui-input input" />
+                    </label>
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    channel：
+                </div>
+                <div style="margin-top: 10px">
+                    <label>
+                        <input value-bind="tongXunFormResult.result.channel" type="text" class="layui-input" />
+                    </label>
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    note：
+                </div>
+                <div style="margin-top: 10px">
+                    <label>
+                        <input value-bind="tongXunFormResult.result.channel" type="text" class="layui-input" />
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <button id="uploadTongXunFormResult" style="width: 100%;" class="layui-btn">上传</button>
+        </div>
+    </blockquote>
+
+    <blockquote class="layui-elem-quote" style="margin-top: 50px;" id="uploadYeWuFormResultBlock">
+        <div class="title">
+            上传业务回执
+        </div>
+        <div style="margin-top: 20px;">
+            <div>
+                <div>
+                    ediNo：
+                </div>
+                <div style="margin-top: 10px">
+                    <label>
+                        <input value-bind="yeWuFormResult.ediNo" type="text" class="layui-input" />
+                    </label>
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    channel：
+                </div>
+                <div style="margin-top: 10px">
+                    <label>
+                        <input value-bind="yeWuFormResult.result.channel" type="text" class="layui-input" />
+                    </label>
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    note：
+                </div>
+                <div style="margin-top: 10px">
+                    <label>
+                        <input value-bind="yeWuFormResult.result.note" type="text" class="layui-input" />
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <button id="uploadYeWuFormResult" style="width: 100%;" class="layui-btn">上传</button>
+        </div>
+    </blockquote>
+
+    <blockquote class="layui-elem-quote" style="margin-top: 50px;" id="disposableUploadFormResultBlock">
+        <div class="title">
+            一次性上传回执
+        </div>
+        <div style="margin-top: 20px;">
+            <div>
+                <div>
+                    ediNo：
+                </div>
+                <div style="margin-top: 10px;">
+                    <label>
+                        <input value-bind="disposableUploadFormResult.ediNo" type="text" class="layui-input" />
+                    </label>
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    channel：
+                </div>
+                <div style="margin-top: 10px">
+                    <label>
+                        <input value-bind="disposableUploadFormResult.result.channel" type="text" class="layui-input" />
+                    </label>
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    note：
+                </div>
+                <div style="margin-top: 10px">
+                    <label>
+                        <input value-bind="tongXunFormResult.result.note" type="text" class="layui-input" />
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <button id="disposableUploadFormResult" style="width: 100%;" class="layui-btn">上传</button>
+        </div>
+    </blockquote>
+
+    <script type="module">
+
+        import valueBindUtil from "../common/valueBindCommon.js";
+        import formResultApi from "../api/formResultApi.js";
+        import methodUtil from "../common/methodCommon.js";
+        import FormResult from "../entity/result/FormResult.js";
+
+        (function () {
+
+            // 数据
+            let data = {
+                tongXunFormResult: new FormResult(),
+                yeWuFormResult: new FormResult(),
+                disposableUploadFormResult: new FormResult()
+            },
+            // 元素
+            element = {
+                uploadTongXunFormResultButton: document.getElementById("uploadTongXunFormResult"),
+                uploadYeWuFormResultButton: document.getElementById("uploadYeWuFormResult"),
+                disposableUploadFormResultButton: document.getElementById("disposableUploadFormResult"),
+
+                // 面板
+                uploadTongXunFormResultBlock: document.getElementById("uploadTongXunFormResultBlock"),
+                uploadYeWuFormResultBlock: document.getElementById("uploadYeWuFormResultBlock"),
+                disposableUploadFormResultBlock: document.getElementById("disposableUploadFormResultBlock")
+            };
+
+            // 绑定数据
+            valueBindUtil.bind(data);
+
+            // 绑定按钮事件
+            element.uploadTongXunFormResultButton.addEventListener("click", function () {
+                let tongXunFormResult = data.tongXunFormResult;
+
+                methodUtil.uploadResult(tongXunFormResult, function () {
+                    return formResultApi.tongXunFormResultUpload(tongXunFormResult);
+                }, element.uploadTongXunFormResultBlock);
+            });
+
+            element.uploadYeWuFormResultButton.addEventListener("click", function () {
+                let yeWuFormResult = data.yeWuFormResult;
+
+                methodUtil.uploadResult(yeWuFormResult, function () {
+                    return formResultApi.yeWuFormResultUpload(yeWuFormResult);
+                }, element.uploadYeWuFormResultBlock);
+            });
+
+            element.disposableUploadFormResultButton.addEventListener("click", function () {
+                let disposableUploadFormResult = data.disposableUploadFormResult;
+
+                methodUtil.uploadResult(disposableUploadFormResult, function () {
+                    return formResultApi.disposableUpload(disposableUploadFormResult);
+                }, element.disposableUploadFormResultBlock);
+            });
+        })();
+
+    </script>
+</div>

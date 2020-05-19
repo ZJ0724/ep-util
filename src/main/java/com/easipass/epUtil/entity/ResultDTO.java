@@ -1,7 +1,7 @@
 package com.easipass.epUtil.entity;
 
-import com.easipass.epUtil.annotation.NotNull;
 import com.easipass.epUtil.exception.ResponseException;
+import com.zj0724.springbootUtil.annotation.NotNull;
 import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,13 +12,13 @@ public class ResultDTO {
     /**
      * 状态
      * */
-    @NotNull(errorMsg = "channel参数缺失")
+    @NotNull
     private String channel;
 
     /**
      * 备注
      * */
-    @NotNull(errorMsg = "note参数缺失")
+    @NotNull
     private String note;
 
     public ResultDTO() {}

@@ -42,4 +42,9 @@ public class ResourcePathConfig {
      * */
     public final static String AGENT_RESULT_PATH = "/resources/agentResult.wts";
 
+    /**
+     * 首页
+     * */
+    public static final String INDEX_HTML = "/page/index.html";
+
 }

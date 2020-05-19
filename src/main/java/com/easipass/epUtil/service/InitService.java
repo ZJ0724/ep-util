@@ -3,8 +3,14 @@ package com.easipass.epUtil.service;
 public interface InitService {
 
     /**
-     * 初始化
+     * 加载配置文件
      * */
-    void init();
+    void configLoad();
+
+    /**
+     * 加载谷歌驱动
+     * */
+    void chromeDriverLoad();
+
 
 }

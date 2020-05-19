@@ -9,23 +9,12 @@ import javax.annotation.Resource;
 public class DecModResultTest extends BaseTest {
 
     @Resource
-    @Qualifier("BaseDecModResultServiceImpl")
-    private DecModResultService baseDecModResultService;
-
-    @Resource
     @Qualifier("QPDecModResultServiceImpl")
     private DecModResultService QPDecModResultService;
 
     @Resource
     @Qualifier("YeWuDecModResultServiceImpl")
     private DecModResultService YeWuDecModResultService;
-
-    @Test
-    public void setFileName() {
-        String preEntryId = "221700000000045771";
-
-        super.assertResponse(baseDecModResultService.setFileName(preEntryId));
-    }
 
     @Test
     public void uploadQP() {

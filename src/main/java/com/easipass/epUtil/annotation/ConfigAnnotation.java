@@ -18,11 +18,7 @@ public @interface ConfigAnnotation {
         /**
          * 装载配置
          * */
-        public static void load(Properties properties, Class<?> c) {
-            // 注解不存在
-            if (!c.isAnnotationPresent(ConfigAnnotation.class)) {
-                return;
-            }
+        public static boolean load(Properties properties, Class<?> c) {
             ConfigAnnotation configAnnotation = c.getAnnotation(ConfigAnnotation.class);
             String value = configAnnotation.value();
 
@@ -31,6 +27,9 @@ public @interface ConfigAnnotation {
             for (Field field : fields) {
                 // 配置文件参数
                 String configValue = properties.getProperty(value + "." + field.getName());
+                if (configValue == null) {
+                    return false;
+                }
                 try {
                     if (field.getType().getSimpleName().equals("int")) {
                         field.setInt(null, Integer.parseInt(configValue));
@@ -41,6 +40,8 @@ public @interface ConfigAnnotation {
                     throw new ErrorException("装载配置文件出错");
                 }
             }
+
+            return true;
         }
     }
 

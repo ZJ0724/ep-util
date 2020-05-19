@@ -10,6 +10,10 @@ public class FileUtil {
      * */
     public static void copyOtherFile(InputStream inputStream, File outFile) {
         try {
+            File parentFile = outFile.getParentFile();
+            if (!parentFile.exists()) {
+                parentFile.mkdirs();
+            }
             OutputStream outputStream = new FileOutputStream(outFile);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
@@ -19,7 +23,6 @@ public class FileUtil {
             outputStream.close();
             bufferedInputStream.close();
             outputStream.close();
-            inputStream.close();
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
@@ -30,12 +33,15 @@ public class FileUtil {
      */
     public static void copyTextFile(InputStream inputStream, File outputFile) {
         try {
+            File parentFile = outputFile.getParentFile();
+            if (!parentFile.exists()) {
+                parentFile.mkdirs();
+            }
             OutputStream outputStream = new FileOutputStream(outputFile);
             byte[] bytes = new byte[inputStream.available()];
             inputStream.read(bytes);
             outputStream.write(bytes);
             outputStream.close();
-            inputStream.close();
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
