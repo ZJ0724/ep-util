@@ -10,6 +10,12 @@ export default [
     {
         hash: "#/decModResult",
         template: "/template/decModResultTemplate.html"
+    },
+
+    // 代理委托
+    {
+        hash: "#/agentResult",
+        template: "/template/agentResultTemplate.html"
     }
 
 ]

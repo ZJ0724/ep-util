@@ -1,0 +1,78 @@
+<div style="padding: 0 30%;">
+    <blockquote class="layui-elem-quote" id="agentResultBlock">
+        <div class="title">
+            上传代理委托回执
+        </div>
+        <div style="margin-top: 20px;">
+            <div>
+                <div>
+                    ediNo：
+                </div>
+                <div style="margin-top: 10px">
+                    <label>
+                        <input value-bind="agentResult.ediNo" type="text" class="layui-input" />
+                    </label>
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    channel：
+                </div>
+                <div style="margin-top: 10px">
+                    <label>
+                        <input value-bind="agentResult.result.channel" type="text" class="layui-input" />
+                    </label>
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    note：
+                </div>
+                <div style="margin-top: 10px">
+                    <label>
+                        <input value-bind="agentResult.result.note" type="text" class="layui-input" />
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <button id="agentResultButton" style="width: 100%;" class="layui-btn">上传</button>
+        </div>
+    </blockquote>
+
+    <script type="module">
+
+        import AgentResult from "../entity/result/AgentResult.js";
+        import valueBindCommon from "../common/valueBindCommon.js";
+        import methodCommon from "../common/methodCommon.js";
+        import agentResultApi from "../api/agentResultApi.js";
+
+        (function () {
+
+            // 数据
+            let data = {
+                agentResult: new AgentResult()
+            },
+            // 元素
+            element = {
+                agentResultBlock: document.getElementById("agentResultBlock"),
+                agentResultButton: document.getElementById("agentResultButton")
+            };
+
+            // 绑定数据
+            valueBindCommon.bind(data);
+
+            // 事件
+            element.agentResultButton.addEventListener("click", function () {
+                let agentResult = data.agentResult;
+                console.log(agentResult);
+
+                methodCommon.uploadResult(agentResult, function () {
+                    return agentResultApi.upload(agentResult);
+                }, element.agentResultBlock);
+            });
+
+        })();
+
+    </script>
+</div>
