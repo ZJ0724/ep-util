@@ -10,12 +10,12 @@ public class ResourcePathConfig {
     /**
      * windows版谷歌驱动路径
      * */
-    public final static String WINDOWS_CHROME_DRIVER_PATH = "/resources/chromeDriver/windows/chromedriver.exe";
+    public final static String WINDOWS_CHROME_DRIVER_PATH = "/resources/chromeDriver/windows/epUtilChromeDriver.exe";
 
     /**
      * linux版谷歌驱动路径
      * */
-    public final static String LINUX_CHROME_DRIVER_PATH = "/resources/chromeDriver/linux/chromedriver";
+    public final static String LINUX_CHROME_DRIVER_PATH = "/resources/chromeDriver/linux/epUtilChromeDriver";
 
     /**
      * 报关单通讯回执路径

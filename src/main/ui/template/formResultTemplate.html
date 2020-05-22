@@ -30,7 +30,7 @@
                 </div>
                 <div style="margin-top: 10px">
                     <label>
-                        <input value-bind="tongXunFormResult.result.channel" type="text" class="layui-input" />
+                        <input value-bind="tongXunFormResult.result.note" type="text" class="layui-input" />
                     </label>
                 </div>
             </div>
@@ -112,7 +112,7 @@
                 </div>
                 <div style="margin-top: 10px">
                     <label>
-                        <input value-bind="tongXunFormResult.result.note" type="text" class="layui-input" />
+                        <input value-bind="disposableUploadFormResult.result.note" type="text" class="layui-input" />
                     </label>
                 </div>
             </div>
@@ -151,6 +151,8 @@
 
             // 绑定数据
             valueBindUtil.bind(data);
+
+            console.log(data);
 
             // 绑定按钮事件
             element.uploadTongXunFormResultButton.addEventListener("click", function () {
