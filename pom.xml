@@ -152,7 +152,7 @@
                 <configuration>
                     <fork>true</fork>
                     <mainClass>com.easipass.epUtil.Main</mainClass>
-                    <outputDirectory>${buildPath}/lib/</outputDirectory>
+                    <outputDirectory>${buildPath}/lib</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>
