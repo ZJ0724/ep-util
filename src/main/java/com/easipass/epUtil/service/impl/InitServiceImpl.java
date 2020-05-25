@@ -1,11 +1,15 @@
 package com.easipass.epUtil.service.impl;
 
 import com.easipass.epUtil.annotation.ConfigAnnotation;
+import com.easipass.epUtil.common.ProcessCommon;
 import com.easipass.epUtil.config.*;
 import com.easipass.epUtil.enumeration.SystemOSEnum;
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.service.InitService;
 import com.easipass.epUtil.util.FileUtil;
+import com.zj0724.uiAuto.WebDriver;
+import com.zj0724.uiAuto.exception.WebDriverException;
+import com.zj0724.uiAuto.webDriver.ChromeWebDriver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -86,6 +90,25 @@ public class InitServiceImpl implements InitService {
             }
         } else {
             throw ErrorException.getErrorException("未找到系统类型");
+        }
+
+        // 检查驱动是否能打开，不能打开删除文件重新生成
+        try {
+            WebDriver webDriver = new ChromeWebDriver(ProjectConfig.CHROME_DRIVER);
+            webDriver.close();
+        } catch (WebDriverException e) {
+            System.out.println("谷歌驱动失效，正在重新生成...");
+
+            // 杀掉进程
+            ProcessCommon.killChromeDriver();
+
+            // 删除文件
+            if (!ProjectConfig.CHROME_DRIVER.delete()) {
+                throw new ErrorException("删除谷歌驱动失败");
+            }
+
+            // 重新加载驱动文件
+            chromeDriverLoad();
         }
     }
 

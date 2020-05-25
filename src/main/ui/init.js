@@ -2,7 +2,6 @@
 
     // style
     document.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"/style/base.css\" />");
-    document.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"/style/input.css\" />");
     document.write("<script src=\"/style/input.js\"></script>");
     document.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"/style/loading.css\" />");
 

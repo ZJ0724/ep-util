@@ -33,12 +33,12 @@ public class ProjectConfig {
     /**
      * 谷歌驱动windows版
      * */
-    public final static File WINDOWS_CHROME_DRIVER = new File(CONFIG_DIR, "chromedriver.exe");
+    public final static File WINDOWS_CHROME_DRIVER = new File(CONFIG_DIR, "epUtilChromeDriver.exe");
 
     /**
      * 谷歌驱动linux版文件名
      * */
-    public final static File LINUX_CHROME_DRIVER = new File(CONFIG_DIR, "chromedriver");
+    public final static File LINUX_CHROME_DRIVER = new File(CONFIG_DIR, "epUtilChromeDriver");
 
     /**
      * 当前使用的驱动
