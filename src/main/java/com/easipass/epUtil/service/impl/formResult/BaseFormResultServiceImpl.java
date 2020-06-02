@@ -1,9 +1,9 @@
 package com.easipass.epUtil.service.impl.formResult;
 
-import com.easipass.epUtil.annotation.UploadResultAnnotation;
+import com.easipass.epUtil.annotation.UploadResult;
 import com.easipass.epUtil.entity.ResultDTO;
 import com.easipass.epUtil.entity.Response;
-import com.easipass.epUtil.enumeration.ResponseFlagEnum;
+import com.easipass.epUtil.config.ResponseFlagConfig;
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.service.FormResultService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,11 +28,11 @@ public class BaseFormResultServiceImpl implements FormResultService {
     }
 
     @Override
-    @UploadResultAnnotation(isDisposable = true)
+    @UploadResult(isDisposable = true)
     public Response disposableUpload(String ediNo, ResultDTO resultDTO) {
         // 通讯回执
         Response response = tongXun.upload(ediNo, new ResultDTO("0", "通讯回执上传成功"));
-        if (response.getFlag().equals(ResponseFlagEnum.FALSE.getFlag())) {
+        if (response.getFlag().equals(ResponseFlagConfig.FALSE.getFlag())) {
             return response;
         }
 

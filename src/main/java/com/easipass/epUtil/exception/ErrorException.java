@@ -1,8 +1,8 @@
 package com.easipass.epUtil.exception;
 
-public class ErrorException extends RuntimeException {
+public class ErrorException extends BaseException {
 
-    public ErrorException(String message) {
+    private ErrorException(String message) {
         super(message);
     }
 

@@ -24,7 +24,7 @@ public class FileUtil {
             bufferedInputStream.close();
             outputStream.close();
         } catch (IOException e) {
-            throw new ErrorException(e.getMessage());
+            throw ErrorException.getErrorException(e.getMessage());
         }
     }
 
@@ -43,7 +43,7 @@ public class FileUtil {
             outputStream.write(bytes);
             outputStream.close();
         } catch (IOException e) {
-            throw new ErrorException(e.getMessage());
+            throw ErrorException.getErrorException(e.getMessage());
         }
     }
 

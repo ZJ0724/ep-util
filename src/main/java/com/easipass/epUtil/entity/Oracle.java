@@ -1,7 +1,7 @@
 package com.easipass.epUtil.entity;
 
-import com.easipass.epUtil.config.KSDDBConfig;
-import com.easipass.epUtil.config.SWGDConfig;
+import com.easipass.epUtil.entity.config.KSDDBConfig;
+import com.easipass.epUtil.entity.config.SWGDConfig;
 import com.easipass.epUtil.exception.ErrorException;
 import java.sql.*;
 
@@ -76,7 +76,7 @@ public class Oracle {
             this.connection = DriverManager.getConnection("jdbc:oracle:thin:@" + url + ":" + port + ":" + sid, username, password);
             this.isConnect = true;
         } catch (ClassNotFoundException e) {
-            throw new ErrorException(e.getMessage());
+            throw ErrorException.getErrorException(e.getMessage());
         } catch (SQLException e) {
             return false;
         }
@@ -98,7 +98,7 @@ public class Oracle {
                 preparedStatement = null;
             }
         } catch (SQLException e) {
-            throw new ErrorException(e.getMessage());
+            throw ErrorException.getErrorException(e.getMessage());
         }
         this.isConnect = false;
     }
@@ -145,14 +145,28 @@ public class Oracle {
      * 获取SWGD数据库
      * */
     public static Oracle getSWGDOracle() {
-        return new Oracle(SWGDConfig.url, SWGDConfig.port, SWGDConfig.sid, SWGDConfig.username, SWGDConfig.password);
+        SWGDConfig swgdConfig = SWGDConfig.getSWGDConfig();
+        return new Oracle(
+                swgdConfig.getUrl(),
+                swgdConfig.getPort(),
+                swgdConfig.getSid(),
+                swgdConfig.getUsername(),
+                swgdConfig.getPassword()
+        );
     }
 
     /**
      * 获取KSDDB数据库
      * */
     public static Oracle getKSDDBOracle() {
-        return new Oracle(KSDDBConfig.url, KSDDBConfig.port, KSDDBConfig.sid, KSDDBConfig.username, KSDDBConfig.password);
+        KSDDBConfig ksddbConfig = KSDDBConfig.getKSDDBConfig();
+        return new Oracle(
+                ksddbConfig.getUrl(),
+                ksddbConfig.getPort(),
+                ksddbConfig.getSid(),
+                ksddbConfig.getUsername(),
+                ksddbConfig.getPassword()
+        );
     }
 
     /**

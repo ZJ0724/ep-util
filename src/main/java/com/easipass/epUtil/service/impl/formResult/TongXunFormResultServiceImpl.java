@@ -1,6 +1,6 @@
 package com.easipass.epUtil.service.impl.formResult;
 
-import com.easipass.epUtil.annotation.UploadResultAnnotation;
+import com.easipass.epUtil.annotation.UploadResult;
 import com.easipass.epUtil.config.ResourcePathConfig;
 import com.easipass.epUtil.entity.ResultDTO;
 import com.easipass.epUtil.entity.Response;
@@ -22,7 +22,7 @@ public class TongXunFormResultServiceImpl implements FormResultService {
     private FormResultService baseFormResultService;
 
     @Override
-    @UploadResultAnnotation
+    @UploadResult
     public Response upload(String ediNo, ResultDTO formResultDTO) {
         //获取回执原document
         Document document = XmlUtil.getDocument(TongXunFormResultServiceImpl.class.getResourceAsStream(ResourcePathConfig.TONG_XUN_FORM_RESULT_PATH));
