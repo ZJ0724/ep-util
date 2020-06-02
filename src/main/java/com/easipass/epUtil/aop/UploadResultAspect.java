@@ -1,9 +1,9 @@
 package com.easipass.epUtil.aop;
 
-import com.easipass.epUtil.annotation.UploadResultAnnotation;
+import com.easipass.epUtil.annotation.UploadResult;
 import com.easipass.epUtil.config.ProjectConfig;
 import com.easipass.epUtil.entity.Sftp;
-import com.easipass.epUtil.exception.ResponseException;
+import com.easipass.epUtil.exception.SftpException;
 import com.easipass.epUtil.service.BaseService;
 import com.zj0724.uiAuto.WebDriver;
 import com.zj0724.uiAuto.webDriver.ChromeWebDriver;
@@ -21,15 +21,15 @@ public class UploadResultAspect {
 
     private static final ThreadLocal<Boolean> isDisposableThreadLocal = new ThreadLocal<>();
 
-    @Pointcut("@annotation(com.easipass.epUtil.annotation.UploadResultAnnotation)")
+    @Pointcut("@annotation(com.easipass.epUtil.annotation.UploadResult)")
     public void UploadResultAspect(){}
 
     @Before("UploadResultAspect()")
     public void before(JoinPoint point) {
         // 获取注解上的参数值
         MethodSignature methodSignature = (MethodSignature)point.getSignature();
-        UploadResultAnnotation uploadResultAnnotation = methodSignature.getMethod().getAnnotation(UploadResultAnnotation.class);
-        boolean isDisposable = uploadResultAnnotation.isDisposable();
+        UploadResult uploadResult = methodSignature.getMethod().getAnnotation(UploadResult.class);
+        boolean isDisposable = uploadResult.isDisposable();
 
         // 一次上传
         if (isDisposable) {
@@ -40,7 +40,7 @@ public class UploadResultAspect {
             Sftp sftp = Sftp.getSftp83();
             System.out.println("连接sftp...");
             if (!sftp.connect()) {
-                throw new ResponseException("sftp:" + sftp.getUrl() + "连接失败");
+                throw SftpException.sftp83ConnectFail();
             }
             BaseService.SFTP_THREAD_LOCAL.set(sftp);
 
@@ -54,8 +54,8 @@ public class UploadResultAspect {
     public void after(JoinPoint point) {
         // 获取注解上的参数值
         MethodSignature methodSignature = (MethodSignature)point.getSignature();
-        UploadResultAnnotation uploadResultAnnotation = methodSignature.getMethod().getAnnotation(UploadResultAnnotation.class);
-        boolean isDisposable = uploadResultAnnotation.isDisposable();
+        UploadResult uploadResult = methodSignature.getMethod().getAnnotation(UploadResult.class);
+        boolean isDisposable = uploadResult.isDisposable();
 
         if ((isDisposableThreadLocal.get() == null && !isDisposable) || (isDisposableThreadLocal.get() && isDisposable)) {
             Sftp sftp = BaseService.SFTP_THREAD_LOCAL.get();

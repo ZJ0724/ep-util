@@ -1,6 +1,6 @@
 package com.easipass.epUtil.entity;
 
-import com.easipass.epUtil.config.Sftp83Config;
+import com.easipass.epUtil.entity.config.Sftp83Config;
 import com.easipass.epUtil.exception.ErrorException;
 import com.jcraft.jsch.*;
 import java.io.InputStream;
@@ -132,14 +132,14 @@ public class Sftp {
      */
     public void uploadFile(String path, String name, InputStream inputStream) {
         if (!this.isConnect) {
-            throw new ErrorException("sftp未连接");
+            throw ErrorException.getErrorException("sftp未连接");
         }
 
         try {
             channelSftp.cd(path);
             channelSftp.put(inputStream, name);
         } catch (SftpException e) {
-            throw new ErrorException(e.getMessage());
+            throw ErrorException.getErrorException(e.getMessage());
         }
     }
 
@@ -154,7 +154,8 @@ public class Sftp {
      * 获取sftp83
      * */
     public static Sftp getSftp83() {
-        return new Sftp(Sftp83Config.url, Sftp83Config.port, Sftp83Config.username, Sftp83Config.password);
+        Sftp83Config sftp83Config = Sftp83Config.getSftp83Config();
+        return new Sftp(sftp83Config.getUrl(), sftp83Config.getPort(), sftp83Config.getUsername(), sftp83Config.getPassword());
     }
 
 }

@@ -1,6 +1,6 @@
 package com.easipass.epUtil.service.impl.decModResult;
 
-import com.easipass.epUtil.annotation.UploadResultAnnotation;
+import com.easipass.epUtil.annotation.UploadResult;
 import com.easipass.epUtil.config.ResourcePathConfig;
 import com.easipass.epUtil.entity.Response;
 import com.easipass.epUtil.entity.ResultDTO;
@@ -18,7 +18,7 @@ import java.io.ByteArrayInputStream;
 public class YeWuDecModResultServiceImpl implements DecModResultService {
 
     @Override
-    @UploadResultAnnotation
+    @UploadResult
     public Response upload(String preEntryId, ResultDTO resultDTO) {
         // 设置文件名
         Response response = BaseDecModResultService.setFileName(preEntryId);

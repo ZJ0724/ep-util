@@ -1,6 +1,6 @@
 package com.easipass.epUtil.entity;
 
-import com.easipass.epUtil.exception.ResponseException;
+import com.easipass.epUtil.exception.OracleException;
 import com.zj0724.springbootUtil.annotation.NotNull;
 import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
@@ -51,14 +51,14 @@ public class ResultDTO {
         String declPort;
         Oracle oracle = Oracle.getSWGDOracle();
         if (!oracle.connect()) {
-            throw new ResponseException("数据库：" + oracle.getUrl() + "连接失败");
+            throw OracleException.getOracleException("数据库：" + oracle.getUrl() + "连接失败");
         }
         ResultSet resultSet = oracle.query("SELECT DECL_PORT FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?", new Object[]{ediNo});
         try {
             resultSet.next();
             declPort = resultSet.getString("DECL_PORT");
         } catch (SQLException e) {
-            throw new ResponseException("未找到报关单数据");
+            throw OracleException.getOracleException("未找到报关单数据");
         }
         oracle.close();
         return declPort + "000000000" + ediNo.substring(ediNo.length() - 5);
@@ -90,6 +90,14 @@ public class ResultDTO {
      * */
     public static String getAgentSeqNo(String ediNo) {
         return "agentSeqNo000" + ediNo.substring(ediNo.length() - 5);
+    }
+
+    @Override
+    public String toString() {
+        return "ResultDTO{" +
+                "channel='" + channel + '\'' +
+                ", note='" + note + '\'' +
+                '}';
     }
 
 }

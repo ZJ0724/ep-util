@@ -1,6 +1,5 @@
 package com.easipass.epUtil.config;
 
-import com.easipass.epUtil.enumeration.SystemOSEnum;
 import java.io.File;
 
 public class ProjectConfig {
@@ -23,11 +22,11 @@ public class ProjectConfig {
     /**
      * 系统类型
      * */
-    public final static SystemOSEnum SYSTEM_OS_ENUM =
+    public final static SystemTypeConfig SYSTEM_TYPE =
             System.getProperty("os.name").contains("Windows") ?
-                    SystemOSEnum.windows :
+                    SystemTypeConfig.windows :
                     (System.getProperty("os.name").contains("Linux") ?
-                            SystemOSEnum.linux :
+                            SystemTypeConfig.linux :
                             null);
 
     /**
@@ -43,6 +42,16 @@ public class ProjectConfig {
     /**
      * 当前使用的驱动
      * */
-    public final static File CHROME_DRIVER = SYSTEM_OS_ENUM == SystemOSEnum.windows ? WINDOWS_CHROME_DRIVER : LINUX_CHROME_DRIVER;
+    public final static File CHROME_DRIVER = SYSTEM_TYPE == SystemTypeConfig.windows ? WINDOWS_CHROME_DRIVER : LINUX_CHROME_DRIVER;
+
+    /**
+     * 当前使用的默认驱动
+     * */
+    public final static String RESOURCE_CHROME_DRIVER = SYSTEM_TYPE == SystemTypeConfig.windows ? ResourcePathConfig.WINDOWS_CHROME_DRIVER_PATH : ResourcePathConfig.LINUX_CHROME_DRIVER_PATH;
+
+    /**
+     * 日志输出文件
+     * */
+    public final static File LOG_FILE = new File(System.getProperty("user.dir"), "/log/info.log");
 
 }

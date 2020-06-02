@@ -73,6 +73,30 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>3.141.59</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.zj0724</groupId>
+            <artifactId>springbootUtil</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.zj0724</groupId>
+            <artifactId>uiAuto</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.zj0724</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>11.2.0.3</version>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -99,13 +123,6 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <targetPath>resources</targetPath>
-            </resource>
-            <resource>
-                <directory>src/main/lib</directory>
-                <includes>
-                    <include>*.*</include>
-                </includes>
-                <targetPath>BOOT-INF/lib/</targetPath>
             </resource>
             <resource>
                 <directory>${project.basedir}</directory>
@@ -141,9 +158,6 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>UTF-8</encoding>
-                    <compilerArguments>
-                        <extdirs>${project.basedir}/src/main/lib</extdirs>
-                    </compilerArguments>
                 </configuration>
             </plugin>
             <plugin>
@@ -158,6 +172,53 @@
                     <execution>
                         <goals>
                             <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <execution>
+                        <id>springbootUtil</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <file>${project.basedir}/src/main/lib/springbootUtil-1.0.0.jar</file>
+                            <groupId>com.zj0724</groupId>
+                            <artifactId>springbootUtil</artifactId>
+                            <version>1.0.0</version>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>uiAuto</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <file>${project.basedir}/src/main/lib/uiAuto-2.2.1.jar</file>
+                            <groupId>com.zj0724</groupId>
+                            <artifactId>uiAuto</artifactId>
+                            <version>2.2.1</version>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>oJdbc6</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <file>${project.basedir}/src/main/lib/ojdbc6-11.2.0.3.jar</file>
+                            <groupId>com.zj0724</groupId>
+                            <artifactId>ojdbc6</artifactId>
+                            <version>11.2.0.3</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
                         </goals>
                     </execution>
                 </executions>

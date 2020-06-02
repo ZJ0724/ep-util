@@ -16,7 +16,7 @@ public class XmlUtil {
             SAXReader saxReader = new SAXReader();
             return saxReader.read(InputStream);
         } catch (DocumentException e) {
-            throw new ErrorException(e.getMessage());
+            throw ErrorException.getErrorException(e.getMessage());
         }
     }
 

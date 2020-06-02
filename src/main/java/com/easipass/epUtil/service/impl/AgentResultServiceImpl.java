@@ -1,6 +1,6 @@
 package com.easipass.epUtil.service.impl;
 
-import com.easipass.epUtil.annotation.UploadResultAnnotation;
+import com.easipass.epUtil.annotation.UploadResult;
 import com.easipass.epUtil.config.ResourcePathConfig;
 import com.easipass.epUtil.entity.*;
 import com.easipass.epUtil.entity.ResultDTO;
@@ -19,7 +19,7 @@ import java.sql.SQLException;
 public class AgentResultServiceImpl implements AgentResultService {
 
     @Override
-    @UploadResultAnnotation
+    @UploadResult
     public Response upload(String ediNo, ResultDTO resultDTO) {
         // 获取回执原节点
         Document document = XmlUtil.getDocument(AgentResultServiceImpl.class.getResourceAsStream(ResourcePathConfig.AGENT_RESULT_PATH));
