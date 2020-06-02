@@ -52,6 +52,6 @@ public class ProjectConfig {
     /**
      * 日志输出文件
      * */
-    public final static File LOG_FILE = new File(System.getProperty("user.dir"), "/log/info.log");
+    public final static File LOG_FILE = new File(System.getProperty("user.dir"), "../log/info.log");
 
 }
