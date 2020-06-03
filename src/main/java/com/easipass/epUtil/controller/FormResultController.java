@@ -2,6 +2,7 @@ package com.easipass.epUtil.controller;
 
 import com.easipass.epUtil.entity.ResultDTO;
 import com.easipass.epUtil.entity.Response;
+import com.easipass.epUtil.service.DisposableUploadService;
 import com.easipass.epUtil.service.FormResultService;
 import com.zj0724.springbootUtil.annotation.Length;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,8 +24,8 @@ public class FormResultController {
     private FormResultService yeWuFormResultService;
 
     @Resource
-    @Qualifier("BaseFormResultServiceImpl")
-    private FormResultService baseFormResultService;
+    @Qualifier("YeWuFormResultServiceImpl")
+    private DisposableUploadService disposableUploadService;
 
 
     @RequestMapping(value = "upload/tongXun", method = RequestMethod.POST)
@@ -39,7 +40,7 @@ public class FormResultController {
 
     @RequestMapping(value = "disposableUpload", method = RequestMethod.POST)
     public Response disposableUpload(@RequestParam @Length(min = 18) String ediNo, @RequestBody ResultDTO formResultDTO) {
-        return baseFormResultService.disposableUpload(ediNo, formResultDTO);
+        return disposableUploadService.disposableUpload(ediNo, formResultDTO);
     }
 
 }

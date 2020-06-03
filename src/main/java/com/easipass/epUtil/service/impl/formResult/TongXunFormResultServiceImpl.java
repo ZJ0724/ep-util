@@ -1,70 +1,31 @@
 package com.easipass.epUtil.service.impl.formResult;
 
-import com.easipass.epUtil.annotation.UploadResult;
-import com.easipass.epUtil.config.ResourcePathConfig;
+import com.easipass.epUtil.entity.ChromeDriver;
 import com.easipass.epUtil.entity.ResultDTO;
 import com.easipass.epUtil.entity.Response;
-import com.easipass.epUtil.service.BaseService;
+import com.easipass.epUtil.entity.result.FormResult;
+import com.easipass.epUtil.entity.result.formResult.TongXunFormResult;
+import com.easipass.epUtil.entity.sftp.Sftp83;
 import com.easipass.epUtil.service.FormResultService;
-import com.easipass.epUtil.util.*;
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
-import java.io.ByteArrayInputStream;
 
 @Service("TongXunFormResultServiceImpl")
 public class TongXunFormResultServiceImpl implements FormResultService {
 
-    @Resource
-    @Qualifier("BaseFormResultServiceImpl")
-    private FormResultService baseFormResultService;
-
     @Override
-    @UploadResult
     public Response upload(String ediNo, ResultDTO formResultDTO) {
-        //获取回执原document
-        Document document = XmlUtil.getDocument(TongXunFormResultServiceImpl.class.getResourceAsStream(ResourcePathConfig.TONG_XUN_FORM_RESULT_PATH));
+        FormResult formResult = new TongXunFormResult(ediNo, formResultDTO);
 
-        //document根节点
-        Element documentRootElement = document.getRootElement();
+        Sftp83 sftp83 = new Sftp83();
+        sftp83.connect();
+        sftp83.uploadResult(formResult);
+        sftp83.close();
 
-        //data节点数据
-        String data = documentRootElement.element("Data").getText();
+        ChromeDriver chromeDriver = new ChromeDriver();
+        chromeDriver.swgdRecvRun();
+        chromeDriver.close();
 
-        //解码
-        data = Base64Util.decode(data);
-
-        //获取回执解码后的document
-        Document dataDocument = XmlUtil.getDocument(new ByteArrayInputStream(data.getBytes()));
-
-        //dataDocument根节点
-        Element dataDocumentRootElement = dataDocument.getRootElement();
-
-        //替换数据
-        dataDocumentRootElement.element("ResponseCode").setText(formResultDTO.getChannel());
-        dataDocumentRootElement.element("ErrorMessage").setText(formResultDTO.getNote());
-        dataDocumentRootElement.element("ClientSeqNo").setText(ediNo);
-        dataDocumentRootElement.element("SeqNo").setText(ResultDTO.getSeqNo(ediNo));
-        data = dataDocument.asXML();
-
-        //加密
-        data = Base64Util.encode(data);
-
-        //替换原document的data节点
-        documentRootElement.element("Data").setText(data);
-
-        // 设置创建时间
-        documentRootElement.element("TransInfo").element("CreatTime").setText(DateUtil.getDate());
-
-        BaseService.uploadResult(document, "tongXunFormResult-" + ResultDTO.getSeqNo(ediNo) + "-" + DateUtil.getTime());
-        return Response.returnTrue(null);
-    }
-
-    @Override
-    public Response disposableUpload(String ediNo, ResultDTO formResultDTO) {
-        return baseFormResultService.disposableUpload(ediNo, formResultDTO);
+        return Response.returnTrue();
     }
 
 }

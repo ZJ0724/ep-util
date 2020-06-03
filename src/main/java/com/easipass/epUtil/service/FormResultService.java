@@ -12,9 +12,4 @@ public interface FormResultService {
      * */
     Response upload(String ediNo, ResultDTO formResultDTO);
 
-    /**
-     * 一次性上传
-     * */
-    Response disposableUpload(String ediNo, ResultDTO formResultDTO);
-
 }

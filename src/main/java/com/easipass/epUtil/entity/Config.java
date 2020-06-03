@@ -14,12 +14,45 @@ import java.util.Properties;
 
 public class Config {
 
-    /**
-     * 配置文件数据
-     * */
-    private static final Properties data = new Properties();
+    @Value("SWGD.url")
+    private String SWGDUrl;
 
-    static {
+    @Value("SWGD.port")
+    private int SWGDPort;
+
+    @Value("SWGD.sid")
+    private String SWGDSid;
+
+    @Value("SWGD.username")
+    private String SWGDUsername;
+
+    @Value("SWGD.password")
+    private String SWGDPassword;
+
+    @Value("sftp83.url")
+    private String sftp83Url;
+
+    @Value("sftp83.port")
+    private int sftp83Port;
+
+    @Value("sftp83.username")
+    private String sftp83Username;
+
+    @Value("sftp83.password")
+    private String sftp83Password;
+
+    @Value("sftp83.uploadPath")
+    private String sftp83UploadPath;
+
+    /**
+     * 单例
+     * */
+    private final static Config config = new Config();
+
+    /**
+     * 构造函数
+     * */
+    private Config() {
         // 检查配置文件是否存在，不存在创建默认配置文件
         if (!ProjectConfig.CONFIG_FILE.exists()) {
             // 不存在创建默认配置文件
@@ -32,38 +65,94 @@ public class Config {
             }
         }
 
-        // 加载配置文件
+        this.loadData();
+    }
+
+    /**
+     * set,get
+     * */
+    public String getSWGDUrl() {
+        return SWGDUrl;
+    }
+
+    public int getSWGDPort() {
+        return SWGDPort;
+    }
+
+    public String getSWGDSid() {
+        return SWGDSid;
+    }
+
+    public String getSWGDUsername() {
+        return SWGDUsername;
+    }
+
+    public String getSWGDPassword() {
+        return SWGDPassword;
+    }
+
+    public String getSftp83Url() {
+        return sftp83Url;
+    }
+
+    public int getSftp83Port() {
+        return sftp83Port;
+    }
+
+    public String getSftp83Username() {
+        return sftp83Username;
+    }
+
+    public String getSftp83Password() {
+        return sftp83Password;
+    }
+
+    public String getSftp83UploadPath() {
+        return sftp83UploadPath;
+    }
+
+    /**
+     * 获取单例
+     * */
+    public static Config getConfig() {
+        return config;
+    }
+
+    /**
+     * 加载数据
+     * */
+    public void loadData() {
+        // 配置文件Properties
+        Properties configProperties = new Properties();
+        // class
+        Class<?> c = this.getClass();
+        // 字段集合
+        Field[] fields = c.getDeclaredFields();
+
+        // 加载配置文件Properties
         try {
             FileReader fileReader = new FileReader(ProjectConfig.CONFIG_FILE);
-            data.load(fileReader);
+            configProperties.load(fileReader);
             fileReader.close();
         } catch (IOException e) {
             throw ErrorException.getErrorException(e.getMessage());
         }
-    }
-
-    protected Config() {}
-
-    /**
-     * 加载
-     * */
-    public void load() {
-        // class
-        Class<?> c = this.getClass();
-        // @Config上的值
-        String configAnnotationValue = c.getAnnotation(com.easipass.epUtil.annotation.Config.class).value();
-        // 字段集合
-        Field[] fields = c.getDeclaredFields();
 
         // 遍历字段
         for (Field field : fields) {
+            // @value注解
+            Value valueAnnotation = field.getAnnotation(Value.class);
+
+            // 设置字段可编辑
+            field.setAccessible(true);
+
             // 只有当被@Value标记的字段
-            if (!field.isAnnotationPresent(Value.class)) {
+            if (valueAnnotation == null) {
                 continue;
             }
 
-            // 配置文件参数
-            String configValue = data.getProperty(configAnnotationValue + "." + field.getName());
+            // config数据
+            String configValue = configProperties.getProperty(valueAnnotation.value());
 
             // 如果参数为null，则配置文件异常
             if (configValue == null) {
@@ -71,7 +160,6 @@ public class Config {
             }
 
             // 加载字段
-            field.setAccessible(true);
             try {
                 if (field.getType().getSimpleName().equals("int")) {
                     field.setInt(this, Integer.parseInt(configValue));
@@ -82,6 +170,22 @@ public class Config {
                 throw ErrorException.getErrorException("装载配置文件出错");
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Config{" +
+                "SWGDUrl='" + SWGDUrl + '\'' +
+                ", SWGDPort=" + SWGDPort +
+                ", SWGDSid='" + SWGDSid + '\'' +
+                ", SWGDUsername='" + SWGDUsername + '\'' +
+                ", SWGDPassword='" + SWGDPassword + '\'' +
+                ", sftp83Url='" + sftp83Url + '\'' +
+                ", sftp83Port=" + sftp83Port +
+                ", sftp83Username='" + sftp83Username + '\'' +
+                ", sftp83Password='" + sftp83Password + '\'' +
+                ", sftp83UploadPath='" + sftp83UploadPath + '\'' +
+                '}';
     }
 
 }

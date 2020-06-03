@@ -11,23 +11,40 @@ import java.util.Date;
 public class Log {
 
     /**
+     * 单例
+     * */
+    private final static Log log = new Log();
+
+    /**
+     * 构造函数
+     * */
+    private Log() {}
+
+    /**
+     * 获取单例
+     * */
+    public static Log getLog() {
+        return Log.log;
+    }
+
+    /**
      * INFO
      * */
-    public static void info(String log) {
-        Log.outputLog("INFO", log);
+    public void info(String log) {
+        this.outputLog("INFO", log);
     }
 
     /**
      * ERROR
      * */
-    public static void error(String log) {
-        Log.outputLog("ERROR", log);
+    public void error(String log) {
+        this.outputLog("ERROR", log);
     }
 
     /**
      * 日志格式
      */
-    private static String logFormat(String type, String log) {
+    private String logFormat(String type, String log) {
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateS = simpleDateFormat.format(date);
@@ -37,8 +54,8 @@ public class Log {
     /**
      * 输出日志
      * */
-    private static void outputLog(String type, String log) {
-        log = Log.logFormat(type, log);
+    private void outputLog(String type, String log) {
+        log = this.logFormat(type, log);
 
         System.out.print(log);
 

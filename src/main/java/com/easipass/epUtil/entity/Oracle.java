@@ -1,8 +1,7 @@
 package com.easipass.epUtil.entity;
 
-import com.easipass.epUtil.entity.config.KSDDBConfig;
-import com.easipass.epUtil.entity.config.SWGDConfig;
 import com.easipass.epUtil.exception.ErrorException;
+import com.easipass.epUtil.exception.OracleException;
 import java.sql.*;
 
 public class Oracle {
@@ -10,27 +9,27 @@ public class Oracle {
     /**
      * 地址
      * */
-    private final String url;
+    private String url;
 
     /**
      * 端口
      * */
-    private final int port;
+    private int port;
 
     /**
      * sid
      * */
-    private final String sid;
+    private String sid;
 
     /**
      * 用户名
      * */
-    private final String username;
+    private String username;
 
     /**
      * 密码
      * */
-    private final String password;
+    private String password;
 
     /**
      * 连接
@@ -50,7 +49,8 @@ public class Oracle {
     /**
      * 构造函数
      * */
-    public Oracle(String url, int port, String sid, String username, String password) {
+    protected Oracle() {}
+    protected Oracle(String url, int port, String sid, String username, String password) {
         this.url = url;
         this.port = port;
         this.sid = sid;
@@ -59,29 +59,71 @@ public class Oracle {
     }
 
     /**
-     * 基础方法
+     * get,set
      * */
-    private void base() {
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getSid() {
+        return sid;
+    }
+
+    public void setSid(String sid) {
+        this.sid = sid;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * 检查连接
+     * */
+    private void checkConnect() {
         if (!isConnect) {
-            throw ErrorException.getErrorException("数据库未连接");
+            throw OracleException.connectFail(this.url);
         }
     }
 
     /**
      * 连接数据库
      * */
-    public boolean connect() {
+    public void connect() {
         try {
             Class.forName("oracle.jdbc.OracleDriver");
             this.connection = DriverManager.getConnection("jdbc:oracle:thin:@" + url + ":" + port + ":" + sid, username, password);
             this.isConnect = true;
+            Log.getLog().info("oracle:" + this.getUrl() + "连接成功!");
         } catch (ClassNotFoundException e) {
             throw ErrorException.getErrorException(e.getMessage());
         } catch (SQLException e) {
-            return false;
+            throw OracleException.connectFail(this.url);
         }
-
-        return true;
     }
 
     /**
@@ -101,13 +143,14 @@ public class Oracle {
             throw ErrorException.getErrorException(e.getMessage());
         }
         this.isConnect = false;
+        Log.getLog().info("oracle:" + this.getUrl() + "已关闭!");
     }
 
     /**
      * 增删改
      */
     public void update(String sql, Object[] objects) {
-        this.base();
+        this.checkConnect();
 
         try {
             this.preparedStatement = this.connection.prepareStatement(sql);
@@ -126,7 +169,7 @@ public class Oracle {
      * 查
      */
     public ResultSet query(String sql, Object[] objects) {
-        this.base();
+        this.checkConnect();
 
         try {
             this.preparedStatement = connection.prepareStatement(sql);
@@ -139,41 +182,6 @@ public class Oracle {
         }catch (SQLException e){
             throw ErrorException.getErrorException("sql错误");
         }
-    }
-
-    /**
-     * 获取SWGD数据库
-     * */
-    public static Oracle getSWGDOracle() {
-        SWGDConfig swgdConfig = SWGDConfig.getSWGDConfig();
-        return new Oracle(
-                swgdConfig.getUrl(),
-                swgdConfig.getPort(),
-                swgdConfig.getSid(),
-                swgdConfig.getUsername(),
-                swgdConfig.getPassword()
-        );
-    }
-
-    /**
-     * 获取KSDDB数据库
-     * */
-    public static Oracle getKSDDBOracle() {
-        KSDDBConfig ksddbConfig = KSDDBConfig.getKSDDBConfig();
-        return new Oracle(
-                ksddbConfig.getUrl(),
-                ksddbConfig.getPort(),
-                ksddbConfig.getSid(),
-                ksddbConfig.getUsername(),
-                ksddbConfig.getPassword()
-        );
-    }
-
-    /**
-     * 获取数据库url
-     * */
-    public String getUrl() {
-        return url;
     }
 
 }

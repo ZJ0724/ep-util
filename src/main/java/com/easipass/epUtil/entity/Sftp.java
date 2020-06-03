@@ -1,8 +1,8 @@
 package com.easipass.epUtil.entity;
 
-import com.easipass.epUtil.entity.config.Sftp83Config;
 import com.easipass.epUtil.exception.ErrorException;
 import com.jcraft.jsch.*;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -43,19 +43,43 @@ public class Sftp {
      * */
     private boolean isConnect = false;
 
-    public Sftp() {}
+    /**
+     * 构造函数
+     * */
+    protected Sftp() {}
 
-    public Sftp(String url, int port, String username, String password) {
+    /**
+     * get,set
+     * */
+    public String getUrl() {
+        return url;
+    }
+    public void setUrl(String url) {
         this.url = url;
+    }
+    public int getPort() {
+        return port;
+    }
+    public void setPort(int port) {
         this.port = port;
+    }
+    public String getUsername() {
+        return username;
+    }
+    public void setUsername(String username) {
         this.username = username;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
         this.password = password;
     }
 
     /**
      * 连接
      * */
-    public boolean connect() {
+    public void connect() {
         try {
             JSch jSch = new JSch();
             this.session = jSch.getSession(username, url, port);
@@ -67,43 +91,11 @@ public class Sftp {
             this.channelSftp = (ChannelSftp)session.openChannel("sftp");
             this.channelSftp.connect();
         }catch (JSchException e) {
-            return false;
+            throw com.easipass.epUtil.exception.SftpException.connectFail(this.url);
         }
 
+        Log.getLog().info("sftp: " + this.getUrl() + "已连接!");
         this.isConnect = true;
-        return true;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     /**
@@ -120,23 +112,23 @@ public class Sftp {
             this.channelSftp = null;
         }
 
+        Log.getLog().info("sftp: " + this.getUrl() + "已关闭!");
         this.isConnect = false;
     }
 
     /**
-     * 上传文件
+     * 上传内容
      *
      * @param path 上传路径
      * @param name 上传文件名
-     * @param inputStream 字节流
+     * @param data 内容
      */
-    public void uploadFile(String path, String name, InputStream inputStream) {
-        if (!this.isConnect) {
-            throw ErrorException.getErrorException("sftp未连接");
-        }
+    public void upload(String path, String name, String data) {
+        this.checkConnect();
 
         try {
             channelSftp.cd(path);
+            InputStream inputStream = new ByteArrayInputStream(data.getBytes());
             channelSftp.put(inputStream, name);
         } catch (SftpException e) {
             throw ErrorException.getErrorException(e.getMessage());
@@ -144,18 +136,12 @@ public class Sftp {
     }
 
     /**
-     * 是否已连接
+     * 检查连接
      * */
-    public boolean isConnect() {
-        return this.isConnect;
-    }
-
-    /**
-     * 获取sftp83
-     * */
-    public static Sftp getSftp83() {
-        Sftp83Config sftp83Config = Sftp83Config.getSftp83Config();
-        return new Sftp(sftp83Config.getUrl(), sftp83Config.getPort(), sftp83Config.getUsername(), sftp83Config.getPassword());
+    private void checkConnect() {
+        if (!this.isConnect) {
+            throw com.easipass.epUtil.exception.SftpException.connectFail(this.url);
+        }
     }
 
 }
