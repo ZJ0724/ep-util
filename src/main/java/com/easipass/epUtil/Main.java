@@ -20,7 +20,7 @@ public class Main {
             initService.chromeDriverLoad();
             SpringApplication.run(Main.class, args);
         } catch (ConfigException | ChromeDriverException e) {
-            Log.error(e.getMessage());
+            Log.getLog().error(e.getMessage());
         }
     }
 

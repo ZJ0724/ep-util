@@ -7,9 +7,16 @@ public class OracleException extends BaseException {
     }
 
     /**
-     * 数据库异常
+     * 连接失败
      * */
-    public static OracleException getOracleException(String message) {
+    public static OracleException connectFail(String url) {
+        return new OracleException("oracle: " + url + "连接失败!");
+    }
+
+    /**
+     * 查询错误
+     * */
+    public static OracleException queryError(String message) {
         return new OracleException(message);
     }
 

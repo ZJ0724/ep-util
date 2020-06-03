@@ -5,13 +5,6 @@ SWGD.sid=testeport
 SWGD.username=devtester
 SWGD.password=easytester
 
-# KSDDB数据库配置
-KSDDB.url=192.168.131.50
-KSDDB.port=1521
-KSDDB.sid=testksd
-KSDDB.username=devtester
-KSDDB.password=easytester
-
 # SFTP-83配置
 sftp83.url=192.168.120.83
 sftp83.port=22

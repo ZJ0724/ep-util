@@ -1,7 +1,5 @@
 package com.easipass.epUtil.exception;
 
-import com.easipass.epUtil.entity.config.Sftp83Config;
-
 public class SftpException extends BaseException {
 
     private SftpException(String message) {
@@ -9,10 +7,10 @@ public class SftpException extends BaseException {
     }
 
     /**
-     * sftp83连接失败
+     * 连接失败
      * */
-    public static SftpException sftp83ConnectFail() {
-        return new SftpException("sftp:" + Sftp83Config.getSftp83Config().getUrl() + "连接失败");
+    public static SftpException connectFail(String url) {
+        return new SftpException("sftp:" + url + "连接失败");
     }
 
 }

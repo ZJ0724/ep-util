@@ -10,7 +10,12 @@ import com.zj0724.uiAuto.webDriver.ChromeWebDriver;
 
 public class ChromeDriver {
 
-    private ChromeDriver() {}
+    private WebDriver webDriver;
+
+    public ChromeDriver() {
+        webDriver = new ChromeWebDriver(ProjectConfig.CHROME_DRIVER);
+        Log.getLog().info("已打开谷歌驱动!");
+    }
 
     /**
      * 检查驱动
@@ -51,7 +56,7 @@ public class ChromeDriver {
     /**
      * 点击job.swgdRecv.run
      * */
-    public static void swgdRecvRun(WebDriver webDriver) {
+    public void swgdRecvRun() {
         webDriver.url("http://192.168.120.83:9909/console");
         webDriver.findElementByCssSelector("input[tabindex='1']").sendKey("Testing");
         webDriver.findElementByCssSelector("input[tabindex='2']").sendKey("Testing");
@@ -60,6 +65,14 @@ public class ChromeDriver {
         webDriver.findElementByXpath("//span[text()=' Servers']").parent().parent().prev().children(1).click();
         webDriver.findElementByXpath("//span[text()=' node.server']").click();
         webDriver.findElementByXpath("//div[text()='job.swgdRecv']").parent().next().next().next().children(1).children(1).children(1).children(3).children(1).click();
+    }
+
+    /**
+     * 关闭驱动
+     * */
+    public void close() {
+        this.webDriver.close();
+        Log.getLog().info("谷歌驱动已关闭!");
     }
 
 }
