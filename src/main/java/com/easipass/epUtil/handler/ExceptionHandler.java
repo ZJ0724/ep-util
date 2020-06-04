@@ -1,5 +1,6 @@
 package com.easipass.epUtil.handler;
 
+import com.easipass.epUtil.entity.Log;
 import com.easipass.epUtil.entity.Response;
 import com.easipass.epUtil.exception.OracleException;
 import com.easipass.epUtil.exception.SftpException;
@@ -15,6 +16,7 @@ public class ExceptionHandler {
      * */
     @org.springframework.web.bind.annotation.ExceptionHandler(SftpException.class)
     public Response sftpException(Exception e) {
+        Log.getLog().error(e.getMessage());
         return Response.returnFalse(e.getMessage());
     }
 
@@ -23,6 +25,7 @@ public class ExceptionHandler {
      * */
     @org.springframework.web.bind.annotation.ExceptionHandler(OracleException.class)
     public Response oracleException(Exception e) {
+        Log.getLog().error(e.getMessage());
         return Response.returnFalse(e.getMessage());
     }
 

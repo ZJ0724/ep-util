@@ -21,11 +21,6 @@ export default {
     // 上传业务回执
     yeWuFormResultUpload(result) {
         return this.base("post", "upload/yeWu", result);
-    },
-
-    // 一次性上传回执
-    disposableUpload(result) {
-        return this.base("post", "disposableUpload", result);
     }
 
 }

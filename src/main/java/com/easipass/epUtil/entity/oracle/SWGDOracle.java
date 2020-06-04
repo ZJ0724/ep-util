@@ -35,8 +35,9 @@ public class SWGDOracle extends Oracle {
             declPort = resultSet.getString("DECL_PORT");
         } catch (SQLException e) {
             throw OracleException.queryError("未找到报关单数据");
+        } finally {
+            this.close();
         }
-        this.close();
 
         return declPort;
     }
@@ -46,7 +47,7 @@ public class SWGDOracle extends Oracle {
      * */
     public void updateDecModFileName(String preEntryId, String fileName) {
         this.connect();
-        this.update("UPDATE SWGD.T_SWGD_DECMOD_HEAD SET FILE_NAME=? WHERE PRE_ENTRY_ID=?", new Object[]{fileName, preEntryId});
+        this.update("UPDATE SWGD.T_SWGD_DECMOD_HEAD SET FILE_NAME = ? WHERE PRE_ENTRY_ID = ?", new Object[]{fileName, preEntryId});
         this.close();
     }
 
@@ -63,6 +64,8 @@ public class SWGDOracle extends Oracle {
             agentCode = resultSet.getString("AGENT_CODE");
         } catch (SQLException e) {
             throw OracleException.queryError("未找到数据");
+        } finally {
+            this.close();
         }
 
         return agentCode;

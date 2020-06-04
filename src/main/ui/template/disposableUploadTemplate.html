@@ -1,0 +1,133 @@
+<div style="padding: 0 30%;">
+    <blockquote class="layui-elem-quote" id="formResultDisposableUploadBlock">
+        <div class="title">
+            一次性上传报关单回执
+        </div>
+        <div style="margin-top: 20px;">
+            <div>
+                <div>
+                    ediNo：
+                </div>
+                <div style="margin-top: 10px;">
+                    <label>
+                        <input value-bind="formResultDisposableUpload.ediNo" type="text" class="layui-input input" />
+                    </label>
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    channel：
+                </div>
+                <div style="margin-top: 10px">
+                    <label>
+                        <input value-bind="formResultDisposableUpload.result.channel" type="text" class="layui-input" />
+                    </label>
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    note：
+                </div>
+                <div style="margin-top: 10px">
+                    <label>
+                        <input value-bind="formResultDisposableUpload.result.note" type="text" class="layui-input" />
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <button id="formResultDisposableUploadButton" style="width: 100%;" class="layui-btn">上传</button>
+        </div>
+    </blockquote>
+
+    <blockquote class="layui-elem-quote" style="margin-top: 50px;" id="decModResultDisposableUploadBlock">
+        <div class="title">
+            一次性上传修撤单回执
+        </div>
+        <div style="margin-top: 20px;">
+            <div>
+                <div>
+                    preEntryId：
+                </div>
+                <div style="margin-top: 10px;">
+                    <label>
+                        <input value-bind="decModResultDisposableUpload.preEntryId" type="text" class="layui-input input" />
+                    </label>
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    channel：
+                </div>
+                <div style="margin-top: 10px">
+                    <label>
+                        <input value-bind="decModResultDisposableUpload.result.channel" type="text" class="layui-input" />
+                    </label>
+                </div>
+            </div>
+            <div style="margin-top: 10px">
+                <div>
+                    note：
+                </div>
+                <div style="margin-top: 10px">
+                    <label>
+                        <input value-bind="decModResultDisposableUpload.result.note" type="text" class="layui-input" />
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <button id="decModResultDisposableUploadButton" style="width: 100%;" class="layui-btn">上传</button>
+        </div>
+    </blockquote>
+
+    <script type="module">
+
+        import valueBindCommon from "../common/valueBindCommon.js";
+        import FormResult from "../entity/result/FormResult.js";
+        import DecModResult from "../entity/result/DecModResult.js";
+        import disposableUploadApi from "../api/disposableUploadApi.js";
+        import methodCommon from "../common/methodCommon.js";
+
+        (function () {
+
+            // 数据
+            let data = {
+                formResultDisposableUpload: new FormResult(),
+                decModResultDisposableUpload: new DecModResult()
+            };
+
+            // 元素
+            let element = {
+                // 按钮
+                formResultDisposableUploadButton: document.getElementById("formResultDisposableUploadButton"),
+                decModResultDisposableUploadButton: document.getElementById("decModResultDisposableUploadButton"),
+
+                // 面板
+                formResultDisposableUploadBlock: document.getElementById("formResultDisposableUploadBlock"),
+                decModResultDisposableUploadBlock: document.getElementById("decModResultDisposableUploadBlock")
+            };
+
+            // 绑定数据
+            valueBindCommon.bind(data);
+
+            // 绑定事件
+            element.formResultDisposableUploadButton.addEventListener("click", function () {
+                let formResultDisposableUpload = data.formResultDisposableUpload;
+
+                methodCommon.uploadResult(formResultDisposableUpload, function () {
+                    return disposableUploadApi.formResult(formResultDisposableUpload.ediNo, formResultDisposableUpload.result);
+                }, element.formResultDisposableUploadBlock);
+            });
+            element.decModResultDisposableUploadButton.addEventListener("click", function () {
+                let decModResultDisposableUpload = data.decModResultDisposableUpload;
+
+                methodCommon.uploadResult(decModResultDisposableUpload, function () {
+                    return disposableUploadApi.decModResult(decModResultDisposableUpload.preEntryId, decModResultDisposableUpload.result);
+                }, element.decModResultDisposableUploadBlock);
+            });
+
+        })();
+
+    </script>
+</div>
