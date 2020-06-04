@@ -16,6 +16,12 @@ export default [
     {
         hash: "#/agentResult",
         template: "/template/agentResultTemplate.html"
+    },
+
+    // 一次性上传回执
+    {
+        hash: "#/disposableUpload",
+        template: "/template/disposableUploadTemplate.html"
     }
 
 ]
