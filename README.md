@@ -4,13 +4,13 @@
 
 ## 端口设置
 
-默认端口为：`8001`
+默认端口为：`8002`
 
 修改端口：修改  `config` 文件下的 `application.properties` 文件
 
 ```properties
  # 端口号
- server.port=8002
+ server.port = 8002
 ```
 
 
@@ -33,13 +33,6 @@ SWGD.port=1521
 SWGD.sid=testeport
 SWGD.username=devtester
 SWGD.password=easytester
-
-# KSDDB数据库配置
-KSDDB.url=192.168.131.50
-KSDDB.port=1521
-KSDDB.sid=testksd
-KSDDB.username=devtester
-KSDDB.password=easytester
 
 # SFTP-83配置
 sftp83.url=192.168.120.83
@@ -73,4 +66,9 @@ sftp83.uploadPath=/gcchome/winx/cus/cfg_c2e
   ./stop.sh
   ```
   
-  
+
+
+
+## 访问
+
+地址 + 端口号

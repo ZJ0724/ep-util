@@ -14,11 +14,11 @@ public class SWGDOracle extends Oracle {
     public SWGDOracle() {
         Config config = Config.getConfig();
 
-        this.setUrl(config.getSWGDUrl());
-        this.setPort(config.getSWGDPort());
-        this.setSid(config.getSWGDSid());
-        this.setUsername(config.getSWGDUsername());
-        this.setPassword(config.getSWGDPassword());
+        this.setUrl(config.getsWGDUrl());
+        this.setPort(config.getsWGDPort());
+        this.setSid(config.getsWGDSid());
+        this.setUsername(config.getsWGDUsername());
+        this.setPassword(config.getsWGDPassword());
     }
 
     /**

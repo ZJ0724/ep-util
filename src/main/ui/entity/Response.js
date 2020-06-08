@@ -2,14 +2,16 @@ export default class Response {
 
     flag;
     errorCode;
-    errorMsg;
+    errorMessage;
     data;
 
     Response() {}
 
     setData(response) {
-        for (let key in this) {
-            this[key] = response[key];
+        for (let key in response) {
+            if (response.hasOwnProperty(key)) {
+                this[key] = response[key];
+            }
         }
     }
 

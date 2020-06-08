@@ -7,7 +7,7 @@ public class Response implements com.zj0724.springbootUtil.Response<Response> {
 
     private Object flag;
     private Object errorCode;
-    private Object errorMsg;
+    private Object errorMessage;
     private Object data;
 
     public Response() {}
@@ -15,10 +15,13 @@ public class Response implements com.zj0724.springbootUtil.Response<Response> {
     public Response(Object flag, Object errorCode, Object errorMsg, Object data) {
         this.flag = flag;
         this.errorCode = errorCode;
-        this.errorMsg = errorMsg;
+        this.errorMessage = errorMsg;
         this.data = data;
     }
 
+    /**
+     * get,set
+     * */
     public Object getFlag() {
         return flag;
     }
@@ -35,12 +38,12 @@ public class Response implements com.zj0724.springbootUtil.Response<Response> {
         this.errorCode = errorCode;
     }
 
-    public Object getErrorMsg() {
-        return errorMsg;
+    public Object getErrorMessage() {
+        return errorMessage;
     }
 
-    public void setErrorMsg(Object errorMsg) {
-        this.errorMsg = errorMsg;
+    public void setErrorMessage(Object errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     public Object getData() {
@@ -96,7 +99,7 @@ public class Response implements com.zj0724.springbootUtil.Response<Response> {
         return "Response{" +
                 "flag=" + flag +
                 ", errorCode=" + errorCode +
-                ", errorMsg=" + errorMsg +
+                ", errorMessage=" + errorMessage +
                 ", data=" + data +
                 '}';
     }
