@@ -97,7 +97,7 @@ public class Config {
 
     @Override
     public String toString() {
-        return "Config{" +
+        return "ConfigDTO{" +
                 "swgd=" + swgd +
                 ", sftp83=" + sftp83 +
                 '}';
