@@ -17,6 +17,11 @@
     <properties>
         <buildPath>${project.build.directory}/build/${project.artifactId}${env}</buildPath>
         <skipTests>true</skipTests>
+
+        <springbootUtilFile>${project.basedir}/src/main/lib/springbootUtil-1.0.2.jar</springbootUtilFile>
+        <springbootUtilGroupId>com.zj0724</springbootUtilGroupId>
+        <springbootUtilArtifactId>springbootUtil</springbootUtilArtifactId>
+        <springbootUtilVersion>1.0.2</springbootUtilVersion>
     </properties>
 
     <!--依赖-->
@@ -75,9 +80,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.zj0724</groupId>
-            <artifactId>springbootUtil</artifactId>
-            <version>1.0.1</version>
+            <groupId>${springbootUtilGroupId}</groupId>
+            <artifactId>${springbootUtilArtifactId}</artifactId>
+            <version>${springbootUtilVersion}</version>
         </dependency>
 
         <dependency>
@@ -124,6 +129,7 @@
                     <include>config/*</include>
                     <include>bin/*</include>
                     <include>version</include>
+                    <include>README.md</include>
                 </includes>
                 <targetPath>${buildPath}</targetPath>
             </resource>
@@ -179,10 +185,10 @@
                         <id>springbootUtil</id>
                         <phase>clean</phase>
                         <configuration>
-                            <file>${project.basedir}/src/main/lib/springbootUtil-1.0.1.jar</file>
-                            <groupId>com.zj0724</groupId>
-                            <artifactId>springbootUtil</artifactId>
-                            <version>1.0.1</version>
+                            <file>${springbootUtilFile}</file>
+                            <groupId>${springbootUtilGroupId}</groupId>
+                            <artifactId>${springbootUtilArtifactId}</artifactId>
+                            <version>${springbootUtilVersion}</version>
                         </configuration>
                         <goals>
                             <goal>install-file</goal>

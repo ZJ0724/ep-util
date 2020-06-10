@@ -20,9 +20,10 @@ export default {
                     let response = new Response();
                     response.setData(JSON.parse(http.response));
                     console.log(response);
+
                     let flag = response.flag,
                         errorCode = response.errorCode,
-                        errorMsg = response.errorMsg,
+                        errorMessage = response.errorMessage,
                         data = response.data,
                         responseConfigTrue = responseConfig.true,
                         responseConfigFalse = responseConfig.false,
@@ -31,7 +32,7 @@ export default {
                     // 判断errorCode
                     for (let _errorCode of errorCodes) {
                         if (_errorCode === errorCode) {
-                            alert(errorMsg);
+                            alert(errorMessage);
                         }
                     }
 
@@ -40,7 +41,7 @@ export default {
                         successCallback(data);
                     }
                     if (flag === responseConfigFalse) {
-                        errorCallback(errorMsg);
+                        errorCallback(errorMessage);
                     }
                 }
             }

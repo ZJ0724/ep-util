@@ -22,6 +22,12 @@ export default [
     {
         hash: "#/disposableUpload",
         template: "/template/disposableUploadTemplate.html"
+    },
+
+    // 配置
+    {
+        hash: "#/config",
+        template: "/template/configTemplate.html"
     }
 
 ]
