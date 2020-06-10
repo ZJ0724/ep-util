@@ -4,13 +4,12 @@ import com.easipass.epUtil.entity.Config;
 import com.easipass.epUtil.entity.Response;
 import com.easipass.epUtil.service.ConfigService;
 import org.springframework.stereotype.Service;
-import java.util.Map;
 
 @Service
 public class ConfigServiceImpl implements ConfigService {
 
     @Override
-    public Response set(Map<String, Object> data) {
+    public Response set(String data) {
         // config
         Config config = Config.getConfig();
 

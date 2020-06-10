@@ -20,7 +20,7 @@ public class InitServiceImpl implements InitService {
 
         // 加载配置
         Config.getConfig().loadData();
-        log.info(Config.getConfig().makeString());
+        log.info(Config.getConfig().toString());
     }
 
     @Override

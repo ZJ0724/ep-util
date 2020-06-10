@@ -47,4 +47,23 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 获取文件内容
+     * */
+    public static String getData(File file) {
+        try {
+            String result = "";
+            InputStream inputStream = new FileInputStream(file);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                result = result + line;
+                line = bufferedReader.readLine();
+            }
+            return result;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
 }

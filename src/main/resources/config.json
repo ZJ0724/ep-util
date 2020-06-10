@@ -1,0 +1,16 @@
+{
+    "swgd": {
+		"url": "192.168.130.216",
+		"port": 1521,
+        "sid": "testeport",
+        "username": "devtester",
+        "password": "easytester"
+    },
+    "sftp83": {
+        "url": "192.168.120.83",
+        "port": 22,
+        "username": "gccoper",
+        "password": "gccoper",
+        "uploadPath": "/gcchome/winx/cus/cfg_c2e"
+    }
+}

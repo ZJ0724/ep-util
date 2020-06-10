@@ -2,7 +2,6 @@ package com.easipass.epUtil.service;
 
 import com.easipass.epUtil.entity.Response;
 import org.springframework.stereotype.Service;
-import java.util.Map;
 
 @Service
 public interface ConfigService {
@@ -14,7 +13,7 @@ public interface ConfigService {
      *
      * @return 响应
      * */
-    Response set(Map<String, Object> data);
+    Response set(String data);
 
     /**
      * 获取config数据

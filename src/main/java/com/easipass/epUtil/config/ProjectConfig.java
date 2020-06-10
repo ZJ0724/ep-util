@@ -17,7 +17,7 @@ public class ProjectConfig {
     /**
      * 配置文件
      * */
-    public final static File CONFIG_FILE = new File(CONFIG_DIR, "config");
+    public final static File CONFIG_FILE = new File(CONFIG_DIR, "config.json");
 
     /**
      * 系统类型

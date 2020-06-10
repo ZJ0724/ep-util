@@ -5,7 +5,7 @@ public class ResourcePathConfig {
     /**
      * 配置文件路径
      * */
-    public final static String CONFIG_PATH = "/resources/config";
+    public final static String CONFIG_PATH = "/resources/config.json";
 
     /**
      * windows版谷歌驱动路径

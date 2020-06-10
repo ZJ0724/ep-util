@@ -15,18 +15,33 @@ public class Test {
 
 
         Config config = Config.getConfig();
+
         config.loadData();
 
-        System.out.println(config.makeString());
+        System.out.println(config);
+
+//        String data = "{\n" +
+//                "    \"SWGD\": {\n" +
+//                "\t\t\"url\": \"192.168.130.216123\",\n" +
+//                "\t\t\"port\": 1521,\n" +
+//                "        \"sid\": \"testeport\",\n" +
+//                "        \"username\": \"devtester\",\n" +
+//                "        \"password\": \"easytester\"\n" +
+//                "    },\n" +
+//                "    \"sftp\": {\n" +
+//                "        \"url\": \"192.168.120.83\",\n" +
+//                "        \"port\": 22,\n" +
+//                "        \"username\": \"gccoper\",\n" +
+//                "        \"password\": \"gccoper\",\n" +
+//                "        \"uploadPath\": \"/gcchome/winx/cus/cfg_c2e\"\n" +
+//                "    }\n" +
+//                "}";
 //
-//        Map<String, String> data = new LinkedHashMap<>();
-//        data.put("SWGDUrl", "123");
 //
 //        config.setData(data);
 //
-//        config.loadData();
-//        System.out.println(config.makeString());
-
+//
+//        System.out.println(config);
 
 
     }
