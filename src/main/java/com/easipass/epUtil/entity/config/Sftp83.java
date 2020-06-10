@@ -1,11 +1,6 @@
 package com.easipass.epUtil.entity.config;
 
-import com.alibaba.fastjson.JSONObject;
-import com.easipass.epUtil.exception.ErrorException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-
-public class Sftp83 {
+public class Sftp83 extends AbstractConfig {
 
     /**
      * 地址
@@ -91,27 +86,6 @@ public class Sftp83 {
      * */
     public static Sftp83 getSftp83() {
         return SFTP_83;
-    }
-
-    /**
-     * 加载数据
-     * */
-    public void loadData(JSONObject jsonObject) {
-        // 所有字段
-        Field[] fields = this.getClass().getDeclaredFields();
-
-        for (Field field : fields) {
-            if (Modifier.isStatic(field.getModifiers())) {
-                continue;
-            }
-            field.setAccessible(true);
-            String fieldName = field.getName();
-            try {
-                field.set(this, jsonObject.get(fieldName));
-            } catch (IllegalAccessException e) {
-                throw ErrorException.getErrorException(e.getMessage());
-            }
-        }
     }
 
     @Override

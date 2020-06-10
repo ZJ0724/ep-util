@@ -5,6 +5,7 @@ import com.easipass.epUtil.config.ProjectConfig;
 import com.easipass.epUtil.config.ResourcePathConfig;
 import com.easipass.epUtil.entity.config.Sftp83;
 import com.easipass.epUtil.entity.config.Swgd;
+import com.easipass.epUtil.exception.ConfigException;
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.util.FileUtil;
 import java.io.*;
@@ -65,17 +66,21 @@ public class Config {
      * 加载数据
      * */
     public void loadData() {
-        // 配置文件数据
-        String configData = FileUtil.getData(ProjectConfig.CONFIG_FILE);
+        try {
+            // 配置文件数据
+            String configData = FileUtil.getData(ProjectConfig.CONFIG_FILE);
 
-        // json数据
-        JSONObject jsonObject = JSONObject.parseObject(configData);
+            // json数据
+            JSONObject jsonObject = JSONObject.parseObject(configData);
 
-        // 加载SWGD
-        this.swgd.loadData(jsonObject.getJSONObject("swgd"));
+            // 加载SWGD
+            this.swgd.loadData(jsonObject.getJSONObject("swgd"));
 
-        // 加载sftp
-        this.sftp83.loadData(jsonObject.getJSONObject("sftp83"));
+            // 加载sftp
+            this.sftp83.loadData(jsonObject.getJSONObject("sftp83"));
+        } catch (com.alibaba.fastjson.JSONException e) {
+            throw ConfigException.configFileException();
+        }
     }
 
     /**
