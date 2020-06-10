@@ -15,35 +15,6 @@
 
 
 
-## 配置文件设置
-
-默认配置文件路径
-
-```bash
-~/.epUtil/config
-```
-
-
-config默认配置
-
-```properties
-# SWGD数据库配置
- SWGD.url=192.168.130.216
-SWGD.port=1521
-SWGD.sid=testeport
-SWGD.username=devtester
-SWGD.password=easytester
-
-# SFTP-83配置
-sftp83.url=192.168.120.83
-sftp83.port=22
-sftp83.username=gccoper
-sftp83.password=gccoper
-sftp83.uploadPath=/gcchome/winx/cus/cfg_c2e
-```
-
-
-
 ## 启动
 
 + **windows**

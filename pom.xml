@@ -129,6 +129,7 @@
                     <include>config/*</include>
                     <include>bin/*</include>
                     <include>version</include>
+                    <include>README.md</include>
                 </includes>
                 <targetPath>${buildPath}</targetPath>
             </resource>
