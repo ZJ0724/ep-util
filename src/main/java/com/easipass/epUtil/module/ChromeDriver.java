@@ -4,9 +4,13 @@ import com.easipass.epUtil.config.ProjectConfig;
 import com.easipass.epUtil.config.SystemTypeConfig;
 import com.easipass.epUtil.exception.ChromeDriverException;
 import com.easipass.epUtil.exception.ErrorException;
+import com.easipass.epUtil.service.impl.InitServiceImpl;
+import com.easipass.epUtil.util.FileUtil;
 import com.zj0724.uiAuto.WebDriver;
 import com.zj0724.uiAuto.exception.WebDriverException;
 import com.zj0724.uiAuto.webDriver.ChromeWebDriver;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class ChromeDriver {
 
@@ -21,6 +25,26 @@ public class ChromeDriver {
      * 检查驱动
      * */
     public static void check() {
+        // 驱动文件是否存在，不存在生成默认驱动
+        if (!ProjectConfig.CHROME_DRIVER.exists()) {
+            InputStream inputStream = InitServiceImpl.class.getResourceAsStream(ProjectConfig.RESOURCE_CHROME_DRIVER);
+            FileUtil.copyOtherFile(inputStream, ProjectConfig.CHROME_DRIVER);
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                throw ErrorException.getErrorException(e.getMessage());
+            }
+
+            // 如果是linux，修改权限777
+            if (ProjectConfig.SYSTEM_TYPE == SystemTypeConfig.linux) {
+                try {
+                    Runtime.getRuntime().exec("chmod 777 " + ProjectConfig.LINUX_CHROME_DRIVER.getAbsolutePath());
+                } catch (IOException e) {
+                    throw ErrorException.getErrorException(e.getMessage());
+                }
+            }
+        }
+
         try {
             WebDriver webDriver = new ChromeWebDriver(ProjectConfig.CHROME_DRIVER);
             webDriver.close();
