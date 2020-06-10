@@ -1,6 +1,6 @@
 package com.easipass.epUtil.test;
 
-import com.easipass.epUtil.entity.ResultDTO;
+import com.easipass.epUtil.entity.dto.ResultDTO;
 import com.easipass.epUtil.service.AgentResultService;
 import org.junit.Test;
 import javax.annotation.Resource;

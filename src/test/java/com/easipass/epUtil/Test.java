@@ -1,13 +1,6 @@
 package com.easipass.epUtil;
 
-import com.easipass.epUtil.entity.ChromeDriver;
 import com.easipass.epUtil.entity.Config;
-import com.easipass.epUtil.entity.Result;
-import com.easipass.epUtil.entity.result.formResult.TongXunFormResult;
-import com.easipass.epUtil.entity.sftp.Sftp83;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class Test {
 

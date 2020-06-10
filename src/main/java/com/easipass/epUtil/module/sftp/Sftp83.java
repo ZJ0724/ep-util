@@ -1,8 +1,8 @@
-package com.easipass.epUtil.entity.sftp;
+package com.easipass.epUtil.module.sftp;
 
 import com.easipass.epUtil.entity.Config;
 import com.easipass.epUtil.entity.Result;
-import com.easipass.epUtil.entity.Sftp;
+import com.easipass.epUtil.module.Sftp;
 
 public class Sftp83 extends Sftp {
 

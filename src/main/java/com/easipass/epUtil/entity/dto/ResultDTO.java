@@ -1,4 +1,4 @@
-package com.easipass.epUtil.entity;
+package com.easipass.epUtil.entity.dto;
 
 import com.zj0724.springbootUtil.annotation.NotNull;
 import org.springframework.stereotype.Component;

@@ -1,9 +1,10 @@
 package com.easipass.epUtil.service.impl.decModResult;
 
 import com.easipass.epUtil.entity.*;
-import com.easipass.epUtil.entity.ResultDTO;
+import com.easipass.epUtil.entity.dto.ResultDTO;
 import com.easipass.epUtil.entity.result.decModResult.QPDecModResult;
-import com.easipass.epUtil.entity.sftp.Sftp83;
+import com.easipass.epUtil.module.ChromeDriver;
+import com.easipass.epUtil.module.sftp.Sftp83;
 import com.easipass.epUtil.service.DecModResultService;
 import org.springframework.stereotype.Service;
 

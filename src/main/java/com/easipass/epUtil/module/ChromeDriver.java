@@ -1,4 +1,4 @@
-package com.easipass.epUtil.entity;
+package com.easipass.epUtil.module;
 
 import com.easipass.epUtil.config.ProjectConfig;
 import com.easipass.epUtil.config.SystemTypeConfig;

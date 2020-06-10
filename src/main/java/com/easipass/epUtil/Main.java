@@ -1,6 +1,6 @@
 package com.easipass.epUtil;
 
-import com.easipass.epUtil.entity.Log;
+import com.easipass.epUtil.module.Log;
 import com.easipass.epUtil.exception.ChromeDriverException;
 import com.easipass.epUtil.exception.ConfigException;
 import com.easipass.epUtil.service.InitService;

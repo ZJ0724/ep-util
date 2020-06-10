@@ -1,6 +1,6 @@
 package com.easipass.epUtil.handler;
 
-import com.easipass.epUtil.entity.Log;
+import com.easipass.epUtil.module.Log;
 import com.easipass.epUtil.entity.Response;
 import com.easipass.epUtil.exception.OracleException;
 import com.easipass.epUtil.exception.SftpException;

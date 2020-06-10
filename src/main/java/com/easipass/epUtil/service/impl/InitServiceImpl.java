@@ -2,9 +2,9 @@ package com.easipass.epUtil.service.impl;
 
 import com.easipass.epUtil.config.*;
 import com.easipass.epUtil.config.SystemTypeConfig;
-import com.easipass.epUtil.entity.ChromeDriver;
+import com.easipass.epUtil.module.ChromeDriver;
 import com.easipass.epUtil.entity.Config;
-import com.easipass.epUtil.entity.Log;
+import com.easipass.epUtil.module.Log;
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.service.InitService;
 import com.easipass.epUtil.util.FileUtil;

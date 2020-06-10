@@ -1,8 +1,8 @@
 package com.easipass.epUtil.entity.result;
 
 import com.easipass.epUtil.entity.Result;
-import com.easipass.epUtil.entity.ResultDTO;
-import com.easipass.epUtil.entity.oracle.SWGDOracle;
+import com.easipass.epUtil.entity.dto.ResultDTO;
+import com.easipass.epUtil.module.oracle.SWGDOracle;
 
 public abstract class FormResult extends Result {
 
