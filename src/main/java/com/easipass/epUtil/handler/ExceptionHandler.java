@@ -1,6 +1,7 @@
 package com.easipass.epUtil.handler;
 
 import com.easipass.epUtil.config.ErrorCodeConfig;
+import com.easipass.epUtil.exception.ChromeDriverException;
 import com.easipass.epUtil.exception.ConfigException;
 import com.easipass.epUtil.module.Log;
 import com.easipass.epUtil.entity.Response;
@@ -38,6 +39,15 @@ public class ExceptionHandler {
     public Response configException(Exception e) {
         Log.getLog().error(e.getMessage());
         return Response.returnFalse(ErrorCodeConfig.CONFIG_ERROR);
+    }
+
+    /**
+     * 谷歌驱动异常
+     * */
+    @org.springframework.web.bind.annotation.ExceptionHandler(ChromeDriverException.class)
+    public Response chromeDriverException(Exception e) {
+        Log.getLog().error(e.getMessage());
+        return Response.returnFalse("驱动异常，请更换驱动文件");
     }
 
 }

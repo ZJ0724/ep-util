@@ -3,10 +3,12 @@ package com.easipass.epUtil.entity;
 import com.alibaba.fastjson.JSONObject;
 import com.easipass.epUtil.config.ProjectConfig;
 import com.easipass.epUtil.config.ResourcePathConfig;
+import com.easipass.epUtil.entity.config.DaKa;
 import com.easipass.epUtil.entity.config.Sftp83;
 import com.easipass.epUtil.entity.config.Swgd;
 import com.easipass.epUtil.exception.ConfigException;
 import com.easipass.epUtil.exception.ErrorException;
+import com.easipass.epUtil.module.Log;
 import com.easipass.epUtil.util.FileUtil;
 import java.io.*;
 
@@ -23,9 +25,19 @@ public class Config {
     private final Sftp83 sftp83 = Sftp83.getSftp83();
 
     /**
+     * daKa
+     * */
+    private final DaKa daKa = DaKa.getDaKa();
+
+    /**
      * 单例
      * */
     private final static Config config = new Config();
+
+    /**
+     * 是否已经加载数据
+     * */
+    private boolean isLoadData = false;
 
     /**
      * 构造函数
@@ -55,10 +67,18 @@ public class Config {
         return sftp83;
     }
 
+    public DaKa getDaKa() {
+        return daKa;
+    }
+
     /**
      * 获取单例
      * */
     public static Config getConfig() {
+        if (!config.isLoadData) {
+            config.loadData();
+        }
+
         return config;
     }
 
@@ -67,6 +87,7 @@ public class Config {
      * */
     public void loadData() {
         try {
+            Log.getLog().info("正在加载config...");
             // 配置文件数据
             String configData = FileUtil.getData(ProjectConfig.CONFIG_FILE);
 
@@ -78,6 +99,11 @@ public class Config {
 
             // 加载sftp
             this.sftp83.loadData(jsonObject.getJSONObject("sftp83"));
+
+            // 加载daKa
+            this.daKa.loadData(jsonObject.getJSONObject("daKa"));
+
+            isLoadData = true;
         } catch (com.alibaba.fastjson.JSONException e) {
             throw ConfigException.configFileException();
         }
@@ -102,9 +128,10 @@ public class Config {
 
     @Override
     public String toString() {
-        return "ConfigDTO{" +
+        return "Config{" +
                 "swgd=" + swgd +
                 ", sftp83=" + sftp83 +
+                ", daKa=" + daKa +
                 '}';
     }
 

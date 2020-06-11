@@ -34,8 +34,8 @@ public abstract class AbstractConfig {
 
             try {
                 field.set(this, value);
-            } catch (IllegalAccessException e) {
-                throw ErrorException.getErrorException(e.getMessage());
+            } catch (IllegalAccessException | IllegalArgumentException e) {
+                throw ConfigException.configFileException();
             }
         }
     }

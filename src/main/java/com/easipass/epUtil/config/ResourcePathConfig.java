@@ -47,4 +47,9 @@ public class ResourcePathConfig {
      * */
     public static final String INDEX_HTML = "/page/index.html";
 
+    /**
+     * daKaSign
+     * */
+    public final static String DAKA_SIGN = "/resources/daKaSign";
+
 }

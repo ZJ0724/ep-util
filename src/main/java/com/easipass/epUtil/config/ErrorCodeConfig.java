@@ -4,7 +4,7 @@ public enum ErrorCodeConfig {
 
     ERROR(500, "后台错误"),
     PARAM_ERROR(400, "请求参数有误或缺失"),
-    CONFIG_ERROR(501, "配置文件错误");
+    CONFIG_ERROR(501, "配置文件错误，请不要手动修改配置文件");
 
     private Object errorCode;
 

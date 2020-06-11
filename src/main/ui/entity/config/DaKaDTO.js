@@ -1,10 +1,11 @@
-export default class Sftp83DTO {
+export default class DaKaDTO {
 
-    url;
-    port;
+    date;
+    week;
+    toWorkTime;
+    offWorkTime;
     username;
     password;
-    uploadPath;
 
     // 设置数据
     setData(data) {

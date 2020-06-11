@@ -33,6 +33,7 @@ export default {
                     for (let _errorCode of errorCodes) {
                         if (_errorCode === errorCode) {
                             alert(errorMessage);
+                            return;
                         }
                     }
 

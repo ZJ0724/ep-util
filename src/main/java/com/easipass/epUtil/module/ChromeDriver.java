@@ -2,6 +2,8 @@ package com.easipass.epUtil.module;
 
 import com.easipass.epUtil.config.ProjectConfig;
 import com.easipass.epUtil.config.SystemTypeConfig;
+import com.easipass.epUtil.entity.Config;
+import com.easipass.epUtil.entity.config.DaKa;
 import com.easipass.epUtil.exception.ChromeDriverException;
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.service.impl.InitServiceImpl;
@@ -14,11 +16,15 @@ import java.io.InputStream;
 
 public class ChromeDriver {
 
-    private WebDriver webDriver;
+    private final WebDriver webDriver;
 
     public ChromeDriver() {
-        webDriver = new ChromeWebDriver(ProjectConfig.CHROME_DRIVER);
-        Log.getLog().info("已打开谷歌驱动!");
+        try {
+            webDriver = new ChromeWebDriver(ProjectConfig.CHROME_DRIVER);
+            Log.getLog().info("已打开谷歌驱动!");
+        } catch (WebDriverException e) {
+            throw ChromeDriverException.chromeDriverFileException();
+        }
     }
 
     /**
@@ -97,6 +103,29 @@ public class ChromeDriver {
     public void close() {
         this.webDriver.close();
         Log.getLog().info("谷歌驱动已关闭!");
+    }
+
+    /**
+     * 执行打卡
+     * */
+    public void daKa() {
+        Log log = Log.getLog();
+        DaKa daKa = Config.getConfig().getDaKa();
+
+        this.webDriver.url("http://192.168.0.41/index.jsp");
+        this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(5) > td:nth-child(2) > input[type=text]").sendKey(daKa.getUsername());
+        this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(6) > td:nth-child(2) > input[type=password]").sendKey(daKa.getPassword());
+        this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(7) > td:nth-child(1) > div > img").click();
+        this.webDriver.findElementByCssSelector("#Image1").click();
+        this.webDriver.close();
+        log.info("打卡完成");
+
+        // 等待1分钟
+        try {
+            Thread.sleep(60000);
+        } catch (InterruptedException e) {
+            throw ErrorException.getErrorException(e.getMessage());
+        }
     }
 
 }

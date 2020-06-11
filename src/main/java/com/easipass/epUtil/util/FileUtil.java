@@ -66,4 +66,17 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 写入文件数据
+     * */
+    public static void setData(File file, String data) {
+        try {
+            OutputStream outputStream = new FileOutputStream(file);
+            outputStream.write(data.getBytes());
+            outputStream.close();
+        } catch (IOException e) {
+            throw ErrorException.getErrorException(e.getMessage());
+        }
+    }
+
 }

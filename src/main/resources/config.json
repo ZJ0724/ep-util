@@ -12,5 +12,13 @@
         "username": "gccoper",
         "password": "gccoper",
         "uploadPath": "/gcchome/winx/cus/cfg_c2e"
+    },
+    "daKa": {
+        "date": ["2020-04-20", "2020-04-20"],
+        "week": ["星期一", "星期二"],
+        "toWorkTime": "09:00",
+        "offWorkTime": "17:31",
+        "username": "jzhou",
+        "password": "easipass"
     }
 }

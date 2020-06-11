@@ -2,6 +2,7 @@ package com.easipass.epUtil.service.impl;
 
 import com.easipass.epUtil.module.ChromeDriver;
 import com.easipass.epUtil.entity.Config;
+import com.easipass.epUtil.module.DaKa;
 import com.easipass.epUtil.module.Log;
 import com.easipass.epUtil.service.InitService;
 
@@ -11,10 +12,8 @@ public class InitServiceImpl implements InitService {
 
     @Override
     public void configLoad() {
-        log.info("加载配置文件...");
-
         // 加载配置
-        Config.getConfig().loadData();
+        Config.getConfig();
         log.info(Config.getConfig().toString());
     }
 
@@ -24,6 +23,14 @@ public class InitServiceImpl implements InitService {
         // 检查谷歌驱动
         ChromeDriver.check();
         log.info("驱动正常！");
+    }
+
+    @Override
+    public void daKaIsStart() {
+        DaKa daKa = DaKa.getDaKa();
+        if (daKa.check()) {
+            daKa.start();
+        }
     }
 
 }

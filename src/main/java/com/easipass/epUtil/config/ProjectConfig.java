@@ -54,4 +54,9 @@ public class ProjectConfig {
      * */
     public final static File LOG_FILE = new File(System.getProperty("user.dir"), "../log/info.log");
 
+    /**
+     * daKa标记文件
+     * */
+    public final static File DAKA_SIGN = new File(CONFIG_DIR, "daKaSign");
+
 }

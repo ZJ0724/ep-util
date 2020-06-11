@@ -45,6 +45,25 @@
         </div>
     </blockquote>
 
+    <blockquote class="layui-elem-quote" style="margin-top: 20px;">
+        <div class="title">
+            daKa
+        </div>
+
+        <div style="margin-top: 20px;">
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>参数名</th>
+                    <th>参数值</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody id="daKaTable"></tbody>
+            </table>
+        </div>
+    </blockquote>
+
     <script type="module">
 
         import ConfigDTO from "../entity/ConfigDTO.js";
@@ -65,7 +84,10 @@
                 swgdTable: document.getElementById("swgdTable"),
 
                 // sftp83表格
-                sftp83Table: document.getElementById("sftp83Table")
+                sftp83Table: document.getElementById("sftp83Table"),
+
+                // daKa表格
+                daKaTable: document.getElementById("daKaTable")
             };
 
             // 方法
@@ -78,17 +100,22 @@
                         let config = data.config;
                         let swgd = config.swgd;
                         let sftp83 = config.sftp83;
+                        let daKa = config.daKa;
 
                         // 加载swgd表格
                         method.loadTable("swgd", element.swgdTable, swgd);
 
                         // 加载sftp83表格
                         method.loadTable("sftp83", element.sftp83Table, sftp83);
+
+                        // 加载daKa表格
+                        method.loadTable("daKa", element.daKaTable, daKa);
                     });
                 },
 
                 // 编辑弹窗
                 setBox(key1, key2, value) {
+                    console.log(value);
                     layui.use('layer', function(){
                         layer.open({
                             type: 1,
@@ -109,7 +136,15 @@
 
                         setBoxInput.value = value;
                         setBoxButton.addEventListener("click", function () {
-                            data.config[key1][key2] = setBoxInput.value;
+                            let inputValue = setBoxInput.value;
+
+                            // 兼容List
+                            if (value instanceof Array) {
+                                data.config[key1][key2] = inputValue.split(",");
+                            } else {
+                                data.config[key1][key2] = inputValue;
+                            }
+
                             configApi.set(data.config).then(function () {
                                 popupCommon.openMsg("修改成功");
                                 method.loadData();
