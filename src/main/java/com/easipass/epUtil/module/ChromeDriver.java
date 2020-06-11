@@ -119,13 +119,6 @@ public class ChromeDriver {
         this.webDriver.findElementByCssSelector("#Image1").click();
         this.webDriver.close();
         log.info("打卡完成");
-
-        // 等待1分钟
-        try {
-            Thread.sleep(60000);
-        } catch (InterruptedException e) {
-            throw ErrorException.getErrorException(e.getMessage());
-        }
     }
 
 }

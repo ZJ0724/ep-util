@@ -1,0 +1,110 @@
+<div style="padding: 0 30%;">
+
+    <div class="layui-card">
+        <div class="layui-card-header">
+            <span class="title">状态</span>
+            <span style="margin-left: 20px;" id="status"></span>
+        </div>
+        <div class="layui-card-body">
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" id="startButton">开启</button>
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="stopButton">关闭</button>
+        </div>
+    </div>
+
+    <div class="layui-card">
+        <div class="layui-card-header">
+            <span class="title">日志</span>
+        </div>
+        <div class="layui-card-body" id="log">
+<!--            <div></div>-->
+        </div>
+    </div>
+
+    <script type="module">
+
+        import daKaApi from "../api/daKaApi.js";
+        import popupCommon from "../common/popupCommon.js";
+
+        (function () {
+
+            // 元素
+            let element = {
+                // 状态
+                status: document.getElementById("status"),
+
+                // 开启按钮
+                startButton: document.getElementById("startButton"),
+
+                // 关闭按钮
+                stopButton: document.getElementById("stopButton"),
+
+                // 日志
+                log: document.getElementById("log")
+            };
+
+            // 方法
+            let method = {
+                // 获取状态
+                getStatus() {
+                    daKaApi.getStatus().then(function (responseData) {
+                        element.status.innerHTML = responseData + "";
+                    });
+                },
+
+                // 开启
+                start() {
+                    daKaApi.start().then(function () {
+                        popupCommon.openMsg("开启成功");
+                        method.getStatus();
+                    }).catch(function (errorMessage) {
+                        popupCommon.openPopup(errorMessage);
+                    });
+                },
+
+                // 关闭
+                stop() {
+                    daKaApi.stop().then(function () {
+                        popupCommon.openMsg("已关闭");
+                        method.getStatus();
+                    });
+                },
+
+                // 获取日志
+                getLog(index) {
+                    daKaApi.getLog().then(function (responseData) {
+                        // 先清除日志
+                        element.log.innerHTML = "";
+
+                        for (let value of responseData) {
+                            let div = document.createElement("div");
+                            div.innerHTML = value;
+                            element.log.appendChild(div);
+                        }
+                    });
+
+                    if (index !== undefined && index > 1) {
+                        return;
+                    }
+
+                    window.getLogInterval = setInterval(function () {
+                        method.getLog(2);
+                    }, 1000);
+                }
+            };
+
+            // 绑定事件
+            element.startButton.addEventListener("click", function () {
+                method.start();
+            });
+            element.stopButton.addEventListener("click", function () {
+                method.stop();
+            });
+
+            method.getStatus();
+            method.getLog();
+
+        })();
+
+    </script>
+
+</div>

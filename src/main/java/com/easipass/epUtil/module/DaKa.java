@@ -30,6 +30,11 @@ public class DaKa {
     private final List<String> daKaLog = new ArrayList<>();
 
     /**
+     * 是否已经开启打卡
+     * */
+    public boolean isStart = false;
+
+    /**
      * 单例
      * */
     private final static DaKa DA_KA = new DaKa();
@@ -65,23 +70,23 @@ public class DaKa {
      * 开始打卡
      * */
     public void start() {
+        if (isStart) {
+            addLog("已开启打卡！");
+            return;
+        }
+
+        isStart = true;
+
         // 将标记为设置成start
         FileUtil.setData(ProjectConfig.DAKA_SIGN, DaKaSignConfig.START.getData());
 
-        log.info("开启打卡...");
+        addLog("开启打卡...");
 
         // 开启另一个线程
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while (check()) {
-                    try {
-                        log.info("等待打卡...");
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        throw ErrorException.getErrorException(e.getMessage());
-                    }
-
                     // 检查日期是否符合
                     boolean dateOk = false;
                     for (String date : daKa.getDate()) {
@@ -111,20 +116,24 @@ public class DaKa {
 
                     // 匹配时间进行打卡
                     if (DateUtil.getNowTime().equals(daKa.getToWorkTime())) {
-                        log.info("开始上班打卡...");
                         addLog("开始上班打卡...");
-                        ChromeDriver chromeDriver = new ChromeDriver();
-                        chromeDriver.daKa();
-                        chromeDriver.close();
-                        addLog("打卡完成！");
-                    }
-                    if (DateUtil.getNowTime().equals(daKa.getOffWorkTime())) {
-                        log.info("开始下班打卡");
+                    } else if (DateUtil.getNowTime().equals(daKa.getOffWorkTime())) {
                         addLog("开始下班打卡...");
-                        ChromeDriver chromeDriver = new ChromeDriver();
-                        chromeDriver.daKa();
-                        chromeDriver.close();
-                        addLog("打卡完成！");
+                    } else {
+                        continue;
+                    }
+
+                    ChromeDriver chromeDriver = new ChromeDriver();
+                    chromeDriver.daKa();
+                    chromeDriver.close();
+
+                    addLog("打卡完成！");
+
+                    // 打卡完等待1分钟
+                    try {
+                        Thread.sleep(60000);
+                    } catch (InterruptedException e) {
+                        throw ErrorException.getErrorException(e.getMessage());
                     }
                 }
             }
@@ -138,12 +147,17 @@ public class DaKa {
         // 将标记为设置成stop
         FileUtil.setData(ProjectConfig.DAKA_SIGN, DaKaSignConfig.STOP.getData());
         log.info("停止打卡！");
+
+        daKaLog.clear();
+
+        isStart = false;
     }
 
     /**
      * 添加日志
      * */
     private void addLog(String log) {
+        this.log.info(log);
         daKaLog.add("[" + DateUtil.getDate("yyyy-MM-dd HH:mm:ss") + "] - " + log);
     }
 
@@ -159,6 +173,13 @@ public class DaKa {
      * */
     public static DaKa getDaKa() {
         return DA_KA;
+    }
+
+    /**
+     * 获取当前打卡状态
+     * */
+    public boolean getStatus() {
+        return isStart;
     }
 
 }
