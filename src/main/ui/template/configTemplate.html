@@ -140,7 +140,11 @@
 
                             // 兼容List
                             if (value instanceof Array) {
-                                data.config[key1][key2] = inputValue.split(",");
+                                if (inputValue === "") {
+                                    data.config[key1][key2] = [];
+                                } else {
+                                    data.config[key1][key2] = inputValue.split(",");
+                                }
                             } else {
                                 data.config[key1][key2] = inputValue;
                             }
