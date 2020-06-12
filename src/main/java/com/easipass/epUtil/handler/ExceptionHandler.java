@@ -1,12 +1,9 @@
 package com.easipass.epUtil.handler;
 
 import com.easipass.epUtil.config.ErrorCodeConfig;
-import com.easipass.epUtil.exception.ChromeDriverException;
-import com.easipass.epUtil.exception.ConfigException;
-import com.easipass.epUtil.module.Log;
+import com.easipass.epUtil.exception.*;
+import com.easipass.epUtil.component.Log;
 import com.easipass.epUtil.entity.Response;
-import com.easipass.epUtil.exception.OracleException;
-import com.easipass.epUtil.exception.SftpException;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -47,7 +44,18 @@ public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(ChromeDriverException.class)
     public Response chromeDriverException(Exception e) {
         Log.getLog().error(e.getMessage());
-        return Response.returnFalse("驱动异常，请更换驱动文件");
+        return Response.returnFalse(e.getMessage());
+    }
+
+    /**
+     * 一次上传异常
+     *
+     * @return 响应结果
+     * */
+    @org.springframework.web.bind.annotation.ExceptionHandler(DisposableUploadException.class)
+    public Response disposableUploadException(Exception e) {
+        Log.getLog().error(e.getMessage());
+        return Response.returnFalse(e.getMessage());
     }
 
 }

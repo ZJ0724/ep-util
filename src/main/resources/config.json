@@ -14,8 +14,8 @@
         "uploadPath": "/gcchome/winx/cus/cfg_c2e"
     },
     "daKa": {
-        "date": ["2020-04-20", "2020-04-20"],
-        "week": ["星期一", "星期二"],
+        "date": [],
+        "week": ["星期一", "星期二", "星期三", "星期四", "星期五"],
         "toWorkTime": "09:00",
         "offWorkTime": "17:31",
         "username": "jzhou",

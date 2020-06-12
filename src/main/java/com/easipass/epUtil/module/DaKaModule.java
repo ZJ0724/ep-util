@@ -1,59 +1,39 @@
 package com.easipass.epUtil.module;
 
+import com.easipass.epUtil.component.ChromeDriver;
+import com.easipass.epUtil.component.Log;
 import com.easipass.epUtil.config.DaKaSignConfig;
-import com.easipass.epUtil.config.ProjectConfig;
-import com.easipass.epUtil.config.ResourcePathConfig;
 import com.easipass.epUtil.entity.Config;
+import com.easipass.epUtil.entity.DaKaSign;
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.util.DateUtil;
-import com.easipass.epUtil.util.FileUtil;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DaKa {
+public class DaKaModule {
 
-    /**
-     * 打卡配置
-     * */
+    /** 打卡配置 */
     private final com.easipass.epUtil.entity.config.DaKa daKa = Config.getConfig().getDaKa();
 
-    /**
-     * 日志
-     * */
+    /** 日志组件 */
     private final Log log = Log.getLog();
 
-    /**
-     * 打卡日志
-     * */
+    /** 打卡日志 */
     private final List<String> daKaLog = new ArrayList<>();
 
-    /**
-     * 是否已经开启打卡
-     * */
+    /** 是否已经开启打卡 */
     public boolean isStart = false;
 
-    /**
-     * 单例
-     * */
-    private final static DaKa DA_KA = new DaKa();
+    /** 单例 */
+    private final static DaKaModule DA_KA = new DaKaModule();
+
+    /** daKaSign */
+    private final DaKaSign daKaSign = DaKaSign.getDaKaSign();
 
     /**
      * 构造函数
      * */
-    private DaKa() {
-        // 检查是否存在打卡标记文件，不存在生成默认标记文件
-        if (!ProjectConfig.DAKA_SIGN.exists()) {
-            InputStream inputStream = DaKa.class.getResourceAsStream(ResourcePathConfig.DAKA_SIGN);
-            FileUtil.copyTextFile(inputStream, ProjectConfig.DAKA_SIGN);
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                throw ErrorException.getErrorException(e.getMessage());
-            }
-        }
-    }
+    private DaKaModule() {}
 
     /**
      * 检查是否执行打卡
@@ -61,9 +41,7 @@ public class DaKa {
      * @return 标记为1，则开始打卡，其他都不进行打卡
      * */
     public boolean check() {
-        String dakSign = FileUtil.getData(ProjectConfig.DAKA_SIGN);
-
-        return DaKaSignConfig.START.getData().equals(dakSign);
+        return DaKaSignConfig.START.getData().equals(daKaSign.getData());
     }
 
     /**
@@ -78,7 +56,7 @@ public class DaKa {
         isStart = true;
 
         // 将标记为设置成start
-        FileUtil.setData(ProjectConfig.DAKA_SIGN, DaKaSignConfig.START.getData());
+        daKaSign.setDaKa(DaKaSignConfig.START.getData());
 
         addLog("开启打卡...");
 
@@ -145,11 +123,13 @@ public class DaKa {
      * */
     public void stop() {
         // 将标记为设置成stop
-        FileUtil.setData(ProjectConfig.DAKA_SIGN, DaKaSignConfig.STOP.getData());
+        daKaSign.setDaKa(DaKaSignConfig.STOP.getData());
         log.info("停止打卡！");
 
+        // 清除日志
         daKaLog.clear();
 
+        // 打卡标记设置成false
         isStart = false;
     }
 
@@ -171,7 +151,7 @@ public class DaKa {
     /**
      * 获取单例
      * */
-    public static DaKa getDaKa() {
+    public static DaKaModule getDaKa() {
         return DA_KA;
     }
 

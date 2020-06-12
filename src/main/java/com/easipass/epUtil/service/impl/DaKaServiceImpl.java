@@ -1,7 +1,7 @@
 package com.easipass.epUtil.service.impl;
 
 import com.easipass.epUtil.entity.Response;
-import com.easipass.epUtil.module.DaKa;
+import com.easipass.epUtil.module.DaKaModule;
 import com.easipass.epUtil.service.DaKaService;
 import org.springframework.stereotype.Service;
 
@@ -11,35 +11,35 @@ public class DaKaServiceImpl implements DaKaService {
     /**
      * 打卡模块
      * */
-    private final DaKa daKa = DaKa.getDaKa();
+    private final DaKaModule daKaModule = DaKaModule.getDaKa();
 
     @Override
     public Response start() {
         // 已开启打卡后不再次开启
-        if (daKa.getStatus()) {
+        if (daKaModule.getStatus()) {
             return Response.returnFalse("已开启打卡");
         }
 
-        daKa.start();
+        daKaModule.start();
 
         return Response.returnTrue();
     }
 
     @Override
     public Response stop() {
-        daKa.stop();
+        daKaModule.stop();
 
         return Response.returnTrue();
     }
 
     @Override
     public Response getLog() {
-        return Response.returnTrue(daKa.getLog());
+        return Response.returnTrue(daKaModule.getLog());
     }
 
     @Override
     public Response getStatus() {
-        return Response.returnTrue(daKa.getStatus());
+        return Response.returnTrue(daKaModule.getStatus());
     }
 
 }

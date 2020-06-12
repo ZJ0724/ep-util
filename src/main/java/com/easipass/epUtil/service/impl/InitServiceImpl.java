@@ -1,9 +1,9 @@
 package com.easipass.epUtil.service.impl;
 
-import com.easipass.epUtil.module.ChromeDriver;
+import com.easipass.epUtil.component.ChromeDriver;
 import com.easipass.epUtil.entity.Config;
-import com.easipass.epUtil.module.DaKa;
-import com.easipass.epUtil.module.Log;
+import com.easipass.epUtil.module.DaKaModule;
+import com.easipass.epUtil.component.Log;
 import com.easipass.epUtil.service.InitService;
 
 public class InitServiceImpl implements InitService {
@@ -27,9 +27,9 @@ public class InitServiceImpl implements InitService {
 
     @Override
     public void daKaIsStart() {
-        DaKa daKa = DaKa.getDaKa();
-        if (daKa.check()) {
-            daKa.start();
+        DaKaModule daKaModule = DaKaModule.getDaKa();
+        if (daKaModule.check()) {
+            daKaModule.start();
         }
     }
 

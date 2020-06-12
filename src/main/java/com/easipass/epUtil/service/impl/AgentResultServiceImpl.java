@@ -3,26 +3,21 @@ package com.easipass.epUtil.service.impl;
 import com.easipass.epUtil.entity.*;
 import com.easipass.epUtil.entity.dto.ResultDTO;
 import com.easipass.epUtil.entity.result.AgentResult;
-import com.easipass.epUtil.module.ChromeDriver;
-import com.easipass.epUtil.module.sftp.Sftp83;
+import com.easipass.epUtil.module.ResultModule;
 import com.easipass.epUtil.service.AgentResultService;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AgentResultServiceImpl implements AgentResultService {
 
+    /** 回执模块 */
+    private final ResultModule resultModule = ResultModule.getResultModule();
+
     @Override
     public Response upload(String ediNo, ResultDTO resultDTO) {
         Result result = new AgentResult(ediNo, resultDTO);
 
-        Sftp83 sftp83 = new Sftp83();
-        sftp83.connect();
-        sftp83.uploadResult(result);
-        sftp83.close();
-
-        ChromeDriver chromeDriver = new ChromeDriver();
-        chromeDriver.swgdRecvRun();
-        chromeDriver.close();
+        resultModule.upload(result);
 
         return Response.returnTrue();
     }

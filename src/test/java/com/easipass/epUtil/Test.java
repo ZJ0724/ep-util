@@ -1,20 +1,19 @@
 package com.easipass.epUtil;
 
 
-import com.easipass.epUtil.entity.Config;
-import com.easipass.epUtil.module.DaKa;
+import com.easipass.epUtil.module.DaKaModule;
 
 public class Test {
 
     public static void main(String[] args) throws Exception {
 
 
-        DaKa daKa = DaKa.getDaKa();
+        DaKaModule daKaModule = DaKaModule.getDaKa();
 
 
-        daKa.start();
+        daKaModule.start();
 
-        daKa.start();
+        daKaModule.start();
 
     }
 

@@ -1,7 +1,7 @@
-package com.easipass.epUtil.module.oracle;
+package com.easipass.epUtil.component.oracle;
 
 import com.easipass.epUtil.entity.Config;
-import com.easipass.epUtil.module.Oracle;
+import com.easipass.epUtil.component.Oracle;
 import com.easipass.epUtil.entity.config.Swgd;
 import com.easipass.epUtil.exception.OracleException;
 import java.sql.ResultSet;

@@ -1,8 +1,7 @@
-package com.easipass.epUtil.module.sftp;
+package com.easipass.epUtil.component.sftp;
 
 import com.easipass.epUtil.entity.Config;
-import com.easipass.epUtil.entity.Result;
-import com.easipass.epUtil.module.Sftp;
+import com.easipass.epUtil.component.Sftp;
 
 public class Sftp83 extends Sftp {
 
@@ -19,13 +18,6 @@ public class Sftp83 extends Sftp {
         this.setPort(sftp83.getPort());
         this.setUsername(sftp83.getUsername());
         this.setPassword(sftp83.getPassword());
-    }
-
-    /**
-     * 上传回执
-     * */
-    public void uploadResult(Result result) {
-        this.upload(sftp83.getUploadPath(), result.getFileName(), result.getData());
     }
 
 }

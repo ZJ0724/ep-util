@@ -1,7 +1,6 @@
-package com.easipass.epUtil.module;
+package com.easipass.epUtil.component;
 
 import com.easipass.epUtil.exception.ErrorException;
-import com.easipass.epUtil.module.Log;
 import com.jcraft.jsch.*;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

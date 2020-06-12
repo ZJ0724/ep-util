@@ -10,7 +10,7 @@ public class ChromeDriverException extends BaseException {
      * 驱动文件异常
      * */
     public static ChromeDriverException chromeDriverFileException() {
-        return new ChromeDriverException("驱动文件异常");
+        return new ChromeDriverException("驱动文件异常，请更换驱动文件");
     }
 
 }

@@ -2,7 +2,6 @@ package com.easipass.epUtil.entity.config;
 
 import com.alibaba.fastjson.JSONObject;
 import com.easipass.epUtil.exception.ConfigException;
-import com.easipass.epUtil.exception.ErrorException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 

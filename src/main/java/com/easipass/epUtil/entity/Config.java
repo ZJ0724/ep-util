@@ -8,7 +8,7 @@ import com.easipass.epUtil.entity.config.Sftp83;
 import com.easipass.epUtil.entity.config.Swgd;
 import com.easipass.epUtil.exception.ConfigException;
 import com.easipass.epUtil.exception.ErrorException;
-import com.easipass.epUtil.module.Log;
+import com.easipass.epUtil.component.Log;
 import com.easipass.epUtil.util.FileUtil;
 import java.io.*;
 
@@ -106,23 +106,6 @@ public class Config {
             isLoadData = true;
         } catch (com.alibaba.fastjson.JSONException e) {
             throw ConfigException.configFileException();
-        }
-    }
-
-    /**
-     * 设置数据
-     *
-     * @param data 数据
-     * */
-    public void setData(String data) {
-        try {
-            OutputStream outputStream = new FileOutputStream(ProjectConfig.CONFIG_FILE);
-            outputStream.write(data.getBytes());
-            outputStream.close();
-
-            this.loadData();
-        } catch (IOException e) {
-            throw ErrorException.getErrorException(e.getLocalizedMessage());
         }
     }
 

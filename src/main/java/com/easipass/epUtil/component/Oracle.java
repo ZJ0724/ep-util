@@ -1,4 +1,4 @@
-package com.easipass.epUtil.module;
+package com.easipass.epUtil.component;
 
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.exception.OracleException;
