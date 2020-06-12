@@ -1,4 +1,4 @@
-import SwgdDTO from "./config/swgdDTO.js";
+import SwgdDTO from "./config/SwgdDTO.js";
 import Sftp83DTO from "./config/Sftp83DTO.js";
 import DaKaDTO from "./config/DaKaDTO.js";
 
