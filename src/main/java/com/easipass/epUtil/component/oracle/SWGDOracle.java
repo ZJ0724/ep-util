@@ -1,7 +1,8 @@
-package com.easipass.epUtil.entity.oracle;
+package com.easipass.epUtil.component.oracle;
 
 import com.easipass.epUtil.entity.Config;
-import com.easipass.epUtil.entity.Oracle;
+import com.easipass.epUtil.component.Oracle;
+import com.easipass.epUtil.entity.config.Swgd;
 import com.easipass.epUtil.exception.OracleException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,13 +13,13 @@ public class SWGDOracle extends Oracle {
      * 构造函数
      */
     public SWGDOracle() {
-        Config config = Config.getConfig();
+        Swgd swgd = Config.getConfig().getSwgd();
 
-        this.setUrl(config.getsWGDUrl());
-        this.setPort(config.getsWGDPort());
-        this.setSid(config.getsWGDSid());
-        this.setUsername(config.getsWGDUsername());
-        this.setPassword(config.getsWGDPassword());
+        this.setUrl(swgd.getUrl());
+        this.setPort(swgd.getPort());
+        this.setSid(swgd.getSid());
+        this.setUsername(swgd.getUsername());
+        this.setPassword(swgd.getPassword());
     }
 
     /**

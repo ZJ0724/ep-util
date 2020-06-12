@@ -58,21 +58,21 @@ public class Response implements com.zj0724.springbootUtil.Response<Response> {
      * 返回正确
      * */
     public static Response returnTrue(Object data) {
-        return new Response(ResponseFlagConfig.TRUE.getFlag(), "", "", data);
+        return new Response(ResponseFlagConfig.TRUE.getFlag(), null, null, data);
     }
 
     /**
      * 返回正确
      * */
     public static Response returnTrue() {
-        return new Response(ResponseFlagConfig.TRUE.getFlag(), "", "", null);
+        return new Response(ResponseFlagConfig.TRUE.getFlag(), null, null, null);
     }
 
     /**
      * 返回错误
      * */
     public static Response returnFalse(Object errorMsg) {
-        return new Response(ResponseFlagConfig.FALSE.getFlag(), "", errorMsg, null);
+        return new Response(ResponseFlagConfig.FALSE.getFlag(), null, errorMsg, null);
     }
 
     /**

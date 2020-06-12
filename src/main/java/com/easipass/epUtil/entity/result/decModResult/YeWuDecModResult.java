@@ -1,7 +1,7 @@
 package com.easipass.epUtil.entity.result.decModResult;
 
 import com.easipass.epUtil.config.ResourcePathConfig;
-import com.easipass.epUtil.entity.ResultDTO;
+import com.easipass.epUtil.entity.dto.ResultDTO;
 import com.easipass.epUtil.entity.result.DecModResult;
 import com.easipass.epUtil.service.impl.decModResult.QPDecModResultServiceImpl;
 import com.easipass.epUtil.util.Base64Util;

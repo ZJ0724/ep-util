@@ -1,26 +1,56 @@
-package com.easipass.epUtil.entity;
+package com.easipass.epUtil.component;
 
 import com.easipass.epUtil.config.ProjectConfig;
 import com.easipass.epUtil.config.SystemTypeConfig;
+import com.easipass.epUtil.entity.Config;
+import com.easipass.epUtil.entity.config.DaKa;
 import com.easipass.epUtil.exception.ChromeDriverException;
 import com.easipass.epUtil.exception.ErrorException;
+import com.easipass.epUtil.service.impl.InitServiceImpl;
+import com.easipass.epUtil.util.FileUtil;
 import com.zj0724.uiAuto.WebDriver;
 import com.zj0724.uiAuto.exception.WebDriverException;
 import com.zj0724.uiAuto.webDriver.ChromeWebDriver;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class ChromeDriver {
 
-    private WebDriver webDriver;
+    private final WebDriver webDriver;
 
     public ChromeDriver() {
-        webDriver = new ChromeWebDriver(ProjectConfig.CHROME_DRIVER);
-        Log.getLog().info("已打开谷歌驱动!");
+        try {
+            webDriver = new ChromeWebDriver(ProjectConfig.CHROME_DRIVER);
+            Log.getLog().info("已打开谷歌驱动!");
+        } catch (WebDriverException e) {
+            throw ChromeDriverException.chromeDriverFileException();
+        }
     }
 
     /**
      * 检查驱动
      * */
     public static void check() {
+        // 驱动文件是否存在，不存在生成默认驱动
+        if (!ProjectConfig.CHROME_DRIVER.exists()) {
+            InputStream inputStream = InitServiceImpl.class.getResourceAsStream(ProjectConfig.RESOURCE_CHROME_DRIVER);
+            FileUtil.copyOtherFile(inputStream, ProjectConfig.CHROME_DRIVER);
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                throw ErrorException.getErrorException(e.getMessage());
+            }
+
+            // 如果是linux，修改权限777
+            if (ProjectConfig.SYSTEM_TYPE == SystemTypeConfig.linux) {
+                try {
+                    Runtime.getRuntime().exec("chmod 777 " + ProjectConfig.LINUX_CHROME_DRIVER.getAbsolutePath());
+                } catch (IOException e) {
+                    throw ErrorException.getErrorException(e.getMessage());
+                }
+            }
+        }
+
         try {
             WebDriver webDriver = new ChromeWebDriver(ProjectConfig.CHROME_DRIVER);
             webDriver.close();
@@ -73,6 +103,22 @@ public class ChromeDriver {
     public void close() {
         this.webDriver.close();
         Log.getLog().info("谷歌驱动已关闭!");
+    }
+
+    /**
+     * 执行打卡
+     * */
+    public void daKa() {
+        Log log = Log.getLog();
+        DaKa daKa = Config.getConfig().getDaKa();
+
+        this.webDriver.url("http://192.168.0.41/index.jsp");
+        this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(5) > td:nth-child(2) > input[type=text]").sendKey(daKa.getUsername());
+        this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(6) > td:nth-child(2) > input[type=password]").sendKey(daKa.getPassword());
+        this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(7) > td:nth-child(1) > div > img").click();
+        this.webDriver.findElementByCssSelector("#Image1").click();
+        this.webDriver.close();
+        log.info("打卡完成");
     }
 
 }

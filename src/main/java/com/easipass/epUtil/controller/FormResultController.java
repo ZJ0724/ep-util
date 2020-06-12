@@ -1,6 +1,6 @@
 package com.easipass.epUtil.controller;
 
-import com.easipass.epUtil.entity.ResultDTO;
+import com.easipass.epUtil.entity.dto.ResultDTO;
 import com.easipass.epUtil.entity.Response;
 import com.easipass.epUtil.service.FormResultService;
 import com.zj0724.springbootUtil.annotation.Length;

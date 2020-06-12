@@ -1,5 +1,7 @@
 package com.easipass.epUtil.entity;
 
+import com.easipass.epUtil.entity.dto.ResultDTO;
+
 public abstract class Result {
 
     /**

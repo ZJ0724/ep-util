@@ -17,7 +17,7 @@ public class ProjectConfig {
     /**
      * 配置文件
      * */
-    public final static File CONFIG_FILE = new File(CONFIG_DIR, "config");
+    public final static File CONFIG_FILE = new File(CONFIG_DIR, "config.json");
 
     /**
      * 系统类型
@@ -53,5 +53,10 @@ public class ProjectConfig {
      * 日志输出文件
      * */
     public final static File LOG_FILE = new File(System.getProperty("user.dir"), "../log/info.log");
+
+    /**
+     * daKa标记文件
+     * */
+    public final static File DAKA_SIGN = new File(CONFIG_DIR, "daKaSign");
 
 }

@@ -12,5 +12,10 @@ public interface InitService {
      * */
     void chromeDriverLoad();
 
+    /**
+     * 检查是否开启打卡
+     * */
+    void daKaIsStart();
+
 
 }

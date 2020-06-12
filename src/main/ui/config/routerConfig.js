@@ -24,6 +24,11 @@ export default [
         template: "/template/disposableUploadTemplate.html"
     },
 
+    {
+        hash: "#/daKa",
+        template: "/template/daKaTemplate.html"
+    },
+
     // 配置
     {
         hash: "#/config",

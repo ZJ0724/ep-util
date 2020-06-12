@@ -2,8 +2,8 @@ package com.easipass.epUtil.entity.result;
 
 import com.easipass.epUtil.config.ResourcePathConfig;
 import com.easipass.epUtil.entity.Result;
-import com.easipass.epUtil.entity.ResultDTO;
-import com.easipass.epUtil.entity.oracle.SWGDOracle;
+import com.easipass.epUtil.entity.dto.ResultDTO;
+import com.easipass.epUtil.component.oracle.SWGDOracle;
 import com.easipass.epUtil.service.impl.AgentResultServiceImpl;
 import com.easipass.epUtil.util.DateUtil;
 import com.easipass.epUtil.util.XmlUtil;

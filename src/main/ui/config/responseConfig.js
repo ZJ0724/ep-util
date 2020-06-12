@@ -4,6 +4,6 @@ export default {
 
     false: "F",
 
-    errorCodes: [500]
+    errorCodes: [500, 501]
 
 }

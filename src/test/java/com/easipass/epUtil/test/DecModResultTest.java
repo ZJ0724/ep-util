@@ -1,6 +1,6 @@
 package com.easipass.epUtil.test;
 
-import com.easipass.epUtil.entity.ResultDTO;
+import com.easipass.epUtil.entity.dto.ResultDTO;
 import com.easipass.epUtil.service.DecModResultService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Qualifier;

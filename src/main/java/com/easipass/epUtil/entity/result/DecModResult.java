@@ -1,7 +1,7 @@
 package com.easipass.epUtil.entity.result;
 
 import com.easipass.epUtil.entity.Result;
-import com.easipass.epUtil.entity.ResultDTO;
+import com.easipass.epUtil.entity.dto.ResultDTO;
 
 public abstract class DecModResult extends Result {
 

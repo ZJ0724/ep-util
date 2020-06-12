@@ -1,4 +1,4 @@
-package com.easipass.epUtil.entity;
+package com.easipass.epUtil.component;
 
 import com.easipass.epUtil.exception.ErrorException;
 import com.jcraft.jsch.*;

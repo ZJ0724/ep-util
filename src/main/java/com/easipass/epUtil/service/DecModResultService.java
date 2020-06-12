@@ -1,7 +1,7 @@
 package com.easipass.epUtil.service;
 
 import com.easipass.epUtil.entity.Response;
-import com.easipass.epUtil.entity.ResultDTO;
+import com.easipass.epUtil.entity.dto.ResultDTO;
 import org.springframework.stereotype.Service;
 
 @Service

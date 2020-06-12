@@ -1,6 +1,6 @@
 package com.easipass.epUtil;
 
-import com.easipass.epUtil.entity.Log;
+import com.easipass.epUtil.component.Log;
 import com.easipass.epUtil.exception.ChromeDriverException;
 import com.easipass.epUtil.exception.ConfigException;
 import com.easipass.epUtil.service.InitService;
@@ -18,6 +18,7 @@ public class Main {
             InitService initService = new InitServiceImpl();
             initService.configLoad();
             initService.chromeDriverLoad();
+            initService.daKaIsStart();
             SpringApplication.run(Main.class, args);
         } catch (ConfigException | ChromeDriverException e) {
             Log.getLog().error(e.getMessage());

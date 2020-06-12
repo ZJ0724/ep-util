@@ -5,7 +5,7 @@ public class ResourcePathConfig {
     /**
      * 配置文件路径
      * */
-    public final static String CONFIG_PATH = "/resources/config";
+    public final static String CONFIG_PATH = "/resources/config.json";
 
     /**
      * windows版谷歌驱动路径
@@ -46,5 +46,10 @@ public class ResourcePathConfig {
      * 首页
      * */
     public static final String INDEX_HTML = "/page/index.html";
+
+    /**
+     * daKaSign
+     * */
+    public final static String DAKA_SIGN = "/resources/daKaSign";
 
 }

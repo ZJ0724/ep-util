@@ -14,6 +14,9 @@ export default {
                 $template.load(value.template, null, function () {
                     // 重新加载input.js
                     documentCommon.loadJs("/style/input.js");
+
+                    // 清除定时器
+                    window.clearInterval(window.getLogInterval);
                 });
                 return;
             }

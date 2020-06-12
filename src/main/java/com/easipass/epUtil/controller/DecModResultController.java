@@ -1,7 +1,7 @@
 package com.easipass.epUtil.controller;
 
 import com.easipass.epUtil.entity.Response;
-import com.easipass.epUtil.entity.ResultDTO;
+import com.easipass.epUtil.entity.dto.ResultDTO;
 import com.easipass.epUtil.service.DecModResultService;
 import com.zj0724.springbootUtil.annotation.Length;
 import org.springframework.beans.factory.annotation.Qualifier;

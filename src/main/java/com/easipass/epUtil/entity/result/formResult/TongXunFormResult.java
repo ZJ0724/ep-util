@@ -1,7 +1,7 @@
 package com.easipass.epUtil.entity.result.formResult;
 
 import com.easipass.epUtil.config.ResourcePathConfig;
-import com.easipass.epUtil.entity.ResultDTO;
+import com.easipass.epUtil.entity.dto.ResultDTO;
 import com.easipass.epUtil.entity.result.FormResult;
 import com.easipass.epUtil.util.Base64Util;
 import com.easipass.epUtil.util.DateUtil;
