@@ -13,7 +13,6 @@ public class InitServiceImpl implements InitService {
     @Override
     public void configLoad() {
         // 加载配置
-        Config.getConfig();
         log.info(Config.getConfig().toString());
     }
 
