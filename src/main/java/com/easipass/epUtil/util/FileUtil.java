@@ -2,6 +2,7 @@ package com.easipass.epUtil.util;
 
 import com.easipass.epUtil.exception.ErrorException;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class FileUtil {
 
@@ -52,15 +53,19 @@ public class FileUtil {
      * */
     public static String getData(File file) {
         try {
-            String result = "";
+            StringBuilder result = new StringBuilder();
             InputStream inputStream = new FileInputStream(file);
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String line = bufferedReader.readLine();
             while (line != null) {
-                result = result + line;
+                result.append(line);
                 line = bufferedReader.readLine();
             }
-            return result;
+            inputStream.close();
+            inputStreamReader.close();
+            bufferedReader.close();
+            return result.toString();
         } catch (IOException e) {
             return null;
         }

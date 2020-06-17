@@ -27,6 +27,11 @@ export default {
     // 获取状态
     getStatus() {
         return this.base("get", "getStatus");
+    },
+
+    // 手动打卡
+    manualDaKa() {
+        return this.base("post", "manualDaKa");
     }
 
 }

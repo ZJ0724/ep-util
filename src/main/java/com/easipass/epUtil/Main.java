@@ -13,15 +13,20 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackageClasses = {Main.class, com.zj0724.springbootUtil.Main.class})
 public class Main {
 
+    /** 日志 */
+    private final static Log LOG = Log.getLog();
+
     public static void main(String[] args) {
         try {
+            LOG.info("---------- < 正在启动 > ----------");
             InitService initService = new InitServiceImpl();
             initService.configLoad();
             initService.chromeDriverLoad();
             initService.daKaIsStart();
             SpringApplication.run(Main.class, args);
+            LOG.info("---------- < 已启动 > ----------");
         } catch (ConfigException | ChromeDriverException e) {
-            Log.getLog().error(e.getMessage());
+            LOG.error(e.getMessage());
         }
     }
 

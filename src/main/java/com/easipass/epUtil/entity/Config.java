@@ -35,11 +35,6 @@ public class Config {
     private final static Config config = new Config();
 
     /**
-     * 是否已经加载数据
-     * */
-    private boolean isLoadData = false;
-
-    /**
      * 构造函数
      * */
     private Config() {
@@ -54,6 +49,8 @@ public class Config {
                 throw ErrorException.getErrorException(e.getMessage());
             }
         }
+
+        loadData();
     }
 
     /**
@@ -75,17 +72,13 @@ public class Config {
      * 获取单例
      * */
     public static Config getConfig() {
-        if (!config.isLoadData) {
-            config.loadData();
-        }
-
         return config;
     }
 
     /**
      * 加载数据
      * */
-    public void loadData() {
+    private void loadData() {
         try {
             Log.getLog().info("正在加载config...");
             // 配置文件数据
@@ -103,9 +96,25 @@ public class Config {
             // 加载daKa
             this.daKa.loadData(jsonObject.getJSONObject("daKa"));
 
-            isLoadData = true;
         } catch (com.alibaba.fastjson.JSONException e) {
             throw ConfigException.configFileException();
+        }
+    }
+
+    /**
+     * 设置数据
+     *
+     * @param data 数据
+     * */
+    public void setData(String data) {
+        try {
+            OutputStream outputStream = new FileOutputStream(ProjectConfig.CONFIG_FILE);
+            outputStream.write(data.getBytes());
+            outputStream.close();
+
+            loadData();
+        } catch (IOException e) {
+            throw ErrorException.getErrorException(e.getLocalizedMessage());
         }
     }
 

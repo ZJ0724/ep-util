@@ -1,4 +1,4 @@
-<div style="padding: 0 30%;">
+<div style="padding: 0 30%;" id="daKaBlock">
 
     <div class="layui-card">
         <div class="layui-card-header">
@@ -8,6 +8,7 @@
         <div class="layui-card-body">
             <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" id="startButton">开启</button>
             <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" id="stopButton">关闭</button>
+            <button type="button" class="layui-btn layui-btn-sm" id="manualDaKaButton">手动打卡</button>
         </div>
     </div>
 
@@ -24,6 +25,7 @@
 
         import daKaApi from "../api/daKaApi.js";
         import popupCommon from "../common/popupCommon.js";
+        import Loading from "../entity/Loading.js";
 
         (function () {
 
@@ -39,7 +41,13 @@
                 stopButton: document.getElementById("stopButton"),
 
                 // 日志
-                log: document.getElementById("log")
+                log: document.getElementById("log"),
+
+                // 手动打卡按钮
+                manualDaKaButton: document.getElementById("manualDaKaButton"),
+
+                // 打卡面板
+                daKaBlock: document.getElementById("daKaBlock").parentElement
             };
 
             // 方法
@@ -89,6 +97,16 @@
                     window.getLogInterval = setInterval(function () {
                         method.getLog(2);
                     }, 1000);
+                },
+
+                // 手动打卡
+                manualDaKa() {
+                    let loading = new Loading(element.daKaBlock);
+                    loading.openLoading();
+                    daKaApi.manualDaKa().then(function () {
+                        loading.closeLoading();
+                        popupCommon.openMsg("打卡成功");
+                    });
                 }
             };
 
@@ -98,6 +116,9 @@
             });
             element.stopButton.addEventListener("click", function () {
                 method.stop();
+            });
+            element.manualDaKaButton.addEventListener("click", function () {
+                method.manualDaKa();
             });
 
             method.getStatus();
