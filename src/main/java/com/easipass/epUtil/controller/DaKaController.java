@@ -35,4 +35,9 @@ public class DaKaController {
         return daKaService.getStatus();
     }
 
+    @PostMapping("manualDaKa")
+    public Response manualDaKa() {
+        return daKaService.manualDaKa();
+    }
+
 }

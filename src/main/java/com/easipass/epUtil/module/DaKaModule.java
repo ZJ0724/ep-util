@@ -162,4 +162,14 @@ public class DaKaModule {
         return isStart;
     }
 
+    /**
+     * 手动打卡
+     * */
+    public void manualDaKa() {
+        ChromeDriver chromeDriver = new ChromeDriver();
+        chromeDriver.daKa();
+        chromeDriver.close();
+        addLog("已手动打卡！");
+    }
+
 }

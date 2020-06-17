@@ -42,4 +42,10 @@ public class DaKaServiceImpl implements DaKaService {
         return Response.returnTrue(daKaModule.getStatus());
     }
 
+    @Override
+    public Response manualDaKa() {
+        daKaModule.manualDaKa();
+        return Response.returnTrue();
+    }
+
 }

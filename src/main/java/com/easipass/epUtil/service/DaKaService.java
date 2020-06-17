@@ -26,4 +26,9 @@ public interface DaKaService {
      * */
     Response getStatus();
 
+    /**
+     * 手动打卡
+     * */
+    Response manualDaKa();
+
 }
