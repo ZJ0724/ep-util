@@ -24,20 +24,12 @@ public class Http {
     /** 请求头数据 */
     private final Map<String, String> headers = new LinkedHashMap<>();
 
-    /** 请求数据 */
-    private final String data;
-
     /**
      * 构造函数
-     *
-     * @param url 请求地址
-     * @param type 请求类型
-     * @param data 请求数据
      * */
-    public Http(String url, String type, String data) {
+    public Http(String url, String type) {
         this.url = url;
         this.type = type;
-        this.data = data;
 
         // 默认请求头
         headers.put("accept", "*/*");
@@ -61,9 +53,11 @@ public class Http {
     /**
      * 发送请求
      *
+     * @param data 请求数据
+     *
      * @return 响应结果
      * */
-    public String send() {
+    public String send(String data) {
         try {
             URL url = new URL(this.url);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -83,9 +77,9 @@ public class Http {
 
             // 输出数据
             OutputStream outputStream = null;
-            if (this.data != null) {
+            if (data != null) {
                 outputStream = httpURLConnection.getOutputStream();
-                outputStream.write(this.data.getBytes());
+                outputStream.write(data.getBytes());
             }
 
             // 获取响应数据
