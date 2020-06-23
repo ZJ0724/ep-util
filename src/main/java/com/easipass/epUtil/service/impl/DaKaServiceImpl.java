@@ -48,4 +48,10 @@ public class DaKaServiceImpl implements DaKaService {
         return Response.returnTrue();
     }
 
+    @Override
+    public Response cleanLog() {
+        this.daKaModule.cleanLog();
+        return Response.returnTrue();
+    }
+
 }

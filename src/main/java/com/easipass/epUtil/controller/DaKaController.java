@@ -40,4 +40,9 @@ public class DaKaController {
         return daKaService.manualDaKa();
     }
 
+    @PostMapping("cleanLog")
+    public Response cleanLog() {
+        return daKaService.cleanLog();
+    }
+
 }

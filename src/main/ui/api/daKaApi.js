@@ -32,6 +32,11 @@ export default {
     // 手动打卡
     manualDaKa() {
         return this.base("post", "manualDaKa");
+    },
+
+    // 清空日志
+    cleanLog() {
+        return this.base("post", "cleanLog");
     }
 
 }

@@ -5,6 +5,7 @@ import com.easipass.epUtil.component.Log;
 import com.easipass.epUtil.config.DaKaSignConfig;
 import com.easipass.epUtil.entity.Config;
 import com.easipass.epUtil.entity.DaKaSign;
+import com.easipass.epUtil.exception.ChromeDriverException;
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.util.DateUtil;
 import java.util.ArrayList;
@@ -167,9 +168,21 @@ public class DaKaModule {
      * */
     public void manualDaKa() {
         ChromeDriver chromeDriver = new ChromeDriver();
-        chromeDriver.daKa();
-        chromeDriver.close();
-        addLog("已手动打卡！");
+        try {
+            chromeDriver.daKa();
+            chromeDriver.close();
+            addLog("已手动打卡！");
+        } catch (ChromeDriverException e) {
+            addLog(e.getMessage());
+            throw ChromeDriverException.daKaException();
+        }
+    }
+
+    /**
+     * 清空日志
+     * */
+    public void cleanLog() {
+        this.daKaLog.clear();
     }
 
 }
