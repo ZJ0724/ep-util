@@ -52,4 +52,9 @@ public class ResourcePathConfig {
      * */
     public final static String DAKA_SIGN = "/resources/daKaSign";
 
+    /**
+     * version
+     * */
+    public final static String VERSION = "/resources/version";
+
 }

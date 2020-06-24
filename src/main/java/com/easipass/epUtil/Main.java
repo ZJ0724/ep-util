@@ -1,6 +1,7 @@
 package com.easipass.epUtil;
 
 import com.easipass.epUtil.component.Log;
+import com.easipass.epUtil.entity.Version;
 import com.easipass.epUtil.exception.ChromeDriverException;
 import com.easipass.epUtil.exception.ConfigException;
 import com.easipass.epUtil.service.InitService;
@@ -16,9 +17,13 @@ public class Main {
     /** 日志 */
     private final static Log LOG = Log.getLog();
 
+    /** 版本 */
+    private final static Version VERSION = Version.getVersionInstance();
+
     public static void main(String[] args) {
         try {
             LOG.info("---------- < 正在启动 > ----------");
+            LOG.info("version:" + VERSION.getVersion());
             InitService initService = new InitServiceImpl();
             initService.configLoad();
             initService.chromeDriverLoad();

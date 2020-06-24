@@ -7,7 +7,7 @@ releasePath="release"
 projectName="epUtil"
 
 # 版本
-version=$(cat version)
+version=$(cat src/main/resources/version)
 
 # 包名
 packageName="${projectName}-${version}"

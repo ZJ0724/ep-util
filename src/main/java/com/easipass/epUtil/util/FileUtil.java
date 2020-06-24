@@ -84,4 +84,29 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 获取文件数据
+     *
+     * @param inputStream 输入流
+     *
+     * @return 输入流数据
+     * */
+    public static String getData(InputStream inputStream) {
+        try {
+            StringBuilder result = new StringBuilder();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                result.append(line);
+                line = bufferedReader.readLine();
+            }
+            inputStreamReader.close();
+            bufferedReader.close();
+            return result.toString();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
 }

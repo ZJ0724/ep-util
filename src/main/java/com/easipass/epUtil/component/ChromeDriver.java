@@ -10,6 +10,7 @@ import com.easipass.epUtil.service.impl.InitServiceImpl;
 import com.easipass.epUtil.util.FileUtil;
 import com.zj0724.uiAuto.WebDriver;
 import com.zj0724.uiAuto.exception.WebDriverException;
+import com.zj0724.uiAuto.exception.WebElementException;
 import com.zj0724.uiAuto.webDriver.ChromeWebDriver;
 import java.io.IOException;
 import java.io.InputStream;
@@ -112,13 +113,18 @@ public class ChromeDriver {
         Log log = Log.getLog();
         DaKa daKa = Config.getConfig().getDaKa();
 
-        this.webDriver.url("http://192.168.0.41/index.jsp");
-        this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(5) > td:nth-child(2) > input[type=text]").sendKey(daKa.getUsername());
-        this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(6) > td:nth-child(2) > input[type=password]").sendKey(daKa.getPassword());
-        this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(7) > td:nth-child(1) > div > img").click();
-        this.webDriver.findElementByCssSelector("#Image1").click();
-        this.webDriver.close();
-        log.info("打卡完成");
+        try {
+            this.webDriver.url("http://192.168.0.41/index.jsp");
+            this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(5) > td:nth-child(2) > input[type=text]").sendKey(daKa.getUsername());
+            this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(6) > td:nth-child(2) > input[type=password]").sendKey(daKa.getPassword());
+            this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(7) > td:nth-child(1) > div > img").click();
+            this.webDriver.findElementByCssSelector("#Image1").click();
+            this.webDriver.close();
+            log.info("打卡完成");
+        } catch (WebElementException e) {
+            this.close();
+            throw ChromeDriverException.daKaException();
+        }
     }
 
 }

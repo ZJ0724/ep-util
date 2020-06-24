@@ -1,7 +1,8 @@
 package com.easipass.epUtil.component;
 
-import com.easipass.epUtil.config.ProjectConfig;
 import com.easipass.epUtil.exception.ErrorException;
+import com.easipass.epUtil.util.DateUtil;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -55,17 +56,25 @@ public class Log {
      * 输出日志
      * */
     private void outputLog(String type, String log) {
+        // 日志输出文件
+        File logFile = new File(System.getProperty("user.dir"), "../log/logFile-" + DateUtil.getDate("yyyy-MM-dd") + ".log");
+        // log文件夹
+        File logFileParent = logFile.getParentFile();
+
+        // 日志信息
         log = this.logFormat(type, log);
 
         System.out.print(log);
 
-        // 日志文件不存在创建文件
-        if (!ProjectConfig.LOG_FILE.getParentFile().exists()) {
-            ProjectConfig.LOG_FILE.getParentFile().mkdirs();
+        // 日志文件夹不存在创建文件
+        if (!logFileParent.exists()) {
+            if (!logFileParent.mkdirs()) {
+                throw ErrorException.getErrorException("创建日志文件夹失败");
+            }
         }
 
         try {
-            OutputStream outputStream = new FileOutputStream(ProjectConfig.LOG_FILE, true);
+            OutputStream outputStream = new FileOutputStream(logFile, true);
             outputStream.write(log.getBytes());
             outputStream.close();
         } catch (IOException e) {

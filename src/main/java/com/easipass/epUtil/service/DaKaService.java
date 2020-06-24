@@ -3,6 +3,9 @@ package com.easipass.epUtil.service;
 import com.easipass.epUtil.entity.Response;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author
+ * */
 @Service
 public interface DaKaService {
 
@@ -30,5 +33,10 @@ public interface DaKaService {
      * 手动打卡
      * */
     Response manualDaKa();
+
+    /**
+     * 清空日志
+     * */
+    Response cleanLog();
 
 }
