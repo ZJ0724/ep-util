@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>报文比对</title>
+    <script src="/page/cusFileComparison/main.js"></script>
+    <style>
+        .input {
+            height: 30px;
+            border-radius: 5px;
+        }
+
+        .button {
+            height: 30px;
+            border-radius: 5px;
+            line-height: 0;
+        }
+
+        .close {
+            font-size: 10px;
+            color: #2D93CA;
+            cursor: pointer;
+        }
+        .close:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="main" class="center">
+        <div>
+            <div style="display: flex;">
+                <input id="cusFile" type="file" style="display: none;" />
+                <input placeholder="报文" id="cusFileInput" style="width: 300px;" type="text" class="layui-input input" disabled />
+                <button id="selectButton" style="margin-left: 5px;" type="button" class="layui-btn layui-btn-primary button">选择...</button>
+            </div>
+
+            <div style="margin-top: 10px;">
+                <input id="ediNoInput" type="text" class="layui-input input" placeholder="ediNo" />
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button id="comparisonButton" style="width: 100%;" type="button" class="layui-btn layui-btn-normal button">比对</button>
+            </div>
+        </div>
+
+        <!-- 遮罩层 -->
+        <div id="mask" style="background-color: #0c0c0c38;position: fixed;top: 0;width: 100%; height: 100%;display: none;"></div>
+
+        <!-- 弹窗 -->
+        <div id="log" style="position: absolute;padding: 0 20px 20px 20px;background-color: white;top: 30px;width: 400px;box-shadow:0 2px 5px 0 #0000004d;border-radius: 5px;max-height: 80%;overflow: auto;font-weight: bold;color: #393D49;font-size: 15px;display: none;" class="layui-anim layui-anim-scale">
+            <div style="display: flex;flex-direction: row-reverse;align-items: center;margin-top: 5px;">
+                <span class="close layui-anim layui-anim-scale" id="close" style="display: none;">
+                    关闭
+                </span>
+            </div>
+
+            <div id="logBody">
+                <!--            <div style="margin-top: 20px;">-->
+                <!--                [表头]-->
+                <!--            </div>-->
+
+                <!--            <div style="margin-top: 10px;display: flex;">-->
+                <!--                <div style="width: 90%;">-->
+                <!--                    note-->
+                <!--                </div>-->
+                <!--                <div class="center" style="width: 10%;color: green;">-->
+                <!--                    √-->
+                <!--                </div>-->
+                <!--            </div>-->
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    (function (cusFileServiceApi, alert, CusFileComparisonWebsocketApi) {
+        let indexHtml = {
+            // 元素
+            element: {
+                cusFile: document.getElementById("cusFile"),
+                cusFileInput: document.getElementById("cusFileInput"),
+                selectButton: document.getElementById("selectButton"),
+                comparisonButton: document.getElementById("comparisonButton"),
+                mask: document.getElementById("mask"),
+                log: document.getElementById("log"),
+                ediNoInput: document.getElementById("ediNoInput"),
+                close: document.getElementById("close"),
+                logBody: document.getElementById("logBody")
+            },
+
+            // 数据
+            data: {
+                id: "",
+                ediNo: ""
+            },
+
+            // 方法
+            method: {
+                // 上传报文
+                upload(file) {
+                    cusFileServiceApi.upload(file).then(function (responseData) {
+                        indexHtml.data.id = responseData;
+                        indexHtml.element.cusFileInput.value = file.name;
+                    }).catch(function (errorMessage) {
+                        alert.message(errorMessage);
+                    });
+                },
+
+                // 打开log弹窗
+                openLog() {
+                    indexHtml.element.logBody.innerHTML = "";
+                    indexHtml.element.log.style.display = "";
+                    indexHtml.element.mask.style.display = "";
+                },
+
+                // 添加log
+                addLog(data) {
+                    let type = data.type,
+                        message = data.message,
+                        node = data.node,
+                        result = data.result;
+
+                    let div = document.createElement("div");
+                    div.setAttribute("class", "layui-anim layui-anim-scale");
+
+                    if (type === "0") { // 标题
+                        div.style.marginTop = "20px";
+                        div.innerHTML = message;
+                    } else if (type === "1") { // 比对结果
+                        div.style.marginTop = "10px";
+                        div.style.display = "flex";
+
+                        let div1 = document.createElement("div");
+                        div1.style.width = "90%";
+                        div1.innerHTML = node;
+
+                        let div2 = document.createElement("div");
+                        div2.style.width = "10%";
+                        div2.setAttribute("class", "center");
+                        let color;
+                        let innerHTML;
+                        if (result) {
+                            color = "green";
+                            innerHTML = "√";
+                        } else {
+                            color = "red";
+                            innerHTML = "x";
+                        }
+                        div2.style.color = color;
+                        div2.innerHTML = innerHTML;
+
+                        div.appendChild(div1);
+                        div.appendChild(div2);
+                    }
+
+                    indexHtml.element.logBody.appendChild(div);
+                },
+
+                // 关闭弹窗
+                closeLog() {
+                    indexHtml.element.log.style.display = "none";
+                    indexHtml.element.mask.style.display = "none";
+                    indexHtml.element.close.style.display = "none";
+                },
+
+                // 显示关闭按钮
+                showClose() {
+                    indexHtml.element.close.style.display = "";
+                },
+
+                // 比对
+                comparison() {
+                    let data = indexHtml.data,
+                        method = indexHtml.method,
+                        id = data.id,
+                        ediNo = data.ediNo;
+
+                    if (id === "") {
+                        alert.message("请选择报文");
+                        return;
+                    }
+
+                    if (ediNo === "") {
+                        alert.message("请填写要比对的ediNo");
+                        return;
+                    }
+
+                    method.openLog();
+
+                    // 连接websocket
+                    let cusFileComparisonWebsocket = new CusFileComparisonWebsocketApi(id, ediNo);
+
+                    // 监听比对消息
+                    cusFileComparisonWebsocket.onmessage(function (message) {
+                        console.log(message);
+                        method.addLog(message);
+                    });
+
+                    // 监听连接关闭
+                    cusFileComparisonWebsocket.onclose(function () {
+                        method.showClose();
+                    });
+                }
+            }
+        };
+
+        // 监听事件
+        indexHtml.element.selectButton.addEventListener("click", function () {
+            indexHtml.element.cusFile.click();
+        });
+        indexHtml.element.cusFile.addEventListener("change", function () {
+            indexHtml.method.upload(indexHtml.element.cusFile.files[0]);
+        });
+        indexHtml.element.comparisonButton.addEventListener("click" ,function () {
+            indexHtml.method.comparison();
+        });
+        indexHtml.element.ediNoInput.addEventListener("change", function () {
+            indexHtml.data.ediNo = indexHtml.element.ediNoInput.value;
+        });
+        indexHtml.element.close.addEventListener("click", function () {
+            indexHtml.method.closeLog();
+        });
+    })(window.epUtil.api.service.cusFileServiceApi, window.epUtil.component.alert, window.epUtil.api.websocket.CusFileComparisonWebsocketApi);
+</script>

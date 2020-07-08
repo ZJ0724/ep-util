@@ -58,4 +58,17 @@ public class ExceptionHandler {
         return Response.returnFalse(e.getMessage());
     }
 
+    /**
+     * 报文异常
+     *
+     * @param e 异常
+     *
+     * @return 响应结果
+     * */
+    @org.springframework.web.bind.annotation.ExceptionHandler(CusFileException.class)
+    public Response cusFileException(Exception e) {
+        Log.getLog().error(e.getMessage());
+        return Response.returnFalse(e.getMessage());
+    }
+
 }

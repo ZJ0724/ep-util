@@ -17,4 +17,14 @@ public class PageController {
         return ResourcePathConfig.INDEX_HTML;
     }
 
+    /**
+     * 报文比对页面
+     *
+     * @return 页面路径
+     * */
+    @GetMapping("/cusFileComparison")
+    public String cusFileComparison() {
+        return ResourcePathConfig.CUS_FILE_COMPARISON_HTMLComparison;
+    }
+
 }

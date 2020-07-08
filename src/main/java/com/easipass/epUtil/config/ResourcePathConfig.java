@@ -57,4 +57,9 @@ public class ResourcePathConfig {
      * */
     public final static String VERSION = "/resources/version";
 
+    /**
+     * 报文比对页面
+     * */
+    public static final String CUS_FILE_COMPARISON_HTMLComparison = "/page/cusFileComparison/index.html";
+
 }

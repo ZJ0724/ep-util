@@ -72,4 +72,14 @@ public class SWGDOracle extends Oracle {
         return agentCode;
     }
 
+    /**
+     * 查询报关单表头数据
+     *
+     * @param ediNo ediNo编号
+     * */
+    public ResultSet queryFormHead(String ediNo) {
+        this.connect();
+        return this.query("SELECT * FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?", new Object[]{ediNo});
+    }
+
 }
