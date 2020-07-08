@@ -33,9 +33,9 @@ public final class CusFile {
     private final Element decHead;
 
     /**
-     * DecSign
+     * ediNo
      * */
-    private final Element DecSign;
+    private final String ediNo;
 
     /**
      * 报文集合
@@ -53,25 +53,35 @@ public final class CusFile {
      * @param multipartFile 前端传过来的文件
      * */
     private CusFile(MultipartFile multipartFile) {
+        Element rootElement;
         try {
             InputStream inputStream = multipartFile.getInputStream();
-            Element rootElement = XmlUtil.getDocument_v2(inputStream).getRootElement();
+            rootElement = XmlUtil.getDocument_v2(inputStream).getRootElement();
             inputStream.close();
-
-            this.decHead = rootElement.element("DecHead");
-            if (this.decHead == null) {
-                throw CusFileException.notCusFile();
-            }
-
-            this.DecSign = rootElement.element("DecSign");
-            if (this.DecSign == null) {
-                throw CusFileException.notCusFile();
-            }
         } catch (IOException e) {
             throw ErrorException.getErrorException(e.getMessage());
         } catch (DocumentException e) {
             throw CusFileException.notCusFile();
         }
+
+        this.decHead = rootElement.element("DecHead");
+        if (this.decHead == null) {
+            throw CusFileException.notCusFile();
+        }
+
+        Element DecSign = rootElement.element("DecSign");
+        if (DecSign == null) {
+            throw CusFileException.notCusFile();
+        }
+        Element ClientSeqNo = DecSign.element("ClientSeqNo");
+        if (ClientSeqNo == null) {
+            throw CusFileException.notCusFile();
+        }
+        String ediNo = ClientSeqNo.getText();
+        if ("".equals(ediNo)) {
+            throw CusFileException.notCusFile();
+        }
+        this.ediNo = ediNo;
     }
 
     /**
@@ -113,16 +123,16 @@ public final class CusFile {
     /**
      * 比对
      *
-     * @param ediNo 要比对的ediNo
+     * @param id id
      * @param cusFileComparisonWebsocketApi 报文比对websocket服务
      * */
-    public void comparison(String ediNo, CusFileComparisonWebsocketApi cusFileComparisonWebsocketApi) {
+    public void comparison(String id, CusFileComparisonWebsocketApi cusFileComparisonWebsocketApi) {
         // 数据库连接
         SWGDOracle SWGDOracle = new SWGDOracle();
 
         try {
             // 比对表头信息
-            ResultSet formHead = SWGDOracle.queryFormHead(ediNo);
+            ResultSet formHead = SWGDOracle.queryFormHead(this.ediNo);
             try {
                 // 检查表头数据是不是存在
                 if (!formHead.next()) {
@@ -132,16 +142,17 @@ public final class CusFile {
                 cusFileComparisonWebsocketApi.sendTitleMessage("[表头]");
                 this.comparison(this.decHead, formHead, CusFileComparisonNodeConfig.FORM_HEAD, cusFileComparisonWebsocketApi);
             } catch (SQLException e) {
-                cusFileComparisonWebsocketApi.sendComparisonMessage(ediNo + "，数据库表头数据不存在", false);
+                cusFileComparisonWebsocketApi.sendComparisonMessage(this.ediNo + "，数据库表头数据不存在", false);
             }
         } catch (OracleException e) {
             cusFileComparisonWebsocketApi.sendComparisonMessage(e.getMessage(), false);
         }
 
         // 比对完成
+        cusFileComparisonWebsocketApi.sendTitleMessage("[NONE]");
         // 关闭数据库
         SWGDOracle.close();
-        cusFileComparisonWebsocketApi.sendTitleMessage("[NONE]");
+        // 关闭websocket连接
         cusFileComparisonWebsocketApi.close();
     }
 
@@ -183,7 +194,7 @@ public final class CusFile {
      *
      * @param id id
      * */
-    public static void deleteCusFile(String id) {
+    private static void deleteCusFile(String id) {
         CUS_FILE_MAP.remove(id);
         LOG.info("已删除报文：" + id);
         LOG.info(CUS_FILE_MAP.toString());
@@ -191,9 +202,11 @@ public final class CusFile {
 
     /**
      * 获取ediNo
+     *
+     * @return ediNo
      * */
     public String getEdiNo() {
-        return this.DecSign.element("ClientSeqNo").getText();
+        return this.ediNo;
     }
 
 }

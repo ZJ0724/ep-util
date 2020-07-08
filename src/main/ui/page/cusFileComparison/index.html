@@ -35,39 +35,46 @@
                 <button id="selectButton" style="margin-left: 5px;" type="button" class="layui-btn layui-btn-primary button">选择...</button>
             </div>
 
-            <div style="margin-top: 10px;">
-                <input id="ediNoInput" type="text" class="layui-input input" placeholder="ediNo" />
-            </div>
-
             <div style="margin-top: 30px;">
                 <button id="comparisonButton" style="width: 100%;" type="button" class="layui-btn layui-btn-normal button">比对</button>
             </div>
         </div>
 
         <!-- 遮罩层 -->
-        <div id="mask" style="background-color: #0c0c0c38;position: fixed;top: 0;width: 100%; height: 100%;display: none;"></div>
+        <div id="mask" class="layui-anim layui-anim-fadein" style="background-color: #0c0c0c38;position: fixed;top: 0;width: 100%; height: 100%;display: none;"></div>
 
         <!-- 弹窗 -->
-        <div id="log" style="position: absolute;padding: 0 20px 20px 20px;background-color: white;top: 30px;width: 400px;box-shadow:0 2px 5px 0 #0000004d;border-radius: 5px;max-height: 80%;overflow: auto;font-weight: bold;color: #393D49;font-size: 15px;display: none;" class="layui-anim layui-anim-scale">
-            <div style="display: flex;flex-direction: row-reverse;align-items: center;margin-top: 5px;">
-                <span class="close layui-anim layui-anim-scale" id="close" style="display: none;">
-                    关闭
-                </span>
+        <div id="log" style="position: absolute;padding: 0 20px 20px 20px;background-color: white;top: 30px;width: 400px;box-shadow:0 2px 5px 0 #0000004d;border-radius: 5px;max-height: 80%;overflow: auto;color: #393D49;display: none;" class="layui-anim layui-anim-scale">
+            <div id="logBody">
+                <div style="font-weight: bold;margin-top: 20px;" class="layui-anim layui-anim-scale">
+                    [表头]
+                </div>
+
+                <div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                    <div style="width: 90%;">
+                        note
+                    </div>
+                    <div class="center" style="width: 10%;">
+                        <i style="color: red;" class="layui-icon layui-icon-close"></i>
+                    </div>
+                </div>
+
+                <div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                    <div style="width: 90%;">
+                        note
+                    </div>
+                    <div class="center" style="width: 10%;">
+                        <i style="color: #5FB878;" class="layui-icon layui-icon-ok"></i>
+                    </div>
+                </div>
+
+                <div style="font-weight: bold;color: red;margin-top: 20px;" class="layui-anim layui-anim-scale">
+                    错误信息!
+                </div>
             </div>
 
-            <div id="logBody">
-                <!--            <div style="margin-top: 20px;">-->
-                <!--                [表头]-->
-                <!--            </div>-->
-
-                <!--            <div style="margin-top: 10px;display: flex;">-->
-                <!--                <div style="width: 90%;">-->
-                <!--                    note-->
-                <!--                </div>-->
-                <!--                <div class="center" style="width: 10%;color: green;">-->
-                <!--                    √-->
-                <!--                </div>-->
-                <!--            </div>-->
+            <div style="display: flex;flex-direction: row-reverse;">
+                <button style="margin-top: 20px;display: none;" id="logClose" type="button" class="layui-btn layui-btn-normal button layui-anim layui-anim-scale">关闭</button>
             </div>
         </div>
     </div>
@@ -85,15 +92,13 @@
                 comparisonButton: document.getElementById("comparisonButton"),
                 mask: document.getElementById("mask"),
                 log: document.getElementById("log"),
-                ediNoInput: document.getElementById("ediNoInput"),
-                close: document.getElementById("close"),
-                logBody: document.getElementById("logBody")
+                logBody: document.getElementById("logBody"),
+                logClose: document.getElementById("logClose")
             },
 
             // 数据
             data: {
-                id: "",
-                ediNo: ""
+                id: ""
             },
 
             // 方法
@@ -160,37 +165,45 @@
 
                 // 关闭弹窗
                 closeLog() {
-                    indexHtml.element.log.style.display = "none";
-                    indexHtml.element.mask.style.display = "none";
-                    indexHtml.element.close.style.display = "none";
+                    let element = indexHtml.element,
+                        log = element.log,
+                        mask = element.mask,
+                        logClose = element.logClose,
+                        logClass = log.getAttribute("class"),
+                        maskClass = mask.getAttribute("class");
+
+                    log.setAttribute("class", "layui-anim layui-anim-fadeout");
+                    mask.setAttribute("class", "layui-anim layui-anim-fadeout");
+
+                    setTimeout(function () {
+                        log.style.display = "none";
+                        log.setAttribute("class", logClass);
+                        mask.style.display = "none";
+                        mask.setAttribute("class", maskClass);
+                        logClose.style.display = "none";
+                    }, 300);
                 },
 
                 // 显示关闭按钮
                 showClose() {
-                    indexHtml.element.close.style.display = "";
+                    indexHtml.element.logClose.style.display = "";
                 },
 
                 // 比对
                 comparison() {
                     let data = indexHtml.data,
                         method = indexHtml.method,
-                        id = data.id,
-                        ediNo = data.ediNo;
+                        id = data.id;
 
                     if (id === "") {
                         alert.message("请选择报文");
                         return;
                     }
 
-                    if (ediNo === "") {
-                        alert.message("请填写要比对的ediNo");
-                        return;
-                    }
-
                     method.openLog();
 
                     // 连接websocket
-                    let cusFileComparisonWebsocket = new CusFileComparisonWebsocketApi(id, ediNo);
+                    let cusFileComparisonWebsocket = new CusFileComparisonWebsocketApi(id);
 
                     // 监听比对消息
                     cusFileComparisonWebsocket.onmessage(function (message) {
@@ -208,6 +221,7 @@
 
         // 监听事件
         indexHtml.element.selectButton.addEventListener("click", function () {
+            indexHtml.element.cusFile.value = "";
             indexHtml.element.cusFile.click();
         });
         indexHtml.element.cusFile.addEventListener("change", function () {
@@ -216,10 +230,7 @@
         indexHtml.element.comparisonButton.addEventListener("click" ,function () {
             indexHtml.method.comparison();
         });
-        indexHtml.element.ediNoInput.addEventListener("change", function () {
-            indexHtml.data.ediNo = indexHtml.element.ediNoInput.value;
-        });
-        indexHtml.element.close.addEventListener("click", function () {
+        indexHtml.element.logClose.addEventListener("click", function () {
             indexHtml.method.closeLog();
         });
     })(window.epUtil.api.service.cusFileServiceApi, window.epUtil.component.alert, window.epUtil.api.websocket.CusFileComparisonWebsocketApi);

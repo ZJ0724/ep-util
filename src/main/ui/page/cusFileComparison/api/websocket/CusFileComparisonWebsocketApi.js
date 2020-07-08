@@ -1,8 +1,8 @@
 (function (websocket) {
     websocket.CusFileComparisonWebsocketApi = class CusFileComparisonWebsocketApi extends websocket.BaseWebsocketApi {
 
-        constructor(id, ediNo) {
-            super("cusFileComparison/" + id + "/" + ediNo);
+        constructor(id) {
+            super("cusFileComparison/" + id);
         }
 
     };

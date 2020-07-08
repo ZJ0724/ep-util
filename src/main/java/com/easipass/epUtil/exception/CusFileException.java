@@ -22,7 +22,7 @@ public final class CusFileException extends RuntimeException {
      * @return 异常实体
      * */
     public static CusFileException notCusFile() {
-        return new CusFileException("不是正确的报文文件，请重新选择！");
+        return new CusFileException("不是正确的报文文件");
     }
 
 }

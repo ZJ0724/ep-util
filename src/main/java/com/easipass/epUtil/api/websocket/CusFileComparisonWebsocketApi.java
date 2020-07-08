@@ -18,7 +18,7 @@ import java.io.IOException;
  * @author ZJ
  * */
 @Component
-@ServerEndpoint(BaseWebsocketApi.URL + "cusFileComparison/{id}/{ediNo}")
+@ServerEndpoint(BaseWebsocketApi.URL + "cusFileComparison/{id}")
 public class CusFileComparisonWebsocketApi {
 
     /**
@@ -32,11 +32,6 @@ public class CusFileComparisonWebsocketApi {
     private String id;
 
     /**
-     * ediNo
-     * */
-    private String ediNo;
-
-    /**
      * 日志
      * */
     private static final Log log = Log.getLog();
@@ -47,14 +42,12 @@ public class CusFileComparisonWebsocketApi {
      * @param session session
      * */
     @OnOpen
-    public void onOpen(Session session, @PathParam("id") String id, @PathParam("ediNo") String ediNo) {
+    public void onOpen(Session session, @PathParam("id") String id) {
         this.session = session;
         this.id = id;
-        this.ediNo = ediNo;
         log.info("已连接: /websocket/cusFileComparison");
         log.info("session: " + session);
         log.info("id: " + this.id);
-        log.info("ediNo: " + this.ediNo);
 
         this.comparison();
     }
@@ -136,14 +129,13 @@ public class CusFileComparisonWebsocketApi {
             return;
         }
 
-        cusFile.comparison(this.ediNo, this);
-
-        // 删除报文
-        CusFile.deleteCusFile(this.id);
+        cusFile.comparison(this.id, this);
     }
 
     /**
      * 监听异常
+     *
+     * @param throwable 异常
      * */
     @OnError
     public void onerror(Throwable throwable) {
