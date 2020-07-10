@@ -1,6 +1,9 @@
 package com.easipass.epUtil.util;
 
+import com.easipass.epUtil.exception.ErrorException;
+
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -67,6 +70,32 @@ public class DateUtil {
         Date date=new Date();
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat(pattern);
         return simpleDateFormat.format(date);
+    }
+
+    /**
+     * 将指定日期格式转换成另外一种格式
+     *
+     * @param date 被转换的日期
+     * @param pattern1 被转换的日期格式
+     * @param pattern2 要转换的日期格式
+     *
+     * @return 转换的日期
+     * */
+    public static String formatDate(String date, String pattern1, String pattern2) {
+        if (date == null) {
+            return null;
+        }
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern1);
+        Date date1;
+        try {
+            date1 = simpleDateFormat.parse(date);
+        } catch (ParseException e) {
+            throw ErrorException.getErrorException(e.getMessage());
+        }
+
+        SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat(pattern2);
+        return simpleDateFormat1.format(date1);
     }
 
 }

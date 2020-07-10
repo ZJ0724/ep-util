@@ -3,6 +3,7 @@ package com.easipass.epUtil.component.oracle;
 import com.easipass.epUtil.entity.Config;
 import com.easipass.epUtil.component.Oracle;
 import com.easipass.epUtil.entity.config.Swgd;
+import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.exception.OracleException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -78,8 +79,17 @@ public class SWGDOracle extends Oracle {
      * @param ediNo ediNo编号
      * */
     public ResultSet queryFormHead(String ediNo) {
-        this.connect();
-        return this.query("SELECT * FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?", new Object[]{ediNo});
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?", new Object[]{ediNo});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw ErrorException.getErrorException(e.getMessage());
+        }
+
+        return resultSet;
     }
 
 }

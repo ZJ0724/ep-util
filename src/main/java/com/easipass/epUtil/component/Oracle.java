@@ -114,6 +114,11 @@ public class Oracle {
      * 连接数据库
      * */
     public void connect() {
+        // 已连接不进行重连
+        if (this.isConnect) {
+            return;
+        }
+
         try {
             Class.forName("oracle.jdbc.OracleDriver");
             this.connection = DriverManager.getConnection("jdbc:oracle:thin:@" + url + ":" + port + ":" + sid, username, password);

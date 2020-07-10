@@ -1,6 +1,6 @@
 package com.easipass.epUtil.api.service;
 
-import com.easipass.epUtil.entity.CusFile;
+import com.easipass.epUtil.core.CusFile;
 import com.easipass.epUtil.entity.Response;
 import com.zj0724.springbootUtil.annotation.SkipCheck;
 import org.springframework.web.bind.annotation.PostMapping;

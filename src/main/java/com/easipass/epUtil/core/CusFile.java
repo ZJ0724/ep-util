@@ -1,12 +1,14 @@
-package com.easipass.epUtil.entity;
+package com.easipass.epUtil.core;
 
 import com.easipass.epUtil.api.websocket.CusFileComparisonWebsocketApi;
 import com.easipass.epUtil.component.Log;
 import com.easipass.epUtil.component.oracle.SWGDOracle;
-import com.easipass.epUtil.config.CusFileComparisonNodeConfig;
+import com.easipass.epUtil.core.cusFile.ComparisonNodeMapping;
+import com.easipass.epUtil.entity.vo.CusFileComparisonMessageVo;
 import com.easipass.epUtil.exception.CusFileException;
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.exception.OracleException;
+import com.easipass.epUtil.util.DateUtil;
 import com.easipass.epUtil.util.XmlUtil;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -25,7 +27,12 @@ import java.util.Set;
  *
  * @author ZJ
  * */
-public final class CusFile {
+public class CusFile {
+
+    /**
+     * 报文集合
+     * */
+    private static final Map<String, CusFile> CUS_FILE_MAP = new LinkedHashMap<>();
 
     /**
      * 表头
@@ -36,11 +43,6 @@ public final class CusFile {
      * ediNo
      * */
     private final String ediNo;
-
-    /**
-     * 报文集合
-     * */
-    private static final Map<String, CusFile> CUS_FILE_MAP = new LinkedHashMap<>();
 
     /**
      * 日志
@@ -123,33 +125,60 @@ public final class CusFile {
     /**
      * 比对
      *
-     * @param id id
      * @param cusFileComparisonWebsocketApi 报文比对websocket服务
      * */
-    public void comparison(String id, CusFileComparisonWebsocketApi cusFileComparisonWebsocketApi) {
-        // 数据库连接
+    public void comparison(CusFileComparisonWebsocketApi cusFileComparisonWebsocketApi) {
+        // 数据库
         SWGDOracle SWGDOracle = new SWGDOracle();
 
+        // 检查数据库连接
         try {
-            // 比对表头信息
-            ResultSet formHead = SWGDOracle.queryFormHead(this.ediNo);
-            try {
-                // 检查表头数据是不是存在
-                if (!formHead.next()) {
-                    throw new SQLException();
+            SWGDOracle.connect();
+        } catch (OracleException e) {
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getErrorType(e.getMessage()));
+            cusFileComparisonWebsocketApi.close();
+            return;
+        }
+
+        // 比对表头
+        ResultSet formHead = SWGDOracle.queryFormHead(this.ediNo);
+
+        if (formHead != null) {
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[表头]"));
+
+            // 遍历表头映射
+            Set<String> keys = ComparisonNodeMapping.FORM_HEAD_MAPPING.keySet();
+            for (String key : keys) {
+                String key1 = ComparisonNodeMapping.getKey(key);
+                String nodeValue = this.decHead.element(key1).getText();
+                String value = ComparisonNodeMapping.FORM_HEAD_MAPPING.get(key);
+                String dbValue = null;
+                if (value != null) {
+                    try {
+                        dbValue = formHead.getString(value);
+                    } catch (SQLException e) {
+                        throw ErrorException.getErrorException(e.getMessage() + value);
+                    }
                 }
 
-                cusFileComparisonWebsocketApi.sendTitleMessage("[表头]");
-                this.comparison(this.decHead, formHead, CusFileComparisonNodeConfig.FORM_HEAD, cusFileComparisonWebsocketApi);
-            } catch (SQLException e) {
-                cusFileComparisonWebsocketApi.sendComparisonMessage(this.ediNo + "，数据库表头数据不存在", false);
+                // IEDate特殊处理
+                if (key1.equals("IEDate")) {
+                    dbValue = DateUtil.formatDate(dbValue, "yyyy-MM-dd", "yyyyMMdd");
+                }
+
+                // DespDate特殊处理
+                if (key1.equals("DespDate")) {
+                    dbValue = DateUtil.formatDate(dbValue, "yyyy-MM-dd", "yyyyMMdd");
+                }
+
+                this.comparison(key, nodeValue, value, dbValue, cusFileComparisonWebsocketApi);
             }
-        } catch (OracleException e) {
-            cusFileComparisonWebsocketApi.sendComparisonMessage(e.getMessage(), false);
+        } else {
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getErrorType(this.ediNo + "，数据库表头数据不存在"));
         }
 
         // 比对完成
-        cusFileComparisonWebsocketApi.sendTitleMessage("[NONE]");
+        cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[NONE]"));
         // 关闭数据库
         SWGDOracle.close();
         // 关闭websocket连接
@@ -159,54 +188,31 @@ public final class CusFile {
     /**
      * 比对
      *
-     * @param node 报文中要比对的节点
-     * @param resultSet 数据库数据
-     * @param config 比对节点配置
+     * @param key 映射key值
+     * @param nodeValue 报文节点值
+     * @param value 映射value值
+     * @param dbValue 数据库值
      * @param cusFileComparisonWebsocketApi 报文比对websocket服务
      * */
-    private void comparison(Element node, ResultSet resultSet, Map<String, String> config, CusFileComparisonWebsocketApi cusFileComparisonWebsocketApi) {
-        // keys
-        Set<String> keys = config.keySet();
-
-        for (String key : keys) {
-            // 报文节点值
-            String cusFileValue = node.element(key).getText();
-            if (cusFileValue == null) {
-                cusFileValue = "";
-            }
-            // 数据库节点值
-            String dbValue;
-            try {
-                dbValue = resultSet.getString(config.get(key));
-                if (dbValue == null) {
-                    dbValue = "";
-                }
-            } catch (SQLException e) {
-                throw ErrorException.getErrorException(e.getMessage() + config.get(key));
-            }
-
-            cusFileComparisonWebsocketApi.sendComparisonMessage(key, cusFileValue.equals(dbValue));
+    private void comparison(String key, String nodeValue, String value, String dbValue, CusFileComparisonWebsocketApi cusFileComparisonWebsocketApi) {
+        // 如果value是null的话，不进行比对
+        if (value == null) {
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getComparisonNullType(key));
+            return;
         }
-    }
 
-    /**
-     * 删除报文
-     *
-     * @param id id
-     * */
-    private static void deleteCusFile(String id) {
-        CUS_FILE_MAP.remove(id);
-        LOG.info("已删除报文：" + id);
-        LOG.info(CUS_FILE_MAP.toString());
-    }
+        if (nodeValue == null) {
+            nodeValue = "";
+        }
+        if (dbValue == null) {
+            dbValue = "";
+        }
 
-    /**
-     * 获取ediNo
-     *
-     * @return ediNo
-     * */
-    public String getEdiNo() {
-        return this.ediNo;
+        if (nodeValue.equals(dbValue)) {
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getComparisonTrueType(key));
+        } else {
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getComparisonFalseType(key));
+        }
     }
 
 }

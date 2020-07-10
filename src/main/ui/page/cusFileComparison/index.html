@@ -15,15 +15,6 @@
             border-radius: 5px;
             line-height: 0;
         }
-
-        .close {
-            font-size: 10px;
-            color: #2D93CA;
-            cursor: pointer;
-        }
-        .close:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
@@ -68,6 +59,15 @@
                     </div>
                 </div>
 
+                <div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                    <div style="width: 90%;">
+                        note
+                    </div>
+                    <div class="center" style="width: 10%;">
+                        <i style="color: #FFB800;" class="layui-icon layui-icon-help"></i>
+                    </div>
+                </div>
+
                 <div style="font-weight: bold;color: red;margin-top: 20px;" class="layui-anim layui-anim-scale">
                     错误信息!
                 </div>
@@ -82,7 +82,10 @@
 </html>
 
 <script>
-    (function (cusFileServiceApi, alert, CusFileComparisonWebsocketApi) {
+    (function (cusFileServiceApi, alert, CusFileComparisonWebsocketApi, CusFileComparisonMessageVo) {
+        // documentUtil
+        let documentUtil = window.epUtil.util.documentUtil;
+
         let indexHtml = {
             // 元素
             element: {
@@ -121,46 +124,68 @@
                 },
 
                 // 添加log
-                addLog(data) {
-                    let type = data.type,
-                        message = data.message,
-                        node = data.node,
-                        result = data.result;
+                addLog(cusFileComparisonMessageVo) {
+                    let div,
+                        type = cusFileComparisonMessageVo.type,
+                        message = cusFileComparisonMessageVo.message,
+                        node = cusFileComparisonMessageVo.node,
+                        logBody = indexHtml.element.logBody;
 
-                    let div = document.createElement("div");
-                    div.setAttribute("class", "layui-anim layui-anim-scale");
-
-                    if (type === "0") { // 标题
-                        div.style.marginTop = "20px";
-                        div.innerHTML = message;
-                    } else if (type === "1") { // 比对结果
-                        div.style.marginTop = "10px";
-                        div.style.display = "flex";
-
-                        let div1 = document.createElement("div");
-                        div1.style.width = "90%";
-                        div1.innerHTML = node;
-
-                        let div2 = document.createElement("div");
-                        div2.style.width = "10%";
-                        div2.setAttribute("class", "center");
-                        let color;
-                        let innerHTML;
-                        if (result) {
-                            color = "green";
-                            innerHTML = "√";
-                        } else {
-                            color = "red";
-                            innerHTML = "x";
+                    // 标题类型
+                    if (type === "0") {
+                        div = documentUtil.parseDocument(`<div style="font-weight: bold;margin-top: 20px;" class="layui-anim layui-anim-scale">
+                    ${message}
+                </div>`);
+                    }
+                    // 比对类型
+                    if (type === "1") {
+                        // 比对通过
+                        if (message === "true") {
+                            div = documentUtil.parseDocument(`<div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                    <div style="width: 90%;">
+                        ${node}
+                    </div>
+                    <div class="center" style="width: 10%;">
+                        <i style="color: #5FB878;" class="layui-icon layui-icon-ok"></i>
+                    </div>
+                </div>`);
                         }
-                        div2.style.color = color;
-                        div2.innerHTML = innerHTML;
-
-                        div.appendChild(div1);
-                        div.appendChild(div2);
+                        // 比对不通过
+                        if (message === "false") {
+                            div = documentUtil.parseDocument(`<div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                    <div style="width: 90%;">
+                        ${node}
+                    </div>
+                    <div class="center" style="width: 10%;">
+                        <i style="color: red;" class="layui-icon layui-icon-close"></i>
+                    </div>
+                </div>`);
+                        }
+                        // 不进行比对
+                        if (message === "null") {
+                            div = documentUtil.parseDocument(`<div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                    <div style="width: 90%;">
+                        ${node}
+                    </div>
+                    <div class="center" style="width: 10%;">
+                        <i style="color: #FFB800;" class="layui-icon layui-icon-help"></i>
+                    </div>
+                </div>`);
+                        }
+                    }
+                    // 错误类型
+                    if (type === "2") {
+                        div = documentUtil.parseDocument(`<div style="font-weight: bold;color: red;margin-top: 20px;" class="layui-anim layui-anim-scale">
+                    ${message}
+                </div>`);
                     }
 
-                    indexHtml.element.logBody.appendChild(div);
+                    // 如果不存在div，则将此div设置成20px
+                    if (logBody.children.length === 0) {
+                        div.style.marginTop = "20px";
+                    }
+
+                    logBody.appendChild(div);
                 },
 
                 // 关闭弹窗
@@ -207,8 +232,7 @@
 
                     // 监听比对消息
                     cusFileComparisonWebsocket.onmessage(function (message) {
-                        console.log(message);
-                        method.addLog(message);
+                        method.addLog(new CusFileComparisonMessageVo(message));
                     });
 
                     // 监听连接关闭
@@ -233,5 +257,5 @@
         indexHtml.element.logClose.addEventListener("click", function () {
             indexHtml.method.closeLog();
         });
-    })(window.epUtil.api.service.cusFileServiceApi, window.epUtil.component.alert, window.epUtil.api.websocket.CusFileComparisonWebsocketApi);
+    })(window.epUtil.api.service.cusFileServiceApi, window.epUtil.component.alert, window.epUtil.api.websocket.CusFileComparisonWebsocketApi, window.epUtil.entity.vo.CusFileComparisonMessageVo);
 </script>

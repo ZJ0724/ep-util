@@ -4,7 +4,10 @@ window.epUtil = {
         websocket: {}
     },
     component: {},
-    entity: {}
+    entity: {
+        vo: {}
+    },
+    util: {}
 };
 
 // 基础样式
@@ -27,3 +30,8 @@ document.write("<script src=\"/page/cusFileComparison/component/alert.js\"></scr
 
 // entity
 document.write("<script src=\"/page/cusFileComparison/entity/Response.js\"></script>");
+// vo
+document.write("<script src=\"/page/cusFileComparison/entity/vo/CusFileComparisonMessageVo.js\"></script>");
+
+// util
+document.write("<script src=\"/page/cusFileComparison/util/documentUtil.js\"></script>");
