@@ -208,25 +208,28 @@ public class CusFile {
             for (String key : keys) {
                 String key1 = ComparisonNodeMapping.getKey(key);
                 String nodeValue = DecList.element(key1).getText();
-                if (nodeValue == null) nodeValue = "";
                 String value = ComparisonNodeMapping.FORM_LIST_MAPPING.get(key);
-                String dbValue = null;
+                StringBuilder dbValue = new StringBuilder();
                 try {
                     if (value != null) {
-                        dbValue = formList.getString(value);
+                        // 特殊处理CodeTS
+                        if (key1.equals("CodeTS")) {
+                            String[] fields = value.split(",");
+                            for (String field : fields) {
+                                String fieldValue = formList.getString(field);
+                                if (fieldValue != null) {
+                                    dbValue.append(fieldValue);
+                                }
+                            }
+                        } else {
+                            dbValue = new StringBuilder(formList.getString(value));
+                        }
                     }
                 } catch (SQLException e) {
                     throw ErrorException.getErrorException(e.getMessage() + value);
                 }
 
-                // 特殊处理CodeTS
-                if (key1.equals("CodeTS")) {
-                    if (value != null) {
-
-                    }
-                }
-
-                this.comparison(key, nodeValue, value, dbValue, cusFileComparisonWebsocketApi);
+                this.comparison(key, nodeValue, value, dbValue.toString(), cusFileComparisonWebsocketApi);
             }
         }
 
