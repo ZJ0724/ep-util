@@ -17,10 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 报关单报文
@@ -38,6 +35,11 @@ public class CusFile {
      * 表头
      * */
     private final Element decHead;
+
+    /**
+     * 表体
+     * */
+    private final List<Element> DecList = new ArrayList<>();
 
     /**
      * ediNo
@@ -84,6 +86,12 @@ public class CusFile {
             throw CusFileException.notCusFile();
         }
         this.ediNo = ediNo;
+
+        Element DecLists = rootElement.element("DecLists");
+        if (DecLists == null) {
+            throw CusFileException.notCusFile();
+        }
+        this.DecList.addAll(DecLists.elements("DecList"));
     }
 
     /**
@@ -143,9 +151,8 @@ public class CusFile {
         // 比对表头
         ResultSet formHead = SWGDOracle.queryFormHead(this.ediNo);
 
+        cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[表头]"));
         if (formHead != null) {
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[表头]"));
-
             // 遍历表头映射
             Set<String> keys = ComparisonNodeMapping.FORM_HEAD_MAPPING.keySet();
             for (String key : keys) {
@@ -175,6 +182,52 @@ public class CusFile {
             }
         } else {
             cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getErrorType(this.ediNo + "，数据库表头数据不存在"));
+        }
+
+        // 比对表体数据
+        int size = this.DecList.size();
+        for (int i = 0; i < size; i++) {
+            // DecList
+            Element DecList = this.DecList.get(i);
+            // GNo
+            String GNo = DecList.element("GNo").getText();
+
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[表体 - " + (i + 1) + "]"));
+            // GNo为null
+            if (GNo == null || "".equals(GNo)) {
+                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getComparisonFalseType("GNo"));
+                continue;
+            }
+
+            // 表体数据
+            ResultSet formList = SWGDOracle.queryFormList(this.ediNo, (Integer.parseInt(GNo) - 1) + "");
+            // 表体映射keys
+            Set<String> keys = ComparisonNodeMapping.FORM_LIST_MAPPING.keySet();
+
+            // 遍历表体映射
+            for (String key : keys) {
+                String key1 = ComparisonNodeMapping.getKey(key);
+                String nodeValue = DecList.element(key1).getText();
+                if (nodeValue == null) nodeValue = "";
+                String value = ComparisonNodeMapping.FORM_LIST_MAPPING.get(key);
+                String dbValue = null;
+                try {
+                    if (value != null) {
+                        dbValue = formList.getString(value);
+                    }
+                } catch (SQLException e) {
+                    throw ErrorException.getErrorException(e.getMessage() + value);
+                }
+
+                // 特殊处理CodeTS
+                if (key1.equals("CodeTS")) {
+                    if (value != null) {
+
+                    }
+                }
+
+                this.comparison(key, nodeValue, value, dbValue, cusFileComparisonWebsocketApi);
+            }
         }
 
         // 比对完成

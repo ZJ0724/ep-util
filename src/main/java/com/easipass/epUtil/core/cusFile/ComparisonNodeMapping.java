@@ -95,6 +95,15 @@ public class ComparisonNodeMapping {
     }
 
     /**
+     * 表体节点映射
+     * */
+    public static final Map<String, String> FORM_LIST_MAPPING = new LinkedHashMap<>();
+
+    static {
+        FORM_LIST_MAPPING.put("CodeTS[HS编码]", "CODE_T,CODE_S");
+    }
+
+    /**
      * 获取key
      *
      * @param key key

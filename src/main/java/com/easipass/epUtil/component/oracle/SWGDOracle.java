@@ -92,4 +92,24 @@ public class SWGDOracle extends Oracle {
         return resultSet;
     }
 
+    /**
+     * 查询表体数据
+     *
+     * @param ediNo ediNo编号
+     * @param gNo gNo
+     * */
+    public ResultSet queryFormList(String ediNo, String gNo) {
+        ResultSet resultSet = this.query("SELECT * FROM T_SWGD_FORM_LIST WHERE HEAD_ID = (SELECT ID FROM T_SWGD_FORM_HEAD WHERE EDI_NO = ?) AND G_NO = ?", new Object[]{ediNo, gNo});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw ErrorException.getErrorException(e.getMessage());
+        }
+
+        return resultSet;
+    }
+
 }
