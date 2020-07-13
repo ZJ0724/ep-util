@@ -113,9 +113,9 @@ public class ComparisonNodeMapping {
         FORM_LIST_MAPPING.put("TradeCurr[成交币制]", "TRADE_CURR_STD");
         FORM_LIST_MAPPING.put("DeclTotal[申报总价]", "DECL_TOTAL");
         FORM_LIST_MAPPING.put("GQty[申报数量]", "G_QTY");
-        FORM_LIST_MAPPING.put("FirstQty[法定第一数量]", "C_QTY_1");
+        FORM_LIST_MAPPING.put("FirstQty[法定第一数量]", "QTY_CONV");
         FORM_LIST_MAPPING.put("SecondQty[法定第二数量]", "QTY_2");
-        FORM_LIST_MAPPING.put("GUnit[申报计量单位]", "G_UNIT");
+        FORM_LIST_MAPPING.put("GUnit[申报计量单位]", "G_UNIT_STD");
         FORM_LIST_MAPPING.put("FirstUnit[法定第一计量单位]", "FIRST_UNIT_STD");
         FORM_LIST_MAPPING.put("SecondUnit[法定第二计量单位]", "SECOND_UNIT_STD");
         FORM_LIST_MAPPING.put("UseTo[用途]", "USE_TO");

@@ -7,7 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class DateUtil {
+public final class DateUtil {
 
     /**
      * 获取时间
@@ -96,6 +96,28 @@ public class DateUtil {
 
         SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat(pattern2);
         return simpleDateFormat1.format(date1);
+    }
+
+    /**
+     * 将日期转换成yyyyMMdd
+     * */
+    public static String formatDateYYYYMMdd(String date) {
+        if (date == null) {
+            return null;
+        }
+
+        // 日期字段长度
+        int length = date.length();
+
+        if (length == 8) {
+            return formatDate(date, "yyyyMMdd", "yyyyMMdd");
+        }
+
+        if (length == 10) {
+            return formatDate(date, "yyyy-MM-dd", "yyyyMMdd");
+        }
+
+        return null;
     }
 
 }

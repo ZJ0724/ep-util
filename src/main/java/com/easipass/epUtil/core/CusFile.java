@@ -99,14 +99,12 @@ public class CusFile {
         // 集装箱
         Element DecContainers = rootElement.element("DecContainers");
 
-        if (DecContainers == null) {
-            throw CusFileException.notCusFile();
-        }
+        if (DecContainers != null) {
+            List<?> ContainerList = DecContainers.elements("Container");
 
-        List<?> ContainerList = DecContainers.elements("Container");
-
-        for (Object element : ContainerList) {
-            this.DecContainers.add((Element) element);
+            for (Object element : ContainerList) {
+                this.DecContainers.add((Element) element);
+            }
         }
     }
 
@@ -184,14 +182,20 @@ public class CusFile {
                     }
                 }
 
-                // IEDate特殊处理
-                if (key1.equals("IEDate")) {
-                    dbValue = DateUtil.formatDate(dbValue, "yyyy-MM-dd", "yyyyMMdd");
+                // IEDate、DespDate、CmplDschrgDt特殊处理
+                if (key1.equals("IEDate") || key1.equals("DespDate") || key1.equals("CmplDschrgDt")) {
+                    dbValue = DateUtil.formatDateYYYYMMdd(dbValue);
                 }
 
-                // DespDate特殊处理
-                if (key1.equals("DespDate")) {
-                    dbValue = DateUtil.formatDate(dbValue, "yyyy-MM-dd", "yyyyMMdd");
+                // DeclareName特殊处理
+                if ("DeclareName".equals(key1)) {
+                    // IE_TYPE
+                    String ieType = this.getDbValue(formHead, "IE_TYPE");
+
+                    // 如果IE_TYPE为0，这DeclareName为null
+                    if ("0".equals(ieType)) {
+                        dbValue = "";
+                    }
                 }
 
                 this.comparison(key, nodeValue, value, dbValue, cusFileComparisonWebsocketApi);
@@ -248,40 +252,50 @@ public class CusFile {
                     throw ErrorException.getErrorException(e.getMessage() + ": " + value);
                 }
 
+                // ProdValidDt特殊处理
+                if (key1.equals("ProdValidDt")) {
+                    dbValue = DateUtil.formatDateYYYYMMdd(dbValue);
+                }
+
                 this.comparison(key, nodeValue, value, dbValue, cusFileComparisonWebsocketApi);
             }
         }
 
         // 比对集装箱信息
-        // keys
-        Set<String> containerKeys = ComparisonNodeMapping.FORM_CONTAINER.keySet();
-        // size
+        // containerSize
         int containerSize = this.DecContainers.size();
 
-        // 遍历集装箱
-        for (int i = 0; i < containerSize; i ++) {
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[集装箱 - " + (i + 1) + "]"));
-            // 单个集装箱
-            Element container = this.DecContainers.get(i);
-            // 数据库集装箱信息
-            ResultSet dbContainer = SWGDOracle.queryFormContainer(this.ediNo, i + "");
+        if (containerSize != 0) {
+            // keys
+            Set<String> containerKeys = ComparisonNodeMapping.FORM_CONTAINER.keySet();
 
-            // 数据库集装箱信息为null
-            if (dbContainer == null) {
-                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getErrorType("数据库集装箱信息不存在"));
-                continue;
+            // 遍历集装箱
+            for (int i = 0; i < containerSize; i ++) {
+                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[集装箱 - " + (i + 1) + "]"));
+                // 单个集装箱
+                Element container = this.DecContainers.get(i);
+                // 数据库集装箱信息
+                ResultSet dbContainer = SWGDOracle.queryFormContainer(this.ediNo, i + "");
+
+                // 数据库集装箱信息为null
+                if (dbContainer == null) {
+                    cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getErrorType("数据库集装箱信息不存在"));
+                    continue;
+                }
+
+                // 遍历映射keys
+                for (String key : containerKeys) {
+                    String key1 = ComparisonNodeMapping.getKey(key);
+                    String nodeValue = this.getNodeValue(container, key1);
+                    String value = ComparisonNodeMapping.FORM_CONTAINER.get(key);
+                    String dbValue = this.getDbValue(dbContainer, value);
+
+                    // 比对
+                    this.comparison(key, nodeValue, value, dbValue, cusFileComparisonWebsocketApi);
+                }
             }
-
-            // 遍历映射keys
-            for (String key : containerKeys) {
-                String key1 = ComparisonNodeMapping.getKey(key);
-                String nodeValue = this.getNodeValue(container, key1);
-                String value = ComparisonNodeMapping.FORM_CONTAINER.get(key);
-                String dbValue = this.getDbValue(dbContainer, value);
-
-                // 比对
-                this.comparison(key, nodeValue, value, dbValue, cusFileComparisonWebsocketApi);
-            }
+        } else {
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[无集装箱]"));
         }
 
         // 比对完成
