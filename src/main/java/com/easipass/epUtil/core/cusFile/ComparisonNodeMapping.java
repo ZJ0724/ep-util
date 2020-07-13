@@ -100,7 +100,67 @@ public class ComparisonNodeMapping {
     public static final Map<String, String> FORM_LIST_MAPPING = new LinkedHashMap<>();
 
     static {
+        FORM_LIST_MAPPING.put("ClassMark[?]", null);
         FORM_LIST_MAPPING.put("CodeTS[HS编码]", "CODE_T,CODE_S");
+        FORM_LIST_MAPPING.put("ContrItem[新贸序号]", "CONTR_ITEM");
+        FORM_LIST_MAPPING.put("DeclPrice[申报单价]", "DECL_PRICE");
+        FORM_LIST_MAPPING.put("DutyMode[征减免税方式]", "DUTY_MODE");
+        FORM_LIST_MAPPING.put("Factor[?]", null);
+        FORM_LIST_MAPPING.put("GModel[规格型号]", "G_MODEL");
+        FORM_LIST_MAPPING.put("GName[商品名称]", "G_NAME");
+        FORM_LIST_MAPPING.put("GNo[商品序号]", "G_NO");
+        FORM_LIST_MAPPING.put("OriginCountry[原产/目的国]", "ORIGIN_COUNTRY_STD");
+        FORM_LIST_MAPPING.put("TradeCurr[成交币制]", "TRADE_CURR_STD");
+        FORM_LIST_MAPPING.put("DeclTotal[申报总价]", "DECL_TOTAL");
+        FORM_LIST_MAPPING.put("GQty[申报数量]", "G_QTY");
+        FORM_LIST_MAPPING.put("FirstQty[法定第一数量]", "C_QTY_1");
+        FORM_LIST_MAPPING.put("SecondQty[法定第二数量]", "QTY_2");
+        FORM_LIST_MAPPING.put("GUnit[申报计量单位]", "G_UNIT");
+        FORM_LIST_MAPPING.put("FirstUnit[法定第一计量单位]", "FIRST_UNIT_STD");
+        FORM_LIST_MAPPING.put("SecondUnit[法定第二计量单位]", "SECOND_UNIT_STD");
+        FORM_LIST_MAPPING.put("UseTo[用途]", "USE_TO");
+        FORM_LIST_MAPPING.put("WorkUsd[工缴费]", "WORK_USD");
+        FORM_LIST_MAPPING.put("ExgNo[?]", null);
+        FORM_LIST_MAPPING.put("ExgVersion[?]", null);
+        FORM_LIST_MAPPING.put("DestinationCountry[目的国]", "DESTINATION_COUNTRY_STD");
+        FORM_LIST_MAPPING.put("CiqCode[检验检疫编码]", "CIQ_CODE");
+        FORM_LIST_MAPPING.put("DeclGoodsEname[商品英文名称]", "DECL_GOODS_ENAME");
+        FORM_LIST_MAPPING.put("OrigPlaceCode[原产地区代码]", "ORIG_PLACE_CODE");
+        FORM_LIST_MAPPING.put("Purpose[用途代码]", "PURPOSE");
+        FORM_LIST_MAPPING.put("ProdValidDt[产品有效期]", "PROD_VALID_DT");
+        FORM_LIST_MAPPING.put("ProdQgp[产品保质期]", "PROD_QGP");
+        FORM_LIST_MAPPING.put("GoodsAttr[货物属性代码]", "GOODS_ATTR");
+        FORM_LIST_MAPPING.put("Stuff[成份/原料/组份]", "STUFF");
+        FORM_LIST_MAPPING.put("Uncode[UN编码]", "UN_CODE");
+        FORM_LIST_MAPPING.put("DangName[危险货物名称]", "DANG_NAME");
+        FORM_LIST_MAPPING.put("DangPackType[危包类别]", "DANG_PACK_TYPE");
+        FORM_LIST_MAPPING.put("DangPackSpec[危包规格]", "DANG_PACK_SPEC");
+        FORM_LIST_MAPPING.put("EngManEntCnm[境外生产企业名称]", "ENG_MAN_ENT_CNM");
+        FORM_LIST_MAPPING.put("NoDangFlag[?]", "NO_DANG_FLAG");
+        FORM_LIST_MAPPING.put("DestCode[目的地代码]", "DEST_CODE");
+        FORM_LIST_MAPPING.put("GoodsSpec[检验检疫货物规格]", "GOODS_SPEC");
+        FORM_LIST_MAPPING.put("GoodsModel[货物型号]", "GOODS_MODEL");
+        FORM_LIST_MAPPING.put("GoodsBrand[货物品牌]", "GOODS_BRAND");
+        FORM_LIST_MAPPING.put("ProduceDate[生产日期]", "PRODUCE_DATE");
+        FORM_LIST_MAPPING.put("ProdBatchNo[生产批号]", "PROD_BATCH_NO");
+        FORM_LIST_MAPPING.put("DistrictCode[境内目的地/境内货源地]", "DISTRICT_CODE");
+        FORM_LIST_MAPPING.put("CiqName[检验检疫名称]", "CIQ_NAME");
+        FORM_LIST_MAPPING.put("MnufctrRegno[生产单位注册号]", "MNUFCTR_REGNO");
+        FORM_LIST_MAPPING.put("MnufctrRegName[生产单位名称]", "MNUFCTR_REG_NAME");
+    }
+
+    /**
+     * 集装箱映射
+     * */
+    public static final Map<String, String> FORM_CONTAINER = new LinkedHashMap<>();
+
+    static {
+        FORM_CONTAINER.put("ContainerId[集装箱号]", "CONTAINER_ID");
+        FORM_CONTAINER.put("ContainerMd[标准码]", "CONTAINER_MD_STD");
+        FORM_CONTAINER.put("GoodsNo[商品项号]", "GOODS_NO");
+        FORM_CONTAINER.put("LclFlag[拼箱标识]", "LCL_FLAG");
+        FORM_CONTAINER.put("GoodsContaWt[?]", null);
+        FORM_CONTAINER.put("ContainerWt[集装箱自重]", "CONTAINER_WT");
     }
 
     /**

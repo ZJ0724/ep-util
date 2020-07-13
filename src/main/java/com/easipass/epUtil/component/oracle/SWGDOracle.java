@@ -99,7 +99,27 @@ public class SWGDOracle extends Oracle {
      * @param gNo gNo
      * */
     public ResultSet queryFormList(String ediNo, String gNo) {
-        ResultSet resultSet = this.query("SELECT * FROM T_SWGD_FORM_LIST WHERE HEAD_ID = (SELECT ID FROM T_SWGD_FORM_HEAD WHERE EDI_NO = ?) AND G_NO = ?", new Object[]{ediNo, gNo});
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_SWGD_FORM_LIST WHERE HEAD_ID = (SELECT ID FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?) AND G_NO = ?", new Object[]{ediNo, gNo});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw ErrorException.getErrorException(e.getMessage());
+        }
+
+        return resultSet;
+    }
+
+    /**
+     * 查询集装箱数据
+     *
+     * @param ediNo ediNo编号
+     * @param containerNo 集装箱序号
+     * */
+    public ResultSet queryFormContainer(String ediNo, String containerNo) {
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_SWGD_FORM_CONTAINER WHERE HEAD_ID = (SELECT ID FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?) AND CONTAINER_NO = ?", new Object[]{ediNo, containerNo});
 
         try {
             if (!resultSet.next()) {

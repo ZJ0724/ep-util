@@ -65,8 +65,14 @@ public class BaseWebsocketApi {
      * */
     @OnError
     public final void onerror(Throwable throwable) {
-        if (throwable.getClass() == ErrorException.class) {
+        // 异常类
+        Class<?> errorClass = throwable.getClass();
+
+        if (errorClass == ErrorException.class) {
             throw (ErrorException) throwable;
+        }
+        if (errorClass == NullPointerException.class) {
+            throw (NullPointerException) throwable;
         }
 
         LOG.error("websocket监听异常: " + throwable.getMessage());
