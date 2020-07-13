@@ -8,7 +8,6 @@ import com.easipass.epUtil.exception.CusFileException;
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.exception.OracleException;
 import com.easipass.epUtil.util.DateUtil;
-import com.easipass.epUtil.util.StringUtil;
 import com.easipass.epUtil.util.XmlUtil;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -179,45 +178,25 @@ public class CusFile {
         }
 
         // 比对表头
-        ResultSet formHead = SWGDOracle.queryFormHead(this.ediNo);
+        ResultSet dbFormHead = SWGDOracle.queryFormHead(this.ediNo);
+        String[] formHeadStrings = comparisonBefore(null, this.decHead, ComparisonNodeMapping.FORM_HEAD_MAPPING, ComparisonNodeMapping.FORM_HEAD_MAPPING.keySet(), dbFormHead, "表头", cusFileComparisonWebsocketApi);
 
-        cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[表头]"));
-        if (formHead != null) {
-            // 遍历表头映射
-            Set<String> keys = ComparisonNodeMapping.FORM_HEAD_MAPPING.keySet();
-            for (String key : keys) {
-                String key1 = ComparisonNodeMapping.getKey(key);
-                String nodeValue = getNodeValue(this.decHead, key1);
-                String value = ComparisonNodeMapping.FORM_HEAD_MAPPING.get(key);
-                String dbValue = null;
-                if (value != null) {
-                    try {
-                        dbValue = formHead.getString(value);
-                    } catch (SQLException e) {
-                        throw ErrorException.getErrorException(e.getMessage() + value);
-                    }
-                }
-
-                // IEDate、DespDate、CmplDschrgDt特殊处理
-                if (key1.equals("IEDate") || key1.equals("DespDate") || key1.equals("CmplDschrgDt")) {
-                    dbValue = DateUtil.formatDateYYYYMMdd(dbValue);
-                }
-
-                // DeclareName特殊处理
-                if ("DeclareName".equals(key1)) {
-                    // IE_TYPE
-                    String ieType = getDbValue(formHead, "IE_TYPE");
-
-                    // 如果IE_TYPE为0，这DeclareName为null
-                    if ("0".equals(ieType)) {
-                        dbValue = "";
-                    }
-                }
-
-                this.comparison(key, nodeValue, value, dbValue, cusFileComparisonWebsocketApi);
+        if (formHeadStrings != null) {
+            // IEDate、DespDate、CmplDschrgDt特殊处理
+            if (formHeadStrings[0].equals("IEDate") || formHeadStrings[0].equals("DespDate") || formHeadStrings[0].equals("CmplDschrgDt")) {
+                formHeadStrings[3] = DateUtil.formatDateYYYYMMdd(formHeadStrings[3]);
             }
-        } else {
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getErrorType(this.ediNo + "，数据库表头数据不存在"));
+
+            // DeclareName特殊处理
+            if ("DeclareName".equals(formHeadStrings[0])) {
+                // IE_TYPE
+                String ieType = getDbValue(dbFormHead, "IE_TYPE");
+
+                // 如果IE_TYPE为0，这DeclareName为null
+                if ("0".equals(ieType)) {
+                    formHeadStrings[3] = "";
+                }
+            }
         }
 
         // 比对表体数据
@@ -367,7 +346,7 @@ public class CusFile {
      * @param message 信息
      * @param cusFileComparisonWebsocketApi 报文比对websocket服务
      * */
-    private static String[] comparisonBefore(int index, Element element, Map<String, String> map, Set<String> keys, ResultSet resultSet, String message, CusFileComparisonWebsocketApi cusFileComparisonWebsocketApi) {
+    private static String[] comparisonBefore(Integer index, Element element, Map<String, String> map, Set<String> keys, ResultSet resultSet, String message, CusFileComparisonWebsocketApi cusFileComparisonWebsocketApi) {
         if (resultSet == null) {
             cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getErrorType("数据库" + message + "不存在"));
             return null;
@@ -376,7 +355,11 @@ public class CusFile {
         String[] result = new String[4];
 
         // 遍历映射keys
-        cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[" + message + " - " + (index + 1) + "]"));
+        if (index == null) {
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[" + message + "]"));
+        } else {
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[" + message + " - " + (index + 1) + "]"));
+        }
         for (String key : keys) {
             String key1 = ComparisonNodeMapping.getKey(key);
 
