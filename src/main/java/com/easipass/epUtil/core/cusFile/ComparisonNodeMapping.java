@@ -101,7 +101,7 @@ public class ComparisonNodeMapping {
 
     static {
         FORM_LIST_MAPPING.put("ClassMark[?]", null);
-        FORM_LIST_MAPPING.put("CodeTS[HS编码]", "CODE_T,CODE_S");
+//        FORM_LIST_MAPPING.put("CodeTS[HS编码]", "CODE_T,CODE_S");
         FORM_LIST_MAPPING.put("ContrItem[新贸序号]", "CONTR_ITEM");
         FORM_LIST_MAPPING.put("DeclPrice[申报单价]", "DECL_PRICE");
         FORM_LIST_MAPPING.put("DutyMode[征减免税方式]", "DUTY_MODE");
@@ -161,6 +161,16 @@ public class ComparisonNodeMapping {
         FORM_CONTAINER.put("LclFlag[拼箱标识]", "LCL_FLAG");
         FORM_CONTAINER.put("GoodsContaWt[?]", null);
         FORM_CONTAINER.put("ContainerWt[集装箱自重]", "CONTAINER_WT");
+    }
+
+    /**
+     * 随附单证映射
+     * */
+    public static final Map<String, String> FORM_CERTIFICATE = new LinkedHashMap<>();
+
+    static {
+        FORM_CERTIFICATE.put("DocuCode[单证代码]", "DOCU_CODE");
+        FORM_CERTIFICATE.put("CertCode[单证编号]", "CERT_CODE");
     }
 
     /**

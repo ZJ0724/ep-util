@@ -132,4 +132,24 @@ public class SWGDOracle extends Oracle {
         return resultSet;
     }
 
+    /**
+     * 查询随附单证数据
+     *
+     * @param ediNo Certificate
+     * @param certificateNo 随附单证序号
+     * */
+    public ResultSet queryFormCertificate(String ediNo, String certificateNo) {
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_SWGD_FORM_CERTIFICATE WHERE HEAD_ID = (SELECT ID FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?) AND CERTIFICATE_NO = ?", new Object[]{ediNo, certificateNo});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw ErrorException.getErrorException(e.getMessage());
+        }
+
+        return resultSet;
+    }
+
 }

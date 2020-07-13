@@ -52,6 +52,11 @@ public class CusFile {
     private final List<Element> DecContainers = new ArrayList<>();
 
     /**
+     * 随附单证
+     * */
+    private final List<Element> LicenseDocu = new ArrayList<>();
+
+    /**
      * 构造函数
      *
      * @param multipartFile 前端传过来的文件
@@ -104,6 +109,17 @@ public class CusFile {
 
             for (Object element : ContainerList) {
                 this.DecContainers.add((Element) element);
+            }
+        }
+
+        // 随附单证
+        Element DecLicenseDocus = rootElement.element("DecLicenseDocus");
+
+        if (DecLicenseDocus != null) {
+            List<?> LicenseDocu = DecLicenseDocus.elements("LicenseDocu");
+
+            for (Object element : LicenseDocu) {
+                this.LicenseDocu.add((Element) element);
             }
         }
     }
@@ -171,7 +187,7 @@ public class CusFile {
             Set<String> keys = ComparisonNodeMapping.FORM_HEAD_MAPPING.keySet();
             for (String key : keys) {
                 String key1 = ComparisonNodeMapping.getKey(key);
-                String nodeValue = this.getNodeValue(this.decHead, key1);
+                String nodeValue = getNodeValue(this.decHead, key1);
                 String value = ComparisonNodeMapping.FORM_HEAD_MAPPING.get(key);
                 String dbValue = null;
                 if (value != null) {
@@ -190,7 +206,7 @@ public class CusFile {
                 // DeclareName特殊处理
                 if ("DeclareName".equals(key1)) {
                     // IE_TYPE
-                    String ieType = this.getDbValue(formHead, "IE_TYPE");
+                    String ieType = getDbValue(formHead, "IE_TYPE");
 
                     // 如果IE_TYPE为0，这DeclareName为null
                     if ("0".equals(ieType)) {
@@ -206,96 +222,54 @@ public class CusFile {
 
         // 比对表体数据
         int size = this.DecList.size();
-        // 表体映射keys
-        Set<String> keys = ComparisonNodeMapping.FORM_LIST_MAPPING.keySet();
+        Set<String> ListKeys = ComparisonNodeMapping.FORM_LIST_MAPPING.keySet();
 
         for (int i = 0; i < size; i++) {
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[表体 - " + (i + 1) + "]"));
-            // DecList
-            Element DecList = this.DecList.get(i);
-            // GNo
-            String GNo = DecList.element("GNo").getText();
+            String[] strings = comparisonBefore(i, this.DecList.get(i), ComparisonNodeMapping.FORM_LIST_MAPPING, ListKeys, SWGDOracle.queryFormList(ediNo, i + ""), "表体", cusFileComparisonWebsocketApi);
 
-            // GNo为null
-            if (GNo == null || "".equals(GNo)) {
-                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getComparisonFalseType("GNo"));
-                continue;
-            }
-
-            // 表体数据
-            ResultSet formList = SWGDOracle.queryFormList(this.ediNo, (Integer.parseInt(GNo) - 1) + "");
-
-            // 遍历表体映射
-            for (String key : keys) {
-                String key1 = ComparisonNodeMapping.getKey(key);
-                String nodeValue = DecList.element(key1).getText();
-                String value = ComparisonNodeMapping.FORM_LIST_MAPPING.get(key);
-                String dbValue = null;
-                try {
-                    if (value != null) {
-                        // 特殊处理CodeTS
-                        if (key1.equals("CodeTS")) {
-                            String[] fields = value.split(",");
-                            for (String field : fields) {
-                                dbValue = StringUtil.append(dbValue, formList.getString(field));
-                            }
-                        } else {
-                            dbValue = formList.getString(value);
-                        }
-
-                        // 特殊处理GNo
-                        if (key1.equals("GNo")) {
-                            dbValue = (Integer.parseInt(dbValue) + 1) + "";
-                        }
-                    }
-                } catch (SQLException e) {
-                    throw ErrorException.getErrorException(e.getMessage() + ": " + value);
-                }
-
+            if (strings != null) {
                 // ProdValidDt特殊处理
-                if (key1.equals("ProdValidDt")) {
-                    dbValue = DateUtil.formatDateYYYYMMdd(dbValue);
+                if (strings[0].equals("ProdValidDt")) {
+                    strings[4] = DateUtil.formatDateYYYYMMdd(strings[4]);
                 }
 
-                this.comparison(key, nodeValue, value, dbValue, cusFileComparisonWebsocketApi);
+                // 特殊处理GNo
+                if (strings[0].equals("GNo")) {
+                    strings[4] = (Integer.parseInt(strings[4]) + 1) + "";
+                }
             }
+
+            comparison(strings, cusFileComparisonWebsocketApi);
         }
 
         // 比对集装箱信息
-        // containerSize
         int containerSize = this.DecContainers.size();
 
         if (containerSize != 0) {
-            // keys
-            Set<String> containerKeys = ComparisonNodeMapping.FORM_CONTAINER.keySet();
+            Set<String> containersKeys = ComparisonNodeMapping.FORM_CONTAINER.keySet();
 
-            // 遍历集装箱
             for (int i = 0; i < containerSize; i ++) {
-                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[集装箱 - " + (i + 1) + "]"));
-                // 单个集装箱
-                Element container = this.DecContainers.get(i);
-                // 数据库集装箱信息
-                ResultSet dbContainer = SWGDOracle.queryFormContainer(this.ediNo, i + "");
+                String[] strings = comparisonBefore(i, this.DecContainers.get(i), ComparisonNodeMapping.FORM_CONTAINER, containersKeys, SWGDOracle.queryFormContainer(ediNo, i + ""), "集装箱", cusFileComparisonWebsocketApi);
 
-                // 数据库集装箱信息为null
-                if (dbContainer == null) {
-                    cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getErrorType("数据库集装箱信息不存在"));
-                    continue;
-                }
-
-                // 遍历映射keys
-                for (String key : containerKeys) {
-                    String key1 = ComparisonNodeMapping.getKey(key);
-                    String nodeValue = this.getNodeValue(container, key1);
-                    String value = ComparisonNodeMapping.FORM_CONTAINER.get(key);
-                    String dbValue = this.getDbValue(dbContainer, value);
-
-                    // 比对
-                    this.comparison(key, nodeValue, value, dbValue, cusFileComparisonWebsocketApi);
-                }
+                comparison(strings, cusFileComparisonWebsocketApi);
             }
         } else {
             cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[无集装箱]"));
+        }
+
+        // 比对随附单证
+        int licenseDocuSize = this.LicenseDocu.size();
+
+        if (licenseDocuSize != 0) {
+            Set<String> certificateKeys = ComparisonNodeMapping.FORM_CERTIFICATE.keySet();
+
+            for (int i = 0; i < licenseDocuSize; i++) {
+                String[] strings = comparisonBefore(i, this.LicenseDocu.get(i), ComparisonNodeMapping.FORM_CERTIFICATE, certificateKeys, SWGDOracle.queryFormCertificate(ediNo, i + ""), "随附单证", cusFileComparisonWebsocketApi);
+
+                comparison(strings, cusFileComparisonWebsocketApi);
+            }
+        } else {
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[无随附单证]"));
         }
 
         // 比对完成
@@ -309,13 +283,19 @@ public class CusFile {
     /**
      * 比对
      *
-     * @param key 映射key值
-     * @param nodeValue 报文节点值
-     * @param value 映射value值
-     * @param dbValue 数据库值
+     * @param strings 节点数据
      * @param cusFileComparisonWebsocketApi 报文比对websocket服务
      * */
-    private void comparison(String key, String nodeValue, String value, String dbValue, CusFileComparisonWebsocketApi cusFileComparisonWebsocketApi) {
+    private static void comparison(String[] strings, CusFileComparisonWebsocketApi cusFileComparisonWebsocketApi) {
+        if (strings == null) {
+            return;
+        }
+
+        String key = strings[0];
+        String nodeValue = strings[1];
+        String value = strings[2];
+        String dbValue = strings[3];
+
         // 如果value是null的话，不进行比对
         if (value == null) {
             cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getComparisonNullType(key));
@@ -344,7 +324,7 @@ public class CusFile {
      *
      * @return 节点值
      * */
-    private String getNodeValue(Element element, String elementName) {
+    private static String getNodeValue(Element element, String elementName) {
         Element cElement = element.element(elementName);
 
         if (cElement == null) {
@@ -360,7 +340,7 @@ public class CusFile {
      * @param resultSet 数据库数据
      * @param value 字段名
      * */
-    private String getDbValue(ResultSet resultSet, String value) {
+    private static String getDbValue(ResultSet resultSet, String value) {
         if (value == null) {
             return "";
         }
@@ -371,6 +351,39 @@ public class CusFile {
             result = resultSet.getString(value);
         } catch (SQLException e) {
             throw new ErrorException(e.getMessage() + ": " + value);
+        }
+
+        return result;
+    }
+
+    /**
+     * 获取key、nodeValue、value、dbValue
+     *
+     * @param index 序号
+     * @param element 元素
+     * @param map 映射
+     * @param keys 映射keys
+     * @param resultSet 数据库数据
+     * @param message 信息
+     * @param cusFileComparisonWebsocketApi 报文比对websocket服务
+     * */
+    private static String[] comparisonBefore(int index, Element element, Map<String, String> map, Set<String> keys, ResultSet resultSet, String message, CusFileComparisonWebsocketApi cusFileComparisonWebsocketApi) {
+        if (resultSet == null) {
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getErrorType("数据库" + message + "不存在"));
+            return null;
+        }
+
+        String[] result = new String[4];
+
+        // 遍历映射keys
+        cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[" + message + " - " + (index + 1) + "]"));
+        for (String key : keys) {
+            String key1 = ComparisonNodeMapping.getKey(key);
+
+            result[0] = key;
+            result[1] = getNodeValue(element, key1);
+            result[2] = map.get(key);
+            result[3] = getDbValue(resultSet, result[2]);
         }
 
         return result;
