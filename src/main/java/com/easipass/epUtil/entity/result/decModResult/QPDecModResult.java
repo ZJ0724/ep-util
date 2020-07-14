@@ -63,7 +63,7 @@ public class QPDecModResult extends DecModResult {
 
     @Override
     public String makeFileName() {
-        return "QPDecModResult-" + this.getDecModSeqNo() + "-" + DateUtil.getTime();
+        return "QPDecModCusResult-" + this.getDecModSeqNo() + "-" + DateUtil.getTime();
     }
 
 }

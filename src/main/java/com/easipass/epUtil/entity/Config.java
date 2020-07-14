@@ -8,7 +8,6 @@ import com.easipass.epUtil.entity.config.Sftp83;
 import com.easipass.epUtil.entity.config.Swgd;
 import com.easipass.epUtil.exception.ConfigException;
 import com.easipass.epUtil.exception.ErrorException;
-import com.easipass.epUtil.component.Log;
 import com.easipass.epUtil.util.FileUtil;
 import java.io.*;
 

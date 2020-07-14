@@ -1,6 +1,5 @@
 package com.easipass.epUtil.entity;
 
-import com.easipass.epUtil.component.Log;
 import com.easipass.epUtil.config.ProjectConfig;
 import com.easipass.epUtil.config.ResourcePathConfig;
 import com.easipass.epUtil.exception.ErrorException;

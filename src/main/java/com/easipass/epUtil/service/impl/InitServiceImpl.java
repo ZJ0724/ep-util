@@ -3,7 +3,7 @@ package com.easipass.epUtil.service.impl;
 import com.easipass.epUtil.component.ChromeDriver;
 import com.easipass.epUtil.entity.Config;
 import com.easipass.epUtil.module.DaKaModule;
-import com.easipass.epUtil.component.Log;
+import com.easipass.epUtil.entity.Log;
 import com.easipass.epUtil.service.InitService;
 
 public class InitServiceImpl implements InitService {

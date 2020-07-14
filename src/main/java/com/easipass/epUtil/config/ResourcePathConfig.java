@@ -17,30 +17,30 @@ public class ResourcePathConfig {
      * */
     public final static String LINUX_CHROME_DRIVER_PATH = "/resources/chromeDriver/linux/epUtilChromeDriver";
 
-    /**
-     * 报关单通讯回执路径
-     * */
-    public final static String TONG_XUN_FORM_RESULT_PATH = "/resources/formResult/tongXunFormResult";
-
-    /**
-     * 报关单业务回执路径
-     * */
-    public final static String YE_WU_FORM_RESULT_PATH = "/resources/formResult/yeWuFormResult";
+//    /**
+//     * 报关单通讯回执路径
+//     * */
+//    public final static String TONG_XUN_FORM_RESULT_PATH = "/resources/formCusResult/tongXunFormCusResult";
+//
+//    /**
+//     * 报关单业务回执路径
+//     * */
+//    public final static String YE_WU_FORM_RESULT_PATH = "/resources/formCusResult/yeWuFormCusResult";
 
     /**
      * 修撤单QP回执路径
      * */
-    public final static String QP_DEC_MOD_RESULT_PATH = "/resources/decModResult/QPDecModResult";
+    public final static String QP_DEC_MOD_RESULT_PATH = "/resources/decModResult/QPDecModCusResult";
 
     /**
      * 报关单业务回执路径
      * */
-    public final static String YE_WU_DEC_MOD_RESULT_PATH = "/resources/decModResult/yeWuDecModResult";
+    public final static String YE_WU_DEC_MOD_RESULT_PATH = "/resources/decModResult/yeWuDecModCusResult";
 
     /**
      * 代理委托回执路径
      * */
-    public final static String AGENT_RESULT_PATH = "/resources/agentResult.wts";
+    public final static String AGENT_RESULT_PATH = "/resources/agentCusResult.wts";
 
     /**
      * 首页

@@ -62,7 +62,7 @@ public class YeWuDecModResult extends DecModResult {
 
     @Override
     public String makeFileName() {
-        return "yeWuDecModResult-" + this.getDecModSeqNo() + "-" + DateUtil.getTime();
+        return "yeWuDecModCusResult-" + this.getDecModSeqNo() + "-" + DateUtil.getTime();
     }
 
 }

@@ -1,4 +1,4 @@
-package com.easipass.epUtil.component;
+package com.easipass.epUtil.entity;
 
 import com.easipass.epUtil.exception.ErrorException;
 import com.jcraft.jsch.*;
@@ -6,27 +6,32 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * ftp
+ *
+ * @author ZJ
+ * */
 public class Sftp {
 
     /**
      * 地址
      * */
-    private String url;
+    private final String url;
 
     /**
      * 端口
      * */
-    private int port;
+    private final int port;
 
     /**
      * 用户名
      * */
-    private String username;
+    private final String username;
 
     /**
      * 密码
      * */
-    private String password;
+    private final String password;
 
     /**
      * sftp连接
@@ -46,33 +51,10 @@ public class Sftp {
     /**
      * 构造函数
      * */
-    protected Sftp() {}
-
-    /**
-     * get,set
-     * */
-    public String getUrl() {
-        return url;
-    }
-    public void setUrl(String url) {
+    public Sftp(String url, int port, String username, String password) {
         this.url = url;
-    }
-    public int getPort() {
-        return port;
-    }
-    public void setPort(int port) {
         this.port = port;
-    }
-    public String getUsername() {
-        return username;
-    }
-    public void setUsername(String username) {
         this.username = username;
-    }
-    public String getPassword() {
-        return password;
-    }
-    public void setPassword(String password) {
         this.password = password;
     }
 
@@ -88,13 +70,13 @@ public class Sftp {
             properties.put("StrictHostKeyChecking", "no");
             this.session.setConfig(properties);
             this.session.connect();
-            this.channelSftp = (ChannelSftp)session.openChannel("sftp");
+            this.channelSftp = (ChannelSftp) session.openChannel("sftp");
             this.channelSftp.connect();
         }catch (JSchException e) {
-            throw com.easipass.epUtil.exception.SftpException.connectFail(this.url);
+            throw new com.easipass.epUtil.exception.SftpException("sftp: " + this.url + ", 连接失败");
         }
 
-        Log.getLog().info("sftp: " + this.getUrl() + "已连接!");
+        Log.getLog().info("sftp: " + this.url + ", 已连接");
         this.isConnect = true;
     }
 
@@ -112,7 +94,7 @@ public class Sftp {
             this.channelSftp = null;
         }
 
-        Log.getLog().info("sftp: " + this.getUrl() + "已关闭!");
+        Log.getLog().info("sftp: " + this.url + ", 已关闭");
         this.isConnect = false;
     }
 
@@ -140,7 +122,7 @@ public class Sftp {
      * */
     private void checkConnect() {
         if (!this.isConnect) {
-            throw com.easipass.epUtil.exception.SftpException.connectFail(this.url);
+            throw new com.easipass.epUtil.exception.SftpException("sftp: " + this.url + ", 未连接");
         }
     }
 

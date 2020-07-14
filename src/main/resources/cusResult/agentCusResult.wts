@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ImportConsignAgrResponse>
+	<ResponseInfo>
+		<ResponseCode>0</ResponseCode>
+		<ResponseNotes>导入接口数据导入成功！</ResponseNotes>
+		<CopCusCode>1234567890</CopCusCode>
+	</ResponseInfo>
+	<ConsignNo>test123</ConsignNo>
+	<DecEntryID>EDI208000001745617</DecEntryID>
+</ImportConsignAgrResponse>

@@ -1,6 +1,6 @@
 package com.easipass.epUtil.api.websocket;
 
-import com.easipass.epUtil.component.Log;
+import com.easipass.epUtil.entity.Log;
 import com.easipass.epUtil.exception.ErrorException;
 import javax.websocket.OnError;
 import javax.websocket.Session;

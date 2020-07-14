@@ -60,7 +60,7 @@ public class TongXunFormResult extends FormResult {
 
     @Override
     public String makeFileName() {
-        return "tongXunFormResult-" + this.getSeqNo() + "-" + DateUtil.getTime();
+        return "tongXunFormCusResult-" + this.getSeqNo() + "-" + DateUtil.getTime();
     }
 
 }

@@ -1,13 +1,13 @@
 package com.easipass.epUtil.module;
 
 import com.easipass.epUtil.component.ChromeDriver;
-import com.easipass.epUtil.component.Sftp;
+import com.easipass.epUtil.entity.Sftp;
 import com.easipass.epUtil.entity.Config;
 import com.easipass.epUtil.entity.Result;
 import com.easipass.epUtil.exception.BaseException;
 import com.easipass.epUtil.exception.DisposableUploadException;
 import com.easipass.epUtil.exception.ErrorException;
-import com.easipass.epUtil.component.sftp.Sftp83;
+import com.easipass.epUtil.entity.sftp.Sftp83;
 
 public class ResultModule {
 

@@ -1,6 +1,6 @@
 package com.easipass.epUtil.exception;
 
-import com.easipass.epUtil.component.Log;
+import com.easipass.epUtil.entity.Log;
 
 public class ChromeDriverException extends BaseException {
 

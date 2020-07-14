@@ -2,7 +2,7 @@ package com.easipass.epUtil.handler;
 
 import com.easipass.epUtil.config.ErrorCodeConfig;
 import com.easipass.epUtil.exception.*;
-import com.easipass.epUtil.component.Log;
+import com.easipass.epUtil.entity.Log;
 import com.easipass.epUtil.entity.Response;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

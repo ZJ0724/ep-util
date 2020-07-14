@@ -3,6 +3,7 @@ package com.easipass.epUtil.component;
 import com.easipass.epUtil.config.ProjectConfig;
 import com.easipass.epUtil.config.SystemTypeConfig;
 import com.easipass.epUtil.entity.Config;
+import com.easipass.epUtil.entity.Log;
 import com.easipass.epUtil.entity.config.DaKa;
 import com.easipass.epUtil.exception.ChromeDriverException;
 import com.easipass.epUtil.exception.ErrorException;

@@ -1,9 +1,9 @@
 package com.easipass.epUtil.core.cusResult.formCusResult;
 
-import com.easipass.epUtil.config.ResourcePathConfig;
+import com.easipass.epUtil.component.oracle.SWGDOracle;
 import com.easipass.epUtil.core.cusResult.FormCusResult;
 import com.easipass.epUtil.core.dto.CusResultDTO;
-import com.easipass.epUtil.entity.result.formResult.TongXunFormResult;
+import com.easipass.epUtil.entity.resources.cusResult.formCusResult.TongXunFormCusResultResource;
 import com.easipass.epUtil.util.Base64Util;
 import com.easipass.epUtil.util.DateUtil;
 import com.easipass.epUtil.util.XmlUtil;
@@ -31,7 +31,9 @@ public final class TongXunFormCusResult extends FormCusResult {
     @Override
     protected String getData() {
         //获取回执原document
-        Document document = XmlUtil.getDocument(TongXunFormResult.class.getResourceAsStream(ResourcePathConfig.TONG_XUN_FORM_RESULT_PATH));
+        TongXunFormCusResultResource tongXunFormCusResultResource = TongXunFormCusResultResource.getInstance();
+        Document document = XmlUtil.getDocument(tongXunFormCusResultResource.getInputStream());
+        tongXunFormCusResultResource.closeInputStream();
 
         //document根节点
         Element documentRootElement = document.getRootElement();
@@ -60,6 +62,13 @@ public final class TongXunFormCusResult extends FormCusResult {
 
         //替换原document的data节点
         documentRootElement.element("Data").setText(data);
+
+        // 设置FileName
+        String fileName = new SWGDOracle().queryFormHeadFileName(this.getEdiNo());
+        if (fileName == null) {
+            fileName = this.getFileName();
+        }
+        documentRootElement.element("AddInfo").element("FileName").setText(fileName);
 
         // 设置创建时间
         documentRootElement.element("TransInfo").element("CreatTime").setText(DateUtil.getDate());

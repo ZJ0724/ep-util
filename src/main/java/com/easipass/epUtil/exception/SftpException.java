@@ -1,16 +1,19 @@
 package com.easipass.epUtil.exception;
 
-public class SftpException extends BaseException {
-
-    private SftpException(String message) {
-        super(message);
-    }
+/**
+ * sftp异常
+ *
+ * @author ZJ
+ * */
+public final class SftpException extends BaseException {
 
     /**
-     * 连接失败
+     * 构造函数
+     *
+     * @param message 异常信息
      * */
-    public static SftpException connectFail(String url) {
-        return new SftpException("sftp:" + url + "连接失败");
+    public SftpException(String message) {
+        super(message);
     }
 
 }

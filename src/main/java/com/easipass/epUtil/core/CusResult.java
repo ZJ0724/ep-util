@@ -49,7 +49,7 @@ public abstract class CusResult {
      *
      * @return channel
      * */
-    protected String getChannel() {
+    protected final String getChannel() {
         return this.channel;
     }
 
@@ -58,8 +58,15 @@ public abstract class CusResult {
      *
      * @return note
      * */
-    protected String getNote() {
+    protected final String getNote() {
         return this.note;
+    }
+
+    /**
+     * 上传
+     * */
+    public final void upload() {
+
     }
 
 }

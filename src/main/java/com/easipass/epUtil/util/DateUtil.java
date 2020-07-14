@@ -1,7 +1,6 @@
 package com.easipass.epUtil.util;
 
 import com.easipass.epUtil.exception.ErrorException;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

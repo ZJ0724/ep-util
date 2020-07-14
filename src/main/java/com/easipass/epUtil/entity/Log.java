@@ -1,4 +1,4 @@
-package com.easipass.epUtil.component;
+package com.easipass.epUtil.entity;
 
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.util.DateUtil;
@@ -9,12 +9,17 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Log {
+/**
+ * 日志
+ *
+ * @author ZJ
+ * */
+public final class Log {
 
     /**
      * 单例
      * */
-    private final static Log log = new Log();
+    private static final Log log = new Log();
 
     /**
      * 构造函数
@@ -23,13 +28,17 @@ public class Log {
 
     /**
      * 获取单例
+     *
+     * @return 单例
      * */
     public static Log getLog() {
-        return Log.log;
+        return log;
     }
 
     /**
      * INFO
+     *
+     * @param log 日志内容
      * */
     public void info(String log) {
         this.outputLog("INFO", log);
@@ -37,6 +46,8 @@ public class Log {
 
     /**
      * ERROR
+     *
+     * @param log 日志内容
      * */
     public void error(String log) {
         this.outputLog("ERROR", log);
@@ -44,6 +55,9 @@ public class Log {
 
     /**
      * 日志格式
+     *
+     * @param type 日志类型
+     * @param log 日志内容
      */
     private String logFormat(String type, String log) {
         Date date = new Date();
@@ -54,6 +68,9 @@ public class Log {
 
     /**
      * 输出日志
+     *
+     * @param type 日志类型
+     * @param log 日志内容
      * */
     private void outputLog(String type, String log) {
         // 日志输出文件
