@@ -135,7 +135,7 @@ public class SWGDOracle extends Oracle {
     /**
      * 查询随附单证数据
      *
-     * @param ediNo Certificate
+     * @param ediNo ediNo编号
      * @param certificateNo 随附单证序号
      * */
     public ResultSet queryFormCertificate(String ediNo, String certificateNo) {
@@ -150,6 +150,116 @@ public class SWGDOracle extends Oracle {
         }
 
         return resultSet;
+    }
+
+    /**
+     * 查询申请单证数据
+     *
+     * @param ediNo ediNo编号
+     * @param orderNo 序号
+     * */
+    public ResultSet queryDecRequestCert(String ediNo, String orderNo) {
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_DEC_REQUEST_CERT WHERE HEAD_ID = (SELECT ID FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?) AND ORDER_NO = ?", new Object[]{ediNo, orderNo});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw ErrorException.getErrorException(e.getMessage());
+        }
+
+        return resultSet;
+    }
+
+    /**
+     * 查询企业资质
+     *
+     * @param ediNo ediNo编号
+     * @param orderNo 序号
+     * */
+    public ResultSet queryDecCopLimit(String ediNo, String orderNo) {
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_DEC_COP_LIMIT WHERE HEAD_ID = (SELECT ID FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?) AND ORDER_NO = ?", new Object[]{ediNo, orderNo});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw ErrorException.getErrorException(e.getMessage());
+        }
+
+        return resultSet;
+    }
+
+    /**
+     * 查询企业承诺
+     *
+     * @param ediNo ediNo编号
+     * @param orderNo 序号
+     * */
+    public ResultSet queryDecCopPromise(String ediNo, String orderNo) {
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_DEC_COP_PROMISE WHERE HEAD_ID = (SELECT ID FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?) AND ORDER_NO = ?", new Object[]{ediNo, orderNo});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw ErrorException.getErrorException(e.getMessage());
+        }
+
+        return resultSet;
+    }
+
+    /**
+     * 查询其他包装
+     *
+     * @param ediNo ediNo编号
+     * @param orderNo 序号
+     * */
+    public ResultSet queryDecOtherPack(String ediNo, String orderNo) {
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_DEC_OTHER_PACK WHERE HEAD_ID = (SELECT ID FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?) AND ORDER_NO = ?", new Object[]{ediNo, orderNo});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw ErrorException.getErrorException(e.getMessage());
+        }
+
+        return resultSet;
+    }
+
+    /**
+     * 获取报关单文件名
+     *
+     * @param ediNo ediNo编号
+     * */
+    public String queryFormHeadFileName(String ediNo) {
+        this.connect();
+
+        String result = null;
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?", new Object[]{ediNo});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw ErrorException.getErrorException(e.getMessage());
+        }
+
+        try {
+            result = resultSet.getString("FILE_NAME");
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        this.close();
+
+        return result;
     }
 
 }

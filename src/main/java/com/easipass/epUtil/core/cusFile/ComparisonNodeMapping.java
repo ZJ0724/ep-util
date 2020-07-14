@@ -19,7 +19,7 @@ public class ComparisonNodeMapping {
     public static final Map<String, String> FORM_HEAD_MAPPING = new LinkedHashMap<>();
 
     static {
-        FORM_HEAD_MAPPING.put("SeqNo[数据中心统一编号]", "SEQ_NO");
+        FORM_HEAD_MAPPING.put("SeqNo[数据中心统一编号]", null);
         FORM_HEAD_MAPPING.put("AgentCode[申报单位代码]", "AGENT_CODE");
         FORM_HEAD_MAPPING.put("AgentName[申报单位名称]", "AGENT_NAME");
         FORM_HEAD_MAPPING.put("ApprNo[批准文号]", "APPR_NO");
@@ -101,7 +101,8 @@ public class ComparisonNodeMapping {
 
     static {
         FORM_LIST_MAPPING.put("ClassMark[?]", null);
-//        FORM_LIST_MAPPING.put("CodeTS[HS编码]", "CODE_T,CODE_S");
+        FORM_LIST_MAPPING.put("CodeTS", "CODE_T");
+        FORM_LIST_MAPPING.put("CodeTS[HS编码]", "CODE_S");
         FORM_LIST_MAPPING.put("ContrItem[新贸序号]", "CONTR_ITEM");
         FORM_LIST_MAPPING.put("DeclPrice[申报单价]", "DECL_PRICE");
         FORM_LIST_MAPPING.put("DutyMode[征减免税方式]", "DUTY_MODE");
@@ -171,6 +172,46 @@ public class ComparisonNodeMapping {
     static {
         FORM_CERTIFICATE.put("DocuCode[单证代码]", "DOCU_CODE");
         FORM_CERTIFICATE.put("CertCode[单证编号]", "CERT_CODE");
+    }
+
+    /**
+     * 所需单证映射
+     * */
+    public static final Map<String, String> DEC_REQUEST_CERT_MAPPING = new LinkedHashMap<>();
+
+    static {
+        DEC_REQUEST_CERT_MAPPING.put("AppCertCode[申请单证代码]", "APP_CERT_CODE");
+        DEC_REQUEST_CERT_MAPPING.put("ApplOri[申请单证正本数]", "APPL_ORI");
+        DEC_REQUEST_CERT_MAPPING.put("ApplCopyQuan[申请单证副本数]", "APPL_COPY_QUAN");
+    }
+
+    /**
+     * 企业资质
+     * */
+    public static final Map<String, String> DEC_COP_LIMIT_MAPPING = new LinkedHashMap<>();
+
+    static {
+        DEC_COP_LIMIT_MAPPING.put("EntQualifNo[企业资质编号]", "ENT_QUALIF_NO");
+        DEC_COP_LIMIT_MAPPING.put("EntQualifTypeCode[企业资质类别代码]", "ENT_QUALIF_TYPE_CODE");
+    }
+
+    /**
+     * 企业承诺
+     * */
+    public static final Map<String, String> DEC_COP_PROMISE_MAPPING = new LinkedHashMap<>();
+
+    static {
+        DEC_COP_PROMISE_MAPPING.put("DeclaratioMaterialCode[证明/声明材料代码]", "DECLARATION_MATERIAL_CODE");
+    }
+
+    /**
+     * 其他包装
+     * */
+    public static final Map<String, String> DEC_OTHER_PACK_MAPPING = new LinkedHashMap<>();
+
+    static {
+        DEC_OTHER_PACK_MAPPING.put("PackQty[包装件数]", "PACK_QTY");
+        DEC_OTHER_PACK_MAPPING.put("PackType[包装材料种类]", "PACK_TYPE");
     }
 
     /**

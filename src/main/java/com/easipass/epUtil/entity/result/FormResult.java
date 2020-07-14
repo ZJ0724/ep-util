@@ -31,23 +31,11 @@ public abstract class FormResult extends Result {
         this.ediNo = ediNo;
     }
 
-    /**
-     * 获取seqNo
-     * */
-    protected String getSeqNo() {
-        String ediNo = this.getEdiNo();
 
-        return "seqNo00000000" + ediNo.substring(ediNo.length() - 5);
-    }
 
-    /**
-     * 获取报关单号
-     * */
-    protected String getPreEntryId() {
-        SWGDOracle swgdOracle = new SWGDOracle();
-        String ediNo = this.getEdiNo();
+    @Override
+    public String getFileName() {
 
-        return swgdOracle.queryDeclPort(ediNo) + "000000000" + ediNo.substring(ediNo.length() - 5);
     }
 
 }

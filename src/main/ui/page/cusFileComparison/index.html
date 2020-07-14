@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>报文比对</title>
+    <title>cusFile comparison</title>
     <script src="/page/cusFileComparison/main.js"></script>
     <style>
         .input {
@@ -42,7 +42,7 @@
                 </div>
 
                 <div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
-                    <div style="width: 90%;">
+                    <div style="width: 90%;color: red;">
                         note
                     </div>
                     <div class="center" style="width: 10%;">
@@ -60,11 +60,11 @@
                 </div>
 
                 <div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
-                    <div style="width: 90%;">
+                    <div style="width: 90%;color: #c2c2c2;">
                         note
                     </div>
                     <div class="center" style="width: 10%;">
-                        <i style="color: #FFB800;" class="layui-icon layui-icon-help"></i>
+                        <i style="color: #c2c2c2;" class="layui-icon layui-icon-subtraction"></i>
                     </div>
                 </div>
 
@@ -152,8 +152,8 @@
                         }
                         // 比对不通过
                         if (message === "false") {
-                            div = documentUtil.parseDocument(`<div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
-                    <div style="width: 90%;">
+                            div = documentUtil.parseDocument(`                <div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                    <div style="width: 90%;color: red;">
                         ${node}
                     </div>
                     <div class="center" style="width: 10%;">
@@ -164,11 +164,11 @@
                         // 不进行比对
                         if (message === "null") {
                             div = documentUtil.parseDocument(`<div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
-                    <div style="width: 90%;">
+                    <div style="width: 90%;color: #c2c2c2;">
                         ${node}
                     </div>
                     <div class="center" style="width: 10%;">
-                        <i style="color: #FFB800;" class="layui-icon layui-icon-help"></i>
+                        <i style="color: #c2c2c2;" class="layui-icon layui-icon-subtraction"></i>
                     </div>
                 </div>`);
                         }
