@@ -1,10 +1,11 @@
 package com.easipass.epUtil.module;
 
-import com.easipass.epUtil.component.ChromeDriver;
+import com.easipass.epUtil.entity.ChromeDriver;
 import com.easipass.epUtil.entity.Log;
 import com.easipass.epUtil.config.DaKaSignConfig;
 import com.easipass.epUtil.entity.Config;
 import com.easipass.epUtil.entity.DaKaSign;
+import com.easipass.epUtil.entity.config.DaKaProperties;
 import com.easipass.epUtil.exception.ChromeDriverException;
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.util.DateUtil;
@@ -14,7 +15,7 @@ import java.util.List;
 public class DaKaModule {
 
     /** 打卡配置 */
-    private final com.easipass.epUtil.entity.config.DaKa daKa = Config.getConfig().getDaKa();
+    private final DaKaProperties daKa = Config.getConfig().getDaKa();
 
     /** 日志组件 */
     private final Log log = Log.getLog();

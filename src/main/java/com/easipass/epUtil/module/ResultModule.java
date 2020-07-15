@@ -1,9 +1,10 @@
 package com.easipass.epUtil.module;
 
-import com.easipass.epUtil.component.ChromeDriver;
+import com.easipass.epUtil.entity.ChromeDriver;
 import com.easipass.epUtil.entity.Sftp;
 import com.easipass.epUtil.entity.Config;
 import com.easipass.epUtil.entity.Result;
+import com.easipass.epUtil.entity.config.Sftp83Properties;
 import com.easipass.epUtil.exception.BaseException;
 import com.easipass.epUtil.exception.DisposableUploadException;
 import com.easipass.epUtil.exception.ErrorException;
@@ -12,7 +13,7 @@ import com.easipass.epUtil.entity.sftp.Sftp83;
 public class ResultModule {
 
     /** sftp83配置 */
-    private final com.easipass.epUtil.entity.config.Sftp83 sftp83 = Config.getConfig().getSftp83();
+    private final Sftp83Properties sftp83 = Config.getConfig().getSftp83();
 
     /** 单例 */
     private final static ResultModule RESULT_MODULE = new ResultModule();

@@ -42,6 +42,16 @@ public abstract class Resource {
     protected static final String DEC_MOD_CUS_RESULT_PATH = CUS_RESULT_PATH + "decModCusResult/";
 
     /**
+     * 配置文件路径
+     * */
+    protected static final String CONFIG_PATH = "config/";
+
+    /**
+     * 谷歌驱动路径
+     * */
+    protected static final String CHROME_DRIVER = "chromeDriver/";
+
+    /**
      * 构造函数
      *
      * @param path 资源路

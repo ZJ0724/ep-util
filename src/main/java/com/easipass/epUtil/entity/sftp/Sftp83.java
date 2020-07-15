@@ -1,23 +1,25 @@
 package com.easipass.epUtil.entity.sftp;
 
-import com.easipass.epUtil.entity.Config;
 import com.easipass.epUtil.entity.Sftp;
+import com.easipass.epUtil.entity.config.Sftp83Properties;
 
-public class Sftp83 extends Sftp {
+/**
+ * sftp83
+ *
+ * @author ZJ
+ * */
+public final class Sftp83 extends Sftp {
 
     /**
      * sftp83配置
      * */
-    private final com.easipass.epUtil.entity.config.Sftp83 sftp83 = Config.getConfig().getSftp83();
+    private final static Sftp83Properties SFTP_83_PROPERTIES = Sftp83Properties.getInstance();
 
     /**
      * 构造函数
      */
     public Sftp83() {
-        this.setUrl(sftp83.getUrl());
-        this.setPort(sftp83.getPort());
-        this.setUsername(sftp83.getUsername());
-        this.setPassword(sftp83.getPassword());
+        super(SFTP_83_PROPERTIES.getUrl(), SFTP_83_PROPERTIES.getPort(), SFTP_83_PROPERTIES.getUsername(), SFTP_83_PROPERTIES.getPassword());
     }
 
 }

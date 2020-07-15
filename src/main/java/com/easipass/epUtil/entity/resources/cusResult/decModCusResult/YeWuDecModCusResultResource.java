@@ -7,7 +7,7 @@ import com.easipass.epUtil.entity.Resource;
  *
  * @author ZJ
  * */
-public class YeWuDecModCusResultResource extends Resource {
+public final class YeWuDecModCusResultResource extends Resource {
 
     /**
      * 单例

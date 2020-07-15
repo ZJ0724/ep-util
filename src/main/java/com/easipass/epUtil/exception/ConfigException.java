@@ -1,16 +1,19 @@
 package com.easipass.epUtil.exception;
 
-public class ConfigException extends BaseException {
-
-    private ConfigException(String message) {
-        super(message);
-    }
+/**
+ * 配置异常
+ *
+ * @author ZJ
+ * */
+public final class ConfigException extends BaseException {
 
     /**
-     * 配置文件异常
+     * 构造函数
+     *
+     * @param message 错误信息
      * */
-    public static ConfigException configFileException() {
-        throw new ConfigException("配置文件错误！");
+    public ConfigException(String message) {
+        super(message);
     }
 
 }

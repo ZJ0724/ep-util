@@ -1,10 +1,8 @@
-package com.easipass.epUtil.component;
+package com.easipass.epUtil.entity;
 
 import com.easipass.epUtil.config.ProjectConfig;
 import com.easipass.epUtil.config.SystemTypeConfig;
-import com.easipass.epUtil.entity.Config;
-import com.easipass.epUtil.entity.Log;
-import com.easipass.epUtil.entity.config.DaKa;
+import com.easipass.epUtil.entity.config.DaKaProperties;
 import com.easipass.epUtil.exception.ChromeDriverException;
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.service.impl.InitServiceImpl;
@@ -13,14 +11,33 @@ import com.zj0724.uiAuto.WebDriver;
 import com.zj0724.uiAuto.exception.WebDriverException;
 import com.zj0724.uiAuto.exception.WebElementException;
 import com.zj0724.uiAuto.webDriver.ChromeWebDriver;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ChromeDriver {
+/**
+ * 谷歌驱动
+ *
+ * @author ZJ
+ * */
+public final class ChromeDriver {
 
+    /**
+     * 驱动
+     * */
     private final WebDriver webDriver;
 
+    /**
+     * 驱动文件
+     * */
+    private static final File FILE ?
+
+    /**
+     * 构造函数
+     * */
     public ChromeDriver() {
+
+
         try {
             webDriver = new ChromeWebDriver(ProjectConfig.CHROME_DRIVER);
             Log.getLog().info("已打开谷歌驱动!");
@@ -112,7 +129,7 @@ public class ChromeDriver {
      * */
     public void daKa() {
         Log log = Log.getLog();
-        DaKa daKa = Config.getConfig().getDaKa();
+        DaKaProperties daKa = Config.getConfig().getDaKa();
 
         try {
             this.webDriver.url("http://192.168.0.41/index.jsp");
