@@ -1,6 +1,10 @@
 package com.easipass.epUtil.core;
 
 import com.easipass.epUtil.core.dto.CusResultDTO;
+import com.easipass.epUtil.entity.ChromeDriver;
+import com.easipass.epUtil.entity.sftp.Sftp83;
+import com.easipass.epUtil.exception.BaseException;
+import com.easipass.epUtil.exception.UploadCusResultException;
 
 /**
  * 回执
@@ -35,14 +39,14 @@ public abstract class CusResult {
      *
      * @return 回执全内容
      * */
-    protected abstract String getData();
+    public abstract String getData();
 
     /**
-     * 获取文件名
+     * 获取回执文件名
      *
      * @return 文件名
      * */
-    protected abstract String getFileName();
+    public abstract String getName();
 
     /**
      * 获取channel
@@ -66,7 +70,33 @@ public abstract class CusResult {
      * 上传
      * */
     public final void upload() {
+        Sftp83 sftp = null;
 
+        try {
+            sftp = new Sftp83();
+            sftp.connect();
+            sftp.uploadCusResult(this);
+        } catch (BaseException e) {
+            throw new UploadCusResultException(e.getMessage());
+        } finally {
+            if (sftp != null) {
+                sftp.close();
+            }
+        }
+
+        ChromeDriver chromeDriver = null;
+
+        try {
+            chromeDriver = new ChromeDriver();
+            chromeDriver.swgdRecvRun();
+
+        } catch (BaseException e) {
+            throw new UploadCusResultException(e.getMessage());
+        } finally {
+            if (chromeDriver != null) {
+                chromeDriver.close();
+            }
+        }
     }
 
 }

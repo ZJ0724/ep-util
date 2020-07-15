@@ -65,7 +65,7 @@ public final class DaKaProperties extends Config {
      * 构造函数
      * */
     private DaKaProperties() {
-        super("daKa.properties", DaKaPropertiesResource.getInstance());
+        super(DaKaPropertiesResource.getInstance());
     }
 
     /**

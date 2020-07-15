@@ -38,16 +38,16 @@ public class ResultModule {
      * @param result 回执实体
      * */
     public void upload(Result result) {
-        // 连接sftp
-        Sftp sftp = new Sftp83();
-        sftp.connect();
-        sftp.upload(sftp83.getUploadPath(), result.getFileName(), result.getData());
-        sftp.close();
-
-        // 谷歌驱动点击RecvRun
-        ChromeDriver chromeDriver = new ChromeDriver();
-        chromeDriver.swgdRecvRun();
-        chromeDriver.close();
+//        // 连接sftp
+//        Sftp sftp = new Sftp83();
+//        sftp.connect();
+//        sftp.upload(sftp83.getUploadPath(), result.getFileName(), result.getData());
+//        sftp.close();
+//
+//        // 谷歌驱动点击RecvRun
+//        ChromeDriver chromeDriver = new ChromeDriver();
+//        chromeDriver.swgdRecvRun();
+//        chromeDriver.close();
     }
 
     /**

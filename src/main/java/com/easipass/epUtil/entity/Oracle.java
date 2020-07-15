@@ -1,36 +1,40 @@
-package com.easipass.epUtil.component;
+package com.easipass.epUtil.entity;
 
-import com.easipass.epUtil.entity.Log;
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.exception.OracleException;
 import java.sql.*;
 
+/**
+ * oracle数据库
+ *
+ * @author ZJ
+ * */
 public class Oracle {
 
     /**
      * 地址
      * */
-    private String url;
+    private final String url;
 
     /**
      * 端口
      * */
-    private int port;
+    private final int port;
 
     /**
      * sid
      * */
-    private String sid;
+    private final String sid;
 
     /**
      * 用户名
      * */
-    private String username;
+    private final String username;
 
     /**
      * 密码
      * */
-    private String password;
+    private final String password;
 
     /**
      * 连接
@@ -49,56 +53,18 @@ public class Oracle {
 
     /**
      * 构造函数
+     *
+     * @param url 地址
+     * @param port 端口
+     * @param  sid sid
+     * @param username 用户名
+     * @param password 密码
      * */
-    protected Oracle() {}
-    protected Oracle(String url, int port, String sid, String username, String password) {
+    public Oracle(String url, int port, String sid, String username, String password) {
         this.url = url;
         this.port = port;
         this.sid = sid;
         this.username = username;
-        this.password = password;
-    }
-
-    /**
-     * get,set
-     * */
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getSid() {
-        return sid;
-    }
-
-    public void setSid(String sid) {
-        this.sid = sid;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
         this.password = password;
     }
 
@@ -107,7 +73,7 @@ public class Oracle {
      * */
     private void checkConnect() {
         if (!isConnect) {
-            throw OracleException.connectFail(this.url);
+            throw new OracleException("数据库未连接");
         }
     }
 
@@ -124,11 +90,10 @@ public class Oracle {
             Class.forName("oracle.jdbc.OracleDriver");
             this.connection = DriverManager.getConnection("jdbc:oracle:thin:@" + url + ":" + port + ":" + sid, username, password);
             this.isConnect = true;
-            Log.getLog().info("oracle:" + this.getUrl() + "连接成功!");
         } catch (ClassNotFoundException e) {
-            throw ErrorException.getErrorException(e.getMessage());
+            throw new ErrorException(e.getMessage());
         } catch (SQLException e) {
-            throw OracleException.connectFail(this.url);
+            throw new OracleException("数据库连接失败");
         }
     }
 
@@ -146,14 +111,16 @@ public class Oracle {
                 preparedStatement = null;
             }
         } catch (SQLException e) {
-            throw ErrorException.getErrorException(e.getMessage());
+            throw new ErrorException(e.getMessage());
         }
         this.isConnect = false;
-        Log.getLog().info("oracle:" + this.getUrl() + "已关闭!");
     }
 
     /**
      * 增删改
+     *
+     * @param sql sql
+     * @param objects 参数
      */
     public void update(String sql, Object[] objects) {
         this.checkConnect();
@@ -167,12 +134,17 @@ public class Oracle {
             }
             preparedStatement.execute();
         } catch (SQLException e) {
-            throw ErrorException.getErrorException("sql错误");
+            throw new ErrorException("sql错误");
         }
     }
 
     /**
      * 查
+     *
+     * @param sql sql
+     * @param objects 参数
+     *
+     * @return ResultSet
      */
     public ResultSet query(String sql, Object[] objects) {
         this.checkConnect();
@@ -186,7 +158,7 @@ public class Oracle {
             }
             return preparedStatement.executeQuery();
         }catch (SQLException e){
-            throw ErrorException.getErrorException("sql错误");
+            throw new ErrorException("sql错误");
         }
     }
 

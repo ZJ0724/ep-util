@@ -35,24 +35,13 @@ public class Config {
     /**
      * 构造函数
      *
-     * @param path 路径
      * @param resource 资源
      * */
-    protected Config(String path, Resource resource) {
-        this.file = new File(ROOT_PATH + path);
-        File par = this.file.getParentFile();
+    protected Config(Resource resource) {
+        this.file = new File(ROOT_PATH + resource.getName());
 
-        if (par.exists()) {
-            boolean is = par.mkdirs();
-            if (!is) {
-                throw new ErrorException("创建config文件夹失败");
-            }
-        }
-
-        if (!this.file.exists()) {
-            FileUtil.copyTextFile(resource.getInputStream(), this.file);
-            resource.closeInputStream();
-        }
+        FileUtil.createFile(this.file, resource.getInputStream());
+        resource.closeInputStream();
 
         InputStream inputStream;
         try {

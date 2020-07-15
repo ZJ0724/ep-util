@@ -1,7 +1,7 @@
 package com.easipass.epUtil.core;
 
 import com.easipass.epUtil.api.websocket.CusFileComparisonWebsocketApi;
-import com.easipass.epUtil.component.oracle.SWGDOracle;
+import com.easipass.epUtil.entity.oracle.SWGDOracle;
 import com.easipass.epUtil.core.cusFile.ComparisonNodeMapping;
 import com.easipass.epUtil.entity.vo.CusFileComparisonMessageVo;
 import com.easipass.epUtil.exception.CusFileException;

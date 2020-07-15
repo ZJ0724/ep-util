@@ -2,77 +2,19 @@ package com.easipass.epUtil.util;
 
 import com.easipass.epUtil.exception.ErrorException;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 
-public class FileUtil {
-
-    /**
-     * 复制其他文件
-     * */
-    public static void copyOtherFile(InputStream inputStream, File outFile) {
-        try {
-            File parentFile = outFile.getParentFile();
-            if (!parentFile.exists()) {
-                parentFile.mkdirs();
-            }
-            OutputStream outputStream = new FileOutputStream(outFile);
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
-            byte[] bytes = new byte[bufferedInputStream.available()];
-            int len = bufferedInputStream.read(bytes);
-            bufferedOutputStream.write(bytes);
-            outputStream.close();
-            bufferedInputStream.close();
-            outputStream.close();
-        } catch (IOException e) {
-            throw ErrorException.getErrorException(e.getMessage());
-        }
-    }
-
-    /**
-     * 复制文本文件
-     */
-    public static void copyTextFile(InputStream inputStream, File outputFile) {
-        try {
-            File parentFile = outputFile.getParentFile();
-            if (!parentFile.exists()) {
-                parentFile.mkdirs();
-            }
-            OutputStream outputStream = new FileOutputStream(outputFile);
-            byte[] bytes = new byte[inputStream.available()];
-            inputStream.read(bytes);
-            outputStream.write(bytes);
-            outputStream.close();
-        } catch (IOException e) {
-            throw ErrorException.getErrorException(e.getMessage());
-        }
-    }
-
-    /**
-     * 获取文件内容
-     * */
-    public static String getData(File file) {
-        try {
-            StringBuilder result = new StringBuilder();
-            InputStream inputStream = new FileInputStream(file);
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                result.append(line);
-                line = bufferedReader.readLine();
-            }
-            inputStream.close();
-            inputStreamReader.close();
-            bufferedReader.close();
-            return result.toString();
-        } catch (IOException e) {
-            return null;
-        }
-    }
+/**
+ * 文件工具
+ *
+ * @author ZJ
+ * */
+public final class FileUtil {
 
     /**
      * 写入文件数据
+     *
+     * @param file 文件
+     * @param data 数据
      * */
     public static void setData(File file, String data) {
         try {
@@ -85,27 +27,41 @@ public class FileUtil {
     }
 
     /**
-     * 获取文件数据
+     * 检查生成文件
      *
-     * @param inputStream 输入流
-     *
-     * @return 输入流数据
+     * @param file 要生成的文件
+     * @param inputStream 文件流
      * */
-    public static String getData(InputStream inputStream) {
-        try {
-            StringBuilder result = new StringBuilder();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                result.append(line);
-                line = bufferedReader.readLine();
+    public static void createFile(File file, InputStream inputStream) {
+        if (file == null) {
+            return;
+        }
+
+        if (!file.exists()) {
+            File par = file.getParentFile();
+
+            if (!par.exists()) {
+                boolean is = par.mkdirs();
+                if (!is) {
+                    throw new ErrorException("创建文件夹失败");
+                }
             }
-            inputStreamReader.close();
-            bufferedReader.close();
-            return result.toString();
-        } catch (IOException e) {
-            return null;
+
+            try {
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+                OutputStream outputStream = new FileOutputStream(file);
+                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
+
+                byte[] bytes = new byte[bufferedInputStream.available()];
+                bufferedInputStream.read(bytes);
+                bufferedOutputStream.write(bytes);
+
+                bufferedInputStream.close();
+                outputStream.close();
+                bufferedOutputStream.close();
+            } catch (IOException e) {
+                throw new ErrorException(e.getMessage());
+            }
         }
     }
 

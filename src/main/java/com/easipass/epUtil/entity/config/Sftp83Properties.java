@@ -8,7 +8,7 @@ import com.easipass.epUtil.entity.resources.config.Sftp83PropertiesResource;
  *
  * @author ZJ
  * */
-public class Sftp83Properties extends Config {
+public final class Sftp83Properties extends Config {
 
     /**
      * 地址
@@ -50,7 +50,7 @@ public class Sftp83Properties extends Config {
      * 构造函数
      * */
     private Sftp83Properties() {
-        super("sftp83.properties", Sftp83PropertiesResource.getInstance());
+        super(Sftp83PropertiesResource.getInstance());
     }
 
     /**

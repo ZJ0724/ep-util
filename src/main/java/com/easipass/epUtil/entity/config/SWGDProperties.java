@@ -8,7 +8,7 @@ import com.easipass.epUtil.entity.resources.config.SWGDPropertiesResource;
  *
  * @author ZJ
  * */
-public class SWGDProperties extends Config {
+public final class SWGDProperties extends Config {
 
     /**
      * 地址
@@ -49,7 +49,7 @@ public class SWGDProperties extends Config {
      * 构造函数
      * */
     private SWGDProperties() {
-        super("SWGD.properties", SWGDPropertiesResource.getInstance());
+        super(SWGDPropertiesResource.getInstance());
     }
 
     /**

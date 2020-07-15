@@ -1,6 +1,7 @@
 package com.easipass.epUtil.entity;
 
 import com.easipass.epUtil.exception.ErrorException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -88,6 +89,13 @@ public abstract class Resource {
         }
     }
 
-
+    /**
+     * 获取资源文件名
+     *
+     * @return 文件名
+     * */
+    public final String getName() {
+        return new File(path).getName();
+    }
 
 }

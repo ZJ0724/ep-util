@@ -1,6 +1,6 @@
 package com.easipass.epUtil.core.cusResult.formCusResult;
 
-import com.easipass.epUtil.component.oracle.SWGDOracle;
+import com.easipass.epUtil.entity.oracle.SWGDOracle;
 import com.easipass.epUtil.core.cusResult.FormCusResult;
 import com.easipass.epUtil.core.dto.CusResultDTO;
 import com.easipass.epUtil.entity.resources.cusResult.formCusResult.YeWuFormCusResultResource;
@@ -67,7 +67,7 @@ public final class YeWuFormCusResult extends FormCusResult {
         // 设置FileName
         String fileName = new SWGDOracle().queryFormHeadFileName(this.getEdiNo());
         if (fileName == null) {
-            fileName = this.getFileName();
+            fileName = this.getName();
         }
         documentRootElement.element("AddInfo").element("FileName").setText(fileName);
 
@@ -78,7 +78,7 @@ public final class YeWuFormCusResult extends FormCusResult {
     }
 
     @Override
-    protected String getFileName() {
+    protected String getName() {
         return "yeWuFormCusResult-" + this.getSeqNo() + "-" + DateUtil.getTime();
     }
 

@@ -50,6 +50,11 @@ public class Sftp {
 
     /**
      * 构造函数
+     *
+     * @param url 地址
+     * @param port 端口
+     * @param username 用户名
+     * @param password 密码
      * */
     public Sftp(String url, int port, String username, String password) {
         this.url = url;
@@ -62,6 +67,10 @@ public class Sftp {
      * 连接
      * */
     public void connect() {
+        if (this.isConnect) {
+            return;
+        }
+
         try {
             JSch jSch = new JSch();
             this.session = jSch.getSession(username, url, port);

@@ -1,6 +1,6 @@
 package com.easipass.epUtil.core.cusResult;
 
-import com.easipass.epUtil.component.oracle.SWGDOracle;
+import com.easipass.epUtil.entity.oracle.SWGDOracle;
 import com.easipass.epUtil.core.CusResult;
 import com.easipass.epUtil.core.dto.CusResultDTO;
 

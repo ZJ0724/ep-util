@@ -1,19 +1,14 @@
 package com.easipass.epUtil.entity;
 
-import com.easipass.epUtil.config.ProjectConfig;
-import com.easipass.epUtil.config.SystemTypeConfig;
 import com.easipass.epUtil.entity.config.DaKaProperties;
+import com.easipass.epUtil.entity.resources.chromeDriver.EpUtilChromeDriverLinuxResource;
+import com.easipass.epUtil.entity.resources.chromeDriver.EpUtilChromeDriverWindowsResource;
 import com.easipass.epUtil.exception.ChromeDriverException;
-import com.easipass.epUtil.exception.ErrorException;
-import com.easipass.epUtil.service.impl.InitServiceImpl;
 import com.easipass.epUtil.util.FileUtil;
 import com.zj0724.uiAuto.WebDriver;
 import com.zj0724.uiAuto.exception.WebDriverException;
-import com.zj0724.uiAuto.exception.WebElementException;
 import com.zj0724.uiAuto.webDriver.ChromeWebDriver;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * 谷歌驱动
@@ -28,77 +23,34 @@ public final class ChromeDriver {
     private final WebDriver webDriver;
 
     /**
-     * 驱动文件
+     * 驱动文件存放路径
      * */
-    private static final File FILE ?
+    private static final String ROOT_PATH = Project.getInstance().getConfigPath() + "chromeDriver/";
 
     /**
      * 构造函数
      * */
     public ChromeDriver() {
+        Resource resource;
+        System system = Project.getInstance().getSystemType();
 
+        if (system == System.WINDOWS) {
+            resource = EpUtilChromeDriverWindowsResource.getInstance();
+        } else if (system == System.LINUX) {
+            resource = EpUtilChromeDriverLinuxResource.getInstance();
+        } else {
+            throw new ChromeDriverException("未找到指定系统类型的驱动文件");
+        }
+
+        File file = new File(ROOT_PATH, resource.getName());
+
+        FileUtil.createFile(file, resource.getInputStream());
+        resource.closeInputStream();
 
         try {
-            webDriver = new ChromeWebDriver(ProjectConfig.CHROME_DRIVER);
-            Log.getLog().info("已打开谷歌驱动!");
+            webDriver = new ChromeWebDriver(file);
         } catch (WebDriverException e) {
-            throw ChromeDriverException.chromeDriverFileException();
-        }
-    }
-
-    /**
-     * 检查驱动
-     * */
-    public static void check() {
-        // 驱动文件是否存在，不存在生成默认驱动
-        if (!ProjectConfig.CHROME_DRIVER.exists()) {
-            InputStream inputStream = InitServiceImpl.class.getResourceAsStream(ProjectConfig.RESOURCE_CHROME_DRIVER);
-            FileUtil.copyOtherFile(inputStream, ProjectConfig.CHROME_DRIVER);
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                throw ErrorException.getErrorException(e.getMessage());
-            }
-
-            // 如果是linux，修改权限777
-            if (ProjectConfig.SYSTEM_TYPE == SystemTypeConfig.linux) {
-                try {
-                    Runtime.getRuntime().exec("chmod 777 " + ProjectConfig.LINUX_CHROME_DRIVER.getAbsolutePath());
-                } catch (IOException e) {
-                    throw ErrorException.getErrorException(e.getMessage());
-                }
-            }
-        }
-
-        try {
-            WebDriver webDriver = new ChromeWebDriver(ProjectConfig.CHROME_DRIVER);
-            webDriver.close();
-        } catch (WebDriverException e) {
-            ChromeDriver.killChromeDriverProcess();
-            throw ChromeDriverException.chromeDriverFileException();
-        }
-    }
-
-    /**
-     * 杀掉谷歌驱动进程
-     * */
-    private static void killChromeDriverProcess() {
-        try {
-            // windows
-            if (ProjectConfig.SYSTEM_TYPE == SystemTypeConfig.windows) {
-                Runtime.getRuntime().exec("taskkill /f /im " + ProjectConfig.CHROME_DRIVER.getName());
-            }
-
-            // linux
-            if (ProjectConfig.SYSTEM_TYPE == SystemTypeConfig.linux) {
-                String cmd = "ps -aux | grep " + ProjectConfig.CHROME_DRIVER.getName() + " | grep -v grep | awk '{print $2}' | xargs kill -9";
-                Runtime.getRuntime().exec(cmd);
-            }
-
-            // 休眠1秒
-            Thread.sleep(1000);
-        } catch (java.io.IOException | java.lang.InterruptedException e) {
-            throw ErrorException.getErrorException(e.getMessage());
+            throw new ChromeDriverException(e.getMessage());
         }
     }
 
@@ -121,28 +73,19 @@ public final class ChromeDriver {
      * */
     public void close() {
         this.webDriver.close();
-        Log.getLog().info("谷歌驱动已关闭!");
     }
 
     /**
      * 执行打卡
      * */
     public void daKa() {
-        Log log = Log.getLog();
-        DaKaProperties daKa = Config.getConfig().getDaKa();
+        DaKaProperties daKa = DaKaProperties.getInstance();
 
-        try {
-            this.webDriver.url("http://192.168.0.41/index.jsp");
-            this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(5) > td:nth-child(2) > input[type=text]").sendKey(daKa.getUsername());
-            this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(6) > td:nth-child(2) > input[type=password]").sendKey(daKa.getPassword());
-            this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(7) > td:nth-child(1) > div > img").click();
-            this.webDriver.findElementByCssSelector("#Image1").click();
-            this.webDriver.close();
-            log.info("打卡完成");
-        } catch (WebElementException e) {
-            this.close();
-            throw ChromeDriverException.daKaException();
-        }
+        this.webDriver.url("http://192.168.0.41/index.jsp");
+        this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(5) > td:nth-child(2) > input[type=text]").sendKey(daKa.getUsername());
+        this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(6) > td:nth-child(2) > input[type=password]").sendKey(daKa.getPassword());
+        this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(7) > td:nth-child(1) > div > img").click();
+        this.webDriver.findElementByCssSelector("#Image1").click();
     }
 
 }

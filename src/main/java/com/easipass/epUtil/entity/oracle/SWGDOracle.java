@@ -1,26 +1,29 @@
-package com.easipass.epUtil.component.oracle;
+package com.easipass.epUtil.entity.oracle;
 
-import com.easipass.epUtil.entity.Config;
-import com.easipass.epUtil.component.Oracle;
+import com.easipass.epUtil.entity.Oracle;
 import com.easipass.epUtil.entity.config.SWGDProperties;
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.exception.OracleException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SWGDOracle extends Oracle {
+/**
+ * SWGD数据库
+ *
+ * @author ZJ
+ * */
+public final class SWGDOracle extends Oracle {
+
+    /**
+     * SWGD配置
+     * */
+    private static final SWGDProperties SWGD_PROPERTIES = SWGDProperties.getInstance();
 
     /**
      * 构造函数
      */
     public SWGDOracle() {
-        SWGDProperties swgd = Config.getConfig().getSwgd();
-
-        this.setUrl(swgd.getUrl());
-        this.setPort(swgd.getPort());
-        this.setSid(swgd.getSid());
-        this.setUsername(swgd.getUsername());
-        this.setPassword(swgd.getPassword());
+        super(SWGD_PROPERTIES.getUrl(), SWGD_PROPERTIES.getPort(), SWGD_PROPERTIES.getSid(), SWGD_PROPERTIES.getUsername(), SWGD_PROPERTIES.getPassword());
     }
 
     /**
@@ -36,7 +39,7 @@ public class SWGDOracle extends Oracle {
             resultSet.next();
             declPort = resultSet.getString("DECL_PORT");
         } catch (SQLException e) {
-            throw OracleException.queryError("未找到报关单数据");
+            throw new OracleException("未找到报关单数据");
         } finally {
             this.close();
         }
@@ -65,7 +68,7 @@ public class SWGDOracle extends Oracle {
             resultSet.next();
             agentCode = resultSet.getString("AGENT_CODE");
         } catch (SQLException e) {
-            throw OracleException.queryError("未找到数据");
+            throw new OracleException("未找到数据");
         } finally {
             this.close();
         }
@@ -86,7 +89,7 @@ public class SWGDOracle extends Oracle {
                 return null;
             }
         } catch (SQLException e) {
-            throw ErrorException.getErrorException(e.getMessage());
+            throw new ErrorException(e.getMessage());
         }
 
         return resultSet;
@@ -106,7 +109,7 @@ public class SWGDOracle extends Oracle {
                 return null;
             }
         } catch (SQLException e) {
-            throw ErrorException.getErrorException(e.getMessage());
+            throw new ErrorException(e.getMessage());
         }
 
         return resultSet;
@@ -126,7 +129,7 @@ public class SWGDOracle extends Oracle {
                 return null;
             }
         } catch (SQLException e) {
-            throw ErrorException.getErrorException(e.getMessage());
+            throw new ErrorException(e.getMessage());
         }
 
         return resultSet;
@@ -146,7 +149,7 @@ public class SWGDOracle extends Oracle {
                 return null;
             }
         } catch (SQLException e) {
-            throw ErrorException.getErrorException(e.getMessage());
+            throw new ErrorException(e.getMessage());
         }
 
         return resultSet;
@@ -166,7 +169,7 @@ public class SWGDOracle extends Oracle {
                 return null;
             }
         } catch (SQLException e) {
-            throw ErrorException.getErrorException(e.getMessage());
+            throw new ErrorException(e.getMessage());
         }
 
         return resultSet;
@@ -186,7 +189,7 @@ public class SWGDOracle extends Oracle {
                 return null;
             }
         } catch (SQLException e) {
-            throw ErrorException.getErrorException(e.getMessage());
+            throw new ErrorException(e.getMessage());
         }
 
         return resultSet;
@@ -206,7 +209,7 @@ public class SWGDOracle extends Oracle {
                 return null;
             }
         } catch (SQLException e) {
-            throw ErrorException.getErrorException(e.getMessage());
+            throw new ErrorException(e.getMessage());
         }
 
         return resultSet;
@@ -226,7 +229,7 @@ public class SWGDOracle extends Oracle {
                 return null;
             }
         } catch (SQLException e) {
-            throw ErrorException.getErrorException(e.getMessage());
+            throw new ErrorException(e.getMessage());
         }
 
         return resultSet;
@@ -248,7 +251,7 @@ public class SWGDOracle extends Oracle {
                 return null;
             }
         } catch (SQLException e) {
-            throw ErrorException.getErrorException(e.getMessage());
+            throw new ErrorException(e.getMessage());
         }
 
         try {
