@@ -16,7 +16,7 @@
     </parent>
 
     <properties>
-        <buildPath>${project.build.directory}/build/${project.artifactId}${env}</buildPath>
+        <buildPath>${project.build.directory}/build/${project.artifactId}</buildPath>
         <skipTests>true</skipTests>
 
         <springbootUtilFile>${project.basedir}/src/main/lib/springbootUtil-1.0.2.jar</springbootUtilFile>
@@ -111,24 +111,6 @@
         </dependency>
     </dependencies>
 
-    <profiles>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <env>-beta</env>
-            </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>release</id>
-            <properties>
-                <env />
-            </properties>
-        </profile>
-    </profiles>
-
     <build>
         <finalName>${project.artifactId}</finalName>
         <resources>
@@ -141,7 +123,6 @@
                 <includes>
                     <include>config/*</include>
                     <include>bin/*</include>
-                    <include>version</include>
                     <include>README.md</include>
                 </includes>
                 <targetPath>${buildPath}</targetPath>

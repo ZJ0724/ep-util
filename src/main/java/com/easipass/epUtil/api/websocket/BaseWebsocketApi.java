@@ -1,7 +1,7 @@
 package com.easipass.epUtil.api.websocket;
 
-import com.easipass.epUtil.entity.Log;
-import com.easipass.epUtil.exception.ErrorException;
+import com.easipass.epUtil.core.entity.Log;
+import com.easipass.epUtil.core.exception.ErrorException;
 import javax.websocket.OnError;
 import javax.websocket.Session;
 import java.io.IOException;
@@ -54,7 +54,7 @@ public class BaseWebsocketApi {
             this.session.close();
             LOG.info("已关闭session: " + this.session);
         } catch (IOException e) {
-            throw ErrorException.getErrorException(e.getMessage());
+            throw new ErrorException(e.getMessage());
         }
     }
 
