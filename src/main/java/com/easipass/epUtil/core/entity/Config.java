@@ -137,8 +137,7 @@ public class Config {
                 List<?> strings = (List<?>) fieldData;
 
                 for (Object s : strings) {
-                    value = StringUtil.append(value, ",");
-                    value = StringUtil.append(value, s.toString());
+                    value = StringUtil.append(value, ",", s.toString());
                 }
 
                 value = value.substring(1);
@@ -146,7 +145,7 @@ public class Config {
                 value = fieldData.toString();
             }
 
-            data = StringUtil.append(StringUtil.append(StringUtil.append(StringUtil.append(data, key), " = "), value), "\n");
+            data = StringUtil.append(data, key, " = ", value, "\n");
         }
 
         data = data.substring(0, data.length() - 1);

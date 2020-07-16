@@ -10,20 +10,22 @@ public final class StringUtil {
     /**
      * 连接字符串
      *
-     * @param a 第一个字符串
-     * @param b 第二个字符串
+     * @param strings 字符串数组
      *
      * @return 连接后的字符串
      * */
-    public static String append(String a, String b) {
-        if (a == null) {
-            a = "";
-        }
-        if (b == null) {
-            b = "";
+    public static String append(String... strings) {
+        StringBuilder result = new StringBuilder();
+
+        for (String s : strings) {
+            if (s == null) {
+                s = "";
+            }
+
+            result.append(s);
         }
 
-        return a + b;
+        return result.toString();
     }
 
 }
