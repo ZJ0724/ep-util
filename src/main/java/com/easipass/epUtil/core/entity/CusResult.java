@@ -3,7 +3,6 @@ package com.easipass.epUtil.core.entity;
 import com.easipass.epUtil.core.entity.dto.CusResultDTO;
 import com.easipass.epUtil.core.entity.sftp.Sftp83;
 import com.easipass.epUtil.core.exception.BaseException;
-import com.easipass.epUtil.core.exception.UploadCusResultException;
 
 /**
  * 回执

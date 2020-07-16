@@ -4,6 +4,8 @@ import com.easipass.epUtil.core.entity.config.Key;
 import com.easipass.epUtil.core.exception.ConfigException;
 import com.easipass.epUtil.core.exception.ErrorException;
 import com.easipass.epUtil.core.util.FileUtil;
+import com.easipass.epUtil.core.util.StringUtil;
+
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
@@ -117,7 +119,7 @@ public class Config {
     /**
      * 保存
      * */
-    public void save() {
+    public final void save() {
         String data = "";
 
         for (Field field : this.keyFields) {
@@ -132,17 +134,22 @@ public class Config {
             }
 
             if (field.getType() == List.class) {
-                List<String> strings = (List<String>) fieldData;
-                for (String s : strings) {
-                    value = value + "," + s;
+                List<?> strings = (List<?>) fieldData;
+
+                for (Object s : strings) {
+                    value = StringUtil.append(value, ",");
+                    value = StringUtil.append(value, s.toString());
                 }
 
+                value = value.substring(1);
             } else {
                 value = fieldData.toString();
             }
 
-            data = data + key + " = " + value + "\n";
+            data = StringUtil.append(StringUtil.append(StringUtil.append(StringUtil.append(data, key), " = "), value), "\n");
         }
+
+        data = data.substring(0, data.length() - 1);
 
         FileUtil.setData(this.file, data);
     }

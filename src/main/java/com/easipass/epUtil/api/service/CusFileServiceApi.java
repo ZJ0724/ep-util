@@ -2,13 +2,11 @@ package com.easipass.epUtil.api.service;
 
 import com.easipass.epUtil.core.entity.CusFile;
 import com.easipass.epUtil.core.entity.Response;
-import com.zj0724.springbootUtil.annotation.SkipCheck;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 
 /**
  * 报文服务Api
@@ -17,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
  * */
 @RestController
 @RequestMapping(BaseServiceApi.URL + "cusFile")
-@SkipCheck
 public class CusFileServiceApi {
 
     /**

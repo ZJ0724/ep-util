@@ -9,6 +9,11 @@ import com.easipass.epUtil.core.exception.BaseException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * main
+ *
+ * @author ZJ
+ * */
 @SpringBootApplication
 public class Main {
 
@@ -17,6 +22,9 @@ public class Main {
      * */
     private static final Log LOG = Log.getLog();
 
+    /**
+     * main
+     * */
     public static void main(String[] args) {
         try {
             LOG.info("--- < 启动 > ---");

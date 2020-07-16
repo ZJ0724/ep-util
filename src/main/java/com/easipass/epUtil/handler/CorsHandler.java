@@ -6,9 +6,17 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+/**
+ * 允许跨域请求
+ *
+ * @author ZJ
+ * */
 @Configuration
-public class CorsHander {
+public class CorsHandler {
 
+    /**
+     * 允许跨域请求
+     * */
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -16,6 +24,9 @@ public class CorsHander {
         return new CorsFilter(source);
     }
 
+    /**
+     * 允许跨域请求
+     * */
     private CorsConfiguration buildConfig() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         // 1允许任何域名使用
