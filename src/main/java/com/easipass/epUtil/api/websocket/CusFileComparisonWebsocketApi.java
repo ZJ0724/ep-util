@@ -1,7 +1,7 @@
 package com.easipass.epUtil.api.websocket;
 
-import com.easipass.epUtil.core.entity.CusFile;
-import com.easipass.epUtil.core.entity.vo.CusFileComparisonMessageVo;
+import com.easipass.epUtil.entity.CusFile;
+import com.easipass.epUtil.entity.vo.CusFileComparisonMessageVo;
 import org.springframework.stereotype.Component;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;

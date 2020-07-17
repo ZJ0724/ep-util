@@ -1,7 +1,7 @@
 package com.easipass.epUtil.handler;
 
-import com.easipass.epUtil.core.entity.Log;
-import com.easipass.epUtil.core.entity.Response;
+import com.easipass.epUtil.entity.Log;
+import com.easipass.epUtil.entity.Response;
 import com.zj0724.uiAuto.exception.BaseException;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

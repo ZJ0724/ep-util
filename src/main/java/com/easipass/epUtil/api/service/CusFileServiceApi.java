@@ -1,7 +1,7 @@
 package com.easipass.epUtil.api.service;
 
-import com.easipass.epUtil.core.entity.CusFile;
-import com.easipass.epUtil.core.entity.Response;
+import com.easipass.epUtil.entity.CusFile;
+import com.easipass.epUtil.entity.Response;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
