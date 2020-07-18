@@ -3,7 +3,7 @@ package com.easipass.epUtil.entity;
 import com.easipass.epUtil.api.websocket.CusFileComparisonWebsocketApi;
 import com.easipass.epUtil.entity.oracle.SWGDOracle;
 import com.easipass.epUtil.entity.cusFile.ComparisonNodeMapping;
-import com.easipass.epUtil.entity.vo.CusFileComparisonMessageVo;
+import com.easipass.epUtil.entity.VO.CusFileComparisonMessageVO;
 import com.easipass.epUtil.exception.CusFileException;
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.exception.OracleException;
@@ -24,7 +24,7 @@ import java.util.*;
  *
  * @author ZJ
  * */
-public class CusFile {
+public final class CusFile {
 
     /**
      * 报文集合
@@ -237,7 +237,7 @@ public class CusFile {
         try {
             SWGDOracle.connect();
         } catch (OracleException e) {
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getErrorType(e.getMessage()));
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getErrorType(e.getMessage()));
             cusFileComparisonWebsocketApi.close();
             return;
         }
@@ -246,7 +246,7 @@ public class CusFile {
         ResultSet dbFormHead = SWGDOracle.queryFormHead(this.ediNo);
         Set<String> formHeadKeys = ComparisonNodeMapping.FORM_HEAD_MAPPING.keySet();
 
-        cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[表头]"));
+        cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[表头]"));
         for (String key : formHeadKeys) {
             String[] formHeadStrings = comparisonBefore(this.decHead, ComparisonNodeMapping.FORM_HEAD_MAPPING, key, dbFormHead, "表头", cusFileComparisonWebsocketApi);
 
@@ -285,7 +285,7 @@ public class CusFile {
             // codeTs
             String codeTs = "";
 
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[表体 - " + (i + 1) + "]"));
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[表体 - " + (i + 1) + "]"));
             for (String key : ListKeys) {
                 String[] strings = comparisonBefore(element, ComparisonNodeMapping.FORM_LIST_MAPPING, key, resultSet, "表体", cusFileComparisonWebsocketApi);
 
@@ -327,7 +327,7 @@ public class CusFile {
                 Element element = this.DecContainers.get(i);
                 ResultSet resultSet = SWGDOracle.queryFormContainer(ediNo, i + "");
 
-                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[集装箱 - " + (i + 1) + "]"));
+                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[集装箱 - " + (i + 1) + "]"));
                 for (String key : containersKeys) {
                     String[] strings = comparisonBefore(element, ComparisonNodeMapping.FORM_CONTAINER, key, resultSet, "集装箱", cusFileComparisonWebsocketApi);
 
@@ -339,7 +339,7 @@ public class CusFile {
                 }
             }
         } else {
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[无集装箱]"));
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[无集装箱]"));
         }
 
         // 比对随附单证
@@ -352,7 +352,7 @@ public class CusFile {
                 Element element = this.LicenseDocu.get(i);
                 ResultSet resultSet = SWGDOracle.queryFormCertificate(ediNo, i + "");
 
-                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[随附单证 - " + (i + 1) + "]"));
+                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[随附单证 - " + (i + 1) + "]"));
                 for (String key : certificateKeys) {
                     String[] strings = comparisonBefore(element, ComparisonNodeMapping.FORM_CERTIFICATE, key, resultSet, "随附单证", cusFileComparisonWebsocketApi);
 
@@ -364,7 +364,7 @@ public class CusFile {
                 }
             }
         } else {
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[无随附单证]"));
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[无随附单证]"));
         }
 
         // 比对申请单证
@@ -378,7 +378,7 @@ public class CusFile {
                 Element element = this.DecRequestCert.get(i);
                 ResultSet resultSet = SWGDOracle.queryDecRequestCert(ediNo, (i + 1) + "");
 
-                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[" + decRequestCertMessage + " - " + (i + 1) + "]"));
+                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[" + decRequestCertMessage + " - " + (i + 1) + "]"));
                 for (String key : keys) {
                     String[] strings = comparisonBefore(element, ComparisonNodeMapping.DEC_REQUEST_CERT_MAPPING, key, resultSet, decRequestCertMessage, cusFileComparisonWebsocketApi);
 
@@ -390,7 +390,7 @@ public class CusFile {
                 }
             }
         } else {
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[无" + decRequestCertMessage + "]"));
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[无" + decRequestCertMessage + "]"));
         }
 
         // 比对企业资质
@@ -404,7 +404,7 @@ public class CusFile {
                 Element element = this.DecCopLimit.get(i);
                 ResultSet resultSet = SWGDOracle.queryDecCopLimit(ediNo, (i + 1) + "");
 
-                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[" + decCopLimitMessage + " - " + (i + 1) + "]"));
+                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[" + decCopLimitMessage + " - " + (i + 1) + "]"));
                 for (String key : keys) {
                     String[] strings = comparisonBefore(element, ComparisonNodeMapping.DEC_COP_LIMIT_MAPPING, key, resultSet, decRequestCertMessage, cusFileComparisonWebsocketApi);
 
@@ -416,7 +416,7 @@ public class CusFile {
                 }
             }
         } else {
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[无" + decCopLimitMessage + "]"));
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[无" + decCopLimitMessage + "]"));
         }
 
         // 比对企业承诺
@@ -430,7 +430,7 @@ public class CusFile {
                 Element element = this.DecCopPromise.get(i);
                 ResultSet resultSet = SWGDOracle.queryDecCopPromise(ediNo, (i + 1) + "");
 
-                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[" + decCopPromisesMessage + " - " + (i + 1) + "]"));
+                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[" + decCopPromisesMessage + " - " + (i + 1) + "]"));
                 for (String key : keys) {
                     String[] strings = comparisonBefore(element, ComparisonNodeMapping.DEC_COP_PROMISE_MAPPING, key, resultSet, decRequestCertMessage, cusFileComparisonWebsocketApi);
 
@@ -442,14 +442,14 @@ public class CusFile {
                 }
             }
         } else {
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[无" + decCopPromisesMessage + "]"));
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[无" + decCopPromisesMessage + "]"));
         }
 
         // 使用人信息暂时不进行比对
-        cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[使用人信息暂时不进行比对]"));
+        cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[使用人信息暂时不进行比对]"));
 
         // 标记号码附件暂时不进行比对
-        cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[标记号码附件暂时不进行比对]"));
+        cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[标记号码附件暂时不进行比对]"));
 
         // 比对其他包装
         String decOtherPackMessage = "其他包装";
@@ -462,7 +462,7 @@ public class CusFile {
                 Element element = this.DecOtherPack.get(i);
                 ResultSet resultSet = SWGDOracle.queryDecOtherPack(ediNo, (i + 1) + "");
 
-                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[" + decOtherPackMessage + " - " + (i + 1) + "]"));
+                cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[" + decOtherPackMessage + " - " + (i + 1) + "]"));
                 for (String key : keys) {
                     String[] strings = comparisonBefore(element, ComparisonNodeMapping.DEC_OTHER_PACK_MAPPING, key, resultSet, decOtherPackMessage, cusFileComparisonWebsocketApi);
 
@@ -474,11 +474,11 @@ public class CusFile {
                 }
             }
         } else {
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[无" + decOtherPackMessage + "]"));
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[无" + decOtherPackMessage + "]"));
         }
 
         // 比对完成
-        cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getTitleType("[NONE]"));
+        cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[NONE]"));
         // 关闭数据库
         SWGDOracle.close();
         // 关闭websocket连接
@@ -503,7 +503,7 @@ public class CusFile {
 
         // 如果value是null的话，不进行比对
         if (value == null) {
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getComparisonNullType(key));
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getComparisonNullType(key));
             return;
         }
 
@@ -515,9 +515,9 @@ public class CusFile {
         }
 
         if (nodeValue.equals(dbValue)) {
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getComparisonTrueType(key));
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getComparisonTrueType(key));
         } else {
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getComparisonFalseType(key));
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getComparisonFalseType(key));
         }
     }
 
@@ -573,7 +573,7 @@ public class CusFile {
      * */
     private static String[] comparisonBefore(Element element, Map<String, String> map, String key, ResultSet resultSet, String message, CusFileComparisonWebsocketApi cusFileComparisonWebsocketApi) {
         if (resultSet == null) {
-            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVo.getErrorType("数据库" + message + "不存在"));
+            cusFileComparisonWebsocketApi.sendMessage(CusFileComparisonMessageVO.getErrorType("数据库" + message + "不存在"));
             return null;
         }
 

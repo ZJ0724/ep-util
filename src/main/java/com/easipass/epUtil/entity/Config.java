@@ -1,8 +1,10 @@
 package com.easipass.epUtil.entity;
 
+import com.easipass.epUtil.entity.DTO.AbstractDTO;
 import com.easipass.epUtil.entity.config.Key;
 import com.easipass.epUtil.exception.ConfigException;
 import com.easipass.epUtil.exception.ErrorException;
+import com.easipass.epUtil.util.ClassUtil;
 import com.easipass.epUtil.util.FileUtil;
 import com.easipass.epUtil.util.StringUtil;
 import java.io.*;
@@ -116,9 +118,9 @@ public class Config {
     }
 
     /**
-     * 保存
+     * 提交保存至文件
      * */
-    public final void save() {
+    protected final void commit() {
         String data = "";
 
         for (Field field : this.keyFields) {
@@ -150,6 +152,17 @@ public class Config {
         data = data.substring(0, data.length() - 1);
 
         FileUtil.setData(this.file, data);
+    }
+
+    /**
+     * 通过DTO设置数据
+     *
+     * @param abstractDTO DTO
+     * */
+    public void setDataByDTO(AbstractDTO abstractDTO) {
+        ClassUtil.assemblyData(abstractDTO, this);
+
+        this.commit();
     }
 
 }

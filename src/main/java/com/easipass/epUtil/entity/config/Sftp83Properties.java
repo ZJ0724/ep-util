@@ -34,7 +34,6 @@ public final class Sftp83Properties extends Config {
     @Key
     private String password;
 
-
     /**
      * 上传路径
      * */
@@ -72,7 +71,7 @@ public final class Sftp83Properties extends Config {
 
     public void setUrl(String url) {
         this.url = url;
-        this.save();
+        this.commit();
     }
 
     public Integer getPort() {
@@ -81,7 +80,7 @@ public final class Sftp83Properties extends Config {
 
     public void setPort(Integer port) {
         this.port = port;
-        this.save();
+        this.commit();
     }
 
     public String getUsername() {
@@ -90,7 +89,7 @@ public final class Sftp83Properties extends Config {
 
     public void setUsername(String username) {
         this.username = username;
-        this.save();
+        this.commit();
     }
 
     public String getPassword() {
@@ -99,7 +98,7 @@ public final class Sftp83Properties extends Config {
 
     public void setPassword(String password) {
         this.password = password;
-        this.save();
+        this.commit();
     }
 
     public String getUploadPath() {
@@ -108,7 +107,7 @@ public final class Sftp83Properties extends Config {
 
     public void setUploadPath(String uploadPath) {
         this.uploadPath = uploadPath;
-        this.save();
+        this.commit();
     }
 
     @Override

@@ -1,68 +1,45 @@
-package com.easipass.epUtil.entity.config;
+package com.easipass.epUtil.entity.VO;
 
-import com.easipass.epUtil.entity.Config;
-import com.easipass.epUtil.entity.resources.config.SWGDPropertiesResource;
+import com.easipass.epUtil.entity.config.Sftp83Properties;
+import com.easipass.epUtil.util.ClassUtil;
 
 /**
- * SWGD配置
+ * sftp83ConfigVO
  *
  * @author ZJ
  * */
-public final class SWGDProperties extends Config {
+public final class Sftp83ConfigVO {
 
     /**
      * 地址
      * */
-    @Key
     private String url;
 
     /**
      * 端口
      * */
-    @Key
     private Integer port;
-
-    /**
-     * sid
-     * */
-    @Key
-    private String sid;
 
     /**
      * 用户名
      * */
-    @Key
     private String username;
 
     /**
      * 密码
      * */
-    @Key
     private String password;
 
     /**
-     * 单例
-     */
-    private static SWGDProperties SWGD;
+     * 上传路径
+     * */
+    private String uploadPath;
 
     /**
      * 构造函数
      * */
-    private SWGDProperties() {
-        super(SWGDPropertiesResource.getInstance());
-    }
-
-    /**
-     * 获取单例
-     *
-     * @return 单例
-     * */
-    public static SWGDProperties getInstance() {
-        if (SWGD == null) {
-            SWGD = new SWGDProperties();
-        }
-
-        return SWGD;
+    public Sftp83ConfigVO() {
+        ClassUtil.assemblyData(Sftp83Properties.getInstance(), this);
     }
 
     public String getUrl() {
@@ -71,7 +48,6 @@ public final class SWGDProperties extends Config {
 
     public void setUrl(String url) {
         this.url = url;
-        this.commit();
     }
 
     public Integer getPort() {
@@ -80,16 +56,6 @@ public final class SWGDProperties extends Config {
 
     public void setPort(Integer port) {
         this.port = port;
-        this.commit();
-    }
-
-    public String getSid() {
-        return sid;
-    }
-
-    public void setSid(String sid) {
-        this.sid = sid;
-        this.commit();
     }
 
     public String getUsername() {
@@ -98,7 +64,6 @@ public final class SWGDProperties extends Config {
 
     public void setUsername(String username) {
         this.username = username;
-        this.commit();
     }
 
     public String getPassword() {
@@ -107,17 +72,24 @@ public final class SWGDProperties extends Config {
 
     public void setPassword(String password) {
         this.password = password;
-        this.commit();
+    }
+
+    public String getUploadPath() {
+        return uploadPath;
+    }
+
+    public void setUploadPath(String uploadPath) {
+        this.uploadPath = uploadPath;
     }
 
     @Override
     public String toString() {
-        return "SWGDProperties{" +
+        return "Sftp83ConfigVO{" +
                 "url='" + url + '\'' +
                 ", port=" + port +
-                ", sid='" + sid + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", uploadPath='" + uploadPath + '\'' +
                 '}';
     }
 

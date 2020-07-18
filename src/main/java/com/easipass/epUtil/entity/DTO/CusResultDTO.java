@@ -1,4 +1,4 @@
-package com.easipass.epUtil.entity.dto;
+package com.easipass.epUtil.entity.DTO;
 
 import com.zj0724.springbootUtil.annotation.NotNull;
 

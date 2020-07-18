@@ -1,6 +1,6 @@
 package com.easipass.epUtil.entity;
 
-import com.easipass.epUtil.entity.dto.CusResultDTO;
+import com.easipass.epUtil.entity.DTO.CusResultDTO;
 import com.easipass.epUtil.entity.sftp.Sftp83;
 import com.easipass.epUtil.exception.BaseException;
 import com.easipass.epUtil.exception.ErrorException;

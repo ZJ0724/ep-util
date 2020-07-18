@@ -1,7 +1,7 @@
 package com.easipass.epUtil.entity.cusResult;
 
 import com.easipass.epUtil.entity.CusResult;
-import com.easipass.epUtil.entity.dto.CusResultDTO;
+import com.easipass.epUtil.entity.DTO.CusResultDTO;
 
 /**
  * 修撤单回执

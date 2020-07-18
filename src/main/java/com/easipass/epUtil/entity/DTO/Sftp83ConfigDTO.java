@@ -1,77 +1,46 @@
-package com.easipass.epUtil.entity.config;
-
-import com.easipass.epUtil.entity.Config;
-import com.easipass.epUtil.entity.resources.config.SWGDPropertiesResource;
+package com.easipass.epUtil.entity.DTO;
 
 /**
- * SWGD配置
+ * sftp83ConfigDTO
  *
  * @author ZJ
  * */
-public final class SWGDProperties extends Config {
+public final class Sftp83ConfigDTO extends AbstractDTO {
 
     /**
      * 地址
      * */
-    @Key
     private String url;
 
     /**
      * 端口
      * */
-    @Key
     private Integer port;
-
-    /**
-     * sid
-     * */
-    @Key
-    private String sid;
 
     /**
      * 用户名
      * */
-    @Key
     private String username;
 
     /**
      * 密码
      * */
-    @Key
     private String password;
 
     /**
-     * 单例
-     */
-    private static SWGDProperties SWGD;
+     * 上传路径
+     * */
+    private String uploadPath;
 
     /**
-     * 构造函数
+     * set, get
      * */
-    private SWGDProperties() {
-        super(SWGDPropertiesResource.getInstance());
-    }
-
-    /**
-     * 获取单例
-     *
-     * @return 单例
-     * */
-    public static SWGDProperties getInstance() {
-        if (SWGD == null) {
-            SWGD = new SWGDProperties();
-        }
-
-        return SWGD;
-    }
-
     public String getUrl() {
         return url;
     }
 
     public void setUrl(String url) {
         this.url = url;
-        this.commit();
     }
 
     public Integer getPort() {
@@ -80,16 +49,6 @@ public final class SWGDProperties extends Config {
 
     public void setPort(Integer port) {
         this.port = port;
-        this.commit();
-    }
-
-    public String getSid() {
-        return sid;
-    }
-
-    public void setSid(String sid) {
-        this.sid = sid;
-        this.commit();
     }
 
     public String getUsername() {
@@ -98,7 +57,6 @@ public final class SWGDProperties extends Config {
 
     public void setUsername(String username) {
         this.username = username;
-        this.commit();
     }
 
     public String getPassword() {
@@ -107,17 +65,24 @@ public final class SWGDProperties extends Config {
 
     public void setPassword(String password) {
         this.password = password;
-        this.commit();
+    }
+
+    public String getUploadPath() {
+        return uploadPath;
+    }
+
+    public void setUploadPath(String uploadPath) {
+        this.uploadPath = uploadPath;
     }
 
     @Override
     public String toString() {
-        return "SWGDProperties{" +
+        return "Sftp83ConfigDTO{" +
                 "url='" + url + '\'' +
                 ", port=" + port +
-                ", sid='" + sid + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", uploadPath='" + uploadPath + '\'' +
                 '}';
     }
 

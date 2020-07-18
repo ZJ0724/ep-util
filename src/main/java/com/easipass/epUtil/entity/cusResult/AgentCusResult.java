@@ -1,7 +1,7 @@
 package com.easipass.epUtil.entity.cusResult;
 
 import com.easipass.epUtil.entity.CusResult;
-import com.easipass.epUtil.entity.dto.CusResultDTO;
+import com.easipass.epUtil.entity.DTO.CusResultDTO;
 import com.easipass.epUtil.entity.oracle.SWGDOracle;
 import com.easipass.epUtil.entity.resources.cusResult.AgentCusResultResource;
 import com.easipass.epUtil.util.DateUtil;

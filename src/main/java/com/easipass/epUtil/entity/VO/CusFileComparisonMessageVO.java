@@ -1,4 +1,4 @@
-package com.easipass.epUtil.entity.vo;
+package com.easipass.epUtil.entity.VO;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -6,11 +6,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 报文比对消息vo
+ * 报文比对消息VO
  *
  * @author ZJ
  * */
-public class CusFileComparisonMessageVo {
+public final class CusFileComparisonMessageVO {
 
     /**
      * 类型
@@ -41,7 +41,7 @@ public class CusFileComparisonMessageVo {
      * @param node 节点名
      * @param message 信息内容
      * */
-    public CusFileComparisonMessageVo(String type, String node, String message) {
+    public CusFileComparisonMessageVO(String type, String node, String message) {
         this.type = type;
         this.message = message;
         this.node = node;
@@ -52,8 +52,8 @@ public class CusFileComparisonMessageVo {
      *
      * @param message 标题信息
      * */
-    public static CusFileComparisonMessageVo getTitleType(String message) {
-        return new CusFileComparisonMessageVo("0", null, message);
+    public static CusFileComparisonMessageVO getTitleType(String message) {
+        return new CusFileComparisonMessageVO("0", null, message);
     }
 
     /**
@@ -61,8 +61,8 @@ public class CusFileComparisonMessageVo {
      *
      * @param node 节点
      * */
-    public static CusFileComparisonMessageVo getComparisonTrueType(String node) {
-        return new CusFileComparisonMessageVo("1", node, "true");
+    public static CusFileComparisonMessageVO getComparisonTrueType(String node) {
+        return new CusFileComparisonMessageVO("1", node, "true");
     }
 
     /**
@@ -70,8 +70,8 @@ public class CusFileComparisonMessageVo {
      *
      * @param node 节点
      * */
-    public static CusFileComparisonMessageVo getComparisonFalseType(String node) {
-        return new CusFileComparisonMessageVo("1", node, "false");
+    public static CusFileComparisonMessageVO getComparisonFalseType(String node) {
+        return new CusFileComparisonMessageVO("1", node, "false");
     }
 
     /**
@@ -79,8 +79,8 @@ public class CusFileComparisonMessageVo {
      *
      * @param node 节点
      * */
-    public static CusFileComparisonMessageVo getComparisonNullType(String node) {
-        return new CusFileComparisonMessageVo("1", node, "null");
+    public static CusFileComparisonMessageVO getComparisonNullType(String node) {
+        return new CusFileComparisonMessageVO("1", node, "null");
     }
 
     /**
@@ -88,8 +88,8 @@ public class CusFileComparisonMessageVo {
      *
      * @param message 错误信息
      * */
-    public static CusFileComparisonMessageVo getErrorType(String message) {
-        return new CusFileComparisonMessageVo("2", null, message);
+    public static CusFileComparisonMessageVO getErrorType(String message) {
+        return new CusFileComparisonMessageVO("2", null, message);
     }
 
     @Override

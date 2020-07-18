@@ -7,7 +7,7 @@ import com.easipass.epUtil.entity.cusResult.decModCusResult.QPDecModCusResult;
 import com.easipass.epUtil.entity.cusResult.decModCusResult.YeWuDecModCusResult;
 import com.easipass.epUtil.entity.cusResult.formCusResult.TongXunFormCusResult;
 import com.easipass.epUtil.entity.cusResult.formCusResult.YeWuFormCusResult;
-import com.easipass.epUtil.entity.dto.CusResultDTO;
+import com.easipass.epUtil.entity.DTO.CusResultDTO;
 import com.zj0724.springbootUtil.annotation.NotNull;
 import org.springframework.web.bind.annotation.*;
 

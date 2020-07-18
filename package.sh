@@ -5,7 +5,7 @@ releasePath="release"
 # 应用名
 projectName="epUtil"
 # 版本
-version="5.0.0"
+version="$(cat version)"
 # 包名
 packageName="${projectName}-${version}"
 # 编译目录

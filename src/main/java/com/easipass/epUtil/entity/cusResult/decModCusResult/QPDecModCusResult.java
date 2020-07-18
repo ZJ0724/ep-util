@@ -1,7 +1,7 @@
 package com.easipass.epUtil.entity.cusResult.decModCusResult;
 
 import com.easipass.epUtil.entity.cusResult.DecModCusResult;
-import com.easipass.epUtil.entity.dto.CusResultDTO;
+import com.easipass.epUtil.entity.DTO.CusResultDTO;
 import com.easipass.epUtil.entity.oracle.SWGDOracle;
 import com.easipass.epUtil.entity.resources.cusResult.decModCusResult.QPDecModCusResultResource;
 import com.easipass.epUtil.util.Base64Util;

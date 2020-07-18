@@ -2,6 +2,7 @@ package com.easipass.epUtil.util;
 
 import com.easipass.epUtil.exception.ErrorException;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 文件工具
@@ -57,6 +58,41 @@ public final class FileUtil {
                 throw new ErrorException(e.getMessage());
             }
         }
+    }
+
+    /**
+     * 获取文件数据
+     *
+     * @param file 文件
+     *
+     * @return 文件内容
+     * */
+    public static String getData(File file) {
+        InputStream inputStream = null;
+        String result;
+
+        try {
+            inputStream = new FileInputStream(file);
+            byte[] bytes = new byte[inputStream.available()];
+            inputStream.read(bytes);
+            result = new String(bytes, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            result = null;
+        }
+
+        if (inputStream != null) {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                throw new ErrorException(e.getMessage());
+            }
+        }
+
+        if (result == null) {
+            throw new ErrorException("获取文件数据异常");
+        }
+
+        return result;
     }
 
 }

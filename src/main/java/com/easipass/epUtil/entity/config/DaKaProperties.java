@@ -97,7 +97,7 @@ public final class DaKaProperties extends Config {
      * */
     public void setDate(List<String> date) {
         this.date = date;
-        this.save();
+        this.commit();
     }
 
     /**
@@ -116,7 +116,7 @@ public final class DaKaProperties extends Config {
      * */
     public void setWeek(List<String> week) {
         this.week = week;
-        this.save();
+        this.commit();
     }
 
     /**
@@ -135,7 +135,7 @@ public final class DaKaProperties extends Config {
      * */
     public void setToWorkTime(String toWorkTime) {
         this.toWorkTime = toWorkTime;
-        this.save();
+        this.commit();
     }
 
     /**
@@ -172,7 +172,7 @@ public final class DaKaProperties extends Config {
      * */
     public void setUsername(String username) {
         this.username = username;
-        this.save();
+        this.commit();
     }
 
     /**
@@ -191,7 +191,7 @@ public final class DaKaProperties extends Config {
      * */
     public void setPassword(String password) {
         this.password = password;
-        this.save();
+        this.commit();
     }
 
     /**
@@ -210,7 +210,7 @@ public final class DaKaProperties extends Config {
      * */
     public void setSign(String sign) {
         this.sign = sign;
-        this.save();
+        this.commit();
     }
 
     @Override

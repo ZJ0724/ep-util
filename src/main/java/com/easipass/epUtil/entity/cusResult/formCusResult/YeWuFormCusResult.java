@@ -2,7 +2,7 @@ package com.easipass.epUtil.entity.cusResult.formCusResult;
 
 import com.easipass.epUtil.entity.oracle.SWGDOracle;
 import com.easipass.epUtil.entity.cusResult.FormCusResult;
-import com.easipass.epUtil.entity.dto.CusResultDTO;
+import com.easipass.epUtil.entity.DTO.CusResultDTO;
 import com.easipass.epUtil.entity.resources.cusResult.formCusResult.YeWuFormCusResultResource;
 import com.easipass.epUtil.util.Base64Util;
 import com.easipass.epUtil.util.DateUtil;

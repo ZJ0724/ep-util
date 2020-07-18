@@ -6,7 +6,7 @@
 
     <groupId>com.easipass</groupId>
     <artifactId>epUtil</artifactId>
-    <version>5.0.0</version>
+    <version>none</version>
     <packaging>jar</packaging>
 
     <parent>
@@ -124,6 +124,7 @@
                     <include>config/*</include>
                     <include>bin/*</include>
                     <include>README.md</include>
+                    <include>version</include>
                 </includes>
                 <targetPath>${buildPath}</targetPath>
             </resource>

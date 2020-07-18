@@ -166,7 +166,7 @@ public class Oracle {
                 }
             }
             return preparedStatement.executeQuery();
-        }catch (SQLException e){
+        }catch (SQLException e) {
             throw new ErrorException("sql错误");
         }
     }

@@ -1,6 +1,7 @@
 package com.easipass.epUtil.entity;
 
 import com.easipass.epUtil.exception.ErrorException;
+import com.easipass.epUtil.util.FileUtil;
 import java.io.File;
 
 /**
@@ -44,7 +45,7 @@ public final class Project {
      * @return 版本
      * */
     public String getVersion() {
-        return "5.0.0";
+        return FileUtil.getData(new File(System.getProperty("user.dir"), "../version"));
     }
 
     /**
