@@ -134,6 +134,8 @@ public final class ChromeDriver {
         } catch (org.openqa.selenium.WebDriverException e) {
             this.webDriver = null;
             throw new ChromeDriverException("驱动异常，请不要手动杀掉驱动进程！");
+        } catch (BaseException e) {
+            throw new ChromeDriverException("打卡网站元素未找到，请检查！");
         }
     }
 

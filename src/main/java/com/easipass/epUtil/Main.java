@@ -1,6 +1,7 @@
 package com.easipass.epUtil;
 
 import com.easipass.epUtil.entity.ChromeDriver;
+import com.easipass.epUtil.entity.DaKa;
 import com.easipass.epUtil.entity.Log;
 import com.easipass.epUtil.entity.config.DaKaProperties;
 import com.easipass.epUtil.entity.config.SWGDProperties;
@@ -26,6 +27,8 @@ public class Main {
 
     /**
      * main
+     *
+     * @param args args
      * */
     public static void main(String[] args) {
         try {
@@ -36,7 +39,10 @@ public class Main {
             Sftp83Properties.getInstance();
 
             // 开启谷歌驱动池
-//            ChromeDriver.openChromeDriverPool();
+            ChromeDriver.openChromeDriverPool();
+
+            // 检查是否开启自动打卡
+            DaKa.getInstance();
 
             SpringApplication.run(Main.class, args);
 
