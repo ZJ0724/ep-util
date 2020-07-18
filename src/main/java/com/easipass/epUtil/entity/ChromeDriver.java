@@ -7,6 +7,7 @@ import com.easipass.epUtil.exception.ChromeDriverException;
 import com.easipass.epUtil.util.ConsoleUtil;
 import com.easipass.epUtil.util.FileUtil;
 import com.zj0724.uiAuto.WebDriver;
+import com.zj0724.uiAuto.exception.BaseException;
 import com.zj0724.uiAuto.exception.WebDriverException;
 import com.zj0724.uiAuto.webDriver.ChromeWebDriver;
 import java.io.File;
@@ -92,7 +93,7 @@ public final class ChromeDriver {
      * */
     public void swgdRecvRun() {
         try {
-            this.webDriver.url("http://192.168.120.83:9909/console");
+            this.webDriver.url("http://192.168.120.83:9909/console1");
             this.webDriver.findElementByCssSelector("input[tabindex='1']").sendKey("Testing");
             this.webDriver.findElementByCssSelector("input[tabindex='2']").sendKey("Testing");
             this.webDriver.findElementByCssSelector("button[tabindex='3']").click();
@@ -103,6 +104,8 @@ public final class ChromeDriver {
         } catch (org.openqa.selenium.WebDriverException e) {
             this.webDriver = null;
             throw new ChromeDriverException("驱动异常，请不要手动杀掉驱动进程！");
+        } catch (BaseException e) {
+            throw new ChromeDriverException("EPMS启动错误，请检查元素！");
         }
     }
 
