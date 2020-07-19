@@ -4,19 +4,21 @@
         template: `<div style="height: 100%;" class="center">
                 <div style="width: 40%;">
                     <div class="input-group input-group-sm">
-                        <span class="input-group-addon">ediNo&nbsp;&nbsp;&nbsp;</span>
-                        <input v-model="ediNo" type="text" class="form-control" aria-describedby="basic-addon1" aria-label="" />
+                        <span class="input-group-addon">
+                            {{text}}<span v-if="text === 'ediNo'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        </span>
+                        <input v-model="param" type="text" class="form-control" aria-describedby="basic-addon1" aria-label="" />
                     </div>
 
                     <div style="margin-top: 10px;" class="input-group input-group-sm">
-                        <span class="input-group-addon">channel</span>
+                        <span class="input-group-addon">channel&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         <input v-model="cusResultDTO.channel" type="text" class="form-control" aria-label="" />
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 选择
                                 <span class="caret"></span>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-right">
+                            <ul class="dropdown-menu">
                                 <li v-for="channel in channelList" :key="channel.key">
                                     <a @click="selectChannel(channel.key)" href="javascript:">{{channel.value}}</a>
                                 </li>
@@ -25,7 +27,7 @@
                     </div>
 
                     <div style="margin-top: 10px;" class="input-group input-group-sm">
-                        <span class="input-group-addon">note&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span class="input-group-addon">node&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;</span>
                         <input v-model="cusResultDTO.note" type="text" class="form-control" aria-describedby="basic-addon1" aria-label="" />
                     </div>
 
@@ -35,11 +37,11 @@
                 </div>
             </div>`,
 
-        props: ["channel-list", "api"],
+        props: ["text", "channel-list", "api"],
 
         data: function () {
             return {
-                ediNo: "",
+                param: "",
                 cusResultDTO: new epUtil.entity.DTO.CusResultDTO(),
 
                 // 上传按钮
@@ -58,7 +60,7 @@
 
             // 上传
             upload() {
-                let ediNo = this.ediNo,
+                let param = this.param,
                     cusResultDTO = this.cusResultDTO,
                     uploadButton = this.uploadButton,
                     uploadButtonDisabled = uploadButton.disabled,
@@ -66,8 +68,8 @@
                     alertComponent = epUtil.component.alertComponent,
                     api = this.api;
 
-                if (ediNo === "") {
-                    alertComponent.message("ediNo不能为空");
+                if (param === "") {
+                    alertComponent.message(this.text + "不能为空");
                     return;
                 }
 
@@ -80,7 +82,7 @@
                 uploadButton.disabled = true;
                 uploadButton.text = "正在上传...";
 
-                api(ediNo, cusResultDTO).then(function () {
+                api(param, cusResultDTO).then(function () {
                     alertComponent.popup("上传成功");
                 }).catch(function (message) {
                     alertComponent.popup(message);
