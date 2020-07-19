@@ -31,7 +31,8 @@ document.write("<script src=\"/frame/vue.min.js\"></script>");
 
 // 导入component
 document.write("<script src=\"/component/navigationComponent.js\"></script>");
-document.write("<script src=\"/component/alert.js\"></script>");
+document.write("<script src=\"/component/alertComponent.js\"></script>");
+document.write("<script src=\"/component/cusResultUploadComponent.js\"></script>");
 
 // 导入entity
 document.write("<script src=\"/entity/DTO/CusResultDTO.js\"></script>");

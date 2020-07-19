@@ -1,5 +1,5 @@
 (function (component) {
-    component.alert = {
+    component.alertComponent = {
         // message信息弹窗
         message(message) {
             layui.use('layer', function(){
