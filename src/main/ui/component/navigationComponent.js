@@ -7,9 +7,11 @@
                     报关单回执
                 </div>
                 <ul class="dropdown-menu">
-                    <li><a href="/formCusResult/tongXunFormCusResult">通讯回执</a></li>
+                    <li><a href="/formCusResult/tongXunFormCusResult">上传通讯回执</a></li>
                     <li role="separator" class="divider"></li>
-                    <li><a href="">业务回执</a></li>
+                    <li><a href="">上传业务回执</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="">一次性上传</a></li>
                 </ul>
             </div>
 
