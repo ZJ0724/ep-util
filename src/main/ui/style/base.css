@@ -5,3 +5,35 @@ html, body, #main {
     padding: 0;
     margin: 0;
 }
+
+#head {
+    height: 5%;
+    background-color: #393D49;
+    padding: 0 20%;
+    color: white;
+    display: flex;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.item {
+    height: 100%;
+    padding: 0 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.item:hover {
+    background-color: #282b34;
+}
+
+#body {
+    padding: 20px 20%;
+    height: 95%;
+}

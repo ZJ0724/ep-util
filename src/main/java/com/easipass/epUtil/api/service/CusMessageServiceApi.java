@@ -24,7 +24,7 @@ public class CusMessageServiceApi {
      *
      * @return 响应结果
      * */
-    @PostMapping("formCusMessage/upload")
+    @PostMapping("formCusMessageUpload")
     public Response upload(@RequestParam("cusFile") MultipartFile multipartFile) {
         String id = FormCusMessage.addFormCusMessage(multipartFile);
 

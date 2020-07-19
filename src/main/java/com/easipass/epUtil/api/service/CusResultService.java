@@ -39,7 +39,7 @@ public class CusResultService {
      * @return 响应
      */
     @PostMapping(FORM_CUS_RESULT + "/tongXunUpload")
-    public Response formCusResultUploadTongXun(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("ediNo") @NotNull String ediNo) {
+    public Response formCusResultTongXunUpload(@RequestParam("ediNo") @NotNull String ediNo, @RequestBody @NotNull CusResultDTO cusResultDTO) {
         return new TongXunFormCusResult(cusResultDTO, ediNo).upload();
     }
 
@@ -52,7 +52,7 @@ public class CusResultService {
      * @return 响应
      * */
     @PostMapping(FORM_CUS_RESULT + "yeWuUpload")
-    public Response formCusResultUploadYeWu(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("ediNo") @NotNull String ediNo) {
+    public Response formCusResultYeWuUpload(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("ediNo") @NotNull String ediNo) {
         return new YeWuFormCusResult(cusResultDTO, ediNo).upload();
     }
 
