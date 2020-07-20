@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>报关单回执 - 通讯回执</title>
+    <title></title>
     <script src="/main.js"></script>
 </head>
 <body>
     <div id="main">
         <navigation></navigation>
         <div id="body">
+            <route-navigation></route-navigation>
             <cus-result-upload text="ediNo" :channel-list="channelList" :api="api"></cus-result-upload>
         </div>
     </div>
@@ -23,20 +24,10 @@
             el: "#main",
 
             data: {
-                channelList: [
-                    {
-                        key: "0",
-                        value: "通过"
-                    },
-                    {
-                        key: "1",
-                        value: "不通过"
-                    }
-                ],
+                channelList: [],
 
-                api: cusResultServiceApi.formCusResultUploadTongXun
+                api: cusResultServiceApi.formCusResultDisposableUpload
             }
         });
     })(window.epUtil);
 </script>
-

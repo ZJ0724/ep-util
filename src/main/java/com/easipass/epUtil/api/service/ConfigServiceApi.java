@@ -26,8 +26,8 @@ public class ConfigServiceApi {
      *
      * @return 响应
      * */
-    @PostMapping("setDaKaConfig")
-    public Response setDaKaConfig(@RequestBody DaKaConfigDTO daKaConfigDTO) {
+    @PostMapping("setDaKa")
+    public Response setDaKa(@RequestBody DaKaConfigDTO daKaConfigDTO) {
         DaKaProperties.getInstance().setDataByDTO(daKaConfigDTO);
 
         return Response.returnTrue();
@@ -38,8 +38,8 @@ public class ConfigServiceApi {
      *
      * @return 响应
      * */
-    @GetMapping("getDaKaConfig")
-    public Response getDaKaConfig() {
+    @GetMapping("getDaKa")
+    public Response getDaKa() {
         return Response.returnTrue(new DaKaConfigVO());
     }
 
@@ -48,8 +48,8 @@ public class ConfigServiceApi {
      *
      * @return 响应
      * */
-    @PostMapping("setSWGDConfig")
-    public Response setSWGDConfig(@RequestBody SWGDConfigDTO swgdConfigDTO) {
+    @PostMapping("setSWGD")
+    public Response setSWGD(@RequestBody SWGDConfigDTO swgdConfigDTO) {
         SWGDProperties.getInstance().setDataByDTO(swgdConfigDTO);
 
         return Response.returnTrue();
@@ -60,8 +60,8 @@ public class ConfigServiceApi {
      *
      * @return 响应
      * */
-    @GetMapping("getSWGDConfig")
-    public Response getSWGDConfig() {
+    @GetMapping("getSWGD")
+    public Response getSWGD() {
         return Response.returnTrue(new SWGDConfigVO());
     }
 
@@ -70,8 +70,8 @@ public class ConfigServiceApi {
      *
      * @return 响应
      * */
-    @PostMapping("setSftp83Config")
-    public Response setSftp83Config(@RequestBody Sftp83ConfigDTO sftp83ConfigDTO) {
+    @PostMapping("setSftp83")
+    public Response setSftp83(@RequestBody Sftp83ConfigDTO sftp83ConfigDTO) {
         Sftp83Properties.getInstance().setDataByDTO(sftp83ConfigDTO);
 
         return Response.returnTrue();
@@ -82,8 +82,8 @@ public class ConfigServiceApi {
      *
      * @return 响应
      * */
-    @GetMapping("getSftp83Config")
-    public Response getSftp83Config() {
+    @GetMapping("getSftp83")
+    public Response getSftp83() {
         return Response.returnTrue(new Sftp83ConfigVO());
     }
 

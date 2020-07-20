@@ -38,8 +38,8 @@ public class CusResultService {
      *
      * @return 响应
      */
-    @PostMapping(FORM_CUS_RESULT + "/tongXunUpload")
-    public Response formCusResultTongXunUpload(@RequestParam("ediNo") @NotNull String ediNo, @RequestBody @NotNull CusResultDTO cusResultDTO) {
+    @PostMapping(FORM_CUS_RESULT + "/uploadTongXun")
+    public Response formCusResultUploadTongXun(@RequestParam("ediNo") @NotNull String ediNo, @RequestBody @NotNull CusResultDTO cusResultDTO) {
         return new TongXunFormCusResult(cusResultDTO, ediNo).upload();
     }
 
@@ -51,8 +51,8 @@ public class CusResultService {
      *
      * @return 响应
      * */
-    @PostMapping(FORM_CUS_RESULT + "yeWuUpload")
-    public Response formCusResultYeWuUpload(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("ediNo") @NotNull String ediNo) {
+    @PostMapping(FORM_CUS_RESULT + "uploadYeWu")
+    public Response formCusResultUploadYeWu(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("ediNo") @NotNull String ediNo) {
         return new YeWuFormCusResult(cusResultDTO, ediNo).upload();
     }
 
@@ -80,8 +80,8 @@ public class CusResultService {
      *
      * @return 响应
      * */
-    @PostMapping(DEC_MOD_RESULT + "QPUpload")
-    public Response decModCusResultQPUpload(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("preEntryId") @NotNull String preEntryId) {
+    @PostMapping(DEC_MOD_RESULT + "uploadQP")
+    public Response decModCusResultUploadQP(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("preEntryId") @NotNull String preEntryId) {
         return new QPDecModCusResult(cusResultDTO, preEntryId).upload();
     }
 
@@ -93,8 +93,8 @@ public class CusResultService {
      *
      * @return 响应
      * */
-    @PostMapping(DEC_MOD_RESULT + "yeWuUpload")
-    public Response decModCusResultYeWuUpload(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("preEntryId") @NotNull String preEntryId) {
+    @PostMapping(DEC_MOD_RESULT + "uploadYeWu")
+    public Response decModCusResultUploadYeWu(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("preEntryId") @NotNull String preEntryId) {
         return new YeWuDecModCusResult(cusResultDTO, preEntryId).upload();
     }
 

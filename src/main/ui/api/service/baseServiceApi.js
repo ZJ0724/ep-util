@@ -7,7 +7,7 @@
         F: "F",
 
         // errorCode
-        errorCode: [500, 501],
+        errorCode: [500, 501, 400],
 
         // 发送
         sendHttp(option) {

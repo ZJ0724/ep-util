@@ -1,7 +1,8 @@
 (function (epUtil) {
     // 回执上传组件
     Vue.component("cus-result-upload", {
-        template: `<div style="height: 100%;" class="center">
+        template: `
+            <div class="center" style="height: 80%;">
                 <div style="width: 40%;">
                     <div class="input-group input-group-sm">
                         <span class="input-group-addon">
@@ -19,8 +20,8 @@
                                 <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
-                                <li v-for="channel in channelList" :key="channel.key">
-                                    <a @click="selectChannel(channel.key)" href="javascript:">{{channel.value}}</a>
+                                <li style="padding: 5px 0;" v-for="channel in channelList" :key="channel.key">
+                                    <a @click="selectChannel(channel.key)" href="javascript:">{{channel.key}} [{{channel.value}}]</a>
                                 </li>
                             </ul>
                         </div>

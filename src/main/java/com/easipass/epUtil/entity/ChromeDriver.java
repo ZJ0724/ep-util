@@ -93,7 +93,7 @@ public final class ChromeDriver {
      * */
     public void swgdRecvRun() {
         try {
-            this.webDriver.url("http://192.168.120.83:9909/console1");
+            this.webDriver.url("http://192.168.120.83:9909/console");
             this.webDriver.findElementByCssSelector("input[tabindex='1']").sendKey("Testing");
             this.webDriver.findElementByCssSelector("input[tabindex='2']").sendKey("Testing");
             this.webDriver.findElementByCssSelector("button[tabindex='3']").click();

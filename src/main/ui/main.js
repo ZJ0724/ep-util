@@ -1,6 +1,7 @@
 window.epUtil = {
     entity: {
-        DTO: {}
+        DTO: {},
+        VO: {}
     },
 
     component: {},
@@ -33,12 +34,24 @@ document.write("<script src=\"/frame/vue.min.js\"></script>");
 document.write("<script src=\"/component/navigationComponent.js\"></script>");
 document.write("<script src=\"/component/alertComponent.js\"></script>");
 document.write("<script src=\"/component/cusResultUploadComponent.js\"></script>");
+document.write("<script src=\"/component/routeNavigationComponent.js\"></script>");
+document.write("<script src=\"/component/configComponent.js\"></script>");
 
 // 导入entity
+document.write("<script src=\"/entity/VO/AbstractVO.js\"></script>");
+document.write("<script src=\"/entity/DTO/AbstractDTO.js\"></script>");
 document.write("<script src=\"/entity/DTO/CusResultDTO.js\"></script>");
 document.write("<script src=\"/entity/Response.js\"></script>");
+document.write("<script src=\"/entity/router.js\"></script>");
+document.write("<script src=\"/entity/VO/SWGDConfigVO.js\"></script>");
+document.write("<script src=\"/entity/DTO/SWGDConfigDTO.js\"></script>");
+document.write("<script src=\"/entity/DTO/Sftp83ConfigDTO.js\"></script>");
+document.write("<script src=\"/entity/VO/Sftp83ConfigVO.js\"></script>");
+document.write("<script src=\"/entity/VO/DaKaConfigVO.js\"></script>");
+document.write("<script src=\"/entity/DTO/DaKaConfigDTO.js\"></script>");
 
 // 导入api
 document.write("<script src=\"/api/service/baseServiceApi.js\"></script>");
 document.write("<script src=\"/api/service/cusResultServiceApi.js\"></script>");
 document.write("<script src=\"/api/websocket/BaseWebsocketApi.js\"></script>");
+document.write("<script src=\"/api/service/configServiceApi.js\"></script>");

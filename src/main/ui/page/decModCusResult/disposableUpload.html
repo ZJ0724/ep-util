@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="/main.js"></script>
+</head>
+<body>
+    <div id="main">
+        <navigation></navigation>
+        <div id="body">
+            <route-navigation></route-navigation>
+            <cus-result-upload text="preEntryId" :channel-list="channelList" :api="api"></cus-result-upload>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    (function (epUtil) {
+        let cusResultServiceApi = epUtil.api.service.cusResultServiceApi;
+
+        new Vue({
+            el: "#main",
+
+            data: {
+                channelList: [],
+
+                api: cusResultServiceApi.decModCusResultDisposableUpload
+            }
+        });
+    })(window.epUtil);
+</script>

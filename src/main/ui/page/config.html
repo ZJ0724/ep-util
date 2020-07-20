@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="/main.js"></script>
+</head>
+<body>
+    <div id="main">
+        <navigation></navigation>
+        <div id="body">
+            <route-navigation></route-navigation>
+
+            <ul class="nav nav-tabs" style="margin-top: 50px;">
+                <li @click="selectConfig(0)" role="presentation" :class="active === 0 ? 'active' : ''"><a href="javascript:">SWGD</a></li>
+                <li @click="selectConfig(1)" role="presentation" :class="active === 1 ? 'active' : ''"><a href="javascript:">sftp83</a></li>
+                <li @click="selectConfig(2)" role="presentation" :class="active === 2 ? 'active' : ''"><a href="javascript:">打卡</a></li>
+            </ul>
+
+            <div style="margin: 10% 30% 0 30%;">
+                <div :style="active === 0 ? '' : 'display: none'">
+                    <config :vo="SWGD.VO" :dto="SWGD.DTO" :get-api="SWGD.getApi" :set-api="SWGD.setApi"></config>
+                </div>
+
+                <div :style="active === 1 ? '' : 'display: none'">
+                    <config :vo="sftp83.VO" :dto="sftp83.DTO" :get-api="sftp83.getApi" :set-api="sftp83.setApi"></config>
+                </div>
+
+                <div :style="active === 2 ? '' : 'display: none'">
+                    <config :vo="daKa.VO" :dto="daKa.DTO" :get-api="daKa.getApi" :set-api="daKa.setApi"></config>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script>
+    (function (epUtil) {
+        let SWGDConfigVO = epUtil.entity.VO.SWGDConfigVO;
+        let configServiceApi = epUtil.api.service.configServiceApi;
+        let SWGDConfigDTO = epUtil.entity.DTO.SWGDConfigDTO;
+        let sftp83ConfigVO = epUtil.entity.VO.Sftp83ConfigVO;
+        let sftp83ConfigDTO = epUtil.entity.DTO.Sftp83ConfigDTO;
+        let daKaConfigDTO = epUtil.entity.DTO.DaKaConfigDTO;
+        let daKaConfigVO = epUtil.entity.VO.DaKaConfigVO;
+
+        new Vue({
+            el: "#main",
+
+            data: {
+                active: 0,
+
+                SWGD: {
+                    VO: new SWGDConfigVO(),
+                    DTO: new SWGDConfigDTO(),
+                    getApi: configServiceApi.getSWGD,
+                    setApi: configServiceApi.setSWGD
+                },
+
+                sftp83: {
+                    VO: new sftp83ConfigVO(),
+                    DTO: new sftp83ConfigDTO(),
+                    getApi: configServiceApi.getSftp83,
+                    setApi: configServiceApi.setSftp83
+                },
+
+                daKa: {
+                    VO: new daKaConfigVO(),
+                    DTO: new daKaConfigDTO(),
+                    getApi: configServiceApi.getDaKa,
+                    setApi: configServiceApi.setDaKa
+                }
+            },
+
+            methods: {
+                // 切换配置选项
+                selectConfig(active) {
+                    this.active = active;
+                }
+            }
+        });
+    })(window.epUtil);
+</script>

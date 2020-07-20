@@ -134,6 +134,10 @@ public class Config {
                 throw new ErrorException(e.getMessage());
             }
 
+            if (fieldData == null) {
+                fieldData = "";
+            }
+
             if (field.getType() == List.class) {
                 List<?> strings = (List<?>) fieldData;
 

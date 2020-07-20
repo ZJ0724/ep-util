@@ -23,12 +23,4 @@ public class PageServiceApi {
         return "/index.html";
     }
 
-    /**
-     * 报关单回执页面
-     * */
-    @GetMapping("/formCusResult/tongXunFormCusResult")
-    public String tongXunFormCusResultHtml() {
-        return "/page/formCusResult/tongXunFormCusResult.html";
-    }
-
 }

@@ -1,30 +1,30 @@
-(function () {
+(function (epUtil) {
     // 注册<navigation>组件
     Vue.component("navigation", {
-        template: `<div id="head">
-            <div class="dropdown">
-                <div class="item" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    报关单回执
+        template: `
+        <div id="head">
+            <div v-for="(item, i) in router" class="dropdown" :key="i">
+                <div v-if="item.children !== undefined" class="item" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    {{item.name}}
                 </div>
-                <ul class="dropdown-menu">
-                    <li><a href="/formCusResult/tongXunFormCusResult">上传通讯回执</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="">上传业务回执</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="">一次性上传</a></li>
+                <div v-else @click="window.location.href = page + item.path" class="item">
+                    {{item.name}}
+                </div>
+                <ul v-if="item.children !== undefined" class="dropdown-menu">
+                    <li style="padding: 5px; 0" v-for="(child, j) in item.children" :key="j">
+                        <a :href="page + item.path + child.path">{{child.name}}</a>
+                    </li>
                 </ul>
             </div>
+        </div>`,
 
-            <div class="dropdown">
-                <div class="item" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    修撤单回执
-                </div>
-                <ul class="dropdown-menu">
-                    <li><a href="">QP回执</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="">业务回执</a></li>
-                </ul>
-            </div>
-        </div>`
+        data() {
+            return {
+                page: "/page/",
+                router: epUtil.entity.router
+            }
+        }
     });
-})();
+
+
+})(window.epUtil);
