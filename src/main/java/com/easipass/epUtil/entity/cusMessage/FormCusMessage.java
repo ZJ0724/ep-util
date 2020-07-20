@@ -2,7 +2,7 @@ package com.easipass.epUtil.entity.cusMessage;
 
 import com.easipass.epUtil.api.websocket.BaseWebsocketApi;
 import com.easipass.epUtil.entity.AbstractCusMessage;
-import com.easipass.epUtil.entity.VO.CusFileComparisonMessageVO;
+import com.easipass.epUtil.entity.VO.CusMessageComparisonVO;
 import com.easipass.epUtil.entity.oracle.SWGDOracle;
 import com.easipass.epUtil.exception.CusFileException;
 import com.easipass.epUtil.exception.ErrorException;
@@ -89,31 +89,31 @@ public final class FormCusMessage extends AbstractCusMessage {
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         } catch (DocumentException e) {
-            throw new CusFileException("不是正确的报文");
+            throw new CusFileException("不是正确的报关单报文");
         }
 
         this.decHead = rootElement.element("DecHead");
         if (this.decHead == null) {
-            throw new CusFileException("不是正确的报文");
+            throw new CusFileException("不是正确的报关单报文");
         }
 
         Element DecSign = rootElement.element("DecSign");
         if (DecSign == null) {
-            throw new CusFileException("不是正确的报文");
+            throw new CusFileException("不是正确的报关单报文");
         }
         Element ClientSeqNo = DecSign.element("ClientSeqNo");
         if (ClientSeqNo == null) {
-            throw new CusFileException("不是正确的报文");
+            throw new CusFileException("不是正确的报关单报文");
         }
         String ediNo = ClientSeqNo.getText();
         if ("".equals(ediNo)) {
-            throw new CusFileException("不是正确的报文");
+            throw new CusFileException("不是正确的报关单报文");
         }
         this.ediNo = ediNo;
 
         Element DecLists = rootElement.element("DecLists");
         if (DecLists == null) {
-            throw new CusFileException("不是正确的报文");
+            throw new CusFileException("不是正确的报关单报文");
         }
         List<?> DecListList = DecLists.elements("DecList");
         for (Object element : DecListList) {
@@ -200,7 +200,7 @@ public final class FormCusMessage extends AbstractCusMessage {
             ResultSet dbFormHead = SWGDOracle.queryFormHead(this.ediNo);
             Set<String> formHeadKeys = FormCusMessageNodeMapping.FORM_HEAD_MAPPING.keySet();
 
-            baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[表头]"));
+            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[表头]"));
             for (String key : formHeadKeys) {
                 MapKeyValue mapKeyValue = getKeyValue(this.decHead, FormCusMessageNodeMapping.FORM_HEAD_MAPPING, key, dbFormHead, "表头", baseWebsocketApi);
 
@@ -243,7 +243,7 @@ public final class FormCusMessage extends AbstractCusMessage {
                 // codeTs
                 String codeTs = "";
 
-                baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[表体 - " + (i + 1) + "]"));
+                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[表体 - " + (i + 1) + "]"));
                 for (String key : ListKeys) {
                     MapKeyValue mapKeyValue = getKeyValue(element, FormCusMessageNodeMapping.FORM_LIST_MAPPING, key, resultSet, "表体", baseWebsocketApi);
 
@@ -289,7 +289,7 @@ public final class FormCusMessage extends AbstractCusMessage {
                     Element element = this.DecContainers.get(i);
                     ResultSet resultSet = SWGDOracle.queryFormContainer(ediNo, i + "");
 
-                    baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[集装箱 - " + (i + 1) + "]"));
+                    baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[集装箱 - " + (i + 1) + "]"));
                     for (String key : containersKeys) {
                         MapKeyValue mapKeyValue = getKeyValue(element, FormCusMessageNodeMapping.FORM_CONTAINER_MAPPING, key, resultSet, "集装箱", baseWebsocketApi);
 
@@ -301,7 +301,7 @@ public final class FormCusMessage extends AbstractCusMessage {
                     }
                 }
             } else {
-                baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[无集装箱]"));
+                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[无集装箱]"));
             }
 
             // 比对随附单证
@@ -314,7 +314,7 @@ public final class FormCusMessage extends AbstractCusMessage {
                     Element element = this.LicenseDocu.get(i);
                     ResultSet resultSet = SWGDOracle.queryFormCertificate(ediNo, i + "");
 
-                    baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[随附单证 - " + (i + 1) + "]"));
+                    baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[随附单证 - " + (i + 1) + "]"));
                     for (String key : certificateKeys) {
                         MapKeyValue mapKeyValue = getKeyValue(element, FormCusMessageNodeMapping.FORM_CERTIFICATE_MAPPING, key, resultSet, "随附单证", baseWebsocketApi);
 
@@ -326,7 +326,7 @@ public final class FormCusMessage extends AbstractCusMessage {
                     }
                 }
             } else {
-                baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[无随附单证]"));
+                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[无随附单证]"));
             }
 
             // 比对申请单证
@@ -340,7 +340,7 @@ public final class FormCusMessage extends AbstractCusMessage {
                     Element element = this.DecRequestCert.get(i);
                     ResultSet resultSet = SWGDOracle.queryDecRequestCert(ediNo, (i + 1) + "");
 
-                    baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[" + decRequestCertMessage + " - " + (i + 1) + "]"));
+                    baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[" + decRequestCertMessage + " - " + (i + 1) + "]"));
                     for (String key : keys) {
                         MapKeyValue mapKeyValue = getKeyValue(element, FormCusMessageNodeMapping.DEC_REQUEST_CERT_MAPPING, key, resultSet, decRequestCertMessage, baseWebsocketApi);
 
@@ -352,7 +352,7 @@ public final class FormCusMessage extends AbstractCusMessage {
                     }
                 }
             } else {
-                baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[无" + decRequestCertMessage + "]"));
+                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[无" + decRequestCertMessage + "]"));
             }
 
             // 比对企业资质
@@ -366,7 +366,7 @@ public final class FormCusMessage extends AbstractCusMessage {
                     Element element = this.DecCopLimit.get(i);
                     ResultSet resultSet = SWGDOracle.queryDecCopLimit(ediNo, (i + 1) + "");
 
-                    baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[" + decCopLimitMessage + " - " + (i + 1) + "]"));
+                    baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[" + decCopLimitMessage + " - " + (i + 1) + "]"));
                     for (String key : keys) {
                         MapKeyValue mapKeyValue = getKeyValue(element, FormCusMessageNodeMapping.DEC_COP_LIMIT_MAPPING, key, resultSet, decRequestCertMessage, baseWebsocketApi);
 
@@ -378,7 +378,7 @@ public final class FormCusMessage extends AbstractCusMessage {
                     }
                 }
             } else {
-                baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[无" + decCopLimitMessage + "]"));
+                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[无" + decCopLimitMessage + "]"));
             }
 
             // 比对企业承诺
@@ -392,7 +392,7 @@ public final class FormCusMessage extends AbstractCusMessage {
                     Element element = this.DecCopPromise.get(i);
                     ResultSet resultSet = SWGDOracle.queryDecCopPromise(ediNo, (i + 1) + "");
 
-                    baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[" + decCopPromisesMessage + " - " + (i + 1) + "]"));
+                    baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[" + decCopPromisesMessage + " - " + (i + 1) + "]"));
                     for (String key : keys) {
                         MapKeyValue mapKeyValue = getKeyValue(element, FormCusMessageNodeMapping.DEC_COP_PROMISE_MAPPING, key, resultSet, decRequestCertMessage, baseWebsocketApi);
 
@@ -404,14 +404,14 @@ public final class FormCusMessage extends AbstractCusMessage {
                     }
                 }
             } else {
-                baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[无" + decCopPromisesMessage + "]"));
+                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[无" + decCopPromisesMessage + "]"));
             }
 
             // 使用人信息暂时不进行比对
-            baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[使用人信息暂时不进行比对]"));
+            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[使用人信息暂时不进行比对]"));
 
             // 标记号码附件暂时不进行比对
-            baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[标记号码附件暂时不进行比对]"));
+            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[标记号码附件暂时不进行比对]"));
 
             // 比对其他包装
             String decOtherPackMessage = "其他包装";
@@ -424,7 +424,7 @@ public final class FormCusMessage extends AbstractCusMessage {
                     Element element = this.DecOtherPack.get(i);
                     ResultSet resultSet = SWGDOracle.queryDecOtherPack(ediNo, (i + 1) + "");
 
-                    baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[" + decOtherPackMessage + " - " + (i + 1) + "]"));
+                    baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[" + decOtherPackMessage + " - " + (i + 1) + "]"));
                     for (String key : keys) {
                         MapKeyValue mapKeyValue = getKeyValue(element, FormCusMessageNodeMapping.DEC_OTHER_PACK_MAPPING, key, resultSet, decOtherPackMessage, baseWebsocketApi);
 
@@ -436,13 +436,13 @@ public final class FormCusMessage extends AbstractCusMessage {
                     }
                 }
             } else {
-                baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[无" + decOtherPackMessage + "]"));
+                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[无" + decOtherPackMessage + "]"));
             }
 
             // 比对完成
-            baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getTitleType("[NONE]"));
+            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[NONE]"));
         } catch (OracleException e) {
-            baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getErrorType(e.getMessage()));
+            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getErrorType(e.getMessage()));
         } finally {
             // 关闭数据库
             SWGDOracle.close();

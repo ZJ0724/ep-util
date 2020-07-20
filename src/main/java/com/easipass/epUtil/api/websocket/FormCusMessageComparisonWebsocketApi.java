@@ -1,6 +1,6 @@
 package com.easipass.epUtil.api.websocket;
 
-import com.easipass.epUtil.entity.VO.CusFileComparisonMessageVO;
+import com.easipass.epUtil.entity.VO.CusMessageComparisonVO;
 import com.easipass.epUtil.entity.cusMessage.FormCusMessage;
 import org.springframework.stereotype.Component;
 import javax.websocket.OnOpen;
@@ -30,7 +30,7 @@ public class FormCusMessageComparisonWebsocketApi extends BaseWebsocketApi {
         FormCusMessage formCusMessage = FormCusMessage.getFormCusMessage(id);
 
         if (formCusMessage == null) {
-            this.sendMessage(CusFileComparisonMessageVO.getErrorType("报文未找到"));
+            this.sendMessage(CusMessageComparisonVO.getErrorType("报文未找到"));
             this.close();
             return;
         }

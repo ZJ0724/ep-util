@@ -10,7 +10,7 @@ import java.util.Map;
  *
  * @author ZJ
  * */
-public final class CusFileComparisonMessageVO {
+public final class CusMessageComparisonVO {
 
     /**
      * 类型
@@ -26,7 +26,6 @@ public final class CusFileComparisonMessageVO {
      * */
     private final String node;
 
-
     /**
      * 信息内容
      *
@@ -41,7 +40,7 @@ public final class CusFileComparisonMessageVO {
      * @param node 节点名
      * @param message 信息内容
      * */
-    public CusFileComparisonMessageVO(String type, String node, String message) {
+    public CusMessageComparisonVO(String type, String node, String message) {
         this.type = type;
         this.message = message;
         this.node = node;
@@ -52,8 +51,8 @@ public final class CusFileComparisonMessageVO {
      *
      * @param message 标题信息
      * */
-    public static CusFileComparisonMessageVO getTitleType(String message) {
-        return new CusFileComparisonMessageVO("0", null, message);
+    public static CusMessageComparisonVO getTitleType(String message) {
+        return new CusMessageComparisonVO("0", null, message);
     }
 
     /**
@@ -61,8 +60,8 @@ public final class CusFileComparisonMessageVO {
      *
      * @param node 节点
      * */
-    public static CusFileComparisonMessageVO getComparisonTrueType(String node) {
-        return new CusFileComparisonMessageVO("1", node, "true");
+    public static CusMessageComparisonVO getComparisonTrueType(String node) {
+        return new CusMessageComparisonVO("1", node, "true");
     }
 
     /**
@@ -70,8 +69,8 @@ public final class CusFileComparisonMessageVO {
      *
      * @param node 节点
      * */
-    public static CusFileComparisonMessageVO getComparisonFalseType(String node) {
-        return new CusFileComparisonMessageVO("1", node, "false");
+    public static CusMessageComparisonVO getComparisonFalseType(String node) {
+        return new CusMessageComparisonVO("1", node, "false");
     }
 
     /**
@@ -79,8 +78,8 @@ public final class CusFileComparisonMessageVO {
      *
      * @param node 节点
      * */
-    public static CusFileComparisonMessageVO getComparisonNullType(String node) {
-        return new CusFileComparisonMessageVO("1", node, "null");
+    public static CusMessageComparisonVO getComparisonNullType(String node) {
+        return new CusMessageComparisonVO("1", node, "null");
     }
 
     /**
@@ -88,8 +87,8 @@ public final class CusFileComparisonMessageVO {
      *
      * @param message 错误信息
      * */
-    public static CusFileComparisonMessageVO getErrorType(String message) {
-        return new CusFileComparisonMessageVO("2", null, message);
+    public static CusMessageComparisonVO getErrorType(String message) {
+        return new CusMessageComparisonVO("2", null, message);
     }
 
     @Override

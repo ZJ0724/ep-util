@@ -51,6 +51,17 @@
         },
 
         {
+            path: "cusMessageComparison/",
+            name: "报文比对",
+            children: [
+                {
+                    path: "formCusMessage.html",
+                    name: "报关单报文"
+                }
+            ]
+        },
+
+        {
             path: "config.html",
             name: "配置"
         }

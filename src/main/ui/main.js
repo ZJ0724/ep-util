@@ -10,7 +10,9 @@ window.epUtil = {
         service: {},
 
         websocket: {}
-    }
+    },
+
+    util: {}
 };
 
 // 基础样式
@@ -49,9 +51,15 @@ document.write("<script src=\"/entity/DTO/Sftp83ConfigDTO.js\"></script>");
 document.write("<script src=\"/entity/VO/Sftp83ConfigVO.js\"></script>");
 document.write("<script src=\"/entity/VO/DaKaConfigVO.js\"></script>");
 document.write("<script src=\"/entity/DTO/DaKaConfigDTO.js\"></script>");
+document.write("<script src=\"/entity/VO/CusMessageComparisonVO.js\"></script>");
 
 // 导入api
 document.write("<script src=\"/api/service/baseServiceApi.js\"></script>");
 document.write("<script src=\"/api/service/cusResultServiceApi.js\"></script>");
 document.write("<script src=\"/api/websocket/BaseWebsocketApi.js\"></script>");
 document.write("<script src=\"/api/service/configServiceApi.js\"></script>");
+document.write("<script src=\"/api/service/cusMessageServiceApi.js\"></script>");
+document.write("<script src=\"/api/websocket/FormCusMessageComparisonWebsocketApi.js\"></script>");
+
+// 导入util
+document.write("<script src=\"/util/documentUtil.js\"></script>");

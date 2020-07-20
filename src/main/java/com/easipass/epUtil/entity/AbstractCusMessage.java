@@ -1,7 +1,7 @@
 package com.easipass.epUtil.entity;
 
 import com.easipass.epUtil.api.websocket.BaseWebsocketApi;
-import com.easipass.epUtil.entity.VO.CusFileComparisonMessageVO;
+import com.easipass.epUtil.entity.VO.CusMessageComparisonVO;
 import com.easipass.epUtil.exception.ErrorException;
 import org.dom4j.Element;
 import java.sql.ResultSet;
@@ -98,7 +98,7 @@ public abstract class AbstractCusMessage {
      * */
     protected static MapKeyValue getKeyValue(Element element, Map<String, String> map, String key, ResultSet resultSet, String message, BaseWebsocketApi baseWebsocketApi) {
         if (resultSet == null) {
-            baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getErrorType("数据库" + message + "不存在"));
+            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getErrorType("数据库" + message + "不存在"));
             return null;
         }
 
@@ -128,7 +128,7 @@ public abstract class AbstractCusMessage {
 
         // 如果value是null的话，不进行比对
         if (value == null) {
-            baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getComparisonNullType(key1));
+            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonNullType(key1));
             return;
         }
 
@@ -140,9 +140,9 @@ public abstract class AbstractCusMessage {
         }
 
         if (nodeValue.equals(dbValue)) {
-            baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getComparisonTrueType(key1));
+            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonTrueType(key1));
         } else {
-            baseWebsocketApi.sendMessage(CusFileComparisonMessageVO.getComparisonFalseType(key1));
+            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonFalseType(key1));
         }
     }
 

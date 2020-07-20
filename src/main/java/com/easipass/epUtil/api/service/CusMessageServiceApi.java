@@ -2,6 +2,7 @@ package com.easipass.epUtil.api.service;
 
 import com.easipass.epUtil.entity.Response;
 import com.easipass.epUtil.entity.cusMessage.FormCusMessage;
+import com.zj0724.springbootUtil.annotation.SkipCheck;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
  * */
 @RestController
 @RequestMapping(BaseServiceApi.URL + "cusMessage")
+@SkipCheck
 public class CusMessageServiceApi {
 
     /**
@@ -25,7 +27,7 @@ public class CusMessageServiceApi {
      * @return 响应结果
      * */
     @PostMapping("formCusMessageUpload")
-    public Response upload(@RequestParam("cusFile") MultipartFile multipartFile) {
+    public Response upload(@RequestParam("formCusMessage") MultipartFile multipartFile) {
         String id = FormCusMessage.addFormCusMessage(multipartFile);
 
         return Response.returnTrue(id);
