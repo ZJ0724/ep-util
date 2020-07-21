@@ -1,15 +1,15 @@
-(function (VO) {
-    VO.SWGDConfigVO = class SWGDConfigVO extends VO.AbstractVO {
+import AbstractVO from "./AbstractVO.js";
 
-        url;
+export default class SWGDConfigVO extends AbstractVO {
 
-        port;
+    url;
 
-        sid;
+    port;
 
-        username;
+    sid;
 
-        password;
+    username;
 
-    }
-})(window.epUtil.entity.VO);
+    password;
+
+}

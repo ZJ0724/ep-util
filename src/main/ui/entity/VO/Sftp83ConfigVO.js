@@ -1,15 +1,15 @@
-(function (VO) {
-    VO.Sftp83ConfigVO = class Sftp83ConfigVO extends VO.AbstractVO {
+import AbstractVO from "./AbstractVO.js";
 
-        url;
+export default class Sftp83ConfigVO extends AbstractVO {
 
-        port;
+    url;
 
-        username;
+    port;
 
-        password;
+    username;
 
-        uploadPath;
+    password;
 
-    }
-})(window.epUtil.entity.VO);
+    uploadPath;
+
+}

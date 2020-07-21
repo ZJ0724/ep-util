@@ -1,9 +1,9 @@
-(function (websocket) {
-    websocket.FormCusMessageComparisonWebsocketApi = class FormCusMessageComparisonWebsocketApi extends websocket.BaseWebsocketApi {
+import BaseWebsocketApi from "./BaseWebsocketApi.js";
 
-        constructor(id) {
-            super("formCusMessageComparison/" + id);
-        }
+export default class FormCusMessageComparisonWebsocketApi extends BaseWebsocketApi {
 
-    };
-})(window.epUtil.api.websocket);
+    constructor(id) {
+        super("formCusMessageComparison/" + id);
+    }
+
+}

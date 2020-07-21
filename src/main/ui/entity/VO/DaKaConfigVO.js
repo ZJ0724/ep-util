@@ -1,17 +1,17 @@
-(function (VO) {
-    VO.DaKaConfigVO = class DaKaConfigVO extends VO.AbstractVO {
+import AbstractVO from "./AbstractVO.js";
 
-        date;
+export default class DaKaConfigVO extends AbstractVO {
 
-        week;
+    date;
 
-        toWorkTime;
+    week;
 
-        offWorkTime;
+    toWorkTime;
 
-        username;
+    offWorkTime;
 
-        password;
+    username;
 
-    }
-})(window.epUtil.entity.VO);
+    password;
+
+}

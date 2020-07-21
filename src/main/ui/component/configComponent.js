@@ -1,4 +1,7 @@
-(function (epUtil) {
+import alertComponent from "./alertComponent.js";
+
+export default (function () {
+
     Vue.component("config", {
         template: `
             <div>
@@ -8,7 +11,7 @@
                     </span>
                     <input v-model="vo[key]" type="text" class="form-control" aria-describedby="basic-addon1" aria-label="" />
                 </div>
-    
+
                 <div style="margin-top: 20px;">
                     <button @click="set()" style="width: 100%;" class="btn btn-primary" type="submit">保存</button>
                 </div>
@@ -30,7 +33,6 @@
             set() {
                 let vo = this.vo;
                 let dto = this.dto;
-                let alertComponent = epUtil.component.alertComponent;
 
                 dto.setData(vo);
 
@@ -40,4 +42,5 @@
             }
         }
     });
-})(window.epUtil);
+
+})();

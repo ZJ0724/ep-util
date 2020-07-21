@@ -1,15 +1,15 @@
-(function (DTO) {
-    DTO.SWGDConfigDTO = class SWGDConfigDTO extends DTO.AbstractDTO {
+import AbstractDTO from "./AbstractDTO.js";
 
-        url;
+export default class SWGDConfigDTO extends AbstractDTO {
 
-        port;
+    url;
 
-        sid;
+    port;
 
-        username;
+    sid;
 
-        password;
+    username;
 
-    }
-})(window.epUtil.entity.DTO);
+    password;
+
+}

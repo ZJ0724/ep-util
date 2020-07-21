@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title></title>
-    <script src="/main.js"></script>
+    <script src="/init.js"></script>
+    <script type="module" src="/main.js"></script>
 </head>
 <body>
     <div id="main">
@@ -76,90 +77,90 @@
 </body>
 </html>
 
-<script>
-    (function (epUtil) {
-        let cusMessageServiceApi = epUtil.api.service.cusMessageServiceApi;
-        let alertComponent = epUtil.component.alertComponent;
-        let cusMessageComparisonVO = epUtil.entity.VO.CusMessageComparisonVO;
-        let documentUtil = epUtil.util.documentUtil;
-        let formCusMessageComparisonWebsocketApi = epUtil.api.websocket.FormCusMessageComparisonWebsocketApi;
+<script type="module">
 
-        new Vue({
-            el: "#main",
+    import cusMessageServiceApi from "../../api/service/cusMessageServiceApi.js";
+    import alertComponent from "../../component/alertComponent.js";
+    import CusMessageComparisonVO from "../../entity/VO/CusMessageComparisonVO.js";
+    import documentUtil from "../../util/documentUtil.js";
+    import FormCusMessageComparisonWebsocketApi from "../../api/websocket/FormCusMessageComparisonWebsocketApi.js";
 
-            data: {
-                fileInput: document.getElementById("file"),
+    new Vue({
+        el: "#main",
 
-                fileName: "",
+        data: {
+            fileInput: document.getElementById("file"),
 
-                id: "",
+            fileName: "",
 
-                mask: false,
+            id: "",
 
-                log: document.getElementById("log"),
+            mask: false,
 
-                closeLog: document.getElementById("closeLog"),
+            log: document.getElementById("log"),
 
-                logBody: document.getElementById("logBody")
+            closeLog: document.getElementById("closeLog"),
+
+            logBody: document.getElementById("logBody")
+        },
+
+        methods: {
+            // 选择文件
+            select() {
+                this.fileInput.click();
             },
 
-            methods: {
-                // 选择文件
-                select() {
-                    this.fileInput.click();
-                },
+            // 比对
+            comparison() {
+                let id = this.id,
+                    that = this;
 
-                // 比对
-                comparison() {
-                    let id = this.id,
-                        that = this;
+                if (id === "") {
+                    alertComponent.popup("未选择报文");
+                    return;
+                }
 
-                    if (id === "") {
-                        alertComponent.popup("未选择报文");
-                        return;
-                    }
+                that.mask = true;
+                this.log.style.display = "";
+                this.logBody.innerHTML = "";
 
-                    that.mask = true;
-                    this.log.style.display = "";
-                    this.logBody.innerHTML = "";
+                let websocket = new FormCusMessageComparisonWebsocketApi(id);
 
-                    let websocket = new formCusMessageComparisonWebsocketApi(id);
+                // 监听比对消息
+                websocket.onmessage(function (message) {
+                    let vo = new CusMessageComparisonVO();
 
-                    // 监听比对消息
-                    websocket.onmessage(function (message) {
-                        let vo = new cusMessageComparisonVO();
+                    vo.setData(message);
+                    console.log(vo);
+                    that.addLog(vo);
+                });
 
-                        vo.setData(message);
-                        console.log(vo);
-                        that.addLog(vo);
-                    });
+                // 监听连接关闭
+                websocket.onclose(function () {
+                    console.log("websocket连接关闭");
+                    that.closeLog.style.display = "flex";
+                });
+            },
 
-                    // 监听连接关闭
-                    websocket.onclose(function () {
-                        console.log("websocket连接关闭");
-                        that.closeLog.style.display = "flex";
-                    });
-                },
+            // 添加比对信息
+            addLog(cusMessageComparisonVO) {
+                let div,
+                    type = cusMessageComparisonVO.type,
+                    message = cusMessageComparisonVO.message,
+                    node = cusMessageComparisonVO.node,
+                    logBody = this.logBody;
 
-                // 添加比对信息
-                addLog(cusMessageComparisonVO) {
-                    let div,
-                        type = cusMessageComparisonVO.type,
-                        message = cusMessageComparisonVO.message,
-                        node = cusMessageComparisonVO.node,
-                        logBody = this.logBody;
-
-                    // 标题类型
-                    if (type === "0") {
-                        div = documentUtil.parseDocument(`<div style="font-weight: bold;margin-top: 20px;" class="layui-anim layui-anim-scale">
+                // 标题类型
+                if (type === "0") {
+                    div = documentUtil.parseDocument(`<div style="font-weight: bold;margin-top: 20px;" class="layui-anim layui-anim-scale">
                     ${message}
                 </div>`);
-                    }
-                    // 比对类型
-                    if (type === "1") {
-                        // 比对通过
-                        if (message === "true") {
-                            div = documentUtil.parseDocument(`<div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                }
+                // 比对类型
+                if (type === "1") {
+                    // 比对通过
+                    if (message === "true") {
+                        div = documentUtil.parseDocument(`<div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
                     <div style="width: 90%;">
                         ${node}
                     </div>
@@ -167,10 +168,10 @@
                         <i style="color: #5FB878;" class="layui-icon layui-icon-ok"></i>
                     </div>
                 </div>`);
-                        }
-                        // 比对不通过
-                        if (message === "false") {
-                            div = documentUtil.parseDocument(`                <div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                    }
+                    // 比对不通过
+                    if (message === "false") {
+                        div = documentUtil.parseDocument(`                <div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
                     <div style="width: 90%;color: red;">
                         ${node}
                     </div>
@@ -178,10 +179,10 @@
                         <i style="color: red;" class="layui-icon layui-icon-close"></i>
                     </div>
                 </div>`);
-                        }
-                        // 不进行比对
-                        if (message === "null") {
-                            div = documentUtil.parseDocument(`<div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                    }
+                    // 不进行比对
+                    if (message === "null") {
+                        div = documentUtil.parseDocument(`<div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
                     <div style="width: 90%;color: #c2c2c2;">
                         ${node}
                     </div>
@@ -189,50 +190,50 @@
                         <i style="color: #c2c2c2;" class="layui-icon layui-icon-subtraction"></i>
                     </div>
                 </div>`);
-                        }
                     }
-                    // 错误类型
-                    if (type === "2") {
-                        div = documentUtil.parseDocument(`<div style="font-weight: bold;color: red;margin-top: 20px;" class="layui-anim layui-anim-scale">
+                }
+                // 错误类型
+                if (type === "2") {
+                    div = documentUtil.parseDocument(`<div style="font-weight: bold;color: red;margin-top: 20px;" class="layui-anim layui-anim-scale">
                     ${message}
                 </div>`);
-                    }
-
-                    // 如果不存在div，则将此div设置成20px
-                    if (logBody.children.length === 0) {
-                        div.style.marginTop = "0px";
-                    }
-
-                    logBody.appendChild(div);
-                },
-
-                // 关闭弹窗
-                close() {
-                    this.log.style.display = "none";
-                    this.mask = false;
-                    this.closeLog.style.display = "none";
                 }
+
+                // 如果不存在div，则将此div设置成20px
+                if (logBody.children.length === 0) {
+                    div.style.marginTop = "0px";
+                }
+
+                logBody.appendChild(div);
             },
 
-            created() {
-                let that = this,
-                    fileInput = that.fileInput;
-
-                this.fileInput.addEventListener("change", function () {
-                    let file = fileInput.files[0];
-
-                    cusMessageServiceApi.upload(file).then(function (id) {
-                        that.fileName = file.name;
-                        that.id = id;
-                    }).catch(function (message) {
-                        alertComponent.popup(message);
-                    });
-                });
-
-                this.closeLog.addEventListener("click", function () {
-                    that.close();
-                });
+            // 关闭弹窗
+            close() {
+                this.log.style.display = "none";
+                this.mask = false;
+                this.closeLog.style.display = "none";
             }
-        });
-    })(window.epUtil);
+        },
+
+        created() {
+            let that = this,
+                fileInput = that.fileInput;
+
+            this.fileInput.addEventListener("change", function () {
+                let file = fileInput.files[0];
+
+                cusMessageServiceApi.upload(file).then(function (id) {
+                    that.fileName = file.name;
+                    that.id = id;
+                }).catch(function (message) {
+                    alertComponent.popup(message);
+                });
+            });
+
+            this.closeLog.addEventListener("click", function () {
+                that.close();
+            });
+        }
+    });
+
 </script>

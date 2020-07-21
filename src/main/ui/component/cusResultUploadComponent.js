@@ -1,4 +1,8 @@
-(function (epUtil) {
+import CusResultDTO from "../entity/DTO/CusResultDTO.js";
+import alertComponent from "./alertComponent.js";
+
+export default (function () {
+
     // 回执上传组件
     Vue.component("cus-result-upload", {
         template: `
@@ -43,7 +47,7 @@
         data: function () {
             return {
                 param: "",
-                cusResultDTO: new epUtil.entity.DTO.CusResultDTO(),
+                cusResultDTO: new CusResultDTO(),
 
                 // 上传按钮
                 uploadButton: {
@@ -66,7 +70,6 @@
                     uploadButton = this.uploadButton,
                     uploadButtonDisabled = uploadButton.disabled,
                     uploadButtonText = uploadButton.text,
-                    alertComponent = epUtil.component.alertComponent,
                     api = this.api;
 
                 if (param === "") {
@@ -94,4 +97,5 @@
             }
         }
     });
-})(window.epUtil);
+
+})();

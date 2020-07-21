@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title></title>
-    <script src="/main.js"></script>
+    <script src="/init.js"></script>
+    <script type="module" src="/main.js"></script>
 </head>
 <body>
     <div id="main">
@@ -16,18 +17,18 @@
 </body>
 </html>
 
-<script>
-    (function (epUtil) {
-        let cusResultServiceApi = epUtil.api.service.cusResultServiceApi;
+<script type="module">
 
-        new Vue({
-            el: "#main",
+    import cusResultServiceApi from "../../api/service/cusResultServiceApi.js";
 
-            data: {
-                channelList: [],
+    new Vue({
+        el: "#main",
 
-                api: cusResultServiceApi.decModCusResultUploadQP
-            }
-        });
-    })(window.epUtil);
+        data: {
+            channelList: [],
+
+            api: cusResultServiceApi.decModCusResultUploadQP
+        }
+    });
+
 </script>

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title></title>
-    <script src="/main.js"></script>
+    <script src="/init.js"></script>
+    <script type="module" src="/main.js"></script>
 </head>
 <body>
     <div id="main">
@@ -16,28 +17,28 @@
 </body>
 </html>
 
-<script>
-    (function (epUtil) {
-        let cusResultServiceApi = epUtil.api.service.cusResultServiceApi;
+<script type="module">
 
-        new Vue({
-            el: "#main",
+    import cusResultServiceApi from "../../api/service/cusResultServiceApi.js";
 
-            data: {
-                channelList: [
-                    {
-                        key: "0",
-                        value: "通过"
-                    },
-                    {
-                        key: "1",
-                        value: "不通过"
-                    }
-                ],
+    new Vue({
+        el: "#main",
 
-                api: cusResultServiceApi.formCusResultUploadTongXun
-            }
-        });
-    })(window.epUtil);
+        data: {
+            channelList: [
+                {
+                    key: "0",
+                    value: "通过"
+                },
+                {
+                    key: "1",
+                    value: "不通过"
+                }
+            ],
+
+            api: cusResultServiceApi.formCusResultUploadTongXun
+        }
+    });
+
 </script>
 

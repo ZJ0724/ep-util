@@ -1,69 +1,70 @@
-(function (service, entity) {
-    let baseServiceApi = {
-        // T
-        T: "T",
+import Response from "../../entity/Response.js";
 
-        // F
-        F: "F",
+let baseServiceApi = {
 
-        // errorCode
-        errorCode: [500, 501, 400],
+    // T
+    T: "T",
 
-        // 发送
-        sendHttp(option) {
-            return new Promise((successCallback, errorCallback) => {
-                let type = option.type,
-                    url = "/api/" + option.url,
-                    data = option.data,
-                    dataType = option.dataType,
-                    sendData = JSON.stringify(data);
+    // F
+    F: "F",
 
-                let http = new XMLHttpRequest();
-                http.open(type, url);
+    // errorCode
+    errorCode: [500, 501, 400],
 
-                if (dataType === "file") {
-                    sendData = new FormData();
-                    for (let key in data) {
-                        if (data.hasOwnProperty(key)) {
-                            sendData.append(key, data[key]);
-                        }
+    // 发送
+    sendHttp(option) {
+        return new Promise((successCallback, errorCallback) => {
+            let type = option.type,
+                url = "/api/" + option.url,
+                data = option.data,
+                dataType = option.dataType,
+                sendData = JSON.stringify(data);
+
+            let http = new XMLHttpRequest();
+            http.open(type, url);
+
+            if (dataType === "file") {
+                sendData = new FormData();
+                for (let key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        sendData.append(key, data[key]);
                     }
                 }
+            }
 
-                if ((type === "post" || type === "POST") && dataType !== "file") {
-                    http.setRequestHeader("content-type", "application/json");
-                }
+            if ((type === "post" || type === "POST") && dataType !== "file") {
+                http.setRequestHeader("content-type", "application/json");
+            }
 
-                http.send(sendData);
+            http.send(sendData);
 
-                http.onreadystatechange = function () {
-                    if (http.status === 200 && http.readyState === 4) {
-                        let Response = entity.Response;
-                        let response = new Response();
-                        response.setData(JSON.parse(http.response));
-                        console.log(response);
+            http.onreadystatechange = function () {
+                if (http.status === 200 && http.readyState === 4) {
+                    let response = new Response();
+                    response.setData(JSON.parse(http.response));
+                    console.log(response);
 
-                        // 判断errorCode
-                        for (let value of baseServiceApi.errorCode) {
-                            if (value === response.errorCode) {
-                                alert(response.errorMessage);
-                                return;
-                            }
-                        }
-
-                        // 调用不同回调
-                        if (response.flag === baseServiceApi.T) {
-                            successCallback(response.data);
+                    // 判断errorCode
+                    for (let value of baseServiceApi.errorCode) {
+                        if (value === response.errorCode) {
+                            alert(response.errorMessage);
                             return;
                         }
-                        if (response.flag === baseServiceApi.F) {
-                            errorCallback(response.errorMessage);
-                        }
+                    }
+
+                    // 调用不同回调
+                    if (response.flag === baseServiceApi.T) {
+                        successCallback(response.data);
+                        return;
+                    }
+                    if (response.flag === baseServiceApi.F) {
+                        errorCallback(response.errorMessage);
                     }
                 }
-            });
-        }
-    };
+            }
+        });
+    }
 
-    service.baseServiceApi = baseServiceApi;
-})(window.epUtil.api.service, window.epUtil.entity);
+};
+
+export default baseServiceApi;

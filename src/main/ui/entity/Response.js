@@ -1,16 +1,19 @@
-(function (entity) {
-    entity.Response = class Response {
-        flag = null;
-        errorCode = null;
-        errorMessage = null;
-        data = null;
+export default class Response {
 
-        setData(response) {
-            for (let key in response) {
-                if (response.hasOwnProperty(key)) {
-                    this[key] = response[key];
-                }
+    flag = null;
+
+    errorCode = null;
+
+    errorMessage = null;
+
+    data = null;
+
+    setData(response) {
+        for (let key in this) {
+            if (this.hasOwnProperty(key)) {
+                this[key] = response[key];
             }
         }
     }
-})(window.epUtil.entity);
+
+}

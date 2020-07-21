@@ -1,5 +1,7 @@
-(function (epUtil) {
-    // 注册<navigation>组件
+import router from "../entity/router.js";
+
+export default (function () {
+
     Vue.component("navigation", {
         template: `
         <div id="head">
@@ -21,10 +23,9 @@
         data() {
             return {
                 page: "/page/",
-                router: epUtil.entity.router
+                router: router
             }
         }
     });
 
-
-})(window.epUtil);
+})();

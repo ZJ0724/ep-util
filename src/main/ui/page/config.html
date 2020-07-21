@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title></title>
-    <script src="/main.js"></script>
+    <script src="/init.js"></script>
+    <script type="module" src="/main.js"></script>
 </head>
 <body>
     <div id="main">
@@ -35,50 +36,50 @@
 </body>
 </html>
 
-<script>
-    (function (epUtil) {
-        let SWGDConfigVO = epUtil.entity.VO.SWGDConfigVO;
-        let configServiceApi = epUtil.api.service.configServiceApi;
-        let SWGDConfigDTO = epUtil.entity.DTO.SWGDConfigDTO;
-        let sftp83ConfigVO = epUtil.entity.VO.Sftp83ConfigVO;
-        let sftp83ConfigDTO = epUtil.entity.DTO.Sftp83ConfigDTO;
-        let daKaConfigDTO = epUtil.entity.DTO.DaKaConfigDTO;
-        let daKaConfigVO = epUtil.entity.VO.DaKaConfigVO;
+<script type="module">
 
-        new Vue({
-            el: "#main",
+    import SWGDConfigVO from "../entity/VO/SWGDConfigVO.js";
+    import SWGDConfigDTO from "../entity/DTO/SWGDConfigDTO.js";
+    import Sftp83ConfigDTO from "../entity/DTO/Sftp83ConfigDTO.js";
+    import Sftp83ConfigVO from "../entity/VO/Sftp83ConfigVO.js";
+    import DaKaConfigDTO from "../entity/DTO/DaKaConfigDTO.js";
+    import DaKaConfigVO from "../entity/VO/DaKaConfigVO.js";
+    import configServiceApi from "../api/service/configServiceApi.js";
 
-            data: {
-                active: 0,
+    new Vue({
+        el: "#main",
 
-                SWGD: {
-                    VO: new SWGDConfigVO(),
-                    DTO: new SWGDConfigDTO(),
-                    getApi: configServiceApi.getSWGD,
-                    setApi: configServiceApi.setSWGD
-                },
+        data: {
+            active: 0,
 
-                sftp83: {
-                    VO: new sftp83ConfigVO(),
-                    DTO: new sftp83ConfigDTO(),
-                    getApi: configServiceApi.getSftp83,
-                    setApi: configServiceApi.setSftp83
-                },
-
-                daKa: {
-                    VO: new daKaConfigVO(),
-                    DTO: new daKaConfigDTO(),
-                    getApi: configServiceApi.getDaKa,
-                    setApi: configServiceApi.setDaKa
-                }
+            SWGD: {
+                VO: new SWGDConfigVO(),
+                DTO: new SWGDConfigDTO(),
+                getApi: configServiceApi.getSWGD,
+                setApi: configServiceApi.setSWGD
             },
 
-            methods: {
-                // 切换配置选项
-                selectConfig(active) {
-                    this.active = active;
-                }
+            sftp83: {
+                VO: new Sftp83ConfigVO(),
+                DTO: new Sftp83ConfigDTO(),
+                getApi: configServiceApi.getSftp83,
+                setApi: configServiceApi.setSftp83
+            },
+
+            daKa: {
+                VO: new DaKaConfigVO(),
+                DTO: new DaKaConfigDTO(),
+                getApi: configServiceApi.getDaKa,
+                setApi: configServiceApi.setDaKa
             }
-        });
-    })(window.epUtil);
+        },
+
+        methods: {
+            // 切换配置选项
+            selectConfig(active) {
+                this.active = active;
+            }
+        }
+    });
+
 </script>

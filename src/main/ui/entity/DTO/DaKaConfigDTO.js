@@ -1,35 +1,35 @@
-(function (DTO) {
-    DTO.DaKaConfigDTO = class DaKaConfigDTO extends DTO.AbstractDTO {
+import AbstractDTO from "./AbstractDTO.js";
 
-        date;
+export default class DaKaConfigDTO extends AbstractDTO {
 
-        week;
+    date;
 
-        toWorkTime;
+    week;
 
-        offWorkTime;
+    toWorkTime;
 
-        username;
+    offWorkTime;
 
-        password;
+    username;
 
-        setData(data) {
-            super.setData(data);
+    password;
 
-            // 特殊处理date
-            let date = this.date;
+    setData(data) {
+        super.setData(data);
 
-            if (date !== "" && !Array.isArray(date)) {
-                this.date = date.split(",");
-            }
+        // 特殊处理date
+        let date = this.date;
 
-            // 特殊处理week
-            let week = this.week;
-
-            if (week !== "" && !Array.isArray(week)) {
-                this.week = week.split(",");
-            }
+        if (date !== "" && !Array.isArray(date)) {
+            this.date = date.split(",");
         }
 
+        // 特殊处理week
+        let week = this.week;
+
+        if (week !== "" && !Array.isArray(week)) {
+            this.week = week.split(",");
+        }
     }
-})(window.epUtil.entity.DTO);
+
+}

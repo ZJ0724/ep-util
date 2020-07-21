@@ -1,68 +1,60 @@
-(function (service) {
-    let config = "config/";
+import baseServiceApi from "./baseServiceApi.js";
 
-    service.configServiceApi = {
-        // 设置打卡配置
-        setDaKa(daKaConfigDTO) {
-            let baseServiceApi = service.baseServiceApi;
+let configServiceApi = {
 
-            return baseServiceApi.sendHttp({
-                type: "POST",
-                url: `${config}setDaKa`,
-                data: daKaConfigDTO
-            });
-        },
+    config: "config/",
 
-        // 获取打卡配置
-        getDaKa() {
-            let baseServiceApi = service.baseServiceApi;
+    // 设置打卡配置
+    setDaKa(daKaConfigDTO) {
+        return baseServiceApi.sendHttp({
+            type: "POST",
+            url: `${configServiceApi.config}setDaKa`,
+            data: daKaConfigDTO
+        });
+    },
 
-            return baseServiceApi.sendHttp({
-                type: "GET",
-                url: `${config}getDaKa`
-            });
-        },
+    // 获取打卡配置
+    getDaKa() {
+        return baseServiceApi.sendHttp({
+            type: "GET",
+            url: `${configServiceApi.config}getDaKa`
+        });
+    },
 
-        // 设置SWGD配置
-        setSWGD(swgdConfigDTO) {
-            let baseServiceApi = service.baseServiceApi;
+    // 设置SWGD配置
+    setSWGD(swgdConfigDTO) {
+        return baseServiceApi.sendHttp({
+            type: "POST",
+            url: `${configServiceApi.config}setSWGD`,
+            data: swgdConfigDTO
+        });
+    },
 
-            return baseServiceApi.sendHttp({
-                type: "POST",
-                url: `${config}setSWGD`,
-                data: swgdConfigDTO
-            });
-        },
+    // 获取SWGD配置
+    getSWGD() {
+        return baseServiceApi.sendHttp({
+            type: "GET",
+            url: `${configServiceApi.config}getSWGD`
+        });
+    },
 
-        // 获取SWGD配置
-        getSWGD() {
-            let baseServiceApi = service.baseServiceApi;
+    // 设置sftp83配置
+    setSftp83(sftp83ConfigDTO) {
+        return baseServiceApi.sendHttp({
+            type: "POST",
+            url: `${configServiceApi.config}setSftp83`,
+            data: sftp83ConfigDTO
+        });
+    },
 
-            return baseServiceApi.sendHttp({
-                type: "GET",
-                url: `${config}getSWGD`
-            });
-        },
+    // 获取sftp83配置
+    getSftp83() {
+        return baseServiceApi.sendHttp({
+            type: "GET",
+            url: `${configServiceApi.config}getSftp83`
+        });
+    }
 
-        // 设置sftp83配置
-        setSftp83(sftp83ConfigDTO) {
-            let baseServiceApi = service.baseServiceApi;
+};
 
-            return baseServiceApi.sendHttp({
-                type: "POST",
-                url: `${config}setSftp83`,
-                data: sftp83ConfigDTO
-            });
-        },
-
-        // 获取sftp83配置
-        getSftp83() {
-            let baseServiceApi = service.baseServiceApi;
-
-            return baseServiceApi.sendHttp({
-                type: "GET",
-                url: `${config}getSftp83`
-            });
-        }
-    };
-})(window.epUtil.api.service);
+export default configServiceApi;

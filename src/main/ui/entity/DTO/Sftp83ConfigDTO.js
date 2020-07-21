@@ -1,15 +1,15 @@
-(function (DTO) {
-    DTO.Sftp83ConfigDTO = class Sftp83ConfigDTO extends DTO.AbstractDTO {
+import AbstractDTO from "./AbstractDTO.js";
 
-        url;
+export default class Sftp83ConfigDTO extends AbstractDTO {
 
-        port;
+    url;
 
-        username;
+    port;
 
-        password;
+    username;
 
-        uploadPath;
+    password;
 
-    }
-})(window.epUtil.entity.DTO);
+    uploadPath;
+
+}

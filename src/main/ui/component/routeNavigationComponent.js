@@ -1,4 +1,7 @@
-(function (epUtil) {
+import router from "../entity/router.js";
+
+export default (function () {
+
     Vue.component("route-navigation", {
         template: `
         <div>
@@ -9,7 +12,7 @@
 
         data() {
             return {
-                router: epUtil.entity.router,
+                router: router,
                 pathName: []
             }
         },
@@ -53,4 +56,5 @@
             document.title = title;
         }
     });
-})(window.epUtil);
+
+})();

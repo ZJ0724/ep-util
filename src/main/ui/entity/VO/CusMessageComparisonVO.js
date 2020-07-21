@@ -1,11 +1,11 @@
-(function (VO) {
-    VO.CusMessageComparisonVO = class CusMessageComparisonVO extends VO.AbstractVO {
+import AbstractVO from "./AbstractVO.js";
 
-        type;
+export default class CusMessageComparisonVO extends AbstractVO {
 
-        node;
+    type;
 
-        message;
+    node;
 
-    }
-})(window.epUtil.entity.VO);
+    message;
+
+}
