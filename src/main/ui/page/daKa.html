@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>打卡</title>
+    <script src="/init.js"></script>
+    <script type="module" src="/main.js"></script>
+</head>
+<body>
+    <div id="main">
+        <div class="center">
+            <div style="margin: 50px 0;width: 30%;">
+                <div class="panel panel-default" style="width: 100%;">
+                    <div class="panel-heading">
+                        <div style="display: flex;">
+                            <div style="font-weight: bold;">
+                                状态
+                            </div>
+                            <div style="margin-left: 10px;">
+                                <span style="display: none;" :style="status ? 'display: inline' : ''" class="label label-success">已开启</span>
+                                <span style="display: none;" :style="status ? '' : 'display: inline'" v-if="status !== null" class="label label-danger">已关闭</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <button @click="open()" class="btn btn-success btn-sm" type="button">开启</button>
+                        <button @click="close()" class="btn btn-danger btn-sm" type="button">关闭</button>
+                        <button ref="manualDaKaButton" @click="souDong()" class="btn btn-primary btn-sm" type="button">手动打卡</button>
+                        <button @click="cleanLog()" class="btn btn-default btn-sm" type="button">清空日志</button>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" style="margin-top: 30px;width: 100%;">
+                    <div class="panel-heading" style="font-weight: bold;">
+                        日志
+                    </div>
+                    <div class="panel-body">
+                        <div v-for="(log, key) in logs" :key="key" :style="key !== 0 ? 'margin-top: 10px' : ''">
+                            {{log}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script type="module">
+
+    import daKaServiceApi from "../api/service/daKaServiceApi.js";
+    import alertComponent from "../component/alertComponent.js";
+
+    new Vue({
+        el: "#main",
+
+        data: {
+            status: null,
+
+            logs: []
+        },
+
+        methods: {
+            // 获取打卡状态
+            getStatus() {
+                let that = this;
+
+                daKaServiceApi.getStatus().then(function (data) {
+                    that.status = data;
+                });
+            },
+
+            // 开启打卡
+            open() {
+                let that = this;
+
+                daKaServiceApi.openAutoDaKa().then(function () {
+                    alertComponent.message("开启成功");
+                    that.getStatus();
+                }).catch(function (message) {
+                    alertComponent.message(message);
+                });
+            },
+
+            // 关闭自动打卡
+            close() {
+                let that = this;
+
+                daKaServiceApi.closeAutoDaKa().then(function () {
+                    alertComponent.message("关闭成功");
+                    that.getStatus();
+                }).catch(function (message) {
+                    alertComponent.message(message);
+                });
+            },
+
+            // 手动打卡
+            souDong() {
+                let manualDaKaButton = this.$refs.manualDaKaButton,
+                    manualDaKaButtonText = manualDaKaButton.innerHTML;
+
+                manualDaKaButton.setAttribute("disabled", true);
+                manualDaKaButton.innerHTML = "正在手动打卡...";
+
+                daKaServiceApi.manualKaKa().then(function () {
+                    alertComponent.message("完成");
+                }).catch(function (message) {
+                    alertComponent.message(message);
+                }).finally(function () {
+                    manualDaKaButton.removeAttribute("disabled");
+                    manualDaKaButton.innerHTML = manualDaKaButtonText;
+                });
+            },
+
+            // 清空日志
+            cleanLog() {
+                daKaServiceApi.cleanLog();
+            },
+
+            // 获取日志
+            getLog() {
+                let that = this;
+
+                daKaServiceApi.getLog().then(function (logs) {
+                    that.logs = logs;
+                });
+            }
+        },
+
+        mounted() {
+            let that = this,
+                Interval = null;
+
+            that.getStatus();
+            that.getLog();
+
+            Interval = setInterval(function () {
+                that.getLog();
+
+                window.onunload = function () {
+                    clearInterval(Interval);
+                }
+            }, 100);
+        }
+    });
+
+</script>
