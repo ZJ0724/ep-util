@@ -2,7 +2,6 @@ package com.easipass.epUtil.api.service;
 
 import com.easipass.epUtil.entity.DaKa;
 import com.easipass.epUtil.entity.Response;
-import oracle.jdbc.proxy.annotation.Post;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,15 +50,6 @@ public class DaKaServiceApi {
     public Response getStatus() {
         return DA_KA.getStatus();
     }
-
-    /**
-     * 获取打卡日志
-     * */
-    @GetMapping("getLog")
-    public Response getLog() {
-        return DA_KA.getLog();
-    }
-
     /**
      * 清空日志
      *

@@ -9,29 +9,42 @@ export default class BaseWebsocketApi {
     }
 
     // 等待连接完成
-    async waitConnect() {
-        await new Promise((successCallback) => {
+    waitConnect() {
+        return new Promise((successCallback) => {
             if (this.websocket.readyState === 1) {
                 successCallback();
-                return;
-            }
-
-            this.websocket.onopen = function () {
-                successCallback();
+            } else {
+                this.websocket.onopen = function () {
+                    console.log("已连接");
+                    successCallback();
+                }
             }
         });
     }
 
     // 发送消息
-    send(message) {
-        this.waitConnect().then();
-        this.websocket.send(message);
+    async send(message) {
+        await this.waitConnect();
+
+        return new Promise((successCallback) => {
+            console.log(message);
+            this.websocket.send(message);
+            successCallback();
+        });
     }
 
     // 监听消息
     onmessage(callback) {
         this.websocket.onmessage = function (message) {
-            callback(JSON.parse(message.data));
+            console.log(message);
+
+            let data = message.data;
+
+            try {
+                callback(JSON.parse(data));
+            } catch (e) {
+                callback(data);
+            }
         }
     }
 
@@ -43,8 +56,9 @@ export default class BaseWebsocketApi {
     }
 
     // 关闭连接
-    close() {
-        this.waitConnect().then();
+    async close() {
+        await this.waitConnect();
+
         this.websocket.close();
     }
 

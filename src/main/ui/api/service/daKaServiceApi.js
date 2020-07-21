@@ -28,14 +28,6 @@ let daKaServiceApi = {
         });
     },
 
-    // 获取打卡日志
-    getLog() {
-        return baseServiceApi.sendHttp({
-            type: "GET",
-            url: `${daKaServiceApi.daKa}getLog`
-        });
-    },
-
     // 清空日志
     cleanLog() {
         return baseServiceApi.sendHttp({

@@ -50,6 +50,7 @@
 
     import daKaServiceApi from "../api/service/daKaServiceApi.js";
     import alertComponent from "../component/alertComponent.js";
+    import DaKaLogWebsocketApi from "../api/websocket/DaKaLogWebsocketApi.js";
 
     new Vue({
         el: "#main",
@@ -57,7 +58,9 @@
         data: {
             status: null,
 
-            logs: []
+            logs: [],
+
+            DaKaLogWebsocket: new DaKaLogWebsocketApi()
         },
 
         methods: {
@@ -114,33 +117,26 @@
 
             // 清空日志
             cleanLog() {
-                daKaServiceApi.cleanLog();
-            },
-
-            // 获取日志
-            getLog() {
                 let that = this;
 
-                daKaServiceApi.getLog().then(function (logs) {
-                    that.logs = logs;
+                daKaServiceApi.cleanLog().then(function () {
+                    that.logs = [];
                 });
             }
         },
 
         mounted() {
-            let that = this,
-                Interval = null;
+            let that = this;
 
             that.getStatus();
-            that.getLog();
 
-            Interval = setInterval(function () {
-                that.getLog();
+            that.DaKaLogWebsocket.onmessage(function (message) {
+                that.logs.push(message);
+            });
 
-                window.onunload = function () {
-                    clearInterval(Interval);
-                }
-            }, 100);
+            window.onunload = function () {
+                that.DaKaLogWebsocket.close();
+            }
         }
     });
 

@@ -1,5 +1,6 @@
 package com.easipass.epUtil.entity;
 
+import com.easipass.epUtil.api.websocket.BaseWebsocketApi;
 import com.easipass.epUtil.entity.config.DaKaProperties;
 import com.easipass.epUtil.exception.BaseException;
 import com.easipass.epUtil.exception.ErrorException;
@@ -38,6 +39,11 @@ public final class DaKa {
      * 打卡日志
      * */
     private final List<String> logs = new ArrayList<>();
+
+    /**
+     * 打卡日志websocket
+     * */
+    private BaseWebsocketApi baseWebsocketApi;
 
     /**
      * 构造函数
@@ -196,16 +202,23 @@ public final class DaKa {
      * */
     private void addLog(String log) {
         LOG.info(log);
-        this.logs.add("[" + DateUtil.getDate("yyyy-MM-dd HH:mm:ss") + "] - " + log);
+
+        String l = "[" + DateUtil.getDate("yyyy-MM-dd HH:mm:ss") + "] - " + log;
+
+        this.logs.add(l);
+
+        if (this.baseWebsocketApi != null) {
+            this.baseWebsocketApi.sendMessage(l);
+        }
     }
 
     /**
      * 获取日志信息
      *
-     * @return 响应
+     * @return 日志
      * */
-    public Response getLog() {
-        return Response.returnTrue(this.logs);
+    public List<String> getLog() {
+        return this.logs;
     }
 
     /**
@@ -244,6 +257,15 @@ public final class DaKa {
         }
 
         return response;
+    }
+
+    /**
+     * 设置打卡日志websocket
+     *
+     * @param baseWebsocketApi 打卡日志websocket
+     */
+    public void setDaKaLogWebsocket(BaseWebsocketApi baseWebsocketApi) {
+        this.baseWebsocketApi = baseWebsocketApi;
     }
 
 }

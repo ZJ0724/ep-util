@@ -21,7 +21,7 @@ public class BaseWebsocketApi {
     /**
      * session
      * */
-    private Session session;
+    protected Session session;
 
     /**
      * 日志
