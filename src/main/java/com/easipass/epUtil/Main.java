@@ -40,26 +40,26 @@ public class Main {
 
             // 加载daKa配置
             DaKaProperties.getInstance();
-            System.out.println();
+            LOG.info("\n");
 
             // 加载SWGD配置
             SWGDProperties.getInstance();
-            System.out.println();
+            LOG.info("\n");
 
             // 加载sftp83配置
             Sftp83Properties.getInstance();
-            System.out.println();
+            LOG.info("\n");
 
             // 开启谷歌驱动池
             ChromeDriver.openChromeDriverPool();
-            System.out.println();
+            LOG.info("\n");
 
             // 检查是否开启自动打卡
             DaKa.getInstance();
-            System.out.println();
+            LOG.info("\n");
 
             SpringApplication.run(Main.class, args);
-            System.out.println();
+            LOG.info("\n");
 
             LOG.info("--- < 完成 > ---" + "\n");
         } catch (BaseException e) {

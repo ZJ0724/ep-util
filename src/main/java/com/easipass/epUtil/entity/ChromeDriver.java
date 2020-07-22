@@ -71,7 +71,7 @@ public final class ChromeDriver {
     /**
      * 构造函数
      * */
-    private ChromeDriver() {
+    public ChromeDriver() {
         LOG.info("检查谷歌驱动");
 
         File file = new File(ROOT_PATH, resource.getName());
