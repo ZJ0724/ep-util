@@ -33,4 +33,19 @@ public class ConsoleUtil {
         }
     }
 
+    /**
+     * 设置777权限
+     *
+     * @param path 文件路径
+     * */
+    public static void setChmod777(String path) {
+        if (Project.getInstance().getSystemType() == SystemType.LINUX) {
+            try {
+                Runtime.getRuntime().exec("chmod 777 " + path);
+            } catch (IOException e) {
+                throw new ErrorException(e.getMessage());
+            }
+        }
+    }
+
 }
