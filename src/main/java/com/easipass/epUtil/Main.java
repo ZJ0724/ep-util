@@ -50,9 +50,11 @@ public class Main {
             Sftp83Properties.getInstance();
             LOG.info("\n");
 
-            // 开启谷歌驱动池
-            ChromeDriver.openChromeDriverPool();
-            LOG.info("\n");
+            // 检查谷歌驱动
+            ChromeDriver.getChromeDriver().close();
+//            // 开启谷歌驱动池
+//            ChromeDriver.openChromeDriverPool();
+//            LOG.info("\n");
 
             // 检查是否开启自动打卡
             DaKa.getInstance();

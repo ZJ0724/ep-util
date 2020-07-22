@@ -10,6 +10,7 @@ import com.easipass.epUtil.util.XmlUtil;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 修撤单QP回执
@@ -45,7 +46,7 @@ public final class QPDecModCusResult extends DecModCusResult {
         data = Base64Util.decode(data);
 
         //获取回执解码后的document
-        Document dataDocument = XmlUtil.getDocument(new ByteArrayInputStream(data.getBytes()));
+        Document dataDocument = XmlUtil.getDocument(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
 
         //dataDocument根节点
         Element dataDocumentRootElement = dataDocument.getRootElement();
