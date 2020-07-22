@@ -264,6 +264,26 @@ public final class FormCusMessage extends AbstractCusMessage {
                             }
                         }
                     }
+
+                    // 特殊处理PackNo
+                    if ("PackNo".equals(key1)) {
+                        // 如果nodeValue为0，并且dbValue为null，则将dbValue设置成0
+                        if ("0".equals(nodeValue) && dbValue == null) {
+                            mapKeyValue.setDbValue("0");
+                        }
+                    }
+
+                    // 特殊处理Type
+                    if ("Type".equals(key1)) {
+                        String[] values = new String[]{"TYPE_2", "TYPE_3", "TYPE_4", "TYPE_5"};
+                        String newDbValue = "  ";
+
+                        for (String value : values) {
+                            String s = getDbValue(dbFormHead, value);
+                            newDbValue = StringUtil.append(newDbValue, s);
+                        }
+                        mapKeyValue.setDbValue(newDbValue);
+                    }
                 } else {
                     break;
                 }
@@ -539,6 +559,7 @@ public final class FormCusMessage extends AbstractCusMessage {
 
         static {
             FORM_HEAD_MAPPING.put("SeqNo[数据中心统一编号]", null);
+            FORM_HEAD_MAPPING.put("Type[type]", "TYPE_2");
             FORM_HEAD_MAPPING.put("AgentCode[申报单位代码]", "AGENT_CODE");
             FORM_HEAD_MAPPING.put("AgentName[申报单位名称]", "AGENT_NAME");
             FORM_HEAD_MAPPING.put("ApprNo[批准文号]", "APPR_NO");

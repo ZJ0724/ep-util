@@ -1,6 +1,10 @@
 export default [
 
     {
+        path: "/",
+        name: "首页"
+    },
+    {
         path: "formCusResult/",
         name: "报关单回执",
         children: [

@@ -121,6 +121,7 @@ public abstract class AbstractCusMessage {
             return;
         }
 
+        String key = mapKeyValue.getKey();
         String key1 = mapKeyValue.getKey1();
         String value = mapKeyValue.getValue();
         String nodeValue = mapKeyValue.getNodeValue();
@@ -140,9 +141,9 @@ public abstract class AbstractCusMessage {
         }
 
         if (nodeValue.equals(dbValue)) {
-            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonTrueType(key1));
+            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonTrueType(key));
         } else {
-            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonFalseType(key1));
+            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonFalseType(key));
         }
     }
 

@@ -9,6 +9,9 @@ export default (function () {
                 <div v-if="item.children !== undefined" class="item" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     {{item.name}}
                 </div>
+                <div v-else-if="item.path === '/'" @click="window.location.href = '/'" class="item">
+                    {{item.name}}
+                </div>
                 <div v-else @click="window.location.href = page + item.path" class="item">
                     {{item.name}}
                 </div>

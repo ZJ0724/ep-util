@@ -25,7 +25,16 @@
         el: "#main",
 
         data: {
-            channelList: [],
+            channelList: [
+                {
+                    key: "0",
+                    value: "QP入库成功"
+                },
+                {
+                    key: "1",
+                    value: "QP入库失败"
+                }
+            ],
 
             api: cusResultServiceApi.decModCusResultUploadQP
         }
