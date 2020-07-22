@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="/init.js"></script>
+    <script type="module" src="/main.js"></script>
+</head>
+<body>
+    <div id="main">
+        <navigation></navigation>
+        <div id="body">
+            <route-navigation></route-navigation>
+
+            <div class="center" style="margin-top: 25%;flex-direction: column;">
+                <div>
+                    <div style="display: flex;">
+                        <input id="file" type="file" style="display: none;" />
+                        <input v-model="fileName" disabled style="width: 300px;" class="form-control input-sm" aria-label="" />
+                        <button @click="select()" style="margin-left: 10px;" type="button" class="btn btn-default btn-sm">选择...</button>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button @click="comparison()" style="width: 100%;" type="button" class="btn btn-primary">比对</button>
+                    </div>
+                </div>
+
+                <!-- 遮罩层 -->
+                <div v-if="mask" class="layui-anim layui-anim-fadein" style="background-color: #0c0c0c38;position: fixed;top: 0;width: 100%; height: 100%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗 -->
+    <div id="log" class="panel panel-default layui-anim layui-anim-fadein" style="width: 30%;position: absolute;top: 120px;overflow: auto;max-height: 80%;left: 35%;display: none;">
+        <div class="panel-heading" style="font-weight: bold;">比对信息</div>
+        <div id="logBody" class="panel-body">
+            <div style="font-weight: bold;" class="layui-anim layui-anim-scale">
+                [表头]
+            </div>
+
+            <div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                <div style="width: 90%;color: red;">
+                    note
+                </div>
+                <div class="center" style="width: 10%;">
+                    <i style="color: red;" class="layui-icon layui-icon-close"></i>
+                </div>
+            </div>
+
+            <div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                <div style="width: 90%;">
+                    note
+                </div>
+                <div class="center" style="width: 10%;">
+                    <i style="color: #5FB878;" class="layui-icon layui-icon-ok"></i>
+                </div>
+            </div>
+
+            <div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                <div style="width: 90%;color: #c2c2c2;">
+                    note
+                </div>
+                <div class="center" style="width: 10%;">
+                    <i style="color: #c2c2c2;" class="layui-icon layui-icon-subtraction"></i>
+                </div>
+            </div>
+
+            <div style="font-weight: bold;color: red;margin-top: 20px;" class="layui-anim layui-anim-scale">
+                错误信息!
+            </div>
+        </div>
+        <div id="closeLog" class="panel-footer" style="display: none;flex-direction: row-reverse;">
+            <button type="button" class="btn btn-primary btn-sm">关闭</button>
+        </div>
+    </div>
+</body>
+</html>
+
+<script type="module">
+
+    import cusMessageServiceApi from "../../api/service/cusMessageServiceApi.js";
+    import alertComponent from "../../component/alertComponent.js";
+    import CusMessageComparisonVO from "../../entity/VO/CusMessageComparisonVO.js";
+    import documentUtil from "../../util/documentUtil.js";
+    import FormCusMessageComparisonWebsocketApi from "../../api/websocket/FormCusMessageComparisonWebsocketApi.js";
+
+    new Vue({
+        el: "#main",
+
+        data: {
+            fileInput: document.getElementById("file"),
+
+            fileName: "",
+
+            id: "",
+
+            mask: false,
+
+            log: document.getElementById("log"),
+
+            closeLog: document.getElementById("closeLog"),
+
+            logBody: document.getElementById("logBody")
+        },
+
+        methods: {
+            // 选择文件
+            select() {
+                this.fileInput.click();
+            },
+
+            // 比对
+            comparison() {
+                let id = this.id,
+                    that = this;
+
+                if (id === "") {
+                    alertComponent.popup("未选择报文");
+                    return;
+                }
+
+                that.mask = true;
+                this.log.style.display = "";
+                this.logBody.innerHTML = "";
+
+                let websocket = new FormCusMessageComparisonWebsocketApi(id);
+
+                // 监听比对消息
+                websocket.onmessage(function (message) {
+                    let vo = new CusMessageComparisonVO();
+
+                    vo.setData(message);
+                    console.log(vo);
+                    that.addLog(vo);
+                });
+
+                // 监听连接关闭
+                websocket.onclose(function () {
+                    console.log("websocket连接关闭");
+                    that.closeLog.style.display = "flex";
+                });
+            },
+
+            // 添加比对信息
+            addLog(cusMessageComparisonVO) {
+                let div,
+                    type = cusMessageComparisonVO.type,
+                    message = cusMessageComparisonVO.message,
+                    node = cusMessageComparisonVO.node,
+                    logBody = this.logBody;
+
+                // 标题类型
+                if (type === "0") {
+                    div = documentUtil.parseDocument(`<div style="font-weight: bold;margin-top: 20px;" class="layui-anim layui-anim-scale">
+                    ${message}
+                </div>`);
+                }
+                // 比对类型
+                if (type === "1") {
+                    // 比对通过
+                    if (message === "true") {
+                        div = documentUtil.parseDocument(`<div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                    <div style="width: 90%;">
+                        ${node}
+                    </div>
+                    <div class="center" style="width: 10%;">
+                        <i style="color: #5FB878;" class="layui-icon layui-icon-ok"></i>
+                    </div>
+                </div>`);
+                    }
+                    // 比对不通过
+                    if (message === "false") {
+                        div = documentUtil.parseDocument(`                <div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                    <div style="width: 90%;color: red;">
+                        ${node}
+                    </div>
+                    <div class="center" style="width: 10%;">
+                        <i style="color: red;" class="layui-icon layui-icon-close"></i>
+                    </div>
+                </div>`);
+                    }
+                    // 不进行比对
+                    if (message === "null") {
+                        div = documentUtil.parseDocument(`<div style="margin-top: 10px;display: flex;" class="layui-anim layui-anim-scale">
+                    <div style="width: 90%;color: #c2c2c2;">
+                        ${node}
+                    </div>
+                    <div class="center" style="width: 10%;">
+                        <i style="color: #c2c2c2;" class="layui-icon layui-icon-subtraction"></i>
+                    </div>
+                </div>`);
+                    }
+                }
+                // 错误类型
+                if (type === "2") {
+                    div = documentUtil.parseDocument(`<div style="font-weight: bold;color: red;margin-top: 20px;" class="layui-anim layui-anim-scale">
+                    ${message}
+                </div>`);
+                }
+
+                // 如果不存在div，则将此div设置成20px
+                if (logBody.children.length === 0) {
+                    div.style.marginTop = "0px";
+                }
+
+                logBody.appendChild(div);
+            },
+
+            // 关闭弹窗
+            close() {
+                this.log.style.display = "none";
+                this.mask = false;
+                this.closeLog.style.display = "none";
+            }
+        },
+
+        created() {
+            let that = this,
+                fileInput = that.fileInput;
+
+            this.fileInput.addEventListener("change", function () {
+                let file = fileInput.files[0];
+
+                cusMessageServiceApi.upload(file).then(function (id) {
+                    that.fileName = file.name;
+                    that.id = id;
+                }).catch(function (message) {
+                    alertComponent.popup(message);
+                });
+            });
+
+            this.closeLog.addEventListener("click", function () {
+                that.close();
+            });
+        }
+    });
+
+</script>

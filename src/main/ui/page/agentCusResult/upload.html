@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="/init.js"></script>
+    <script type="module" src="/main.js"></script>
+</head>
+<body>
+    <div id="main">
+        <navigation></navigation>
+        <div id="body">
+            <route-navigation></route-navigation>
+            <cus-result-upload text="ediNo" :channel-list="channelList" :api="api"></cus-result-upload>
+        </div>
+    </div>
+</body>
+</html>
+
+<script type="module">
+
+    import cusResultServiceApi from "../../api/service/cusResultServiceApi.js";
+
+    new Vue({
+        el: "#main",
+
+        data: {
+            channelList: [
+                {
+                    key: "0",
+                    value: "同意"
+                },
+                {
+                    key: "1",
+                    value: "不同意"
+                }
+            ],
+
+            api: cusResultServiceApi.agentCusResultUpload
+        }
+    });
+
+</script>

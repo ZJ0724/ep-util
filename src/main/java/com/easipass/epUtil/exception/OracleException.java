@@ -1,23 +1,19 @@
 package com.easipass.epUtil.exception;
 
-public class OracleException extends BaseException {
+/**
+ * 数据库异常
+ *
+ * @author ZJ
+ * */
+public final class OracleException extends BaseException {
 
-    private OracleException(String message) {
+    /**
+     * 构造函数
+     *
+     * @param message 异常信息
+     * */
+    public OracleException(String message) {
         super(message);
-    }
-
-    /**
-     * 连接失败
-     * */
-    public static OracleException connectFail(String url) {
-        return new OracleException("oracle: " + url + "连接失败!");
-    }
-
-    /**
-     * 查询错误
-     * */
-    public static OracleException queryError(String message) {
-        return new OracleException(message);
     }
 
 }

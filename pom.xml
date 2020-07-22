@@ -6,6 +6,7 @@
 
     <groupId>com.easipass</groupId>
     <artifactId>epUtil</artifactId>
+    <version>none</version>
     <packaging>jar</packaging>
 
     <parent>
@@ -15,7 +16,7 @@
     </parent>
 
     <properties>
-        <buildPath>${project.build.directory}/build/${project.artifactId}${env}</buildPath>
+        <buildPath>${project.build.directory}/build/${project.artifactId}</buildPath>
         <skipTests>true</skipTests>
 
         <springbootUtilFile>${project.basedir}/src/main/lib/springbootUtil-1.0.2.jar</springbootUtilFile>
@@ -103,25 +104,12 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.70</version>
         </dependency>
-    </dependencies>
 
-    <profiles>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <env>-beta</env>
-            </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>release</id>
-            <properties>
-                <env />
-            </properties>
-        </profile>
-    </profiles>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+    </dependencies>
 
     <build>
         <finalName>${project.artifactId}</finalName>
@@ -135,8 +123,8 @@
                 <includes>
                     <include>config/*</include>
                     <include>bin/*</include>
-                    <include>version</include>
                     <include>README.md</include>
+                    <include>version</include>
                 </includes>
                 <targetPath>${buildPath}</targetPath>
             </resource>

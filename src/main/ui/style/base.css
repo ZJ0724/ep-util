@@ -1,4 +1,4 @@
-html, body {
+html, body, #main {
     width: 100%;
     height: 100%;
     border: 0;
@@ -6,26 +6,12 @@ html, body {
     margin: 0;
 }
 
-#main {
-    width: 100%;
-    height: 100%;
-}
-
-.item {
-    font-weight: bold;
-    background-color: #009688;
-    padding: 10px;
-    margin: 20px 0;
-}
-
-.item a {
+#head {
+    height: 5%;
+    background-color: #393D49;
+    padding: 0 20%;
     color: white;
-    cursor: pointer;
-}
-
-.title {
-    font-size: 18px;
-    font-weight: bold;
+    display: flex;
 }
 
 .center {
@@ -34,8 +20,20 @@ html, body {
     align-items: center;
 }
 
-/* label */
-label {
-    position: relative;
+.item {
+    height: 100%;
+    padding: 0 10px;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.item:hover {
+    background-color: #282b34;
+}
+
+#body {
+    padding: 20px 20%;
+    height: 95%;
 }

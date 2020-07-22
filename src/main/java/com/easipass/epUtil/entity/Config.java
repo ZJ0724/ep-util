@@ -1,130 +1,172 @@
 package com.easipass.epUtil.entity;
 
-import com.alibaba.fastjson.JSONObject;
-import com.easipass.epUtil.config.ProjectConfig;
-import com.easipass.epUtil.config.ResourcePathConfig;
-import com.easipass.epUtil.entity.config.DaKa;
-import com.easipass.epUtil.entity.config.Sftp83;
-import com.easipass.epUtil.entity.config.Swgd;
+import com.easipass.epUtil.entity.DTO.AbstractDTO;
+import com.easipass.epUtil.entity.config.Key;
 import com.easipass.epUtil.exception.ConfigException;
 import com.easipass.epUtil.exception.ErrorException;
-import com.easipass.epUtil.component.Log;
+import com.easipass.epUtil.util.ClassUtil;
 import com.easipass.epUtil.util.FileUtil;
+import com.easipass.epUtil.util.StringUtil;
 import java.io.*;
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 
+/**
+ * 配置
+ *
+ * @author ZJ
+ * */
 public class Config {
 
     /**
-     * SWGD
+     * 配置文件存放路径
      * */
-    private final Swgd swgd = Swgd.getSWGD();
+    protected static final String ROOT_PATH = Project.getInstance().getConfigPath() + "config/";
 
     /**
-     * sftp83
+     * 所有带有key注解的字段
      * */
-    private final Sftp83 sftp83 = Sftp83.getSftp83();
+    private final List<Field> keyFields = new ArrayList<>();
 
     /**
-     * daKa
+     * 文件
      * */
-    private final DaKa daKa = DaKa.getDaKa();
+    private final File file;
 
     /**
-     * 单例
+     * 日志
      * */
-    private final static Config config = new Config();
+    private static final Log LOG = Log.getLog();
 
     /**
      * 构造函数
+     *
+     * @param resource 资源
      * */
-    private Config() {
-        // 检查配置文件是否存在，不存在创建默认配置文件
-        if (!ProjectConfig.CONFIG_FILE.exists()) {
-            // 不存在创建默认配置文件
-            InputStream inputStream = Config.class.getResourceAsStream(ResourcePathConfig.CONFIG_PATH);
-            FileUtil.copyTextFile(inputStream, ProjectConfig.CONFIG_FILE);
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                throw ErrorException.getErrorException(e.getMessage());
+    protected Config(Resource resource) {
+        LOG.info("加载配置: " + resource.getName());
+
+        this.file = new File(ROOT_PATH + resource.getName());
+
+        FileUtil.createFile(this.file, resource.getInputStream());
+        resource.closeInputStream();
+
+        InputStreamReader inputStreamReader;
+        try {
+            inputStreamReader = new InputStreamReader(new FileInputStream(this.file), StandardCharsets.UTF_8);
+        } catch (FileNotFoundException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        Properties properties = new Properties();
+
+        try {
+            properties.load(inputStreamReader);
+        } catch (IOException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        // 所有字段
+        Field[] fields = this.getClass().getDeclaredFields();
+
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(Key.class)) {
+                this.keyFields.add(field);
+                field.setAccessible(true);
+
+                // 字段名
+                String name = field.getName();
+                // 配置值
+                String value = properties.getProperty(name);
+
+                if (value == null) {
+                    throw new ConfigException("配置文件出错");
+                }
+
+                if (field.getType() == List.class) {
+                    try {
+                        field.set(this, Arrays.asList(value.split(",")));
+                    } catch (IllegalAccessException e) {
+                        throw new ErrorException(e.getMessage());
+                    }
+                    continue;
+                }
+
+                if (field.getType() == Integer.class) {
+                    try {
+                        field.set(this, Integer.parseInt(value));
+                    } catch (IllegalAccessException e) {
+                        throw new ErrorException(e.getMessage());
+                    }
+                    continue;
+                }
+
+                try {
+                    field.set(this, value);
+                } catch (IllegalAccessException e) {
+                    throw new ErrorException(e.getMessage());
+                }
             }
         }
 
-        loadData();
+        LOG.info(this.toString());
+        LOG.info("加载完成");
     }
 
     /**
-     * get
+     * 提交保存至文件
      * */
-    public Swgd getSwgd() {
-        return swgd;
-    }
+    protected final void commit() {
+        String data = "";
 
-    public Sftp83 getSftp83() {
-        return sftp83;
-    }
+        for (Field field : this.keyFields) {
+            Object fieldData;
+            String key  = field.getName();
+            String value = "";
 
-    public DaKa getDaKa() {
-        return daKa;
-    }
+            try {
+                fieldData = field.get(this);
+            } catch (IllegalAccessException e) {
+                throw new ErrorException(e.getMessage());
+            }
 
-    /**
-     * 获取单例
-     * */
-    public static Config getConfig() {
-        return config;
-    }
+            if (fieldData == null) {
+                fieldData = "";
+            }
 
-    /**
-     * 加载数据
-     * */
-    private void loadData() {
-        try {
-            Log.getLog().info("正在加载config...");
-            // 配置文件数据
-            String configData = FileUtil.getData(ProjectConfig.CONFIG_FILE);
+            if (field.getType() == List.class) {
+                List<?> strings = (List<?>) fieldData;
 
-            // json数据
-            JSONObject jsonObject = JSONObject.parseObject(configData);
+                for (Object s : strings) {
+                    value = StringUtil.append(value, ",", s.toString());
+                }
 
-            // 加载SWGD
-            this.swgd.loadData(jsonObject.getJSONObject("swgd"));
+                value = value.substring(1);
+            } else {
+                value = fieldData.toString();
+            }
 
-            // 加载sftp
-            this.sftp83.loadData(jsonObject.getJSONObject("sftp83"));
-
-            // 加载daKa
-            this.daKa.loadData(jsonObject.getJSONObject("daKa"));
-
-        } catch (com.alibaba.fastjson.JSONException e) {
-            throw ConfigException.configFileException();
+            data = StringUtil.append(data, key, " = ", value, "\n");
         }
+
+        data = data.substring(0, data.length() - 1);
+
+        FileUtil.setData(this.file, data);
     }
 
     /**
-     * 设置数据
+     * 通过DTO设置数据
      *
-     * @param data 数据
+     * @param abstractDTO DTO
      * */
-    public void setData(String data) {
-        try {
-            OutputStream outputStream = new FileOutputStream(ProjectConfig.CONFIG_FILE);
-            outputStream.write(data.getBytes());
-            outputStream.close();
+    public void setDataByDTO(AbstractDTO abstractDTO) {
+        ClassUtil.assemblyData(abstractDTO, this);
 
-            loadData();
-        } catch (IOException e) {
-            throw ErrorException.getErrorException(e.getLocalizedMessage());
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "Config{" +
-                "swgd=" + swgd +
-                ", sftp83=" + sftp83 +
-                ", daKa=" + daKa +
-                '}';
+        this.commit();
     }
 
 }

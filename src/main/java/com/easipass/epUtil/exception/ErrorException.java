@@ -1,23 +1,19 @@
 package com.easipass.epUtil.exception;
 
-public class ErrorException extends BaseException {
+/**
+ * 错误异常
+ *
+ * @author ZJ
+ * */
+public final class ErrorException extends RuntimeException {
 
-    private ErrorException(String message) {
+    /**
+     * 构造函数
+     *
+     * @param message 错误信息
+     * */
+    public ErrorException(String message) {
         super(message);
-    }
-
-    /**
-     * 获取错误异常
-     * */
-    public static ErrorException getErrorException() {
-        return new ErrorException("error");
-    }
-
-    /**
-     * 获取错误异常
-     * */
-    public static ErrorException getErrorException(String errorMsg) {
-        return new ErrorException("bug:" + errorMsg);
     }
 
 }

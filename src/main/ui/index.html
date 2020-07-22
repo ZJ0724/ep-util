@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>epUtil</title>
+    <script src="/init.js"></script>
+    <script type="module" src="/main.js"></script>
+</head>
+<body>
+    <div id="main">
+        <navigation></navigation>
+        <div id="body">
+            <route-navigation></route-navigation>
+        </div>
+    </div>
+</body>
+</html>
+
+<script type="module">
+    (function () {
+        new Vue({
+            el: "#main"
+        })
+    })();
+</script>
