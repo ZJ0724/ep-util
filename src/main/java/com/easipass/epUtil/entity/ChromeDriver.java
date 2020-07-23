@@ -11,8 +11,6 @@ import com.zj0724.uiAuto.exception.BaseException;
 import com.zj0724.uiAuto.exception.WebDriverException;
 import com.zj0724.uiAuto.webDriver.ChromeWebDriver;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 谷歌驱动
@@ -37,16 +35,6 @@ public final class ChromeDriver {
     private static final Log LOG = Log.getLog();
 
     /**
-     * 谷歌驱动池
-     * */
-    private static final List<ChromeDriver> CHROME_DRIVER_POOL = new ArrayList<>();
-
-    /**
-     * 谷歌驱动池最大数量
-     * */
-    private static final int CHROME_DRIVER_POOL_SIZE = 2;
-
-    /**
      * 谷歌驱动资源
      * */
     private static Resource resource;
@@ -64,19 +52,18 @@ public final class ChromeDriver {
     }
 
     /**
-     * 谷歌驱动池是否以打开
-     * */
-    private static boolean isOpenChromeDriverPool = false;
-
-    /**
      * 构造函数
      * */
-    private ChromeDriver() {
+    public ChromeDriver() {
         LOG.info("检查谷歌驱动");
 
         File file = new File(ROOT_PATH, resource.getName());
 
-        FileUtil.createFile(file, resource.getInputStream());
+        if (!file.exists()) {
+            FileUtil.createFile(file, resource.getInputStream());
+            ConsoleUtil.setChmod777(file.getAbsolutePath());
+        }
+
         resource.closeInputStream();
 
         try {
@@ -140,50 +127,10 @@ public final class ChromeDriver {
     }
 
     /**
-     * 获取一个谷歌驱动
-     *
-     * @return 一个谷歌驱动
+     * 关闭进程
      * */
-    public synchronized static ChromeDriver getChromeDriver() {
-        // 如果谷歌驱动池的数量为0，则返回一个新的驱动
-        if (CHROME_DRIVER_POOL.size() == 0) {
-            LOG.info("驱动池没有驱动，返回新的驱动");
-            return new ChromeDriver();
-        }
-
-        // 返回的驱动
-        ChromeDriver chromeDriver = CHROME_DRIVER_POOL.get(0);
-
-        // 将此驱动从池中移除
-        CHROME_DRIVER_POOL.remove(0);
-
-        return chromeDriver;
-    }
-
-    /**
-     * 开启谷歌驱动池功能
-     * */
-    public static void openChromeDriverPool() {
-        if (isOpenChromeDriverPool) {
-            return;
-        }
-
-        LOG.info("打开谷歌驱动池");
-        isOpenChromeDriverPool = true;
-
-        new Thread(() -> {
-            CHROME_DRIVER_POOL.clear();
-            ConsoleUtil.kill(resource.getName());
-
-            while (true) {
-                if (CHROME_DRIVER_POOL.size() == CHROME_DRIVER_POOL_SIZE) {
-                    continue;
-                }
-
-                LOG.info("添加谷歌驱动");
-                CHROME_DRIVER_POOL.add(new ChromeDriver());
-            }
-        }).start();
+    public static void kill() {
+        ConsoleUtil.kill(resource.getName());
     }
 
 }

@@ -20,7 +20,7 @@ public final class FileUtil {
     public static void setData(File file, String data) {
         try {
             OutputStream outputStream = new FileOutputStream(file);
-            outputStream.write(data.getBytes());
+            outputStream.write(data.getBytes(StandardCharsets.UTF_8));
             outputStream.close();
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
@@ -50,10 +50,18 @@ public final class FileUtil {
 
             try {
                 OutputStream outputStream = new FileOutputStream(file);
-                byte[] bytes = new byte[inputStream.available()];
-                inputStream.read(bytes);
-                outputStream.write(bytes);
+                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+                byte[] bytes = new byte[1024];
+                int i = bufferedInputStream.read(bytes);
+                while (i != -1) {
+                    bufferedOutputStream.write(bytes, 0, i);
+                    i = bufferedInputStream.read(bytes);
+                }
+                bufferedOutputStream.flush();
                 outputStream.close();
+                bufferedOutputStream.close();
+                bufferedInputStream.close();
             } catch (IOException e) {
                 throw new ErrorException(e.getMessage());
             }

@@ -87,7 +87,7 @@ public abstract class CusResult {
         ChromeDriver chromeDriver = null;
 
         try {
-            chromeDriver = ChromeDriver.getChromeDriver();
+            chromeDriver = new ChromeDriver();
             chromeDriver.swgdRecvRun();
         } catch (BaseException e) {
             return Response.returnFalse(e.getMessage());
@@ -118,7 +118,7 @@ public abstract class CusResult {
             sftp83 = new Sftp83();
             sftp83.connect();
 
-            chromeDriver = ChromeDriver.getChromeDriver();
+            chromeDriver = new ChromeDriver();
 
             sftp83.uploadCusResult(cusResult1);
             chromeDriver.swgdRecvRun();
