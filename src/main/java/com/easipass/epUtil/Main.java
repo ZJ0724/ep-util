@@ -1,9 +1,9 @@
 package com.easipass.epUtil;
 
-import com.easipass.epUtil.entity.ChromeDriver;
 import com.easipass.epUtil.entity.DaKa;
 import com.easipass.epUtil.entity.Log;
 import com.easipass.epUtil.entity.Project;
+import com.easipass.epUtil.entity.chromeDriver.ChromeDriverPool;
 import com.easipass.epUtil.entity.config.DaKaProperties;
 import com.easipass.epUtil.entity.config.SWGDProperties;
 import com.easipass.epUtil.entity.config.Sftp83Properties;
@@ -50,10 +50,8 @@ public class Main {
             Sftp83Properties.getInstance();
             LOG.info("\n");
 
-            // 杀掉谷歌驱动经常
-            ChromeDriver.kill();
-            // 检查谷歌驱动
-            new ChromeDriver().close();
+            // 开启谷歌驱动池
+            ChromeDriverPool.getChromeDriverPool().open();
 
             // 检查是否开启自动打卡
             DaKa.getInstance();

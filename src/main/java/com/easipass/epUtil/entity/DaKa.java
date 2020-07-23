@@ -1,6 +1,7 @@
 package com.easipass.epUtil.entity;
 
 import com.easipass.epUtil.api.websocket.BaseWebsocketApi;
+import com.easipass.epUtil.entity.chromeDriver.ChromeDriverPool;
 import com.easipass.epUtil.entity.config.DaKaProperties;
 import com.easipass.epUtil.exception.BaseException;
 import com.easipass.epUtil.exception.ErrorException;
@@ -122,7 +123,7 @@ public final class DaKa {
                 ChromeDriver chromeDriver = null;
 
                 try {
-                    chromeDriver = new ChromeDriver();
+                    chromeDriver = ChromeDriverPool.getChromeDriverPool().get();
                     chromeDriver.daKa();
                     this.addLog("打卡完成！");
                 } catch (BaseException e) {
@@ -243,7 +244,7 @@ public final class DaKa {
 
         try {
             this.addLog("手动打卡...");
-            chromeDriver = new ChromeDriver();
+            chromeDriver = ChromeDriverPool.getChromeDriverPool().get();
             chromeDriver.daKa();
             response = Response.returnTrue();
             this.addLog("打卡完成！");

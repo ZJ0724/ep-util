@@ -89,6 +89,12 @@ public final class FormCusMessage extends AbstractCusMessage {
 
             log.info("开启报文删除服务");
             while (true) {
+                try {
+                    Thread.sleep(0);
+                } catch (InterruptedException e) {
+                    throw new ErrorException(e.getMessage());
+                }
+
                 Set<String> keys = FORM_CUS_MESSAGE_MAP.keySet();
                 long nowTime = new Date().getTime();
                 long outTime = 24 * 60 * 60 * 1000;

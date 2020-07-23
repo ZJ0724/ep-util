@@ -54,7 +54,7 @@ public final class ChromeDriver {
     /**
      * 构造函数
      * */
-    public ChromeDriver() {
+    private ChromeDriver() {
         LOG.info("检查谷歌驱动");
 
         File file = new File(ROOT_PATH, resource.getName());
@@ -73,6 +73,10 @@ public final class ChromeDriver {
         }
 
         LOG.info("谷歌驱动已打开");
+    }
+
+    public ChromeDriver(boolean is) {
+        this();
     }
 
     /**
