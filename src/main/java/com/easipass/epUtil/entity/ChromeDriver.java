@@ -130,6 +130,10 @@ public final class ChromeDriver {
      * 关闭进程
      * */
     public static void kill() {
+        if (Project.getInstance().getSystemType() == SystemType.LINUX) {
+            ConsoleUtil.kill("/opt/google/chrome/chrome");
+        }
+
         ConsoleUtil.kill(resource.getName());
     }
 
