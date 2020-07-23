@@ -18,7 +18,7 @@ public class EpUtilChromeDriverWindowsResource extends Resource {
      * 构造函数
      */
     private EpUtilChromeDriverWindowsResource() {
-        super(CHROME_DRIVER + "epUtilChromeDriver-windows.exe");
+        super(CHROME_DRIVER + "epUtilChromeDriver84-windows.exe");
     }
 
     /**

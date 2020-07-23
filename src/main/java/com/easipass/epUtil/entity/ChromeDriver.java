@@ -134,6 +134,10 @@ public final class ChromeDriver {
             ConsoleUtil.kill("/opt/google/chrome/chrome");
         }
 
+        if (Project.getInstance().getSystemType() == SystemType.WINDOWS) {
+            ConsoleUtil.kill("chrome.exe");
+        }
+
         ConsoleUtil.kill(resource.getName());
     }
 
