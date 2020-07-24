@@ -215,7 +215,7 @@ public abstract class CusMessage {
      * */
     protected static boolean checkResultSet(ResultSet resultSet, String message, BaseWebsocketApi baseWebsocketApi) {
         if (resultSet == null) {
-            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getErrorType("数据库[" + message + "]数据不存在"));
+            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getErrorType("数据库" + message + "数据不存在"));
             return false;
         }
 
