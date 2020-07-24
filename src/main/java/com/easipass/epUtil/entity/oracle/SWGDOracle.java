@@ -290,4 +290,42 @@ public final class SWGDOracle extends Oracle {
         return result;
     }
 
+    /**
+     * 查询产品资质
+     *
+     * @param ediNo ediNo
+     * @param gNo 商品序号
+     * @param orderNo 产品资质序号
+     * */
+    public ResultSet queryDecGoodsLimit(String ediNo, String gNo, String orderNo) {
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_DEC_GOODS_LIMIT WHERE LIST_ID = (SELECT ID FROM SWGD.T_SWGD_FORM_LIST WHERE HEAD_ID = (SELECT ID FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?) AND G_NO = ?) AND ORDER_NO = ?", new Object[]{ediNo, gNo, orderNo});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        return resultSet;
+    }
+
+    /**
+     * 查询产品资质VIN
+     * */
+    public ResultSet queryDecGoodsLimitVin(String DEC_GOODS_LIMIT_GUID, String ORDER_NO) {
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_DEC_GOODS_LIMIT_VIN WHERE DEC_GOODS_LIMIT_GUID = ? AND ORDER_NO = ?", new Object[]{DEC_GOODS_LIMIT_GUID, ORDER_NO});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        return resultSet;
+    }
+
 }

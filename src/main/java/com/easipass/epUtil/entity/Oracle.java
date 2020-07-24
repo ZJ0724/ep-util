@@ -155,16 +155,17 @@ public class Oracle {
      *
      * @return ResultSet
      */
-    public ResultSet query(String sql, Object[] objects) {
+    public final ResultSet query(String sql, Object[] objects) {
         this.checkConnect();
 
         try {
             this.preparedStatement = connection.prepareStatement(sql);
             if (objects != null && objects.length > 0) {
                 for (int i= 0; i<objects.length; i++) {
-                    preparedStatement.setObject(i+1,objects[i]);
+                    preparedStatement.setObject(i + 1, objects[i]);
                 }
             }
+
             return preparedStatement.executeQuery();
         }catch (SQLException e) {
             throw new ErrorException("sql错误");

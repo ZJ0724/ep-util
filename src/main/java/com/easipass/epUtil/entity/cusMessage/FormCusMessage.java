@@ -195,61 +195,62 @@ public final class FormCusMessage extends CusMessage {
             baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[ediNo: " + this.ediNo + "]"));
 
             // 比对表头
+            String formHeadMessage = "表头";
             ResultSet dbFormHead = SWGDOracle.queryFormHead(this.ediNo);
+
+            if (!checkResultSet(dbFormHead, formHeadMessage, baseWebsocketApi)) {
+                return;
+            }
+
             Set<String> formHeadKeys = FormCusMessageNodeMapping.FORM_HEAD_MAPPING.keySet();
 
-            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[表头]"));
+            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType(formHeadMessage));
             for (String key : formHeadKeys) {
-                MapKeyValue mapKeyValue = getKeyValue(this.decHead, FormCusMessageNodeMapping.FORM_HEAD_MAPPING, key, dbFormHead, "表头", baseWebsocketApi);
+                MapKeyValue mapKeyValue = getKeyValue(this.decHead, FormCusMessageNodeMapping.FORM_HEAD_MAPPING, key, dbFormHead);
+                String key1 = mapKeyValue.getKey1();
+                String nodeValue = mapKeyValue.getNodeValue();
+                String dbValue = mapKeyValue.getDbValue();
 
-                if (mapKeyValue != null) {
-                    String key1 = mapKeyValue.getKey1();
-                    String nodeValue = mapKeyValue.getNodeValue();
-                    String dbValue = mapKeyValue.getDbValue();
+                // IEDate、DespDate、CmplDschrgDt特殊处理
+                if (key1.equals("IEDate") || key1.equals("DespDate") || key1.equals("CmplDschrgDt")) {
+                    mapKeyValue.setDbValue(DateUtil.formatDateYYYYMMdd(dbValue));
+                }
 
-                    // IEDate、DespDate、CmplDschrgDt特殊处理
-                    if (key1.equals("IEDate") || key1.equals("DespDate") || key1.equals("CmplDschrgDt")) {
-                        mapKeyValue.setDbValue(DateUtil.formatDateYYYYMMdd(dbValue));
-                    }
+                // DeclareName特殊处理
+                if ("DeclareName".equals(key1)) {
+                    // IE_TYPE
+                    String ieType = getDbValue(dbFormHead, "IE_TYPE");
 
-                    // DeclareName特殊处理
-                    if ("DeclareName".equals(key1)) {
-                        // IE_TYPE
-                        String ieType = getDbValue(dbFormHead, "IE_TYPE");
-
-                        // 如果IE_TYPE为0，则DeclareName可以为null
-                        if ("0".equals(ieType)) {
-                            if ("".equals(nodeValue)) {
-                                mapKeyValue.setDbValue("");
-                            }
-                        }
-                    }
-
-                    // 特殊处理PackNo
-                    if ("PackNo".equals(key1)) {
-                        // 如果nodeValue为0，并且dbValue为null，则将dbValue设置成0
-                        if ("0".equals(nodeValue) && dbValue == null) {
-                            mapKeyValue.setDbValue("0");
-                        }
-                    }
-
-                    // 特殊处理Type
-                    if ("Type".equals(key1)) {
-                        String[] values = new String[]{"TYPE_2", "TYPE_3", "TYPE_4", "TYPE_5"};
-                        String newDbValue = "  ";
-
+                    // 如果IE_TYPE为0，则DeclareName可以为null
+                    if ("0".equals(ieType)) {
                         if ("".equals(nodeValue)) {
-                            newDbValue = "";
+                            mapKeyValue.setDbValue("");
                         }
-
-                        for (String value : values) {
-                            String s = getDbValue(dbFormHead, value);
-                            newDbValue = StringUtil.append(newDbValue, s);
-                        }
-                        mapKeyValue.setDbValue(newDbValue);
                     }
-                } else {
-                    break;
+                }
+
+                // 特殊处理PackNo
+                if ("PackNo".equals(key1)) {
+                    // 如果nodeValue为0，并且dbValue为null，则将dbValue设置成0
+                    if ("0".equals(nodeValue) && dbValue == null) {
+                        mapKeyValue.setDbValue("0");
+                    }
+                }
+
+                // 特殊处理Type
+                if ("Type".equals(key1)) {
+                    String[] values = new String[]{"TYPE_2", "TYPE_3", "TYPE_4", "TYPE_5"};
+                    String newDbValue = "  ";
+
+                    if ("".equals(nodeValue)) {
+                        newDbValue = "";
+                    }
+
+                    for (String value : values) {
+                        String s = getDbValue(dbFormHead, value);
+                        newDbValue = StringUtil.append(newDbValue, s);
+                    }
+                    mapKeyValue.setDbValue(newDbValue);
                 }
 
                 comparison(mapKeyValue, baseWebsocketApi);
@@ -258,12 +259,18 @@ public final class FormCusMessage extends CusMessage {
             // 比对表体数据
             int size = this.DecList.size();
             Set<String> ListKeys = FormCusMessageNodeMapping.FORM_LIST_MAPPING.keySet();
+            String formListMessage = "[表体]";
 
             for (int i = 0; i < size; i++) {
-                Element element = this.DecList.get(i);
                 ResultSet resultSet = SWGDOracle.queryFormList(ediNo, i + "");
+
+                if (!checkResultSet(resultSet, formListMessage, baseWebsocketApi)) {
+                    continue;
+                }
+
                 // codeTs
                 String codeTs = "";
+                Element element = this.DecList.get(i);
 
                 baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[表体 - " + (i + 1) + "]"));
                 for (String key : ListKeys) {
@@ -302,6 +309,70 @@ public final class FormCusMessage extends CusMessage {
                     }
 
                     comparison(mapKeyValue, baseWebsocketApi);
+                }
+
+                // 比对产品资质 DecGoodsLimits
+                Element DecGoodsLimits = element.element("DecGoodsLimits");
+                String message = "表体 - " + (i + 1) + " -> 产品资质";
+
+                if (DecGoodsLimits == null) {
+                    baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[无" + message + "]"));
+                    continue;
+                }
+
+                List<?> DecGoodsLimit_list = DecGoodsLimits.elements("DecGoodsLimit");
+                int DecGoodsLimit_listSize = DecGoodsLimit_list.size();
+
+                for (int j = 0; j < DecGoodsLimit_listSize; j++) {
+                    Set<String> keys = FormCusMessageNodeMapping.DEC_GOODS_LIMIT_MAPPING.keySet();
+                    ResultSet DecGoodsLimitResultSet = SWGDOracle.queryDecGoodsLimit(this.ediNo, i + "", (j +1) + "");
+                    Element DecGoodsLimit = (Element) DecGoodsLimit_list.get(j);
+
+                    baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[" + message + " - " + (j + 1) + "]"));
+                    for (String key : keys) {
+                        MapKeyValue mapKeyValue = getKeyValue(
+                                DecGoodsLimit,
+                                FormCusMessageNodeMapping.DEC_GOODS_LIMIT_MAPPING,
+                                key,
+                                DecGoodsLimitResultSet,
+                                message,
+                                baseWebsocketApi
+                        );
+
+                        if (mapKeyValue != null) {
+                            comparison(mapKeyValue, baseWebsocketApi);
+                        }
+                    }
+
+                    // 比对产品资质VIN DecGoodsLimitVin
+                    List<?> DecGoodsLimitVin_list = DecGoodsLimit.elements("DecGoodsLimitVin");
+                    int DecGoodsLimitVin_listSize = DecGoodsLimitVin_list.size();
+                    String DecGoodsLimitVinMessage = message + " - " + (j + 1) + " -> 产品资质VIN";
+
+                    if (DecGoodsLimitVin_listSize == 0) {
+                        baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[无" + DecGoodsLimitVinMessage + "]"));
+                        continue;
+                    }
+
+                    for (int k = 0; k < DecGoodsLimitVin_listSize; k++) {
+                        Set<String> decGoodsLimitVinKeys = FormCusMessageNodeMapping.DEC_GOODS_LIMIT_VIN_MAPPING.keySet();
+
+                        baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[" + DecGoodsLimitVinMessage + " - " + (k + 1) + "]"));
+                        for (String key : decGoodsLimitVinKeys) {
+                            MapKeyValue mapKeyValue = getKeyValue(
+                                    (Element) DecGoodsLimitVin_list.get(k),
+                                    FormCusMessageNodeMapping.DEC_GOODS_LIMIT_VIN_MAPPING,
+                                    key,
+                                    SWGDOracle.queryDecGoodsLimitVin(getDbValue(DecGoodsLimitResultSet, "GUID"), (k + 1) + ""),
+                                    DecGoodsLimitVinMessage,
+                                    baseWebsocketApi
+                            );
+
+                            if (mapKeyValue != null) {
+                                comparison(mapKeyValue, baseWebsocketApi);
+                            }
+                        }
+                    }
                 }
             }
 
@@ -684,6 +755,42 @@ public final class FormCusMessage extends CusMessage {
         static {
             DEC_OTHER_PACK_MAPPING.put("PackQty[包装件数]", "PACK_QTY");
             DEC_OTHER_PACK_MAPPING.put("PackType[包装材料种类]", "PACK_TYPE");
+        }
+
+        /**
+         * 产品资质
+         * */
+        private static final Map<String, String> DEC_GOODS_LIMIT_MAPPING = new LinkedHashMap<>();
+
+        static {
+            DEC_GOODS_LIMIT_MAPPING.put("GoodsNo[商品序号]", "GOODS_NO");
+            DEC_GOODS_LIMIT_MAPPING.put("LicTypeCode[许可证类别代码]", "LIC_TYPE_CODE");
+            DEC_GOODS_LIMIT_MAPPING.put("LicenceNo[许可证编号]", "LICENCE_NO");
+            DEC_GOODS_LIMIT_MAPPING.put("LicWrtofDetailNo[许可证核销明细序号]", "LIC_WRTOF_DETAIL_NO");
+            DEC_GOODS_LIMIT_MAPPING.put("LicWrtofQty[许可证核销数量]", "LIC_WRTOF_QTY");
+            DEC_GOODS_LIMIT_MAPPING.put("LicWrtofQtyUnit[许可证核销数量单位]", "LIC_WRTOF_QTY_UNIT");
+        }
+
+        /**
+         * 产品资质VIN
+         * */
+        private static final Map<String, String> DEC_GOODS_LIMIT_VIN_MAPPING = new LinkedHashMap<>();
+
+        static {
+            DEC_GOODS_LIMIT_VIN_MAPPING.put("LicenceNo[许可证编号]", "LICENCE_NO");
+            DEC_GOODS_LIMIT_VIN_MAPPING.put("LicTypeCode[许可证类别代码]", "LICTYPE_CODE");
+            DEC_GOODS_LIMIT_VIN_MAPPING.put("VinNo[VIN序号]", "VIN_NO");
+            DEC_GOODS_LIMIT_VIN_MAPPING.put("BillLadDate[提/运单日期]", "BILL_LAD_DATE");
+            DEC_GOODS_LIMIT_VIN_MAPPING.put("QualityQgp[质量保质期]", "QUALITY_QGP");
+            DEC_GOODS_LIMIT_VIN_MAPPING.put("MotorNo[发动机号或电机号]", "MOTOR_NO");
+            DEC_GOODS_LIMIT_VIN_MAPPING.put("VinCode[车辆识别代码（VIN）]", "VIN_CODE");
+            DEC_GOODS_LIMIT_VIN_MAPPING.put("ChassisNo[底盘(车架)号]", "CHASSIS_NO");
+            DEC_GOODS_LIMIT_VIN_MAPPING.put("InvoiceNum[发票所列数量]", "INVOICE_NUM");
+            DEC_GOODS_LIMIT_VIN_MAPPING.put("ProdCnnm[品名（中文名称）]", "PROD_CNNM");
+            DEC_GOODS_LIMIT_VIN_MAPPING.put("ProdEnnm[品名（英文名称）]", "PROD_ENNM");
+            DEC_GOODS_LIMIT_VIN_MAPPING.put("ModelEn[型号（英文）]", "MODEL_EN");
+            DEC_GOODS_LIMIT_VIN_MAPPING.put("PricePerUnit[单价]", "PRICE_PER_UNIT");
+            DEC_GOODS_LIMIT_VIN_MAPPING.put("InvoiceNo[发票号]", "INVOICE_NO");
         }
 
     }
