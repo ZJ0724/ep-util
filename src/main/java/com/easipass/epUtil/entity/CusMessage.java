@@ -6,14 +6,33 @@ import com.easipass.epUtil.exception.ErrorException;
 import org.dom4j.Element;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 抽象报文
  *
  * @author ZJ
  * */
-public abstract class AbstractCusMessage {
+public abstract class CusMessage {
+
+    /**
+     * 报文id
+     * */
+    private final String id;
+
+    /**
+     * 报文集合
+     * */
+    private static final List<CusMessage> CUS_MESSAGES_LIST = new ArrayList<>();
+
+    /**
+     * 日志
+     * */
+    private static final Log LOG = Log.getLog();
+
+    {
+        this.id = new Date().getTime() + "";
+    }
 
     /**
      * 比对
@@ -21,6 +40,34 @@ public abstract class AbstractCusMessage {
      * @param baseWebsocketApi websocket服务
      * */
     public abstract void comparison(BaseWebsocketApi baseWebsocketApi);
+
+    /**
+     * 获取id
+     * */
+    public final String getId() {
+        return this.id;
+    }
+
+    /**
+     * 添加报文
+     * */
+    public void push() {
+        CUS_MESSAGES_LIST.add(this);
+        LOG.info("添加报文: " + this.getId());
+    }
+
+    /**
+     * 删除报文
+     * */
+    public void delete() {
+        for (CusMessage cusMessage : CUS_MESSAGES_LIST) {
+            if (cusMessage.getId().equals(this.getId())) {
+                CUS_MESSAGES_LIST.remove(cusMessage);
+                LOG.info("删除报文: " + this.getId());
+                return;
+            }
+        }
+    }
 
     /**
      * 获取节点内容
@@ -145,6 +192,23 @@ public abstract class AbstractCusMessage {
         } else {
             baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonFalseType(key));
         }
+    }
+
+    /**
+     * 获取报文
+     *
+     * @param id id
+     *
+     * @return 报文
+     * */
+    public static CusMessage get(String id) {
+        for (CusMessage cusMessage : CUS_MESSAGES_LIST) {
+            if (cusMessage.getId().equals(id)) {
+                return cusMessage;
+            }
+        }
+
+        return null;
     }
 
     /**
