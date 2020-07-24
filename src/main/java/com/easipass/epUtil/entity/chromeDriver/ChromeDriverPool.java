@@ -3,6 +3,8 @@ package com.easipass.epUtil.entity.chromeDriver;
 import com.easipass.epUtil.entity.ChromeDriver;
 import com.easipass.epUtil.entity.Log;
 import com.easipass.epUtil.exception.ErrorException;
+import com.easipass.epUtil.util.ThreadUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,19 +71,11 @@ public final class ChromeDriverPool {
         this.isOpen = true;
         LOG.info("开启驱动池");
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new ErrorException(e.getMessage());
-        }
+        ThreadUtil.sleep(5000);
 
         new Thread(() -> {
             while (true) {
-                try {
-                    Thread.sleep(0);
-                } catch (InterruptedException e) {
-                    throw new ErrorException(e.getMessage());
-                }
+                ThreadUtil.sleep(0);
 
                 if (this.chromeDrivers.size() == this.size) {
                     continue;
