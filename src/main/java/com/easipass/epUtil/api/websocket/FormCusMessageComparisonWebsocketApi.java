@@ -1,7 +1,7 @@
 package com.easipass.epUtil.api.websocket;
 
+import com.easipass.epUtil.entity.CusMessage;
 import com.easipass.epUtil.entity.VO.CusMessageComparisonVO;
-import com.easipass.epUtil.entity.cusMessage.FormCusMessage;
 import org.springframework.stereotype.Component;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
@@ -27,15 +27,17 @@ public class FormCusMessageComparisonWebsocketApi extends BaseWebsocketApi {
         super.onOpen(session);
 
         LOG.info("id: " + id);
-        FormCusMessage formCusMessage = FormCusMessage.getFormCusMessage(id);
+        CusMessage cusMessage = CusMessage.get(id);
 
-        if (formCusMessage == null) {
+        if (cusMessage == null) {
             this.sendMessage(CusMessageComparisonVO.getErrorType("报文未找到"));
             this.close();
             return;
         }
 
-        formCusMessage.comparison(this);
+        cusMessage.comparison(this);
+
+        cusMessage.delete();
     }
 
 }

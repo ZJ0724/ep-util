@@ -14,22 +14,17 @@
 
             <div class="center" style="margin-top: 25%;flex-direction: column;">
                 <div>
-                    <div style="display: flex;">
+                    <div style="width: 300px;">
                         <input id="file" type="file" style="display: none;" />
-                        <input v-model="fileName" disabled style="width: 300px;" class="form-control input-sm" aria-label="" />
-                        <button @click="select()" style="margin-left: 10px;" type="button" class="btn btn-default btn-sm">选择...</button>
-                    </div>
-
-                    <div style="margin-top: 20px;">
-                        <button @click="comparison()" style="width: 100%;" type="button" class="btn btn-primary">比对</button>
+                        <button @click="select()" style="width: 100%;" type="button" class="btn btn-primary">选择报文...</button>
                     </div>
                 </div>
-
-                <!-- 遮罩层 -->
-                <div v-if="mask" class="layui-anim layui-anim-fadein" style="background-color: #0c0c0c38;position: fixed;top: 0;width: 100%; height: 100%;"></div>
             </div>
         </div>
     </div>
+
+    <!-- 遮罩层 -->
+    <div id="mask" class="layui-anim layui-anim-fadein" style="background-color: #0c0c0c38;position: fixed;top: 0;width: 100%; height: 100%;display: none;"></div>
 
     <!-- 弹窗 -->
     <div id="log" class="panel panel-default layui-anim layui-anim-fadein" style="width: 30%;position: absolute;top: 120px;overflow: auto;max-height: 80%;left: 35%;display: none;">
@@ -91,11 +86,7 @@
         data: {
             fileInput: document.getElementById("file"),
 
-            fileName: "",
-
-            id: "",
-
-            mask: false,
+            mask: document.getElementById("mask"),
 
             log: document.getElementById("log"),
 
@@ -112,33 +103,32 @@
 
             // 比对
             comparison() {
-                let id = this.id,
-                    that = this;
+                let that = this,
+                    file = that.fileInput.files[0];
 
-                if (id === "") {
-                    alertComponent.popup("未选择报文");
-                    return;
-                }
+                cusMessageServiceApi.upload(file).then(function (id) {
+                    that.mask.style.display = "";
+                    that.log.style.display = "";
+                    that.logBody.innerHTML = "";
 
-                that.mask = true;
-                this.log.style.display = "";
-                this.logBody.innerHTML = "";
+                    let websocket = new FormCusMessageComparisonWebsocketApi(id);
 
-                let websocket = new FormCusMessageComparisonWebsocketApi(id);
+                    // 监听比对消息
+                    websocket.onmessage(function (message) {
+                        let vo = new CusMessageComparisonVO();
 
-                // 监听比对消息
-                websocket.onmessage(function (message) {
-                    let vo = new CusMessageComparisonVO();
+                        vo.setData(message);
+                        console.log(vo);
+                        that.addLog(vo);
+                    });
 
-                    vo.setData(message);
-                    console.log(vo);
-                    that.addLog(vo);
-                });
-
-                // 监听连接关闭
-                websocket.onclose(function () {
-                    console.log("websocket连接关闭");
-                    that.closeLog.style.display = "flex";
+                    // 监听连接关闭
+                    websocket.onclose(function () {
+                        console.log("websocket连接关闭");
+                        that.closeLog.style.display = "flex";
+                    });
+                }).catch(function (message) {
+                    alertComponent.popup(message);
                 });
             },
 
@@ -210,28 +200,20 @@
             // 关闭弹窗
             close() {
                 this.log.style.display = "none";
-                this.mask = false;
+                this.mask.style.display = "none";
                 this.closeLog.style.display = "none";
             }
         },
 
         created() {
-            let that = this,
-                fileInput = that.fileInput;
-
-            this.fileInput.addEventListener("change", function () {
-                let file = fileInput.files[0];
-
-                cusMessageServiceApi.upload(file).then(function (id) {
-                    that.fileName = file.name;
-                    that.id = id;
-                }).catch(function (message) {
-                    alertComponent.popup(message);
-                });
-            });
+            let that = this;
 
             this.closeLog.addEventListener("click", function () {
                 that.close();
+            });
+
+            that.fileInput.addEventListener("change", function () {
+                that.comparison();
             });
         }
     });

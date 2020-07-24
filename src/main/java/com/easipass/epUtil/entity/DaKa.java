@@ -122,7 +122,7 @@ public final class DaKa {
                 ChromeDriver chromeDriver = null;
 
                 try {
-                    chromeDriver = new ChromeDriver();
+                    chromeDriver = ChromeDriver.get();
                     chromeDriver.daKa();
                     this.addLog("打卡完成！");
                 } catch (BaseException e) {
@@ -243,7 +243,7 @@ public final class DaKa {
 
         try {
             this.addLog("手动打卡...");
-            chromeDriver = new ChromeDriver();
+            chromeDriver = ChromeDriver.get();
             chromeDriver.daKa();
             response = Response.returnTrue();
             this.addLog("打卡完成！");

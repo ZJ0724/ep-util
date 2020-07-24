@@ -50,10 +50,8 @@ public class Main {
             Sftp83Properties.getInstance();
             LOG.info("\n");
 
-            // 杀掉谷歌驱动经常
-            ChromeDriver.kill();
-            // 检查谷歌驱动
-            new ChromeDriver().close();
+            // 开启谷歌驱动池
+            ChromeDriver.openChromeDriverPool();
 
             // 检查是否开启自动打卡
             DaKa.getInstance();

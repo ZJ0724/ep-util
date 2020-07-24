@@ -1,5 +1,6 @@
 package com.easipass.epUtil.api.service;
 
+import com.easipass.epUtil.entity.CusMessage;
 import com.easipass.epUtil.entity.Response;
 import com.easipass.epUtil.entity.cusMessage.FormCusMessage;
 import com.zj0724.springbootUtil.annotation.SkipCheck;
@@ -28,9 +29,11 @@ public class CusMessageServiceApi {
      * */
     @PostMapping("formCusMessageUpload")
     public Response upload(@RequestParam("formCusMessage") MultipartFile multipartFile) {
-        String id = FormCusMessage.addFormCusMessage(multipartFile);
+        CusMessage cusMessage = new FormCusMessage(multipartFile);
 
-        return Response.returnTrue(id);
+        cusMessage.push();
+
+        return Response.returnTrue(cusMessage.getId());
     }
 
 }

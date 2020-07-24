@@ -1,8 +1,7 @@
 package com.easipass.epUtil.entity.cusMessage;
 
 import com.easipass.epUtil.api.websocket.BaseWebsocketApi;
-import com.easipass.epUtil.entity.AbstractCusMessage;
-import com.easipass.epUtil.entity.Log;
+import com.easipass.epUtil.entity.CusMessage;
 import com.easipass.epUtil.entity.VO.CusMessageComparisonVO;
 import com.easipass.epUtil.entity.oracle.SWGDOracle;
 import com.easipass.epUtil.exception.CusFileException;
@@ -18,19 +17,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 报关单报文
  *
  * @author ZJ
  * */
-public final class FormCusMessage extends AbstractCusMessage {
-
-    /**
-     * 报文集合
-     * */
-    private static final Map<String, FormCusMessage> FORM_CUS_MESSAGE_MAP = new LinkedHashMap<>();
+public final class FormCusMessage extends CusMessage {
 
     /**
      * 表头
@@ -78,47 +71,11 @@ public final class FormCusMessage extends AbstractCusMessage {
     private final List<Element> DecOtherPack = new ArrayList<>();
 
     /**
-     * 创建时间
-     * */
-    private final Date createTime = new Date();
-
-    static {
-        // 当报文创建时间超过1天，则删除
-        new Thread(() -> {
-            Log log = Log.getLog();
-
-            log.info("开启报文删除服务");
-            while (true) {
-                Set<String> keys = FORM_CUS_MESSAGE_MAP.keySet();
-                long nowTime = new Date().getTime();
-                long outTime = 24 * 60 * 60 * 1000;
-//                long outTime = 10 * 1000;
-                List<String> newKeys;
-                try {
-                    newKeys = new CopyOnWriteArrayList<>(keys);
-                } catch (java.util.ConcurrentModificationException e) {
-                    log.error("报文集合被修改，重新遍历");
-                    continue;
-                }
-
-                for (String key : newKeys) {
-                    FormCusMessage cusMessage = FORM_CUS_MESSAGE_MAP.get(key);
-
-                    if (nowTime > cusMessage.createTime.getTime() + outTime) {
-                        FORM_CUS_MESSAGE_MAP.remove(key);
-                        log.info("删除报关单报文: " + key + "; size: " + FORM_CUS_MESSAGE_MAP.size());
-                    }
-                }
-            }
-        }).start();
-    }
-
-    /**
      * 构造函数
      *
      * @param multipartFile 前端传过来的文件
      * */
-    private FormCusMessage(MultipartFile multipartFile) {
+    public FormCusMessage(MultipartFile multipartFile) {
         Element rootElement;
         try {
             InputStream inputStream = multipartFile.getInputStream();
@@ -234,6 +191,9 @@ public final class FormCusMessage extends AbstractCusMessage {
             // 检查数据库连接
             SWGDOracle.connect();
 
+            // ediNo
+            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[ediNo: " + this.ediNo + "]"));
+
             // 比对表头
             ResultSet dbFormHead = SWGDOracle.queryFormHead(this.ediNo);
             Set<String> formHeadKeys = FormCusMessageNodeMapping.FORM_HEAD_MAPPING.keySet();
@@ -278,6 +238,10 @@ public final class FormCusMessage extends AbstractCusMessage {
                         String[] values = new String[]{"TYPE_2", "TYPE_3", "TYPE_4", "TYPE_5"};
                         String newDbValue = "  ";
 
+                        if ("".equals(nodeValue)) {
+                            newDbValue = "";
+                        }
+
                         for (String value : values) {
                             String s = getDbValue(dbFormHead, value);
                             newDbValue = StringUtil.append(newDbValue, s);
@@ -309,6 +273,7 @@ public final class FormCusMessage extends AbstractCusMessage {
                         String key1 = mapKeyValue.getKey1();
                         String dbValue = mapKeyValue.getDbValue();
                         String value = mapKeyValue.getValue();
+                        String nodeValue = mapKeyValue.getNodeValue();
 
                         // ProdValidDt特殊处理
                         if (key1.equals("ProdValidDt")) {
@@ -326,6 +291,9 @@ public final class FormCusMessage extends AbstractCusMessage {
                             continue;
                         }
                         if ("CODE_S".equals(value)) {
+                            if (dbValue == null) {
+                                dbValue = nodeValue.substring(nodeValue.length() - 2);
+                            }
                             codeTs = StringUtil.append(codeTs, dbValue);
                             mapKeyValue.setDbValue(codeTs);
                         }
@@ -507,42 +475,6 @@ public final class FormCusMessage extends AbstractCusMessage {
             // 关闭websocket连接
             baseWebsocketApi.close();
         }
-    }
-
-    /**
-     * 添加报文
-     *
-     * @param multipartFile 前端传过来的文件
-     *
-     * @return 唯一标识
-     * */
-    public static String addFormCusMessage(MultipartFile multipartFile) {
-        String id = new Date().getTime() + "";
-
-        if (getFormCusMessage(id) != null) {
-            id = id + "1";
-        }
-
-        FORM_CUS_MESSAGE_MAP.put(id, new FormCusMessage(multipartFile));
-
-        return id;
-    }
-
-    /**
-     * 获取报文
-     *
-     * @return 通过id获取报文
-     * */
-    public static FormCusMessage getFormCusMessage(String id) {
-        Set<String> keys = FORM_CUS_MESSAGE_MAP.keySet();
-
-        for (String key : keys) {
-            if (key.equals(id)) {
-                return FORM_CUS_MESSAGE_MAP.get(id);
-            }
-        }
-
-        return null;
     }
 
     /**
