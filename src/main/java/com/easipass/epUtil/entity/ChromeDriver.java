@@ -6,11 +6,14 @@ import com.easipass.epUtil.entity.resources.chromeDriver.EpUtilChromeDriverWindo
 import com.easipass.epUtil.exception.ChromeDriverException;
 import com.easipass.epUtil.util.ConsoleUtil;
 import com.easipass.epUtil.util.FileUtil;
+import com.easipass.epUtil.util.ThreadUtil;
 import com.zj0724.uiAuto.WebDriver;
 import com.zj0724.uiAuto.exception.BaseException;
 import com.zj0724.uiAuto.exception.WebDriverException;
 import com.zj0724.uiAuto.webDriver.ChromeWebDriver;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 谷歌驱动
@@ -38,6 +41,16 @@ public final class ChromeDriver {
      * 谷歌驱动资源
      * */
     private static Resource resource;
+
+    /**
+     * 谷歌驱动池
+     * */
+    private static final List<ChromeDriver> CHROME_DRIVER_POOL = new ArrayList<>();
+
+    /**
+     * 是否已开启池
+     * */
+    private static boolean isOpenChromeDriverPool = false;
 
     static {
         SystemType systemType = Project.getInstance().getSystemType();
@@ -73,10 +86,6 @@ public final class ChromeDriver {
         }
 
         LOG.info("谷歌驱动已打开");
-    }
-
-    public ChromeDriver(boolean is) {
-        this();
     }
 
     /**
@@ -143,6 +152,58 @@ public final class ChromeDriver {
         }
 
         ConsoleUtil.kill(resource.getName());
+    }
+
+    /**
+     * 开启谷歌驱动池
+     * */
+    public static void openChromeDriverPool() {
+        if (isOpenChromeDriverPool) {
+            LOG.info("驱动池已开启");
+            return;
+        }
+
+        // 检查驱动
+        new ChromeDriver().close();
+
+        isOpenChromeDriverPool = true;
+        LOG.info("开启驱动池");
+
+        ThreadUtil.sleep(5000);
+
+        new Thread(() -> {
+            while (true) {
+                // 驱动池最大数量
+                final int size = 2;
+
+                ThreadUtil.sleep(0);
+
+                if (CHROME_DRIVER_POOL.size() == size) {
+                    continue;
+                }
+
+                LOG.info("添加驱动");
+                CHROME_DRIVER_POOL.add(new ChromeDriver());
+            }
+        }).start();
+    }
+
+    /**
+     * 获取驱动
+     *
+     * @return 一个驱动
+     * */
+    public static synchronized ChromeDriver get() {
+        if (CHROME_DRIVER_POOL.size() == 0) {
+            LOG.info("驱动池无驱动，返回一个新的驱动");
+            return new ChromeDriver();
+        }
+
+        LOG.info("获取一个驱动");
+        ChromeDriver chromeDriver = CHROME_DRIVER_POOL.get(0);
+        CHROME_DRIVER_POOL.remove(0);
+
+        return chromeDriver;
     }
 
 }

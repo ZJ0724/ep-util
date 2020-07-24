@@ -1,7 +1,6 @@
 package com.easipass.epUtil.entity;
 
 import com.easipass.epUtil.entity.DTO.CusResultDTO;
-import com.easipass.epUtil.entity.chromeDriver.ChromeDriverPool;
 import com.easipass.epUtil.entity.sftp.Sftp83;
 import com.easipass.epUtil.exception.BaseException;
 import com.easipass.epUtil.exception.ErrorException;
@@ -88,7 +87,7 @@ public abstract class CusResult {
         ChromeDriver chromeDriver = null;
 
         try {
-            chromeDriver = ChromeDriverPool.getChromeDriverPool().get();
+            chromeDriver = ChromeDriver.get();
             chromeDriver.swgdRecvRun();
         } catch (BaseException e) {
             return Response.returnFalse(e.getMessage());
@@ -119,7 +118,7 @@ public abstract class CusResult {
             sftp83 = new Sftp83();
             sftp83.connect();
 
-            chromeDriver = ChromeDriverPool.getChromeDriverPool().get();
+            chromeDriver = ChromeDriver.get();
 
             sftp83.uploadCusResult(cusResult1);
             chromeDriver.swgdRecvRun();
