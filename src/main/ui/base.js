@@ -10,8 +10,9 @@
         document.write(`<link rel="stylesheet" type="text/css" href="${path}" />`);
     }
 
-    // 基础样式
+    // 样式
     addCss("/style/base.css");
+    addCss("/style/a.css");
 
     // layui
     addCss("/frame/layui/css/layui.css");

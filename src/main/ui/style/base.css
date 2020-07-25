@@ -37,3 +37,7 @@ html, body, #main {
     padding: 20px 20%;
     height: 95%;
 }
+
+[v-cloak] {
+    display: none;
+}
