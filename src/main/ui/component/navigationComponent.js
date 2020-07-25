@@ -9,11 +9,11 @@ export default (function () {
                 <div v-if="item.children !== undefined" class="item" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     {{item.name}}
                 </div>
-                <div v-else-if="item.path === '/'" @click="window.location.href = '/'" class="item">
-                    {{item.name}}
+                <div v-else-if="item.path === '/'" class="item">
+                    <a class="a" href="/">{{item.name}}</a>
                 </div>
-                <div v-else @click="window.location.href = page + item.path" class="item">
-                    {{item.name}}
+                <div v-else class="item">
+                    <a class="a" :href="page + item.path">{{item.name}}</a>
                 </div>
                 <ul v-if="item.children !== undefined" class="dropdown-menu">
                     <li style="padding: 5px; 0" v-for="(child, j) in item.children" :key="j">
