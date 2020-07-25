@@ -138,17 +138,10 @@ public abstract class CusMessage {
      * @param map 映射
      * @param key 映射key
      * @param resultSet 数据库数据
-     * @param message 信息
-     * @param baseWebsocketApi websocket服务
      *
      * @return keyValue
      * */
-    protected static MapKeyValue getKeyValue(Element element, Map<String, String> map, String key, ResultSet resultSet, String message, BaseWebsocketApi baseWebsocketApi) {
-        if (resultSet == null) {
-            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getErrorType("数据库" + message + "不存在"));
-            return null;
-        }
-
+    protected static MapKeyValue getKeyValue(Element element, Map<String, String> map, String key, ResultSet resultSet) {
         String key1 = getKey1(key);
         String value = map.get(key);
         String nodeValue = getNodeValue(element, key1);
@@ -209,6 +202,24 @@ public abstract class CusMessage {
         }
 
         return null;
+    }
+
+    /**
+     * 检查数据库数据
+     *
+     * @param resultSet 数据库数据
+     * @param message 信息
+     * @param baseWebsocketApi websocket服务
+     *
+     * @return 数据库数据不为null返回true
+     * */
+    protected static boolean checkResultSet(ResultSet resultSet, String message, BaseWebsocketApi baseWebsocketApi) {
+        if (resultSet == null) {
+            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getErrorType("数据库" + message + "数据不存在"));
+            return false;
+        }
+
+        return true;
     }
 
     /**

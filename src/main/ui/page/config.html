@@ -15,7 +15,6 @@
             <ul class="nav nav-tabs" style="margin-top: 50px;">
                 <li @click="selectConfig(0)" role="presentation" :class="active === 0 ? 'active' : ''"><a href="javascript:">SWGD</a></li>
                 <li @click="selectConfig(1)" role="presentation" :class="active === 1 ? 'active' : ''"><a href="javascript:">sftp83</a></li>
-                <li @click="selectConfig(2)" role="presentation" :class="active === 2 ? 'active' : ''"><a href="javascript:">打卡</a></li>
             </ul>
 
             <div style="margin: 10% 30% 0 30%;">
@@ -25,10 +24,6 @@
 
                 <div :style="active === 1 ? '' : 'display: none'">
                     <config :vo="sftp83.VO" :dto="sftp83.DTO" :get-api="sftp83.getApi" :set-api="sftp83.setApi"></config>
-                </div>
-
-                <div :style="active === 2 ? '' : 'display: none'">
-                    <config :vo="daKa.VO" :dto="daKa.DTO" :get-api="daKa.getApi" :set-api="daKa.setApi"></config>
                 </div>
             </div>
         </div>
@@ -42,8 +37,6 @@
     import SWGDConfigDTO from "../entity/DTO/SWGDConfigDTO.js";
     import Sftp83ConfigDTO from "../entity/DTO/Sftp83ConfigDTO.js";
     import Sftp83ConfigVO from "../entity/VO/Sftp83ConfigVO.js";
-    import DaKaConfigDTO from "../entity/DTO/DaKaConfigDTO.js";
-    import DaKaConfigVO from "../entity/VO/DaKaConfigVO.js";
     import configServiceApi from "../api/service/configServiceApi.js";
 
     new Vue({
@@ -64,13 +57,6 @@
                 DTO: new Sftp83ConfigDTO(),
                 getApi: configServiceApi.getSftp83,
                 setApi: configServiceApi.setSftp83
-            },
-
-            daKa: {
-                VO: new DaKaConfigVO(),
-                DTO: new DaKaConfigDTO(),
-                getApi: configServiceApi.getDaKa,
-                setApi: configServiceApi.setDaKa
             }
         },
 

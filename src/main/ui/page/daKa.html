@@ -26,17 +26,30 @@
                         <button @click="open()" class="btn btn-success btn-sm" type="button">开启</button>
                         <button @click="close()" class="btn btn-danger btn-sm" type="button">关闭</button>
                         <button ref="manualDaKaButton" @click="souDong()" class="btn btn-primary btn-sm" type="button">手动打卡</button>
-                        <button @click="cleanLog()" class="btn btn-default btn-sm" type="button">清空日志</button>
+                        <button @click="daKaConfig.show = true" class="btn btn-info btn-sm" type="button">配置</button>
                     </div>
                 </div>
 
                 <div class="panel panel-default" style="margin-top: 30px;width: 100%;">
                     <div class="panel-heading" style="font-weight: bold;">
-                        日志
+                        日志<button style="margin-left: 10px;" @click="cleanLog()" class="btn btn-default btn-xs" type="button">清空</button>
                     </div>
                     <div class="panel-body">
                         <div v-for="(log, key) in logs" :key="key" :style="key !== 0 ? 'margin-top: 10px' : ''">
                             {{log}}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 遮罩层 -->
+                <div v-if="daKaConfig.show" class="layui-anim layui-anim-fadein" style="background-color: #0c0c0c38;position: fixed;top: 0;width: 100%; height: 100%;left: 0;"></div>
+
+                <!-- 配置弹窗 -->
+                <div v-if="daKaConfig.show" style="position: fixed;top: 200px;width: 30%;box-shadow: #00000026 0 0 7px 0;">
+                    <div class="panel panel-default" style="margin-bottom: 0">
+                        <div class="panel-body">
+                            <config :vo="daKaConfig.VO" :dto="daKaConfig.DTO" :get-api="daKaConfig.getApi" :set-api="daKaConfig.setApi"></config>
+                            <button @click="daKaConfig.show = false" style="width: 100%;margin-top: 10px;" class="btn btn-default" type="button">关闭</button>
                         </div>
                     </div>
                 </div>
@@ -51,6 +64,9 @@
     import daKaServiceApi from "../api/service/daKaServiceApi.js";
     import alertComponent from "../component/alertComponent.js";
     import DaKaLogWebsocketApi from "../api/websocket/DaKaLogWebsocketApi.js";
+    import DaKaConfigDTO from "../entity/DTO/DaKaConfigDTO.js";
+    import DaKaConfigVO from "../entity/VO/DaKaConfigVO.js";
+    import configServiceApi from "../api/service/configServiceApi.js";
 
     new Vue({
         el: "#main",
@@ -60,7 +76,15 @@
 
             logs: [],
 
-            DaKaLogWebsocket: new DaKaLogWebsocketApi()
+            DaKaLogWebsocket: new DaKaLogWebsocketApi(),
+
+            daKaConfig: {
+                show: false,
+                VO: new DaKaConfigVO(),
+                DTO: new DaKaConfigDTO(),
+                getApi: configServiceApi.getDaKa,
+                setApi: configServiceApi.setDaKa
+            }
         },
 
         methods: {
