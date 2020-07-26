@@ -6,8 +6,8 @@ export default (function () {
     // 回执上传组件
     Vue.component("cus-result-upload", {
         template: `
-            <div class="center" style="height: 80%;">
-                <div style="width: 40%;">
+            <div class="center">
+                <div style="width: 40%;margin-top: 200px;">
                     <div class="input-group input-group-sm">
                         <span class="input-group-addon">
                             {{text}}<span v-if="text === 'ediNo'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>

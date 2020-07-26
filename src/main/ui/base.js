@@ -13,6 +13,8 @@
     // 样式
     addCss("/style/base.css");
     addCss("/style/a.css");
+    addCss("/style/head.css");
+    addCss("/style/body.css");
 
     // layui
     addCss("/frame/layui/css/layui.css");
