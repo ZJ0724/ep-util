@@ -15,6 +15,7 @@
     addCss("/style/a.css");
     addCss("/style/head.css");
     addCss("/style/body.css");
+    addCss("/style/panel.css");
 
     // layui
     addCss("/frame/layui/css/layui.css");
