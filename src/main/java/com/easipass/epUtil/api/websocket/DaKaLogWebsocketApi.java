@@ -6,6 +6,7 @@ import javax.websocket.OnClose;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,6 +18,8 @@ import java.util.List;
 @ServerEndpoint(BaseWebsocketApi.URL + "daKaLog")
 public class DaKaLogWebsocketApi extends BaseWebsocketApi {
 
+    private final String id = new Date().getTime() + "";
+
     /**
      * 打卡
      * */
@@ -27,7 +30,7 @@ public class DaKaLogWebsocketApi extends BaseWebsocketApi {
     public void onOpen(Session session) {
         super.onOpen(session);
 
-        DA_KA.setDaKaLogWebsocket(this);
+        DA_KA.addDaKaLogWebsocket(this);
         List<String> logs = DA_KA.getLog();
 
         for (String log : logs) {
@@ -40,8 +43,17 @@ public class DaKaLogWebsocketApi extends BaseWebsocketApi {
      * */
     @OnClose
     public void onClose() {
-        DA_KA.setDaKaLogWebsocket(null);
+        DA_KA.deleteDaKaLogWebsocket(this);
         LOG.info(this.session.toString() + "已关闭");
+    }
+
+    /**
+     * 获取id
+     *
+     * @return id
+     * */
+    public String getId() {
+        return this.id;
     }
 
 }
