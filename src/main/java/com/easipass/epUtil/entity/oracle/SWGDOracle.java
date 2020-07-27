@@ -313,9 +313,35 @@ public final class SWGDOracle extends Oracle {
 
     /**
      * 查询产品资质VIN
+     *
+     * @param DEC_GOODS_LIMIT_GUID DEC_GOODS_LIMIT_GUID
+     * @param ORDER_NO ORDER_NO
+     *
+     * @return ResultSet
      * */
     public ResultSet queryDecGoodsLimitVin(String DEC_GOODS_LIMIT_GUID, String ORDER_NO) {
         ResultSet resultSet = this.query("SELECT * FROM SWGD.T_DEC_GOODS_LIMIT_VIN WHERE DEC_GOODS_LIMIT_GUID = ? AND ORDER_NO = ?", new Object[]{DEC_GOODS_LIMIT_GUID, ORDER_NO});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        return resultSet;
+    }
+
+    /**
+     * 查询特许权使用费
+     *
+     * @param ediNo ediNo
+     *
+     * @return ResultSet
+     * */
+    public ResultSet queryDecRoyaltyFee(String ediNo) {
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_DEC_ROYALTY_FEE WHERE HEAD_ID = (SELECT ID FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?)", new Object[]{ediNo});
 
         try {
             if (!resultSet.next()) {
