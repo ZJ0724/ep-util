@@ -21,7 +21,13 @@ public abstract class FormCusResult extends CusResult {
      */
     protected FormCusResult(CusResultDTO cusResultDTO, String ediNo) {
         super(cusResultDTO);
-        this.ediNo = ediNo;
+
+        // 兼容报关单号
+        if (ediNo.startsWith("EDI")) {
+            this.ediNo = ediNo;
+        } else {
+            this.ediNo = new SWGDOracle().queryEdiNo(ediNo);
+        }
     }
 
     /**

@@ -354,4 +354,33 @@ public final class SWGDOracle extends Oracle {
         return resultSet;
     }
 
+    /**
+     * 查询ediNo
+     *
+     * @param preEntryId 报关单号
+     *
+     * @return ediNo
+     * */
+    public String queryEdiNo(String preEntryId) {
+        String result;
+
+        this.connect();
+
+        ResultSet resultSet = this.query("SELECT EDI_NO FROM SWGD.T_SWGD_FORM_HEAD WHERE PRE_ENTRY_ID = ?", new Object[]{preEntryId});
+
+        try {
+            if (resultSet.next()) {
+                result = resultSet.getString("EDI_NO");
+            } else {
+                throw new OracleException("未找到报关单(" + preEntryId + ")数据");
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            this.close();
+        }
+
+        return result;
+    }
+
 }
