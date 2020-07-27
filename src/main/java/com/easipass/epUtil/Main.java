@@ -51,7 +51,7 @@ public class Main {
             LOG.info("\n");
 
             // 开启谷歌驱动池
-//            ChromeDriver.openChromeDriverPool();
+            ChromeDriver.openChromeDriverPool();
 
             // 检查是否开启自动打卡
             DaKa.getInstance();
