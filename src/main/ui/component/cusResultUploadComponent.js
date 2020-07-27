@@ -10,13 +10,13 @@ export default (function () {
                 <div style="width: 40%;margin-top: 200px;">
                     <div class="input-group input-group-sm">
                         <span class="input-group-addon">
-                            {{text}}<span v-if="text === 'ediNo'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                            {{text}}
                         </span>
                         <input v-model="param" type="text" class="form-control" aria-describedby="basic-addon1" aria-label="" />
                     </div>
 
                     <div style="margin-top: 10px;" class="input-group input-group-sm">
-                        <span class="input-group-addon">channel&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span class="input-group-addon">channel</span>
                         <input v-model="cusResultDTO.channel" type="text" class="form-control" aria-label="" />
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -32,7 +32,7 @@ export default (function () {
                     </div>
 
                     <div style="margin-top: 10px;" class="input-group input-group-sm">
-                        <span class="input-group-addon">node&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&thinsp;</span>
+                        <span class="input-group-addon">node</span>
                         <input v-model="cusResultDTO.note" type="text" class="form-control" aria-describedby="basic-addon1" aria-label="" />
                     </div>
 

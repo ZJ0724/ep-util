@@ -1,10 +1,10 @@
 package com.easipass.epUtil.entity;
 
-import com.easipass.epUtil.api.websocket.BaseWebsocketApi;
+import com.easipass.epUtil.api.websocket.DaKaLogWebsocketApi;
 import com.easipass.epUtil.entity.config.DaKaProperties;
 import com.easipass.epUtil.exception.BaseException;
-import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.util.DateUtil;
+import com.easipass.epUtil.util.ThreadUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,9 +41,9 @@ public final class DaKa {
     private final List<String> logs = new ArrayList<>();
 
     /**
-     * 打卡日志websocket
+     * 打卡日志websocket集合
      * */
-    private BaseWebsocketApi baseWebsocketApi;
+    private final List<DaKaLogWebsocketApi> daKaLogWebsocketApiList = new ArrayList<>();
 
     /**
      * 构造函数
@@ -134,11 +134,7 @@ public final class DaKa {
                 }
 
                 // 打卡完等待1分钟
-                try {
-                    Thread.sleep(60000);
-                } catch (InterruptedException e) {
-                    throw new ErrorException(e.getMessage());
-                }
+                ThreadUtil.sleep(60000);
             }
 
             this.addLog("关闭自动打卡");
@@ -207,8 +203,9 @@ public final class DaKa {
 
         this.logs.add(l);
 
-        if (this.baseWebsocketApi != null) {
-            this.baseWebsocketApi.sendMessage(l);
+        // 发送websocket
+        for (DaKaLogWebsocketApi daKaLogWebsocketApi : this.daKaLogWebsocketApiList) {
+            daKaLogWebsocketApi.sendMessage(l);
         }
     }
 
@@ -260,12 +257,29 @@ public final class DaKa {
     }
 
     /**
-     * 设置打卡日志websocket
+     * 添加打卡日志websocket
      *
-     * @param baseWebsocketApi 打卡日志websocket
+     * @param daKaLogWebsocketApi 打卡日志websocket
      */
-    public void setDaKaLogWebsocket(BaseWebsocketApi baseWebsocketApi) {
-        this.baseWebsocketApi = baseWebsocketApi;
+    public void addDaKaLogWebsocket(DaKaLogWebsocketApi daKaLogWebsocketApi) {
+        this.daKaLogWebsocketApiList.add(daKaLogWebsocketApi);
+    }
+
+    /**
+     * 删除打卡日志websocket
+     *
+     * @param daKaLogWebsocketApi 打卡日志websocket
+     * */
+    public synchronized void deleteDaKaLogWebsocket(DaKaLogWebsocketApi daKaLogWebsocketApi) {
+        int size = this.daKaLogWebsocketApiList.size();
+
+        for (int i = 0;i < size; i++) {
+            if (daKaLogWebsocketApi.getId().equals(this.daKaLogWebsocketApiList.get(i).getId())) {
+                this.daKaLogWebsocketApiList.remove(i);
+                LOG.info("daKaLogWebsocketApiList: " + this.daKaLogWebsocketApiList.size());
+                return;
+            }
+        }
     }
 
 }

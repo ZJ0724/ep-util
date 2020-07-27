@@ -71,6 +71,11 @@ public final class FormCusMessage extends CusMessage {
     private final List<Element> DecOtherPack = new ArrayList<>();
 
     /**
+     * 特许权使用费
+     * */
+    private final Element DecRoyaltyFee;
+
+    /**
      * 构造函数
      *
      * @param multipartFile 前端传过来的文件
@@ -180,6 +185,9 @@ public final class FormCusMessage extends CusMessage {
                 this.DecOtherPack.add((Element) element);
             }
         }
+
+        // DecRoyaltyFee 特许权使用费
+        this.DecRoyaltyFee = rootElement.element("DecRoyaltyFee");
     }
 
     @Override
@@ -374,6 +382,11 @@ public final class FormCusMessage extends CusMessage {
                                     decGoodsLimitVinResultSet
                             );
 
+                            // 特殊处理BillLadDate
+                            if ("BillLadDate".equals(mapKeyValue.getKey1())) {
+                                mapKeyValue.setDbValue(DateUtil.formatDate(mapKeyValue.getDbValue(), "yyyy-MM-dd 00:00:00", "yyyyMMdd"));
+                            }
+
                             comparison(mapKeyValue, baseWebsocketApi);
                         }
                     }
@@ -551,6 +564,30 @@ public final class FormCusMessage extends CusMessage {
                     );
 
                     comparison(mapKeyValue, baseWebsocketApi);
+                }
+            }
+
+            // 比对特许权使用费
+            if (this.DecRoyaltyFee != null && this.DecRoyaltyFee.elements().size() != 0) {
+                String decRoyaltyFeeMessage = "[特许权使用费]";
+
+                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType(decRoyaltyFeeMessage));
+
+                ResultSet decRoyaltyFeeResultSet = SWGDOracle.queryDecRoyaltyFee(this.ediNo);
+
+                if (checkResultSet(decRoyaltyFeeResultSet, decRoyaltyFeeMessage, baseWebsocketApi)) {
+                    Set<String> decRoyaltyFeeKeys = FormCusMessageNodeMapping.DEC_ROYALTY_FEE_MAPPING.keySet();
+
+                    for (String decRoyaltyFeeKey : decRoyaltyFeeKeys) {
+                        MapKeyValue mapKeyValue = getKeyValue(
+                                this.DecRoyaltyFee,
+                                FormCusMessageNodeMapping.DEC_ROYALTY_FEE_MAPPING,
+                                decRoyaltyFeeKey,
+                                decRoyaltyFeeResultSet
+                        );
+
+                        comparison(mapKeyValue, baseWebsocketApi);
+                    }
                 }
             }
 
@@ -809,6 +846,35 @@ public final class FormCusMessage extends CusMessage {
             DEC_GOODS_LIMIT_VIN_MAPPING.put("ModelEn[型号（英文）]", "MODEL_EN");
             DEC_GOODS_LIMIT_VIN_MAPPING.put("PricePerUnit[单价]", "PRICE_PER_UNIT");
             DEC_GOODS_LIMIT_VIN_MAPPING.put("InvoiceNo[发票号]", "INVOICE_NO");
+        }
+
+        /**
+         * 特许权使用费
+         * */
+        private static final Map<String, String> DEC_ROYALTY_FEE_MAPPING = new LinkedHashMap<>();
+
+        static {
+            DEC_ROYALTY_FEE_MAPPING.put("PricePreDeterminNo[价格预裁定编号]", "PRICE_PRE_DETERMIN_NO");
+            DEC_ROYALTY_FEE_MAPPING.put("TaxRoyaltyDeclType[应税特许权使用费申报情形]", "TAX_ROYALTY_DECL_TYPE");
+            DEC_ROYALTY_FEE_MAPPING.put("ContractNo[合同/协议号]", "CONTRACT_NO");
+            DEC_ROYALTY_FEE_MAPPING.put("Authorizer[授权方]", "AUTHORIZER");
+            DEC_ROYALTY_FEE_MAPPING.put("AuthorizedPerson[被授权方]", "AUTHORIZED_PERSON");
+            DEC_ROYALTY_FEE_MAPPING.put("PayType[支付方式]", "PAY_TYPE");
+            DEC_ROYALTY_FEE_MAPPING.put("PayTime[支付时间]", "PAY_TIME");
+            DEC_ROYALTY_FEE_MAPPING.put("PayPeriod[支付计提周期]", "PAY_PERIOD");
+            DEC_ROYALTY_FEE_MAPPING.put("EffectiveDateTime[合同/协议起始执行时间]", "EFFECTIVE_DATE_TIME");
+            DEC_ROYALTY_FEE_MAPPING.put("ExpirationDateTime[合同协议终止时间]", "EXPIRATION_DATE_TIME");
+            DEC_ROYALTY_FEE_MAPPING.put("RoyaltyAmount[特许权使用费金额]", "ROYALTY_AMOUNT");
+            DEC_ROYALTY_FEE_MAPPING.put("Curr[币制]", "CURR");
+            DEC_ROYALTY_FEE_MAPPING.put("RoyaltyFeeType[特许权使用费类型]", "ROYALTY_FEE_TYPE");
+            DEC_ROYALTY_FEE_MAPPING.put("EdocType[随附材料清单类型]", "EDOC_TYPE");
+            DEC_ROYALTY_FEE_MAPPING.put("Statment[说明]", "STATMENT");
+            DEC_ROYALTY_FEE_MAPPING.put("IsSecret[是否保密]", "IS_SECRET");
+            DEC_ROYALTY_FEE_MAPPING.put("IsCusAudit[是否经过海关审核认定]", "IS_CUS_AUDIT");
+            DEC_ROYALTY_FEE_MAPPING.put("IsCusPricePreDetermin[是否经过海关价格预裁定]", "IS_CUS_PRICE_PRE_DETERMIN");
+            DEC_ROYALTY_FEE_MAPPING.put("IssueDateTime[合同/协议签约时间]", "ISSUE_DATE_TIME");
+            DEC_ROYALTY_FEE_MAPPING.put("PeriodStartDate[本次支付对应的计提周期起始时间]", "PERIOD_START_DATE");
+            DEC_ROYALTY_FEE_MAPPING.put("PeriodEndDate[本次支付对应的计提周期终止时间]", "PERIOD_END_DATE");
         }
 
     }

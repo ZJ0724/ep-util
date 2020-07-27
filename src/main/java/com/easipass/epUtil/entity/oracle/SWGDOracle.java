@@ -313,6 +313,11 @@ public final class SWGDOracle extends Oracle {
 
     /**
      * 查询产品资质VIN
+     *
+     * @param DEC_GOODS_LIMIT_GUID DEC_GOODS_LIMIT_GUID
+     * @param ORDER_NO ORDER_NO
+     *
+     * @return ResultSet
      * */
     public ResultSet queryDecGoodsLimitVin(String DEC_GOODS_LIMIT_GUID, String ORDER_NO) {
         ResultSet resultSet = this.query("SELECT * FROM SWGD.T_DEC_GOODS_LIMIT_VIN WHERE DEC_GOODS_LIMIT_GUID = ? AND ORDER_NO = ?", new Object[]{DEC_GOODS_LIMIT_GUID, ORDER_NO});
@@ -326,6 +331,56 @@ public final class SWGDOracle extends Oracle {
         }
 
         return resultSet;
+    }
+
+    /**
+     * 查询特许权使用费
+     *
+     * @param ediNo ediNo
+     *
+     * @return ResultSet
+     * */
+    public ResultSet queryDecRoyaltyFee(String ediNo) {
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_DEC_ROYALTY_FEE WHERE HEAD_ID = (SELECT ID FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO = ?)", new Object[]{ediNo});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        return resultSet;
+    }
+
+    /**
+     * 查询ediNo
+     *
+     * @param preEntryId 报关单号
+     *
+     * @return ediNo
+     * */
+    public String queryEdiNo(String preEntryId) {
+        String result;
+
+        this.connect();
+
+        ResultSet resultSet = this.query("SELECT EDI_NO FROM SWGD.T_SWGD_FORM_HEAD WHERE PRE_ENTRY_ID = ?", new Object[]{preEntryId});
+
+        try {
+            if (resultSet.next()) {
+                result = resultSet.getString("EDI_NO");
+            } else {
+                throw new OracleException("未找到报关单(" + preEntryId + ")数据");
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            this.close();
+        }
+
+        return result;
     }
 
 }
