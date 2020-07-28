@@ -2,6 +2,7 @@ package com.easipass.epUtil.api.service;
 
 import com.easipass.epUtil.entity.CusMessage;
 import com.easipass.epUtil.entity.Response;
+import com.easipass.epUtil.entity.cusMessage.DecModCusMessage;
 import com.easipass.epUtil.entity.cusMessage.FormCusMessage;
 import com.zj0724.springbootUtil.annotation.SkipCheck;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 @SkipCheck
 public class CusMessageServiceApi {
 
+    private static final String UPLOAD = "upload/";
+
     /**
      * 上传报关单报文
      *
@@ -27,11 +30,27 @@ public class CusMessageServiceApi {
      *
      * @return 响应结果
      * */
-    @PostMapping("formCusMessageUpload")
-    public Response upload(@RequestParam("formCusMessage") MultipartFile multipartFile) {
+    @PostMapping(UPLOAD + "formCusMessage")
+    public Response uploadFormCusMessage(@RequestParam("formCusMessage") MultipartFile multipartFile) {
         CusMessage cusMessage = new FormCusMessage(multipartFile);
 
-        cusMessage.push();
+        CusMessage.push(cusMessage);
+
+        return Response.returnTrue(cusMessage.getId());
+    }
+
+    /**
+     * 上传修撤单报文
+     *
+     * @param multipartFile 前端传过来的报文
+     *
+     * @return 响应结果
+     * */
+    @PostMapping(UPLOAD + "decModCusMessage")
+    public Response uploadDecModCusMessage(@RequestParam("decModCusMessage") MultipartFile multipartFile) {
+        CusMessage cusMessage = new DecModCusMessage(multipartFile);
+
+        CusMessage.push(cusMessage);
 
         return Response.returnTrue(cusMessage.getId());
     }

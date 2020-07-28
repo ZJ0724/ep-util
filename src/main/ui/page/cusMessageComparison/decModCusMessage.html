@@ -19,14 +19,14 @@
 <script type="module">
 
     import cusMessageServiceApi from "../../api/service/cusMessageServiceApi.js";
-    import FormCusMessageComparisonWebsocketApi from "../../api/websocket/FormCusMessageComparisonWebsocketApi.js";
+    import DecModCusMessageComparisonWebsocketApi from "../../api/websocket/DecModCusMessageComparisonWebsocketApi.js";
 
     new Vue({
         el: "#main",
 
         data: {
-            uploadApi: cusMessageServiceApi.uploadFormCusMessage,
-            comparisonApi: FormCusMessageComparisonWebsocketApi
+            uploadApi: cusMessageServiceApi.uploadDecModCusMessage,
+            comparisonApi: DecModCusMessageComparisonWebsocketApi
         }
     });
 

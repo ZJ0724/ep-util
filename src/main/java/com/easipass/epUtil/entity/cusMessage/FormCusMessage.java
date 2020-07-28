@@ -4,7 +4,7 @@ import com.easipass.epUtil.api.websocket.BaseWebsocketApi;
 import com.easipass.epUtil.entity.CusMessage;
 import com.easipass.epUtil.entity.VO.CusMessageComparisonVO;
 import com.easipass.epUtil.entity.oracle.SWGDOracle;
-import com.easipass.epUtil.exception.CusFileException;
+import com.easipass.epUtil.exception.CusMessageException;
 import com.easipass.epUtil.exception.ErrorException;
 import com.easipass.epUtil.exception.OracleException;
 import com.easipass.epUtil.util.DateUtil;
@@ -89,31 +89,31 @@ public final class FormCusMessage extends CusMessage {
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         } catch (DocumentException e) {
-            throw new CusFileException("不是正确的报关单报文");
+            throw new CusMessageException("不是正确的报关单报文");
         }
 
         this.decHead = rootElement.element("DecHead");
         if (this.decHead == null) {
-            throw new CusFileException("不是正确的报关单报文");
+            throw new CusMessageException("不是正确的报关单报文");
         }
 
         Element DecSign = rootElement.element("DecSign");
         if (DecSign == null) {
-            throw new CusFileException("不是正确的报关单报文");
+            throw new CusMessageException("不是正确的报关单报文");
         }
         Element ClientSeqNo = DecSign.element("ClientSeqNo");
         if (ClientSeqNo == null) {
-            throw new CusFileException("不是正确的报关单报文");
+            throw new CusMessageException("不是正确的报关单报文");
         }
         String ediNo = ClientSeqNo.getText();
         if ("".equals(ediNo)) {
-            throw new CusFileException("不是正确的报关单报文");
+            throw new CusMessageException("不是正确的报关单报文");
         }
         this.ediNo = ediNo;
 
         Element DecLists = rootElement.element("DecLists");
         if (DecLists == null) {
-            throw new CusFileException("不是正确的报关单报文");
+            throw new CusMessageException("不是正确的报关单报文");
         }
         List<?> DecListList = DecLists.elements("DecList");
         for (Object element : DecListList) {
