@@ -383,4 +383,68 @@ public final class SWGDOracle extends Oracle {
         return result;
     }
 
+    /**
+     * 查询修撤单表头
+     *
+     * @param preEntryId 报关单号
+     *
+     * @return ResultSet
+     * */
+    public ResultSet queryDecModHead(String preEntryId) {
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_SWGD_DECMOD_HEAD WHERE PRE_ENTRY_ID = ?", new Object[]{preEntryId});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        return resultSet;
+    }
+
+    /**
+     * 查询报关单表头通过报关单号
+     *
+     * @param preEntryId 报关单号
+     *
+     * @return ResultSet
+     * */
+    public ResultSet queryFormHeadByPreEntryId(String preEntryId) {
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_SWGD_FORM_HEAD WHERE PRE_ENTRY_ID = ?", new Object[]{preEntryId});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        return resultSet;
+    }
+
+    /**
+     * 获取修撤单表体
+     *
+     * @param preEntryId 报关单号
+     * @param QPFieldCode 字段代码
+     *
+     * @return ResultSet
+     * */
+    public ResultSet queryDecModList(String preEntryId, String QPFieldCode) {
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_SWGD_DECMOD_LIST WHERE HEAD_ID = (SELECT ID FROM SWGD.T_SWGD_DECMOD_HEAD WHERE PRE_ENTRY_ID = ?) AND QP_FIELDCODE = ?", new Object[]{preEntryId, QPFieldCode});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        return resultSet;
+    }
+
 }

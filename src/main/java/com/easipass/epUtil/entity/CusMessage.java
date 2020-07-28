@@ -49,14 +49,6 @@ public abstract class CusMessage {
     }
 
     /**
-     * 添加报文
-     * */
-    public void push() {
-        CUS_MESSAGES_LIST.add(this);
-        LOG.info("添加报文: " + this.getId());
-    }
-
-    /**
      * 删除报文
      * */
     public void delete() {
@@ -96,7 +88,7 @@ public abstract class CusMessage {
      * @return dbValue
      * */
     protected static String getDbValue(ResultSet resultSet, String value) {
-        if (value == null) {
+        if (value == null || "?".equals(value)) {
             return "";
         }
 
@@ -202,6 +194,16 @@ public abstract class CusMessage {
         }
 
         return null;
+    }
+
+    /**
+     * 添加报文
+     *
+     * @param cusMessage 报文
+     * */
+    public static void push(CusMessage cusMessage) {
+        CUS_MESSAGES_LIST.add(cusMessage);
+        LOG.info("添加报文: " + cusMessage.getId());
     }
 
     /**
