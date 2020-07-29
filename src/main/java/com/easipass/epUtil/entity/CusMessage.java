@@ -62,124 +62,6 @@ public abstract class CusMessage {
     }
 
     /**
-     * 获取节点内容
-     *
-     * @param element 父节点
-     * @param elementName 子节点名
-     *
-     * @return 节点值
-     * */
-    protected static String getNodeValue(Element element, String elementName) {
-        Element cElement = element.element(elementName);
-
-        if (cElement == null) {
-            return "";
-        }
-
-        return cElement.getText();
-    }
-
-    /**
-     * 获取dbValue
-     *
-     * @param resultSet 数据库数据
-     * @param value 字段名
-     *
-     * @return dbValue
-     * */
-    protected static String getDbValue(ResultSet resultSet, String value) {
-        if (value == null || "?".equals(value)) {
-            return "";
-        }
-
-        String result;
-
-        try {
-            result = resultSet.getString(value);
-        } catch (SQLException e) {
-            throw new ErrorException(e.getMessage() + ": " + value);
-        }
-
-        return result;
-    }
-
-    /**
-     * 获取key1
-     *
-     * @param key key
-     *
-     * @return key1
-     * */
-    protected static String getKey1(String key) {
-        // [索引
-        int index = key.indexOf("[");
-        // 返回的key
-        String result = key;
-
-        if (index != -1) {
-            result = result.substring(0, index);
-        }
-
-        return result;
-    }
-
-    /**
-     * 获取keyValue
-     *
-     * @param element 元素
-     * @param map 映射
-     * @param key 映射key
-     * @param resultSet 数据库数据
-     *
-     * @return keyValue
-     * */
-    protected static MapKeyValue getKeyValue(Element element, Map<String, String> map, String key, ResultSet resultSet) {
-        String key1 = getKey1(key);
-        String value = map.get(key);
-        String nodeValue = getNodeValue(element, key1);
-        String dbValue = getDbValue(resultSet, value);
-
-        return new MapKeyValue(key, key1, value, nodeValue, dbValue);
-    }
-
-    /**
-     * 比对
-     *
-     * @param mapKeyValue mapKeyValue
-     * @param baseWebsocketApi websocket服务
-     * */
-    protected static void comparison(MapKeyValue mapKeyValue, BaseWebsocketApi baseWebsocketApi) {
-        if (mapKeyValue == null) {
-            return;
-        }
-
-        String key = mapKeyValue.getKey();
-        String key1 = mapKeyValue.getKey1();
-        String value = mapKeyValue.getValue();
-        String nodeValue = mapKeyValue.getNodeValue();
-        String dbValue = mapKeyValue.getDbValue();
-
-        // 如果value是null的话，不进行比对
-        if (value == null) {
-            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonNullType(key1));
-            return;
-        }
-
-        if (nodeValue == null) {
-            nodeValue = "";
-        }
-        if (dbValue == null) {
-            dbValue = "";
-        }
-
-        if (nodeValue.equals(dbValue)) {
-            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonTrueType(key));
-        } else {
-            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonFalseType(key));
-        }
-    }
-
-    /**
      * 获取报文
      *
      * @param id id
@@ -207,44 +89,21 @@ public abstract class CusMessage {
     }
 
     /**
-     * 检查数据库数据
-     *
-     * @param resultSet 数据库数据
-     * @param message 信息
-     * @param baseWebsocketApi websocket服务
-     *
-     * @return 数据库数据不为null返回true
-     * */
-    protected static boolean checkResultSet(ResultSet resultSet, String message, BaseWebsocketApi baseWebsocketApi) {
-        if (resultSet == null) {
-            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getErrorType("数据库" + message + "数据不存在"));
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * MapKeyValue
+     * 节点映射
      *
      * @author ZJ
      * */
-    protected static final class MapKeyValue {
+    protected static final class NodeMapping {
 
         /**
-         * key
+         * 节点
          * */
-        private String key;
+        private final String node;
 
         /**
-         * key1
+         * 节点名
          * */
-        private String key1;
-
-        /**
-         * value
-         * */
-        private String value;
+        private final String nodeName;
 
         /**
          * 节点值
@@ -252,68 +111,166 @@ public abstract class CusMessage {
         private String nodeValue;
 
         /**
+         * 数据库对应字段
+         * */
+        private final String dbField;
+
+        /**
          * 数据库值
          * */
         private String dbValue;
 
         /**
+         * 是否不能为空
+         * */
+        private final boolean notNull;
+
+        /**
          * 构造函数
          *
-         * @param key key
-         * @param key1 key1
-         * @param value value
-         * @param nodeValue 节点值
-         * @param dbValue 数据库值
+         * @param node 节点
+         * @param nodeName 节点名
+         * @param dbField 数据库对应字段
+         * @param notNull 是否不能为空
          * */
-        public MapKeyValue(String key, String key1, String value, String nodeValue, String dbValue) {
-            this.key = key;
-            this.key1 = key1;
-            this.value = value;
-            this.nodeValue = nodeValue;
-            this.dbValue = dbValue;
+        public NodeMapping(String node, String nodeName, String dbField, boolean notNull) {
+            this.node = node;
+            this.nodeName = node + "[" + nodeName + "]";
+            this.dbField = dbField;
+            this.notNull = notNull;
+        }
+
+        /**
+         * 构造函数
+         *
+         * @param node 节点
+         * @param nodeName 节点名
+         * @param dbField 数据库对应字段
+         * */
+        public NodeMapping(String node, String nodeName, String dbField) {
+            this(node, nodeName, dbField, false);
         }
 
         /**
          * get, set
          * */
-        public String getKey() {
-            return key;
+        public String getNode() {
+            return node;
         }
 
-        public void setKey(String key) {
-            this.key = key;
-        }
-
-        public String getKey1() {
-            return key1;
-        }
-
-        public void setKey1(String key1) {
-            this.key1 = key1;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
+        public String getNodeName() {
+            return nodeName;
         }
 
         public String getNodeValue() {
             return nodeValue;
         }
 
-        public void setNodeValue(String nodeValue) {
-            this.nodeValue = nodeValue;
+        public String getDbField() {
+            return dbField;
         }
 
         public String getDbValue() {
             return dbValue;
         }
 
+        public boolean isNotNull() {
+            return notNull;
+        }
+
+        public void setNodeValue(String nodeValue) {
+            this.nodeValue = nodeValue;
+        }
+
         public void setDbValue(String dbValue) {
             this.dbValue = dbValue;
+        }
+
+        /**
+         * 比对
+         *
+         * @param element 元素
+         * @param resultSet 数据库数据
+         * @param message 信息
+         * @param baseWebsocketApi websocket服务
+         * */
+        public void comparison(Element element, ResultSet resultSet, String message, BaseWebsocketApi baseWebsocketApi) {
+            // 校验数据库数据
+            if (resultSet == null) {
+                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getErrorType("数据库" + message + "数据不存在"));
+                return;
+            }
+
+            // 如果dbField是null的话，不进行比对
+            if (this.dbField == null) {
+                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonNullType(this.nodeName));
+                return;
+            }
+
+            this.nodeValue = getNodeValue(element, this.node);
+            this.dbValue = getDbValue(resultSet, this.dbField);
+
+
+            if (this.nodeValue == null) {
+                this.nodeValue = "";
+            }
+            if (this.dbValue == null) {
+                this.dbValue = "";
+            }
+
+            // 校验必填
+            if (this.notNull && "".equals(this.nodeValue)) {
+                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonFalseType(this.nodeName));
+                return;
+            }
+
+            if (nodeValue.equals(dbValue)) {
+                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonTrueType(this.nodeName));
+            } else {
+                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonFalseType(this.nodeName));
+            }
+        }
+
+        /**
+         * 获取节点内容
+         *
+         * @param element 父节点
+         * @param elementName 子节点名
+         *
+         * @return 节点值
+         * */
+        public static String getNodeValue(Element element, String elementName) {
+            Element cElement = element.element(elementName);
+
+            if (cElement == null) {
+                return "";
+            }
+
+            return cElement.getText();
+        }
+
+        /**
+         * 获取dbValue
+         *
+         * @param resultSet 数据库数据
+         * @param value 字段名
+         *
+         * @return dbValue
+         * */
+        public static String getDbValue(ResultSet resultSet, String value) {
+            if (value == null || "?".equals(value)) {
+                return "";
+            }
+
+            String result;
+
+            try {
+                result = resultSet.getString(value);
+            } catch (SQLException e) {
+                throw new ErrorException(e.getMessage() + ": " + value);
+            }
+
+            return result;
         }
 
     }
