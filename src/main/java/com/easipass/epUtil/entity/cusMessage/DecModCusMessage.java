@@ -163,7 +163,12 @@ public final class DecModCusMessage extends CusMessage {
                             mapKeyValue.setDbValue(getDbValue(formHeadResult, "AGENT_CODE_SCC"));
                         }
 
-                        comparison(mapKeyValue, baseWebsocketApi);
+                        // Sign
+                        if ("Sign".equals(key1) && "".equals(mapKeyValue.getNodeValue())) {
+                            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonFalseType(mapKeyValue.getKey()));
+                        } else {
+                            comparison(mapKeyValue, baseWebsocketApi);
+                        }
                     }
                 }
             }
