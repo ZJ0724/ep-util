@@ -187,29 +187,26 @@ public abstract class CusMessage {
         }
 
         /**
-         * 比对
-         *
+         * 加载数据
          * @param element 元素
          * @param resultSet 数据库数据
-         * @param message 信息
+         * */
+        public void loadData(Element element, ResultSet resultSet) {
+            this.nodeValue = getNodeValue(element, this.node);
+            this.dbValue = getDbValue(resultSet, this.dbField);
+        }
+
+        /**
+         * 比对
+         *
          * @param baseWebsocketApi websocket服务
          * */
-        public void comparison(Element element, ResultSet resultSet, String message, BaseWebsocketApi baseWebsocketApi) {
-            // 校验数据库数据
-            if (resultSet == null) {
-                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getErrorType("数据库" + message + "数据不存在"));
-                return;
-            }
-
+        public void comparison(BaseWebsocketApi baseWebsocketApi) {
             // 如果dbField是null的话，不进行比对
             if (this.dbField == null) {
                 baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonNullType(this.nodeName));
                 return;
             }
-
-            this.nodeValue = getNodeValue(element, this.node);
-            this.dbValue = getDbValue(resultSet, this.dbField);
-
 
             if (this.nodeValue == null) {
                 this.nodeValue = "";
@@ -271,6 +268,44 @@ public abstract class CusMessage {
             }
 
             return result;
+        }
+
+        /**
+         * 检查数据库数据
+         *
+         * @param resultSet resultSet
+         * @param message message
+         * @param baseWebsocketApi baseWebsocketApi
+         *
+         * @return 数据不为NULl这返回true
+         * */
+        public static boolean checkResultSet(ResultSet resultSet, String message, BaseWebsocketApi baseWebsocketApi) {
+            if (resultSet == null) {
+                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getErrorType("数据库" + message + "数据不存在"));
+                return false;
+            }
+
+            return true;
+        }
+
+        /**
+         * 获取ieFlag
+         *
+         * @param ieFlag ieFlag
+         *
+         * @return ieFlag
+         * */
+        public static String getIeFlag(String ieFlag) {
+            switch (ieFlag) {
+                case "0" : case "2" : case "4" : case "6" : case "8" : case "A" :
+                    return "E";
+
+                case "1" : case "3" : case "5" : case "7" : case "9" : case "B" :
+                case "D" :  case "F" :
+                    return "I";
+            }
+
+            return null;
         }
 
     }

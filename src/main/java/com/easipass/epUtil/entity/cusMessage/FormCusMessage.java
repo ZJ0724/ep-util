@@ -209,46 +209,45 @@ public final class FormCusMessage extends CusMessage {
 
             ResultSet dbFormHead = SWGDOracle.queryFormHead(this.ediNo);
 
-            if (!checkResultSet(dbFormHead, formHeadMessage, baseWebsocketApi)) {
+            if (!NodeMapping.checkResultSet(dbFormHead, formHeadMessage, baseWebsocketApi)) {
                 return;
             }
 
-            Set<String> formHeadKeys = FormCusMessageNodeMapping.FORM_HEAD_MAPPING.keySet();
+            for (NodeMapping nodeMapping : FormCusMessageNodeMapping.FORM_HEAD_MAPPING) {
+                nodeMapping.loadData(this.decHead, dbFormHead);
 
-            for (String key : formHeadKeys) {
-                MapKeyValue mapKeyValue = getKeyValue(this.decHead, FormCusMessageNodeMapping.FORM_HEAD_MAPPING, key, dbFormHead);
-                String key1 = mapKeyValue.getKey1();
-                String nodeValue = mapKeyValue.getNodeValue();
-                String dbValue = mapKeyValue.getDbValue();
+                String node = nodeMapping.getNode();
+                String nodeValue = nodeMapping.getNodeValue();
+                String dbValue = nodeMapping.getDbValue();
 
                 // IEDate、DespDate、CmplDschrgDt特殊处理
-                if (key1.equals("IEDate") || key1.equals("DespDate") || key1.equals("CmplDschrgDt")) {
-                    mapKeyValue.setDbValue(DateUtil.formatDateYYYYMMdd(dbValue));
+                if (node.equals("IEDate") || node.equals("DespDate") || node.equals("CmplDschrgDt")) {
+                    nodeMapping.setDbValue(DateUtil.formatDateYYYYMMdd(dbValue));
                 }
 
                 // DeclareName特殊处理
-                if ("DeclareName".equals(key1)) {
+                if ("DeclareName".equals(node)) {
                     // IE_TYPE
-                    String ieType = getDbValue(dbFormHead, "IE_TYPE");
+                    String ieType = NodeMapping.getDbValue(dbFormHead, "IE_TYPE");
 
                     // 如果IE_TYPE为0，则DeclareName可以为null
                     if ("0".equals(ieType)) {
                         if ("".equals(nodeValue)) {
-                            mapKeyValue.setDbValue("");
+                            nodeMapping.setDbValue("");
                         }
                     }
                 }
 
                 // 特殊处理PackNo
-                if ("PackNo".equals(key1)) {
+                if ("PackNo".equals(node)) {
                     // 如果nodeValue为0，并且dbValue为null，则将dbValue设置成0
                     if ("0".equals(nodeValue) && dbValue == null) {
-                        mapKeyValue.setDbValue("0");
+                        nodeMapping.setDbValue("0");
                     }
                 }
 
                 // 特殊处理Type
-                if ("Type".equals(key1)) {
+                if ("Type".equals(node)) {
                     String[] values = new String[]{"TYPE_2", "TYPE_3", "TYPE_4", "TYPE_5"};
                     String newDbValue = "  ";
 
@@ -257,18 +256,22 @@ public final class FormCusMessage extends CusMessage {
                     }
 
                     for (String value : values) {
-                        String s = getDbValue(dbFormHead, value);
+                        String s = NodeMapping.getDbValue(dbFormHead, value);
                         newDbValue = StringUtil.append(newDbValue, s);
                     }
-                    mapKeyValue.setDbValue(newDbValue);
+                    nodeMapping.setDbValue(newDbValue);
                 }
 
-                comparison(mapKeyValue, baseWebsocketApi);
+                // IEFlag
+                if ("IEFlag".equals(node)) {
+                    nodeMapping.setDbValue(NodeMapping.getIeFlag(dbValue));
+                }
+
+                nodeMapping.comparison(baseWebsocketApi);
             }
 
             // 比对表体数据
             int size = this.DecList.size();
-            Set<String> ListKeys = FormCusMessageNodeMapping.FORM_LIST_MAPPING.keySet();
 
             for (int i = 0; i < size; i++) {
                 String formListMessage = "[表体 - " + (i + 1) + "]";
@@ -277,45 +280,37 @@ public final class FormCusMessage extends CusMessage {
 
                 ResultSet resultSet = SWGDOracle.queryFormList(ediNo, i + "");
 
-                if (!checkResultSet(resultSet, formListMessage, baseWebsocketApi)) {
+                if (!NodeMapping.checkResultSet(resultSet, formListMessage, baseWebsocketApi)) {
                     continue;
                 }
 
-                // codeTs
-                String codeTs = "";
                 Element element = this.DecList.get(i);
 
-                for (String key : ListKeys) {
-                    MapKeyValue mapKeyValue = getKeyValue(element, FormCusMessageNodeMapping.FORM_LIST_MAPPING, key, resultSet);
-                    String key1 = mapKeyValue.getKey1();
-                    String dbValue = mapKeyValue.getDbValue();
-                    String value = mapKeyValue.getValue();
-                    String nodeValue = mapKeyValue.getNodeValue();
+                for (NodeMapping nodeMapping : FormCusMessageNodeMapping.FORM_LIST_MAPPING) {
+                    nodeMapping.loadData(element, resultSet);
+
+                    String node = nodeMapping.getNode();
+                    String dbValue = nodeMapping.getDbValue();
 
                     // ProdValidDt特殊处理
-                    if (key1.equals("ProdValidDt")) {
-                        mapKeyValue.setDbValue(DateUtil.formatDateYYYYMMdd(dbValue));
+                    if (node.equals("ProdValidDt")) {
+                        nodeMapping.setDbValue(DateUtil.formatDateYYYYMMdd(dbValue));
                     }
 
                     // 特殊处理GNo
-                    if (key1.equals("GNo")) {
-                        mapKeyValue.setDbValue((Integer.parseInt(dbValue) + 1) + "");
+                    if (node.equals("GNo")) {
+                        nodeMapping.setDbValue((Integer.parseInt(dbValue) + 1) + "");
                     }
 
                     // 特殊处理CodeTS
-                    if ("CODE_T".equals(value)) {
-                        codeTs = StringUtil.append(codeTs, dbValue);
-                        continue;
-                    }
-                    if ("CODE_S".equals(value)) {
-                        if (dbValue == null) {
-                            dbValue = nodeValue.substring(nodeValue.length() - 2);
-                        }
-                        codeTs = StringUtil.append(codeTs, dbValue);
-                        mapKeyValue.setDbValue(codeTs);
+                    if ("CodeTS".equals(node)) {
+                        String codeT = NodeMapping.getDbValue(resultSet, "CODE_T");
+                        String codeS = NodeMapping.getDbValue(resultSet, "CODE_S");
+
+                        nodeMapping.setDbValue(codeT + codeS);
                     }
 
-                    comparison(mapKeyValue, baseWebsocketApi);
+                    nodeMapping.comparison(baseWebsocketApi);
                 }
 
                 // 比对产品资质 DecGoodsLimits
@@ -327,7 +322,6 @@ public final class FormCusMessage extends CusMessage {
 
                 List<?> DecGoodsLimit_list = DecGoodsLimits.elements("DecGoodsLimit");
                 int DecGoodsLimit_listSize = DecGoodsLimit_list.size();
-                Set<String> keys = FormCusMessageNodeMapping.DEC_GOODS_LIMIT_MAPPING.keySet();
 
                 for (int j = 0; j < DecGoodsLimit_listSize; j++) {
                     String decGoodsLimitMessage = formListMessage + " -> [产品资质 - " + (j + 1) + "]";
@@ -336,21 +330,15 @@ public final class FormCusMessage extends CusMessage {
 
                     ResultSet DecGoodsLimitResultSet = SWGDOracle.queryDecGoodsLimit(this.ediNo, i + "", (j + 1) + "");
 
-                    if (!checkResultSet(DecGoodsLimitResultSet,decGoodsLimitMessage , baseWebsocketApi)) {
+                    if (!NodeMapping.checkResultSet(DecGoodsLimitResultSet,decGoodsLimitMessage , baseWebsocketApi)) {
                         continue;
                     }
 
                     Element DecGoodsLimit = (Element) DecGoodsLimit_list.get(j);
 
-                    for (String key : keys) {
-                        MapKeyValue mapKeyValue = getKeyValue(
-                                DecGoodsLimit,
-                                FormCusMessageNodeMapping.DEC_GOODS_LIMIT_MAPPING,
-                                key,
-                                DecGoodsLimitResultSet
-                        );
-
-                        comparison(mapKeyValue, baseWebsocketApi);
+                    for (NodeMapping nodeMapping : FormCusMessageNodeMapping.DEC_GOODS_LIMIT_MAPPING) {
+                        nodeMapping.loadData(DecGoodsLimit, DecGoodsLimitResultSet);
+                        nodeMapping.comparison(baseWebsocketApi);
                     }
 
                     // 比对产品资质VIN DecGoodsLimitVin
@@ -366,28 +354,21 @@ public final class FormCusMessage extends CusMessage {
 
                         baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType(DecGoodsLimitVinMessage));
 
-                        ResultSet decGoodsLimitVinResultSet = SWGDOracle.queryDecGoodsLimitVin(getDbValue(DecGoodsLimitResultSet, "GUID"), (k + 1) + "");
+                        ResultSet decGoodsLimitVinResultSet = SWGDOracle.queryDecGoodsLimitVin(NodeMapping.getDbValue(DecGoodsLimitResultSet, "GUID"), (k + 1) + "");
 
-                        if (!checkResultSet(decGoodsLimitVinResultSet, DecGoodsLimitVinMessage, baseWebsocketApi)) {
+                        if (!NodeMapping.checkResultSet(decGoodsLimitVinResultSet, DecGoodsLimitVinMessage, baseWebsocketApi)) {
                             continue;
                         }
 
-                        Set<String> decGoodsLimitVinKeys = FormCusMessageNodeMapping.DEC_GOODS_LIMIT_VIN_MAPPING.keySet();
-
-                        for (String key : decGoodsLimitVinKeys) {
-                            MapKeyValue mapKeyValue = getKeyValue(
-                                    (Element) DecGoodsLimitVin_list.get(k),
-                                    FormCusMessageNodeMapping.DEC_GOODS_LIMIT_VIN_MAPPING,
-                                    key,
-                                    decGoodsLimitVinResultSet
-                            );
+                        for (NodeMapping nodeMapping : FormCusMessageNodeMapping.DEC_GOODS_LIMIT_VIN_MAPPING) {
+                            nodeMapping.loadData((Element) DecGoodsLimitVin_list.get(k), decGoodsLimitVinResultSet);
 
                             // 特殊处理BillLadDate
-                            if ("BillLadDate".equals(mapKeyValue.getKey1())) {
-                                mapKeyValue.setDbValue(DateUtil.formatDate(mapKeyValue.getDbValue(), "yyyy-MM-dd 00:00:00", "yyyyMMdd"));
+                            if ("BillLadDate".equals(nodeMapping.getNode())) {
+                                nodeMapping.setDbValue(DateUtil.formatDate(nodeMapping.getDbValue(), "yyyy-MM-dd 00:00:00", "yyyyMMdd"));
                             }
 
-                            comparison(mapKeyValue, baseWebsocketApi);
+                            nodeMapping.comparison(baseWebsocketApi);
                         }
                     }
                 }
@@ -403,21 +384,13 @@ public final class FormCusMessage extends CusMessage {
 
                 ResultSet resultSet = SWGDOracle.queryFormContainer(ediNo, i + "");
 
-                if (!checkResultSet(resultSet, containerMessage, baseWebsocketApi)) {
+                if (!NodeMapping.checkResultSet(resultSet, containerMessage, baseWebsocketApi)) {
                     continue;
                 }
 
-                Set<String> containersKeys = FormCusMessageNodeMapping.FORM_CONTAINER_MAPPING.keySet();
-
-                for (String key : containersKeys) {
-                    MapKeyValue mapKeyValue = getKeyValue(
-                            this.DecContainers.get(i),
-                            FormCusMessageNodeMapping.FORM_CONTAINER_MAPPING,
-                            key,
-                            resultSet
-                    );
-
-                    comparison(mapKeyValue, baseWebsocketApi);
+                for (NodeMapping nodeMapping : FormCusMessageNodeMapping.FORM_CONTAINER_MAPPING) {
+                    nodeMapping.loadData(this.DecContainers.get(i), resultSet);
+                    nodeMapping.comparison(baseWebsocketApi);
                 }
             }
 
@@ -431,21 +404,13 @@ public final class FormCusMessage extends CusMessage {
 
                 ResultSet resultSet = SWGDOracle.queryFormCertificate(ediNo, i + "");
 
-                if (!checkResultSet(resultSet, licenseDocuMessage, baseWebsocketApi)) {
+                if (!NodeMapping.checkResultSet(resultSet, licenseDocuMessage, baseWebsocketApi)) {
                     continue;
                 }
 
-                Set<String> certificateKeys = FormCusMessageNodeMapping.FORM_CERTIFICATE_MAPPING.keySet();
-
-                for (String key : certificateKeys) {
-                    MapKeyValue mapKeyValue = getKeyValue(
-                            this.LicenseDocu.get(i),
-                            FormCusMessageNodeMapping.FORM_CERTIFICATE_MAPPING,
-                            key,
-                            resultSet
-                    );
-
-                    comparison(mapKeyValue, baseWebsocketApi);
+                for (NodeMapping nodeMapping : FormCusMessageNodeMapping.FORM_CERTIFICATE_MAPPING) {
+                    nodeMapping.loadData(this.LicenseDocu.get(i), resultSet);
+                    nodeMapping.comparison(baseWebsocketApi);
                 }
             }
 
@@ -459,21 +424,13 @@ public final class FormCusMessage extends CusMessage {
 
                 ResultSet resultSet = SWGDOracle.queryDecRequestCert(this.ediNo, i + "");
 
-                if (!checkResultSet(resultSet, decRequestCerMessage, baseWebsocketApi)) {
+                if (!NodeMapping.checkResultSet(resultSet, decRequestCerMessage, baseWebsocketApi)) {
                     continue;
                 }
 
-                Set<String> keys = FormCusMessageNodeMapping.DEC_REQUEST_CERT_MAPPING.keySet();
-
-                for (String key : keys) {
-                    MapKeyValue mapKeyValue = getKeyValue(
-                            this.DecRequestCert.get(i),
-                            FormCusMessageNodeMapping.DEC_REQUEST_CERT_MAPPING,
-                            key,
-                            resultSet
-                    );
-
-                    comparison(mapKeyValue, baseWebsocketApi);
+                for (NodeMapping nodeMapping : FormCusMessageNodeMapping.DEC_REQUEST_CERT_MAPPING) {
+                    nodeMapping.loadData(this.DecRequestCert.get(i), resultSet);
+                    nodeMapping.comparison(baseWebsocketApi);
                 }
             }
 
@@ -487,21 +444,13 @@ public final class FormCusMessage extends CusMessage {
 
                 ResultSet resultSet = SWGDOracle.queryDecCopLimit(this.ediNo, (i + 1) + "");
 
-                if (!checkResultSet(resultSet, decCopLimitMessage, baseWebsocketApi)) {
+                if (!NodeMapping.checkResultSet(resultSet, decCopLimitMessage, baseWebsocketApi)) {
                     continue;
                 }
 
-                Set<String> keys = FormCusMessageNodeMapping.DEC_COP_LIMIT_MAPPING.keySet();
-
-                for (String key : keys) {
-                    MapKeyValue mapKeyValue = getKeyValue(
-                            this.DecCopLimit.get(i),
-                            FormCusMessageNodeMapping.DEC_COP_LIMIT_MAPPING,
-                            key,
-                            resultSet
-                    );
-
-                    comparison(mapKeyValue, baseWebsocketApi);
+                for (NodeMapping nodeMapping : FormCusMessageNodeMapping.DEC_COP_LIMIT_MAPPING) {
+                    nodeMapping.loadData(this.DecCopLimit.get(i), resultSet);
+                    nodeMapping.comparison(baseWebsocketApi);
                 }
             }
 
@@ -515,21 +464,13 @@ public final class FormCusMessage extends CusMessage {
 
                 ResultSet resultSet = SWGDOracle.queryDecCopPromise(ediNo, (i + 1) + "");
 
-                if (!checkResultSet(resultSet, decCopPromiseMessage, baseWebsocketApi)) {
+                if (!NodeMapping.checkResultSet(resultSet, decCopPromiseMessage, baseWebsocketApi)) {
                     continue;
                 }
 
-                Set<String> keys = FormCusMessageNodeMapping.DEC_COP_PROMISE_MAPPING.keySet();
-
-                for (String key : keys) {
-                    MapKeyValue mapKeyValue = getKeyValue(
-                            this.DecCopPromise.get(i),
-                            FormCusMessageNodeMapping.DEC_COP_PROMISE_MAPPING,
-                            key,
-                            resultSet
-                    );
-
-                    comparison(mapKeyValue, baseWebsocketApi);
+                for (NodeMapping nodeMapping : FormCusMessageNodeMapping.DEC_COP_PROMISE_MAPPING) {
+                    nodeMapping.loadData(this.DecCopPromise.get(i), resultSet);
+                    nodeMapping.comparison(baseWebsocketApi);
                 }
             }
 
@@ -549,21 +490,13 @@ public final class FormCusMessage extends CusMessage {
 
                 ResultSet resultSet = SWGDOracle.queryDecOtherPack(ediNo, (i + 1) + "");
 
-                if (!checkResultSet(resultSet, decOtherPackMessage, baseWebsocketApi)) {
+                if (!NodeMapping.checkResultSet(resultSet, decOtherPackMessage, baseWebsocketApi)) {
                     continue;
                 }
 
-                Set<String> keys = FormCusMessageNodeMapping.DEC_OTHER_PACK_MAPPING.keySet();
-
-                for (String key : keys) {
-                    MapKeyValue mapKeyValue = getKeyValue(
-                            this.DecOtherPack.get(i),
-                            FormCusMessageNodeMapping.DEC_OTHER_PACK_MAPPING,
-                            key,
-                            resultSet
-                    );
-
-                    comparison(mapKeyValue, baseWebsocketApi);
+                for (NodeMapping nodeMapping : FormCusMessageNodeMapping.DEC_OTHER_PACK_MAPPING) {
+                    nodeMapping.loadData(this.DecOtherPack.get(i), resultSet);
+                    nodeMapping.comparison(baseWebsocketApi);
                 }
             }
 
@@ -575,18 +508,10 @@ public final class FormCusMessage extends CusMessage {
 
                 ResultSet decRoyaltyFeeResultSet = SWGDOracle.queryDecRoyaltyFee(this.ediNo);
 
-                if (checkResultSet(decRoyaltyFeeResultSet, decRoyaltyFeeMessage, baseWebsocketApi)) {
-                    Set<String> decRoyaltyFeeKeys = FormCusMessageNodeMapping.DEC_ROYALTY_FEE_MAPPING.keySet();
-
-                    for (String decRoyaltyFeeKey : decRoyaltyFeeKeys) {
-                        MapKeyValue mapKeyValue = getKeyValue(
-                                this.DecRoyaltyFee,
-                                FormCusMessageNodeMapping.DEC_ROYALTY_FEE_MAPPING,
-                                decRoyaltyFeeKey,
-                                decRoyaltyFeeResultSet
-                        );
-
-                        comparison(mapKeyValue, baseWebsocketApi);
+                if (NodeMapping.checkResultSet(decRoyaltyFeeResultSet, decRoyaltyFeeMessage, baseWebsocketApi)) {
+                    for (NodeMapping nodeMapping : FormCusMessageNodeMapping.DEC_ROYALTY_FEE_MAPPING) {
+                        nodeMapping.loadData(this.DecRoyaltyFee, decRoyaltyFeeResultSet);
+                        nodeMapping.comparison(baseWebsocketApi);
                     }
                 }
             }
@@ -617,7 +542,7 @@ public final class FormCusMessage extends CusMessage {
 
         static {
             FORM_HEAD_MAPPING.add(new NodeMapping("SeqNo", "数据中心统一编号", null));
-            FORM_HEAD_MAPPING.add(new NodeMapping("IEFlag", "进出口标识", "?"));
+            FORM_HEAD_MAPPING.add(new NodeMapping("IEFlag", "进出口标识", "IE_FLAG"));
             FORM_HEAD_MAPPING.add(new NodeMapping("Type", "type", "?"));
             FORM_HEAD_MAPPING.add(new NodeMapping("AgentCode", "申报单位代码", "AGENT_CODE"));
             FORM_HEAD_MAPPING.add(new NodeMapping("AgentName", "申报单位名称", "AGENT_NAME"));
@@ -824,9 +749,7 @@ public final class FormCusMessage extends CusMessage {
 
         static {
             DEC_OTHER_PACK_MAPPING.add(new NodeMapping("PackQty", "包装件数", "PACK_QTY"));
-
-            DEC_OTHER_PACK_MAPPING.put("[]", "");
-            DEC_OTHER_PACK_MAPPING.put("PackType[包装材料种类]", "PACK_TYPE");
+            DEC_OTHER_PACK_MAPPING.add(new NodeMapping("PackType", "包装材料种类", "PACK_TYPE"));
         }
 
         /**
@@ -835,12 +758,12 @@ public final class FormCusMessage extends CusMessage {
         private static final List<NodeMapping> DEC_GOODS_LIMIT_MAPPING = new ArrayList<>();
 
         static {
-            DEC_GOODS_LIMIT_MAPPING.put("GoodsNo[商品序号]", "GOODS_NO");
-            DEC_GOODS_LIMIT_MAPPING.put("LicTypeCode[许可证类别代码]", "LIC_TYPE_CODE");
-            DEC_GOODS_LIMIT_MAPPING.put("LicenceNo[许可证编号]", "LICENCE_NO");
-            DEC_GOODS_LIMIT_MAPPING.put("LicWrtofDetailNo[许可证核销明细序号]", "LIC_WRTOF_DETAIL_NO");
-            DEC_GOODS_LIMIT_MAPPING.put("LicWrtofQty[许可证核销数量]", "LIC_WRTOF_QTY");
-            DEC_GOODS_LIMIT_MAPPING.put("LicWrtofQtyUnit[许可证核销数量单位]", "LIC_WRTOF_QTY_UNIT");
+            DEC_GOODS_LIMIT_MAPPING.add(new NodeMapping("GoodsNo", "商品序号", "GOODS_NO"));
+            DEC_GOODS_LIMIT_MAPPING.add(new NodeMapping("LicTypeCode", "许可证类别代码", "LIC_TYPE_CODE"));
+            DEC_GOODS_LIMIT_MAPPING.add(new NodeMapping("LicenceNo", "许可证编号", "LICENCE_NO"));
+            DEC_GOODS_LIMIT_MAPPING.add(new NodeMapping("LicWrtofDetailNo", "许可证核销明细序号", "LIC_WRTOF_DETAIL_NO"));
+            DEC_GOODS_LIMIT_MAPPING.add(new NodeMapping("LicWrtofQty", "许可证核销数量", "LIC_WRTOF_QTY"));
+            DEC_GOODS_LIMIT_MAPPING.add(new NodeMapping("LicWrtofQtyUnit", "许可证核销数量单位", "LIC_WRTOF_QTY_UNIT"));
         }
 
         /**
@@ -849,20 +772,20 @@ public final class FormCusMessage extends CusMessage {
         private static final List<NodeMapping> DEC_GOODS_LIMIT_VIN_MAPPING = new ArrayList<>();
 
         static {
-            DEC_GOODS_LIMIT_VIN_MAPPING.put("LicenceNo[许可证编号]", "LICENCE_NO");
-            DEC_GOODS_LIMIT_VIN_MAPPING.put("LicTypeCode[许可证类别代码]", "LICTYPE_CODE");
-            DEC_GOODS_LIMIT_VIN_MAPPING.put("VinNo[VIN序号]", "VIN_NO");
-            DEC_GOODS_LIMIT_VIN_MAPPING.put("BillLadDate[提/运单日期]", "BILL_LAD_DATE");
-            DEC_GOODS_LIMIT_VIN_MAPPING.put("QualityQgp[质量保质期]", "QUALITY_QGP");
-            DEC_GOODS_LIMIT_VIN_MAPPING.put("MotorNo[发动机号或电机号]", "MOTOR_NO");
-            DEC_GOODS_LIMIT_VIN_MAPPING.put("VinCode[车辆识别代码（VIN）]", "VIN_CODE");
-            DEC_GOODS_LIMIT_VIN_MAPPING.put("ChassisNo[底盘(车架)号]", "CHASSIS_NO");
-            DEC_GOODS_LIMIT_VIN_MAPPING.put("InvoiceNum[发票所列数量]", "INVOICE_NUM");
-            DEC_GOODS_LIMIT_VIN_MAPPING.put("ProdCnnm[品名（中文名称）]", "PROD_CNNM");
-            DEC_GOODS_LIMIT_VIN_MAPPING.put("ProdEnnm[品名（英文名称）]", "PROD_ENNM");
-            DEC_GOODS_LIMIT_VIN_MAPPING.put("ModelEn[型号（英文）]", "MODEL_EN");
-            DEC_GOODS_LIMIT_VIN_MAPPING.put("PricePerUnit[单价]", "PRICE_PER_UNIT");
-            DEC_GOODS_LIMIT_VIN_MAPPING.put("InvoiceNo[发票号]", "INVOICE_NO");
+            DEC_GOODS_LIMIT_VIN_MAPPING.add(new NodeMapping("LicenceNo", "许可证编号", "LICENCE_NO"));
+            DEC_GOODS_LIMIT_VIN_MAPPING.add(new NodeMapping("LicTypeCode", "许可证类别代码", "LICTYPE_CODE"));
+            DEC_GOODS_LIMIT_VIN_MAPPING.add(new NodeMapping("VinNo", "VIN序号", "VIN_NO"));
+            DEC_GOODS_LIMIT_VIN_MAPPING.add(new NodeMapping("BillLadDate", "提/运单日期", "BILL_LAD_DATE"));
+            DEC_GOODS_LIMIT_VIN_MAPPING.add(new NodeMapping("QualityQgp", "质量保质期", "QUALITY_QGP"));
+            DEC_GOODS_LIMIT_VIN_MAPPING.add(new NodeMapping("MotorNo", "发动机号或电机号", "MOTOR_NO"));
+            DEC_GOODS_LIMIT_VIN_MAPPING.add(new NodeMapping("VinCode", "车辆识别代码（VIN）", "VIN_CODE"));
+            DEC_GOODS_LIMIT_VIN_MAPPING.add(new NodeMapping("ChassisNo", "底盘(车架)号", "CHASSIS_NO"));
+            DEC_GOODS_LIMIT_VIN_MAPPING.add(new NodeMapping("InvoiceNum", "发票所列数量", "INVOICE_NUM"));
+            DEC_GOODS_LIMIT_VIN_MAPPING.add(new NodeMapping("ProdCnnm", "品名（中文名称）", "PROD_CNNM"));
+            DEC_GOODS_LIMIT_VIN_MAPPING.add(new NodeMapping("ProdEnnm", "品名（英文名称）", "PROD_ENNM"));
+            DEC_GOODS_LIMIT_VIN_MAPPING.add(new NodeMapping("ModelEn", "型号（英文）", "MODEL_EN"));
+            DEC_GOODS_LIMIT_VIN_MAPPING.add(new NodeMapping("PricePerUnit", "单价", "PRICE_PER_UNIT"));
+            DEC_GOODS_LIMIT_VIN_MAPPING.add(new NodeMapping("InvoiceNo", "发票号", "INVOICE_NO"));
         }
 
         /**
@@ -871,27 +794,27 @@ public final class FormCusMessage extends CusMessage {
         private static final List<NodeMapping> DEC_ROYALTY_FEE_MAPPING = new ArrayList<>();
 
         static {
-            DEC_ROYALTY_FEE_MAPPING.put("PricePreDeterminNo[价格预裁定编号]", "PRICE_PRE_DETERMIN_NO");
-            DEC_ROYALTY_FEE_MAPPING.put("TaxRoyaltyDeclType[应税特许权使用费申报情形]", "TAX_ROYALTY_DECL_TYPE");
-            DEC_ROYALTY_FEE_MAPPING.put("ContractNo[合同/协议号]", "CONTRACT_NO");
-            DEC_ROYALTY_FEE_MAPPING.put("Authorizer[授权方]", "AUTHORIZER");
-            DEC_ROYALTY_FEE_MAPPING.put("AuthorizedPerson[被授权方]", "AUTHORIZED_PERSON");
-            DEC_ROYALTY_FEE_MAPPING.put("PayType[支付方式]", "PAY_TYPE");
-            DEC_ROYALTY_FEE_MAPPING.put("PayTime[支付时间]", "PAY_TIME");
-            DEC_ROYALTY_FEE_MAPPING.put("PayPeriod[支付计提周期]", "PAY_PERIOD");
-            DEC_ROYALTY_FEE_MAPPING.put("EffectiveDateTime[合同/协议起始执行时间]", "EFFECTIVE_DATE_TIME");
-            DEC_ROYALTY_FEE_MAPPING.put("ExpirationDateTime[合同协议终止时间]", "EXPIRATION_DATE_TIME");
-            DEC_ROYALTY_FEE_MAPPING.put("RoyaltyAmount[特许权使用费金额]", "ROYALTY_AMOUNT");
-            DEC_ROYALTY_FEE_MAPPING.put("Curr[币制]", "CURR");
-            DEC_ROYALTY_FEE_MAPPING.put("RoyaltyFeeType[特许权使用费类型]", "ROYALTY_FEE_TYPE");
-            DEC_ROYALTY_FEE_MAPPING.put("EdocType[随附材料清单类型]", "EDOC_TYPE");
-            DEC_ROYALTY_FEE_MAPPING.put("Statment[说明]", "STATMENT");
-            DEC_ROYALTY_FEE_MAPPING.put("IsSecret[是否保密]", "IS_SECRET");
-            DEC_ROYALTY_FEE_MAPPING.put("IsCusAudit[是否经过海关审核认定]", "IS_CUS_AUDIT");
-            DEC_ROYALTY_FEE_MAPPING.put("IsCusPricePreDetermin[是否经过海关价格预裁定]", "IS_CUS_PRICE_PRE_DETERMIN");
-            DEC_ROYALTY_FEE_MAPPING.put("IssueDateTime[合同/协议签约时间]", "ISSUE_DATE_TIME");
-            DEC_ROYALTY_FEE_MAPPING.put("PeriodStartDate[本次支付对应的计提周期起始时间]", "PERIOD_START_DATE");
-            DEC_ROYALTY_FEE_MAPPING.put("PeriodEndDate[本次支付对应的计提周期终止时间]", "PERIOD_END_DATE");
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("PricePreDeterminNo", "价格预裁定编号", "PRICE_PRE_DETERMIN_NO"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("TaxRoyaltyDeclType", "应税特许权使用费申报情形", "TAX_ROYALTY_DECL_TYPE"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("ContractNo", "合同/协议号", "CONTRACT_NO"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("Authorizer", "授权方", "AUTHORIZER"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("AuthorizedPerson", "被授权方", "AUTHORIZED_PERSON"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("PayType", "支付方式", "PAY_TYPE"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("PayTime", "支付时间", "PAY_TIME"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("PayPeriod", "支付计提周期", "PAY_PERIOD"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("EffectiveDateTime", "合同/协议起始执行时间", "EFFECTIVE_DATE_TIME"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("ExpirationDateTime", "合同协议终止时间", "EXPIRATION_DATE_TIME"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("RoyaltyAmount", "特许权使用费金额", "ROYALTY_AMOUNT"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("Curr", "币制", "CURR"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("RoyaltyFeeType", "特许权使用费类型", "ROYALTY_FEE_TYPE"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("EdocType", "随附材料清单类型", "EDOC_TYPE"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("Statment", "说明", "STATMENT"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("IsSecret", "是否保密", "IS_SECRET"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("IsCusAudit", "是否经过海关审核认定", "IS_CUS_AUDIT"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("IsCusPricePreDetermin", "是否经过海关价格预裁定", "IS_CUS_PRICE_PRE_DETERMIN"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("IssueDateTime", "合同/协议签约时间", "ISSUE_DATE_TIME"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("PeriodStartDate", "本次支付对应的计提周期起始时间", "PERIOD_START_DATE"));
+            DEC_ROYALTY_FEE_MAPPING.add(new NodeMapping("PeriodEndDate", "本次支付对应的计提周期终止时间", "PERIOD_END_DATE"));
         }
 
     }

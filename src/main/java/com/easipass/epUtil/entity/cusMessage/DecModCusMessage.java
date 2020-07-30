@@ -60,12 +60,19 @@ public final class DecModCusMessage extends CusMessage {
         this.DecModMessage = rootElement;
 
         // preEntryId
-        String EntryId = rootElement.element("EntryId").getText();
+        Element EntryId = rootElement.element("EntryId");
 
-        if (EntryId == null || "".equals(EntryId)) {
+        if (EntryId == null) {
             throw new CusMessageException("报文中 <EntryId> 缺失");
         }
-        this.preEntryId = EntryId;
+
+        String EntryIdS = EntryId.getText();
+
+        if ("".equals(EntryIdS)) {
+            throw new CusMessageException("报文中 <EntryId> 缺失");
+        }
+
+        this.preEntryId = EntryIdS;
 
         // items
         Element Items = this.DecModMessage.element("Items");
@@ -94,81 +101,61 @@ public final class DecModCusMessage extends CusMessage {
 
             ResultSet decModHeadResultSet = SWGDOracle.queryDecModHead(this.preEntryId);
 
-            if (checkResultSet(decModHeadResultSet, decModHeadMessage, baseWebsocketApi)) {
+            if (NodeMapping.checkResultSet(decModHeadResultSet, decModHeadMessage, baseWebsocketApi)) {
                 ResultSet formHeadResult = SWGDOracle.queryFormHeadByPreEntryId(this.preEntryId);
 
-                if (checkResultSet(formHeadResult, "[报关单表头]", baseWebsocketApi)) {
-                    Set<String> keys = DecModCusMessageNodeMapping.DEC_MOD_HEAD_MAPPING.keySet();
+                if (NodeMapping.checkResultSet(formHeadResult, "[报关单表头]", baseWebsocketApi)) {
+                    for (NodeMapping nodeMapping : DecModCusMessageNodeMapping.DEC_MOD_HEAD_MAPPING) {
+                        nodeMapping.loadData(this.DecModMessage, decModHeadResultSet);
 
-                    for (String key : keys) {
-                        MapKeyValue mapKeyValue = getKeyValue(
-                                this.DecModMessage,
-                                DecModCusMessageNodeMapping.DEC_MOD_HEAD_MAPPING,
-                                key,
-                                decModHeadResultSet
-                        );
-                        String key1 = mapKeyValue.getKey1();
+                        String node = nodeMapping.getNode();
 
                         // CustomsCode
-                        if ("CustomsCode".equals(key1)) {
-                            mapKeyValue.setDbValue(getDbValue(formHeadResult, "DECL_PORT"));
+                        if ("CustomsCode".equals(node)) {
+                            nodeMapping.setDbValue(NodeMapping.getDbValue(formHeadResult, "DECL_PORT"));
                         }
 
                         // TradeCode
-                        if ("TradeCode".equals(key1)) {
-                            mapKeyValue.setDbValue(getDbValue(formHeadResult, "TRADE_CO"));
+                        if ("TradeCode".equals(node)) {
+                            nodeMapping.setDbValue(NodeMapping.getDbValue(formHeadResult, "TRADE_CO"));
                         }
 
                         // TradeName
-                        if ("TradeName".equals(key1)) {
-                            mapKeyValue.setDbValue(getDbValue(formHeadResult, "TRADE_NAME"));
+                        if ("TradeName".equals(node)) {
+                            nodeMapping.setDbValue(NodeMapping.getDbValue(formHeadResult, "TRADE_NAME"));
                         }
 
                         // AgentName
-                        if ("AgentName".equals(key1)) {
-                            mapKeyValue.setDbValue(getDbValue(formHeadResult, "AGENT_NAME"));
+                        if ("AgentName".equals(node)) {
+                            nodeMapping.setDbValue(NodeMapping.getDbValue(formHeadResult, "AGENT_NAME"));
                         }
 
                         // IeFlag
-                        if ("IeFlag".equals(key1)) {
+                        if ("IeFlag".equals(node)) {
                             // IE_FLAG
-                            String ieFlag = getDbValue(formHeadResult, "IE_FLAG");
-                            String dbValue = "";
+                            String ieFlag = NodeMapping.getDbValue(formHeadResult, "IE_FLAG");
 
-                            switch (ieFlag) {
-                                case "0" : case "2" : case "4" : case "6" : case "8" : case "A" :
-                                    dbValue = "E";
-                                    break;
-
-                                case "1" : case "3" : case "5" : case "7" : case "9" : case "B" :
-                                case "D" :  case "F" :
-                                    dbValue = "I";
-                                    break;
-                            }
-                            mapKeyValue.setDbValue(dbValue);
+                            nodeMapping.setDbValue(NodeMapping.getIeFlag(ieFlag));
                         }
 
                         // IcCode
-                        if ("IcCode".equals(key1)) {
-                            mapKeyValue.setDbValue(mapKeyValue.getDbValue() + "|0107d927");
+                        if ("IcCode".equals(node)) {
+                            String CERT_NO = NodeMapping.getDbValue(decModHeadResultSet, "CERT_NO");
+
+                            nodeMapping.setDbValue(nodeMapping.getDbValue() + "|" + CERT_NO);
                         }
 
                         // TradeCreditCode
-                        if ("TradeCreditCode".equals(key1)) {
-                            mapKeyValue.setDbValue(getDbValue(formHeadResult, "TRADE_CO_SCC"));
+                        if ("TradeCreditCode".equals(node)) {
+                            nodeMapping.setDbValue(NodeMapping.getDbValue(formHeadResult, "TRADE_CO_SCC"));
                         }
 
                         // AgentCreditCode
-                        if ("AgentCreditCode".equals(key1)) {
-                            mapKeyValue.setDbValue(getDbValue(formHeadResult, "AGENT_CODE_SCC"));
+                        if ("AgentCreditCode".equals(node)) {
+                            nodeMapping.setDbValue(NodeMapping.getDbValue(formHeadResult, "AGENT_CODE_SCC"));
                         }
 
-                        // Sign
-                        if ("Sign".equals(key1) && "".equals(mapKeyValue.getNodeValue())) {
-                            baseWebsocketApi.sendMessage(CusMessageComparisonVO.getComparisonFalseType(mapKeyValue.getKey()));
-                        } else {
-                            comparison(mapKeyValue, baseWebsocketApi);
-                        }
+                        nodeMapping.comparison(baseWebsocketApi);
                     }
                 }
             }
@@ -177,34 +164,27 @@ public final class DecModCusMessage extends CusMessage {
             int No = 1;
 
             for (Element element : this.ItemList) {
-                String FieldName = getNodeValue(element, "FieldName");
+                String FieldName = NodeMapping.getNodeValue(element, "FieldName");
                 String decModListMessage = "[修撤单表体 - " + FieldName + "]";
 
                 baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType(decModListMessage));
 
-                ResultSet decModListResultSet = SWGDOracle.queryDecModList(this.preEntryId, getNodeValue(element, "FieldCode"));
+                ResultSet decModListResultSet = SWGDOracle.queryDecModList(this.preEntryId, NodeMapping.getNodeValue(element, "FieldCode"));
 
-                if (!checkResultSet(decModListResultSet, decModListMessage, baseWebsocketApi)) {
+                if (!NodeMapping.checkResultSet(decModListResultSet, decModListMessage, baseWebsocketApi)) {
                     continue;
                 }
 
-                Set<String> keys = DecModCusMessageNodeMapping.DEC_MOD_LIST_MAPPING.keySet();
-
-                for (String key : keys) {
-                    MapKeyValue mapKeyValue = getKeyValue(
-                            element,
-                            DecModCusMessageNodeMapping.DEC_MOD_LIST_MAPPING,
-                            key,
-                            decModListResultSet
-                    );
+                for (NodeMapping nodeMapping : DecModCusMessageNodeMapping.DEC_MOD_LIST_MAPPING) {
+                    nodeMapping.loadData(element, decModListResultSet);
 
                     //No
-                    if ("No".equals(mapKeyValue.getKey1())) {
-                        mapKeyValue.setDbValue(No + "");
+                    if ("No".equals(nodeMapping.getNode())) {
+                        nodeMapping.setDbValue(No + "");
                         No++;
                     }
 
-                    comparison(mapKeyValue, baseWebsocketApi);
+                    nodeMapping.comparison(baseWebsocketApi);
                 }
             }
         } catch (OracleException e) {
@@ -225,46 +205,46 @@ public final class DecModCusMessage extends CusMessage {
         /**
          * 表头
          * */
-        private static final Map<String, String> DEC_MOD_HEAD_MAPPING = new LinkedHashMap<>();
+        private static final List<NodeMapping> DEC_MOD_HEAD_MAPPING = new ArrayList<>();
 
         static {
-            DEC_MOD_HEAD_MAPPING.put("DecModSeqNo[修撤单统一编号]", "DECMODSEQNO");
-            DEC_MOD_HEAD_MAPPING.put("Version", null);
-            DEC_MOD_HEAD_MAPPING.put("DecModType[修撤单类型]", "DECMODTYPE");
-            DEC_MOD_HEAD_MAPPING.put("EntryId[报关单号]", "PRE_ENTRY_ID");
-            DEC_MOD_HEAD_MAPPING.put("CustomsCode[申报地海关]", "?");
-            DEC_MOD_HEAD_MAPPING.put("TradeCode[收发货人代码]", "?");
-            DEC_MOD_HEAD_MAPPING.put("TradeName[收发货人名称]", "?");
-            DEC_MOD_HEAD_MAPPING.put("AgentCode[企业代码]", "TRADE_CODE");
-            DEC_MOD_HEAD_MAPPING.put("AgentName[企业名称]", "?");
-            DEC_MOD_HEAD_MAPPING.put("DecModNote[修撤单原因]", "DECMODNOTE");
-            DEC_MOD_HEAD_MAPPING.put("CheckMark[审查表识]", "CHECKMARK");
-            DEC_MOD_HEAD_MAPPING.put("DecSeqNo[报关单统一编号]", "DECSEQNO");
-            DEC_MOD_HEAD_MAPPING.put("Sign[加签信息]", "SIGNTXT");
-            DEC_MOD_HEAD_MAPPING.put("SignTime[加签时间]", "SIGN_TIME");
-            DEC_MOD_HEAD_MAPPING.put("IeFlag[进出口标识]", "?");
-            DEC_MOD_HEAD_MAPPING.put("OperType[操作类型]", "OPERTYPE");
-            DEC_MOD_HEAD_MAPPING.put("IcCode[IC卡号]", "IC_CODE");
-            DEC_MOD_HEAD_MAPPING.put("EntOpName[联系人]", "ENTOPNAME");
-            DEC_MOD_HEAD_MAPPING.put("EntOpTele[联系方式]", "ENTOPTELE");
-            DEC_MOD_HEAD_MAPPING.put("FeedDept[岗位]", "FEEDDEPT");
-            DEC_MOD_HEAD_MAPPING.put("TradeCreditCode[境内收发货人统一社会信用代码]", "?");
-            DEC_MOD_HEAD_MAPPING.put("AgentCreditCode[申报单位统一社会信用代码]", "?");
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("DecModSeqNo", "修撤单统一编号", "DECMODSEQNO"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("Version", "?", null));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("DecModType", "修撤单类型", "DECMODTYPE"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("EntryId", "报关单号", "PRE_ENTRY_ID"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("CustomsCode", "申报地海关", "?"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("TradeCode", "收发货人代码", "?"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("TradeName", "收发货人名称", "?"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("AgentCode", "企业代码", "TRADE_CODE"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("AgentName", "企业名称", "?"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("DecModNote", "修撤单原因", "DECMODNOTE"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("CheckMark", "审查表识", "CHECKMARK"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("DecSeqNo", "报关单统一编号", "DECSEQNO"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("Sign", "加签信息", "SIGNTXT", true));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("SignTime", "加签时间", "SIGN_TIME"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("IeFlag", "进出口标识", "?"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("OperType", "操作类型", "OPERTYPE"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("IcCode", "IC卡号", "IC_CODE"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("EntOpName", "联系人", "ENTOPNAME"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("EntOpTele", "联系方式", "ENTOPTELE"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("FeedDept", "岗位", "FEEDDEPT"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("TradeCreditCode", "境内收发货人统一社会信用代码", "?"));
+            DEC_MOD_HEAD_MAPPING.add(new NodeMapping("AgentCreditCode", "申报单位统一社会信用代码", "?"));
         }
 
         /**
          * 表体
          * */
-        private static final Map<String, String> DEC_MOD_LIST_MAPPING = new LinkedHashMap<>();
+        private static final List<NodeMapping> DEC_MOD_LIST_MAPPING = new ArrayList<>();
 
         static {
-            DEC_MOD_LIST_MAPPING.put("No", "?");
-            DEC_MOD_LIST_MAPPING.put("FieldCode[字段代码]", "QP_FIELDCODE");
-            DEC_MOD_LIST_MAPPING.put("FieldName[字段名]", "QP_FIELDNAME");
-            DEC_MOD_LIST_MAPPING.put("OldValue[字段原值]", "OLDVALUE");
-            DEC_MOD_LIST_MAPPING.put("NewValue[字段新值]", "NEWVALUE");
-            DEC_MOD_LIST_MAPPING.put("OldName[字段原值参数表对应中文名称]", "OLDNAME");
-            DEC_MOD_LIST_MAPPING.put("NewName[字段新值参数表对应中文名称]", "NEWNAME");
+            DEC_MOD_LIST_MAPPING.add(new NodeMapping("No", "序号", "?"));
+            DEC_MOD_LIST_MAPPING.add(new NodeMapping("FieldCode", "字段代码", "QP_FIELDCODE"));
+            DEC_MOD_LIST_MAPPING.add(new NodeMapping("FieldName", "字段名", "QP_FIELDNAME"));
+            DEC_MOD_LIST_MAPPING.add(new NodeMapping("OldValue", "字段原值", "OLDVALUE"));
+            DEC_MOD_LIST_MAPPING.add(new NodeMapping("NewValue", "字段新值", "NEWVALUE"));
+            DEC_MOD_LIST_MAPPING.add(new NodeMapping("OldName", "字段原值参数表对应中文名称", "OLDNAME"));
+            DEC_MOD_LIST_MAPPING.add(new NodeMapping("NewName", "字段新值参数表对应中文名称", "NEWNAME"));
         }
 
     }
