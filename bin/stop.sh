@@ -4,17 +4,16 @@
 
 # shellcheck disable=SC2009
 
-pid=$(ps -ef | grep "java -jar ../lib/epUtil.jar --spring.config.location=../config/application.properties" | grep -v grep | awk '{print $2}')
+pid=$(ps -ef | grep "java -jar ../lib/ep-util.jar --spring.config.location=../config/application.properties" | grep -v grep | awk '{print $2}')
 
 if [ "${pid}" = "" ]; then
 
-  echo "epUtil is not run!"
+  echo "ep-util is not run!"
 
 else
 
   kill -9 "${pid}"
 
-  echo "epUtil is stop!"
+  echo "ep-util is stop!"
 
 fi
-
