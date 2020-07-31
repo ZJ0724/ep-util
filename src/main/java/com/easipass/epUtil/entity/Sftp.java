@@ -93,6 +93,10 @@ public class Sftp {
      * 关闭
      * */
     public void close() {
+        if (!this.isConnect) {
+            return;
+        }
+
         if (this.session != null) {
             this.session.disconnect();
             this.session = null;

@@ -1,8 +1,11 @@
 package com.easipass.epUtil.entity.cusResult;
 
+import com.easipass.epUtil.entity.Oracle;
 import com.easipass.epUtil.entity.oracle.SWGDOracle;
 import com.easipass.epUtil.entity.CusResult;
 import com.easipass.epUtil.entity.DTO.CusResultDTO;
+import com.easipass.epUtil.exception.CusResultException;
+import java.sql.ResultSet;
 
 /**
  * 报关单回执
@@ -21,13 +24,7 @@ public abstract class FormCusResult extends CusResult {
      */
     protected FormCusResult(CusResultDTO cusResultDTO, String ediNo) {
         super(cusResultDTO);
-
-        // 兼容报关单号
-        if (ediNo.startsWith("EDI")) {
-            this.ediNo = ediNo;
-        } else {
-            this.ediNo = new SWGDOracle().queryEdiNo(ediNo);
-        }
+        this.ediNo = ediNo;
     }
 
     /**
@@ -36,16 +33,26 @@ public abstract class FormCusResult extends CusResult {
      * @return seqNo
      * */
     protected final String getSeqNo() {
-        return "seqNo00000000" + this.ediNo.substring(this.ediNo.length() - 5);
-    }
+        SWGDOracle swgdOracle = new SWGDOracle();
 
-    /**
-     * 获取报关单号
-     *
-     * @return 报关单号
-     * */
-    protected final String getPreEntryId() {
-        return new SWGDOracle().queryDeclPort(this.ediNo) + "000000000" + this.ediNo.substring(this.ediNo.length() - 5);
+        swgdOracle.connect();
+
+        ResultSet resultSet = swgdOracle.queryFormHead(this.ediNo);
+
+        if (resultSet == null) {
+            swgdOracle.close();
+            throw new CusResultException("数据库不存在ediNo: " + this.ediNo + "数据");
+        }
+
+        String seqNo = Oracle.getFiledData(resultSet, "SEQ_NO");
+
+        swgdOracle.close();
+
+        if (seqNo == null || "".equals(seqNo)) {
+            return "seqNo00000000" + this.ediNo.substring(this.ediNo.length() - 5);
+        } else {
+            return seqNo;
+        }
     }
 
     /**

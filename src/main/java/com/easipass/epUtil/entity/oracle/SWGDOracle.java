@@ -257,9 +257,9 @@ public final class SWGDOracle extends Oracle {
             }
         } catch (SQLException e) {
             throw new ErrorException(e.getMessage());
+        } finally {
+            this.close();
         }
-
-        this.close();
 
         return result;
     }
@@ -283,9 +283,9 @@ public final class SWGDOracle extends Oracle {
             }
         } catch (SQLException e) {
             throw new ErrorException(e.getMessage());
+        } finally {
+            this.close();
         }
-
-        this.close();
 
         return result;
     }

@@ -1,9 +1,11 @@
 package com.easipass.epUtil.entity.cusResult.formCusResult;
 
+import com.easipass.epUtil.entity.Oracle;
 import com.easipass.epUtil.entity.oracle.SWGDOracle;
 import com.easipass.epUtil.entity.cusResult.FormCusResult;
 import com.easipass.epUtil.entity.DTO.CusResultDTO;
 import com.easipass.epUtil.entity.resources.cusResult.formCusResult.YeWuFormCusResultResource;
+import com.easipass.epUtil.exception.CusResultException;
 import com.easipass.epUtil.util.Base64Util;
 import com.easipass.epUtil.util.DateUtil;
 import com.easipass.epUtil.util.XmlUtil;
@@ -11,6 +13,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.sql.ResultSet;
 
 /**
  * 报关单业务回执
@@ -26,7 +29,7 @@ public final class YeWuFormCusResult extends FormCusResult {
      * @param ediNo ediNo
      */
     public YeWuFormCusResult(CusResultDTO cusResultDTO, String ediNo) {
-        super(cusResultDTO, ediNo);
+        super(cusResultDTO, compatiblePreEntryId(ediNo));
     }
 
     @Override
@@ -81,6 +84,55 @@ public final class YeWuFormCusResult extends FormCusResult {
     @Override
     public String getName() {
         return "yeWuFormCusResult-" + this.getSeqNo() + "-" + DateUtil.getTime();
+    }
+
+    /**
+     * 获取报关单号
+     *
+     * @return 报关单号
+     * */
+    protected final String getPreEntryId() {
+        SWGDOracle swgdOracle = new SWGDOracle();
+
+        swgdOracle.connect();
+
+        ResultSet resultSet = swgdOracle.queryFormHead(this.getEdiNo());
+
+        if (resultSet == null) {
+            swgdOracle.close();
+            throw new CusResultException("数据库不存在ediNo: " + this.getEdiNo() + "数据");
+        }
+
+        String declPort = Oracle.getFiledData(resultSet, "DECL_PORT");
+
+        if (declPort == null) {
+            throw new CusResultException("ediNo: " + this.getEdiNo() + "申报关区为空");
+        }
+
+        String preEntryId = Oracle.getFiledData(resultSet, "PRE_ENTRY_ID");
+
+        swgdOracle.close();
+
+        if (preEntryId.startsWith("EDI")) {
+            return new SWGDOracle().queryDeclPort(this.getEdiNo()) + "000000000" + this.getEdiNo().substring(this.getEdiNo().length() - 5);
+        } else {
+            return preEntryId;
+        }
+    }
+
+    /**
+     * 兼容报关单号
+     *
+     * @param ediNo ediNo
+     *
+     * @return ediNo
+     * */
+    private static String compatiblePreEntryId(String ediNo) {
+        if (ediNo.startsWith("EDI")) {
+            return ediNo;
+        }
+
+        return new SWGDOracle().queryEdiNo(ediNo);
     }
 
 }

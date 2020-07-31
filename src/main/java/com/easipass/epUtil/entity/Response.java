@@ -168,4 +168,14 @@ public class Response implements com.zj0724.springbootUtil.Response<Response> {
         return FLAG_F;
     }
 
+    @Override
+    public String toString() {
+        return "Response{" +
+                "flag=" + flag +
+                ", errorCode=" + errorCode +
+                ", errorMessage=" + errorMessage +
+                ", data=" + data +
+                '}';
+    }
+
 }

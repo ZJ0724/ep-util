@@ -108,6 +108,11 @@ public class Oracle {
      * 关闭连接
      */
     public void close() {
+        // 已关闭不进行关闭
+        if (!this.isConnect) {
+            return;
+        }
+
         try {
             if (this.connection != null) {
                 connection.close();
@@ -169,6 +174,22 @@ public class Oracle {
             return preparedStatement.executeQuery();
         }catch (SQLException e) {
             throw new ErrorException("sql错误");
+        }
+    }
+
+    /**
+     * 获取字段内容
+     *
+     * @param resultSet resultSet
+     * @param filedName 字段名
+     *
+     * @return 字段值
+     * */
+    public static String getFiledData(ResultSet resultSet, String filedName) {
+        try {
+            return resultSet.getString(filedName);
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
         }
     }
 
