@@ -3,7 +3,7 @@
 # 存放目录
 releasePath="release"
 # 应用名
-projectName="epUtil"
+projectName="ep-util"
 # 版本
 version="$(cat version)"
 # 包名

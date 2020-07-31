@@ -4,8 +4,8 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.easipass</groupId>
-    <artifactId>epUtil</artifactId>
+    <groupId>com.easipass.util</groupId>
+    <artifactId>ep-util</artifactId>
     <version>none</version>
     <packaging>jar</packaging>
 
@@ -160,7 +160,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <fork>true</fork>
-                    <mainClass>com.easipass.epUtil.Main</mainClass>
+                    <mainClass>com.easipass.util.Main</mainClass>
                     <outputDirectory>${buildPath}/lib</outputDirectory>
                 </configuration>
                 <executions>
