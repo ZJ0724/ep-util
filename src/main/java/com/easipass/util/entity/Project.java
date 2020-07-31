@@ -54,7 +54,7 @@ public final class Project {
      * @return 项目配置路径
      * */
     public String getConfigPath() {
-        return java.lang.System.getProperty("user.home") + "/.epUtil/";
+        return java.lang.System.getProperty("user.home") + "/.ep-util/";
     }
 
     /**
