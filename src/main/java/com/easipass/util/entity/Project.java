@@ -12,6 +12,11 @@ import java.io.File;
 public final class Project {
 
     /**
+     * 项目根目录
+     * */
+    private static String absolutePath = null;
+
+    /**
      * 单例
      * */
     private static final Project PROJECT = new Project();
@@ -45,7 +50,7 @@ public final class Project {
      * @return 版本
      * */
     public String getVersion() {
-        return FileUtil.getData(new File(System.getProperty("user.dir"), "../version"));
+        return FileUtil.getData(new File(absolutePath, "version"));
     }
 
     /**
@@ -74,6 +79,24 @@ public final class Project {
         }
 
         throw new ErrorException("系统类型错误");
+    }
+
+    /**
+     * 设置项目根目录
+     *
+     * @param absolutePath 路径
+     * */
+    public void setAbsolutePath(String absolutePath) {
+        Project.absolutePath = absolutePath;
+    }
+
+    /**
+     * 获取项目根目录
+     *
+     * @return 项目根目录
+     * */
+    public String getAbsolutePath() {
+        return absolutePath;
     }
 
 }
