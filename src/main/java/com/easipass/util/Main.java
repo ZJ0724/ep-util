@@ -1,5 +1,6 @@
 package com.easipass.util;
 
+import com.easipass.util.entity.ChromeDriver;
 import com.easipass.util.entity.DaKa;
 import com.easipass.util.entity.Log;
 import com.easipass.util.entity.Project;
@@ -51,6 +52,10 @@ public class Main {
 
             // 开启谷歌驱动池
 //            ChromeDriver.openChromeDriverPool();
+
+            // 校验谷歌浏览器
+            ChromeDriver.get().close();
+            LOG.info("\n");
 
             // 检查是否开启自动打卡
             DaKa.getInstance();
