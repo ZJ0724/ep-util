@@ -11,9 +11,8 @@
         <navigation></navigation>
 
         <div id="body">
-            <div v-cloak class="ep-panel">
-                version: {{version}}
-            </div>
+            <panel text="version" :data="version"></panel>
+            <panel style="margin-top: 20px;" text="time" :data="time"></panel>
         </div>
     </div>
 </body>
@@ -23,22 +22,43 @@
 
     import systemServiceApi from "./api/service/systemServiceApi.js";
 
-    (function () {
-        new Vue({
-            el: "#main",
+    new Vue({
+        el: "#main",
 
-            data: {
-                version: null
-            },
+        data: {
+            version: null,
 
-            mounted() {
-                let that = this;
+            time: null
+        },
 
-                systemServiceApi.getVersion().then(function (version) {
-                    that.version = version;
-                });
+        mounted() {
+            let that = this;
+
+            systemServiceApi.getVersion().then(function (version) {
+                that.version = version;
+            });
+
+            systemServiceApi.getTime().then(function (time) {
+                that.time = time;
+            });
+        },
+
+        components: {
+            panel: {
+                template: `
+                        <div v-cloak class="ep-panel" style="display: flex;">
+                            <div style="font-weight: bold;width: 60px;">
+                                {{text}}
+                            </div>
+                            <div>
+                                {{data}}
+                            </div>
+                        </div>
+                    `,
+
+                props: ["text", "data"]
             }
-        })
-    })();
+        }
+    });
 
 </script>
