@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# base.sh
-. ./base.sh
+# 项目根目录
+projectPath="$(cd `dirname $0`;pwd)/.."
+
+# pid.sh
+. ${projectPath}/bin/pid.sh
 
 # 检查是否已经运行
 if [ "${pid}" != "" ]; then

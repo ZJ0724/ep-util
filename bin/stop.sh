@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# base.sh
-. ./base.sh
+# 项目根目录
+projectPath="$(cd `dirname $0`;pwd)/.."
+
+# pid.sh
+. ${projectPath}/bin/pid.sh
 
 if [ "${pid}" != "" ]; then
   kill -9 "${pid}"
