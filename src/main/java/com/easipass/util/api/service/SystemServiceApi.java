@@ -33,7 +33,7 @@ public class SystemServiceApi {
      * */
     @GetMapping("getTime")
     public Response getTime() {
-        return Response.returnTrue(DateUtil.getDate("yyyy-MM-dd HH:mm:ss E"));
+        return Response.returnTrue(DateUtil.getDate("yyyy-MM-dd HH:mm:ss") + " " + DateUtil.getWeek());
     }
 
 }
