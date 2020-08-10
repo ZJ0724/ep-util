@@ -69,6 +69,17 @@ export default [
     },
 
     {
+        path: "supplySend/",
+        name: "第三方发送",
+        children: [
+            {
+                path: "sendCusFile.html",
+                name: "发送报文"
+            }
+        ]
+    },
+
+    {
         path: "config.html",
         name: "配置"
     }

@@ -447,4 +447,25 @@ public final class SWGDOracle extends Oracle {
         return resultSet;
     }
 
+    /**
+     * 获取第三方用户信息
+     *
+     * @param SENDER 发送方代码
+     *
+     * @return ResultSet
+     * */
+    public ResultSet querySupplyUser(String SENDER) {
+        ResultSet resultSet = this.query("SELECT * FROM SWGD.T_SWGD_SUPPLY_USER WHERE SENDER = ?", new Object[]{SENDER});
+
+        try {
+            if (!resultSet.next()) {
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        return resultSet;
+    }
+
 }
