@@ -1,6 +1,5 @@
 package com.easipass.util.entity.http.SWGDSupply;
 
-import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.easipass.util.exception.SupplySendException;
 
