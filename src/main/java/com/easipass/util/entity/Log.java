@@ -74,7 +74,7 @@ public final class Log {
      * */
     private void outputLog(String type, String log) {
         // 日志输出文件
-        File logFile = new File(java.lang.System.getProperty("user.dir"), "../log/logFile-" + DateUtil.getDate("yyyy-MM-dd") + ".log");
+        File logFile = new File(Project.getInstance().getAbsolutePath(), "log/logFile-" + DateUtil.getDate("yyyy-MM-dd") + ".log");
         // log文件夹
         File logFileParent = logFile.getParentFile();
 

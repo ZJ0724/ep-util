@@ -1,6 +1,7 @@
 package com.easipass.util.entity;
 
 import com.easipass.util.exception.ErrorException;
+import com.easipass.util.exception.HttpException;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -26,6 +27,9 @@ public class Http {
 
     /**
      * 构造函数
+     *
+     * @param url url
+     * @param type type
      * */
     public Http(String url, String type) {
         this.url = url;
@@ -46,7 +50,7 @@ public class Http {
      * @param key 键
      * @param value 值
      * */
-    public void setHeader(String key, String value) {
+    public final void setHeader(String key, String value) {
         headers.put(key, value);
     }
 
@@ -57,33 +61,53 @@ public class Http {
      *
      * @return 响应结果
      * */
-    public String send(String data) {
+    public final String send(String data) {
+        URL url;
+        HttpURLConnection httpURLConnection;
+
         try {
-            URL url = new URL(this.url);
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+            url = new URL(this.url);
+            httpURLConnection = (HttpURLConnection) url.openConnection();
 
             // 设置type
             httpURLConnection.setRequestMethod(this.type);
+        } catch (IOException e) {
+            throw new ErrorException(e.getMessage());
+        }
 
-            // 设置请求头
-            Set<String> keys = this.headers.keySet();
-            for (String key : keys) {
-                httpURLConnection.setRequestProperty(key, this.headers.get(key));
-            }
+        // 设置请求头
+        Set<String> keys = this.headers.keySet();
+        for (String key : keys) {
+            httpURLConnection.setRequestProperty(key, this.headers.get(key));
+        }
 
-            // 开启输入输出
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setDoInput(true);
+        // 开启输入输出
+        httpURLConnection.setDoOutput(true);
+        httpURLConnection.setDoInput(true);
 
-            // 输出数据
-            OutputStream outputStream = null;
+        // 输出数据
+        OutputStream outputStream = null;
+        try {
             if (data != null) {
                 outputStream = httpURLConnection.getOutputStream();
                 outputStream.write(data.getBytes());
             }
+        } catch (IOException e) {
+            throw new ErrorException(e.getMessage());
+        }
 
-            // 获取响应数据
-            InputStream inputStream = httpURLConnection.getInputStream();
+        // 获取响应数据
+        InputStream inputStream;
+
+        try {
+            inputStream = httpURLConnection.getInputStream();
+        } catch (IOException e) {
+            //断开连接
+            httpURLConnection.disconnect();
+            throw new HttpException(this.url + "请求失败");
+        }
+
+        try {
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 

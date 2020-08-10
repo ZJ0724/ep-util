@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public final class DateUtil {
 
@@ -43,7 +44,7 @@ public final class DateUtil {
      */
     public static String getWeek() {
         Date date=new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEEE");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E", Locale.CHINA);
         return simpleDateFormat.format(date);
     }
 
