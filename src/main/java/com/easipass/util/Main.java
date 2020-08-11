@@ -8,7 +8,6 @@ import com.easipass.util.entity.config.DaKaProperties;
 import com.easipass.util.entity.config.SWGDProperties;
 import com.easipass.util.entity.config.Sftp83Properties;
 import com.easipass.util.exception.BaseException;
-import com.easipass.util.exception.ErrorException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -38,18 +37,14 @@ public class Main {
      * @param args args
      * */
     public static void main(String[] args) {
-        try {
-            // 设置项目根目录
-            try {
-                PROJECT.setAbsolutePath(args[1]);
-            } catch (ArrayIndexOutOfBoundsException e) {
-                throw new ErrorException("未指定项目根目录");
-            }
+        // 指定配置文件
+        System.setProperty("spring.config.location", PROJECT.getApplicationPropertiesPath());
 
+        try {
             LOG.info("--- < 启动 > ---" + "\n");
 
             // 项目根目录
-            LOG.info("项目根目录: " + PROJECT.getAbsolutePath() + "\n");
+            LOG.info("项目根目录: " + PROJECT.getProjectRootPath() + "\n");
 
             // version
             LOG.info("version: " + PROJECT.getVersion() + "\n");
@@ -65,9 +60,6 @@ public class Main {
             // 加载sftp83配置
             Sftp83Properties.getInstance();
             LOG.info("\n");
-
-            // 开启谷歌驱动池
-//            ChromeDriver.openChromeDriverPool();
 
             // 校验谷歌浏览器
             ChromeDriver.get().close();

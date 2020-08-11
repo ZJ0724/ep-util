@@ -14,7 +14,12 @@ public final class Project {
     /**
      * 项目根目录
      * */
-    private static String absolutePath = null;
+    private static final String PROJECT_ROOT_PATH = System.getProperty("user.dir");
+
+    /**
+     * application.properties
+     * */
+    private static final String APPLICATION_PROPERTIES_PATH = PROJECT_ROOT_PATH + "/" + "config/application.properties";
 
     /**
      * 单例
@@ -50,7 +55,7 @@ public final class Project {
      * @return 版本
      * */
     public String getVersion() {
-        return FileUtil.getData(new File(absolutePath, "version"));
+        return FileUtil.getData(new File(PROJECT_ROOT_PATH, "version"));
     }
 
     /**
@@ -82,21 +87,21 @@ public final class Project {
     }
 
     /**
-     * 设置项目根目录
-     *
-     * @param absolutePath 路径
-     * */
-    public void setAbsolutePath(String absolutePath) {
-        Project.absolutePath = absolutePath;
-    }
-
-    /**
      * 获取项目根目录
      *
      * @return 项目根目录
      * */
-    public String getAbsolutePath() {
-        return absolutePath;
+    public String getProjectRootPath() {
+        return PROJECT_ROOT_PATH;
+    }
+
+    /**
+     * 获取application.properties路径
+     *
+     * @return application.properties路径
+     * */
+    public String getApplicationPropertiesPath() {
+        return APPLICATION_PROPERTIES_PATH;
     }
 
 }

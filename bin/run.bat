@@ -1,3 +1,8 @@
 @echo off
-java -jar ../lib/ep-util.jar --spring.config.location=../config/application.properties
+
+cd %~dp0
+cd ..
+
+java -jar lib/ep-util.jar
+
 pause
