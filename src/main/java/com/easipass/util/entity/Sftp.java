@@ -2,6 +2,8 @@ package com.easipass.util.entity;
 
 import com.easipass.util.exception.ErrorException;
 import com.jcraft.jsch.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Properties;
@@ -49,6 +51,11 @@ public class Sftp {
     private boolean isConnect = false;
 
     /**
+     * 日志
+     * */
+    private static final Logger log = LoggerFactory.getLogger(Sftp.class);
+
+    /**
      * 构造函数
      *
      * @param url 地址
@@ -85,7 +92,7 @@ public class Sftp {
             throw new com.easipass.util.exception.SftpException("sftp: " + this.url + ", 连接失败");
         }
 
-        Log.getLog().info("sftp: " + this.url + ", 已连接");
+        log.info("sftp: {}, 已连接", this.url);
         this.isConnect = true;
     }
 
@@ -107,7 +114,7 @@ public class Sftp {
             this.channelSftp = null;
         }
 
-        Log.getLog().info("sftp: " + this.url + ", 已关闭");
+        log.info("sftp: {}, 已关闭", this.url);
         this.isConnect = false;
     }
 

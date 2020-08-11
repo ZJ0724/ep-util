@@ -5,6 +5,8 @@ import com.easipass.util.entity.config.DaKaProperties;
 import com.easipass.util.exception.BaseException;
 import com.easipass.util.util.DateUtil;
 import com.easipass.util.util.ThreadUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +30,7 @@ public final class DaKa {
     /**
      * 日志
      * */
-    private static final Log LOG = Log.getLog();
+    private static final Logger log = LoggerFactory.getLogger(DaKa.class);
 
     /**
      * 自动打卡状态
@@ -197,7 +199,7 @@ public final class DaKa {
      * @param log 日志信息
      * */
     private void addLog(String log) {
-        LOG.info(log);
+        DaKa.log.info(log);
 
         String l = "[" + DateUtil.getDate("yyyy-MM-dd HH:mm:ss") + "] - " + log;
 
@@ -276,7 +278,7 @@ public final class DaKa {
         for (int i = 0;i < size; i++) {
             if (daKaLogWebsocketApi.getId().equals(this.daKaLogWebsocketApiList.get(i).getId())) {
                 this.daKaLogWebsocketApiList.remove(i);
-                LOG.info("daKaLogWebsocketApiList: " + this.daKaLogWebsocketApiList.size());
+                log.info("daKaLogWebsocketApiList: " + this.daKaLogWebsocketApiList.size());
                 return;
             }
         }

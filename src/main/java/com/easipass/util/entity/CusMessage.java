@@ -4,6 +4,9 @@ import com.easipass.util.api.websocket.BaseWebsocketApi;
 import com.easipass.util.entity.VO.CusMessageComparisonVO;
 import com.easipass.util.exception.ErrorException;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -28,7 +31,7 @@ public abstract class CusMessage {
     /**
      * 日志
      * */
-    private static final Log LOG = Log.getLog();
+    private static final Logger log = LoggerFactory.getLogger(CusMessage.class);
 
     {
         this.id = new Date().getTime() + "";
@@ -55,7 +58,7 @@ public abstract class CusMessage {
         for (CusMessage cusMessage : CUS_MESSAGES_LIST) {
             if (cusMessage.getId().equals(this.getId())) {
                 CUS_MESSAGES_LIST.remove(cusMessage);
-                LOG.info("删除报文: " + this.getId());
+                log.info("删除报文: {}", this.getId());
                 return;
             }
         }
@@ -85,7 +88,7 @@ public abstract class CusMessage {
      * */
     public static void push(CusMessage cusMessage) {
         CUS_MESSAGES_LIST.add(cusMessage);
-        LOG.info("添加报文: " + cusMessage.getId());
+        log.info("添加报文: {}", cusMessage.getId());
     }
 
     /**

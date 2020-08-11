@@ -7,6 +7,8 @@ import com.easipass.util.exception.ErrorException;
 import com.easipass.util.util.ClassUtil;
 import com.easipass.util.util.FileUtil;
 import com.easipass.util.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
@@ -40,7 +42,7 @@ public class Config {
     /**
      * 日志
      * */
-    private static final Log LOG = Log.getLog();
+    private static final Logger log = LoggerFactory.getLogger(Config.class);
 
     /**
      * 构造函数
@@ -48,7 +50,7 @@ public class Config {
      * @param resource 资源
      * */
     protected Config(Resource resource) {
-        LOG.info("加载配置: " + resource.getName());
+        log.info("加载配置: {}", resource.getName());
 
         this.file = new File(ROOT_PATH + resource.getName());
 
@@ -113,8 +115,8 @@ public class Config {
             }
         }
 
-        LOG.info(this.toString());
-        LOG.info("加载完成");
+        log.info(this.toString());
+        log.info("加载完成");
     }
 
     /**

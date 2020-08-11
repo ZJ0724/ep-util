@@ -2,6 +2,9 @@ package com.easipass.util.entity;
 
 import com.easipass.util.exception.ErrorException;
 import com.easipass.util.exception.OracleException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.*;
 
 /**
@@ -54,7 +57,7 @@ public class Oracle {
     /**
      * 日志
      * */
-    private static final Log LOG = Log.getLog();
+    private static final Logger log = LoggerFactory.getLogger(Oracle.class);
 
     /**
      * 构造函数
@@ -101,7 +104,7 @@ public class Oracle {
             throw new OracleException("数据库连接失败");
         }
 
-        LOG.info("oracle: " + this.url + ", 已连接");
+        log.info("oracle: {}, 已连接", this.url);
     }
 
     /**
@@ -127,7 +130,7 @@ public class Oracle {
         }
         this.isConnect = false;
 
-        LOG.info("oracle: " + this.url + ", 已关闭");
+        log.info("oracle: {}, 已关闭", this.url);
     }
 
     /**

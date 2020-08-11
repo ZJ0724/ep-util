@@ -11,6 +11,8 @@ import com.zj0724.uiAuto.WebDriver;
 import com.zj0724.uiAuto.exception.BaseException;
 import com.zj0724.uiAuto.exception.WebDriverException;
 import com.zj0724.uiAuto.webDriver.ChromeWebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +37,7 @@ public final class ChromeDriver {
     /**
      * 日志
      * */
-    private static final Log LOG = Log.getLog();
+    private static final Logger log = LoggerFactory.getLogger(ChromeDriver.class);
 
     /**
      * 谷歌驱动资源
@@ -68,7 +70,7 @@ public final class ChromeDriver {
      * 构造函数
      * */
     private ChromeDriver() {
-        LOG.info("检查谷歌驱动");
+        log.info("检查谷歌驱动");
 
         File file = new File(ROOT_PATH, resource.getName());
 
@@ -85,7 +87,7 @@ public final class ChromeDriver {
             throw new ChromeDriverException(e.getMessage());
         }
 
-        LOG.info("谷歌驱动已打开");
+        log.info("谷歌驱动已打开");
     }
 
     /**
@@ -115,7 +117,7 @@ public final class ChromeDriver {
     public void close() {
         if (this.webDriver != null) {
             this.webDriver.close();
-            LOG.info("谷歌驱动已关闭");
+            log.info("谷歌驱动已关闭");
         }
     }
 
@@ -157,9 +159,10 @@ public final class ChromeDriver {
     /**
      * 开启谷歌驱动池
      * */
+    @Deprecated
     public static void openChromeDriverPool() {
         if (isOpenChromeDriverPool) {
-            LOG.info("驱动池已开启");
+            log.info("驱动池已开启");
             return;
         }
 
@@ -167,7 +170,7 @@ public final class ChromeDriver {
         new ChromeDriver().close();
 
         isOpenChromeDriverPool = true;
-        LOG.info("开启驱动池");
+        log.info("开启驱动池");
 
         ThreadUtil.sleep(5000);
 
@@ -182,7 +185,7 @@ public final class ChromeDriver {
                     continue;
                 }
 
-                LOG.info("添加驱动");
+                log.info("添加驱动");
                 CHROME_DRIVER_POOL.add(new ChromeDriver());
             }
         }).start();
@@ -195,11 +198,11 @@ public final class ChromeDriver {
      * */
     public static synchronized ChromeDriver get() {
         if (CHROME_DRIVER_POOL.size() == 0) {
-            LOG.info("驱动池无驱动，返回一个新的驱动");
+            log.info("驱动池无驱动，返回一个新的驱动");
             return new ChromeDriver();
         }
 
-        LOG.info("获取一个驱动");
+        log.info("获取一个驱动");
         ChromeDriver chromeDriver = CHROME_DRIVER_POOL.get(0);
         CHROME_DRIVER_POOL.remove(0);
 

@@ -1,7 +1,8 @@
 package com.easipass.util.api.websocket;
 
-import com.easipass.util.entity.Log;
 import com.easipass.util.exception.ErrorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.websocket.OnError;
 import javax.websocket.Session;
 import java.io.IOException;
@@ -26,11 +27,11 @@ public class BaseWebsocketApi {
     /**
      * 日志
      * */
-    protected static final Log LOG = Log.getLog();
+    private static final Logger log = LoggerFactory.getLogger(BaseWebsocketApi.class);
 
     public void onOpen(Session session) {
         this.session = session;
-        LOG.info("已连接session: " + this.session);
+        log.info("已连接session: {}", this.session);
     }
 
     /**
@@ -42,7 +43,7 @@ public class BaseWebsocketApi {
         try {
             this.session.getBasicRemote().sendText(message.toString());
         } catch (IOException e) {
-            LOG.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -52,7 +53,7 @@ public class BaseWebsocketApi {
     public final void close() {
         try {
             this.session.close();
-            LOG.info("已关闭session: " + this.session);
+            log.info("已关闭session: " + this.session);
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
@@ -75,7 +76,7 @@ public class BaseWebsocketApi {
             throw (NullPointerException) throwable;
         }
 
-        LOG.error("websocket监听异常: " + throwable.getMessage());
+        log.error("websocket监听异常: ", throwable);
     }
 
 }

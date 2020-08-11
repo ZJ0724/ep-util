@@ -1,9 +1,10 @@
 package com.easipass.util.entity.sftp;
 
 import com.easipass.util.entity.CusResult;
-import com.easipass.util.entity.Log;
 import com.easipass.util.entity.Sftp;
 import com.easipass.util.entity.config.Sftp83Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * sftp83
@@ -16,6 +17,11 @@ public final class Sftp83 extends Sftp {
      * sftp83配置
      * */
     private final static Sftp83Properties SFTP_83_PROPERTIES = Sftp83Properties.getInstance();
+
+    /**
+     * 日志
+     * */
+    private static final Logger log = LoggerFactory.getLogger(Sftp83.class);
 
     /**
      * 构造函数
@@ -32,7 +38,7 @@ public final class Sftp83 extends Sftp {
     public void uploadCusResult(CusResult cusResult) {
         String data = cusResult.getData();
 
-        Log.getLog().info(data);
+        log.info(data);
 
         this.upload(SFTP_83_PROPERTIES.getUploadPath(), cusResult.getName(), data);
     }

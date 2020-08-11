@@ -2,12 +2,13 @@ package com.easipass.util;
 
 import com.easipass.util.entity.ChromeDriver;
 import com.easipass.util.entity.DaKa;
-import com.easipass.util.entity.Log;
 import com.easipass.util.entity.Project;
 import com.easipass.util.entity.config.DaKaProperties;
 import com.easipass.util.entity.config.SWGDProperties;
 import com.easipass.util.entity.config.Sftp83Properties;
 import com.easipass.util.exception.BaseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -24,57 +25,44 @@ public class Main {
     /**
      * 日志
      * */
-    private static final Log LOG = Log.getLog();
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     /**
      * 项目
      * */
     private static final Project PROJECT = Project.getInstance();
 
-    /**
-     * main
-     *
-     * @param args args
-     * */
     public static void main(String[] args) {
         // 指定配置文件
         System.setProperty("spring.config.location", PROJECT.getApplicationPropertiesPath());
 
-        try {
-            LOG.info("--- < 启动 > ---" + "\n");
+        SpringApplication.run(Main.class, args);
 
+        try {
             // 项目根目录
-            LOG.info("项目根目录: " + PROJECT.getProjectRootPath() + "\n");
+            log.info("项目根目录: {}", PROJECT.getProjectRootPath());
 
             // version
-            LOG.info("version: " + PROJECT.getVersion() + "\n");
+            log.info("version: {}", PROJECT.getVersion());
 
             // 加载daKa配置
             DaKaProperties.getInstance();
-            LOG.info("\n");
 
             // 加载SWGD配置
             SWGDProperties.getInstance();
-            LOG.info("\n");
 
             // 加载sftp83配置
             Sftp83Properties.getInstance();
-            LOG.info("\n");
 
             // 校验谷歌浏览器
             ChromeDriver.get().close();
-            LOG.info("\n");
 
             // 检查是否开启自动打卡
             DaKa.getInstance();
-            LOG.info("\n");
 
-            SpringApplication.run(Main.class, args);
-            LOG.info("\n");
-
-            LOG.info("--- < 完成 > ---" + "\n");
+            log.info("--- < 完成 > ---");
         } catch (BaseException e) {
-            LOG.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
     }
 
