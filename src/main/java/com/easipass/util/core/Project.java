@@ -1,8 +1,6 @@
 package com.easipass.util.core;
 
-import com.easipass.util.core.config.Port;
-import com.easipass.util.exception.ErrorException;
-import com.easipass.util.util.FileUtil;
+import com.easipass.util.core.util.FileUtil;
 import java.io.File;
 
 /**
@@ -36,19 +34,5 @@ public final class Project {
      * 系统类型
      * */
     public static final SystemType SYSTEM_TYPE = System.getProperty("os.name").contains("Windows") ? SystemType.WINDOWS : System.getProperty("os.name").contains("Linux") ? SystemType.LINUX : null;
-
-//    /**
-//     * 初始化
-//     * */
-//    public static void init() {
-//        if (VERSION == null || SYSTEM_TYPE == null) {
-//            throw new ErrorException("项目异常");
-//        }
-//
-//
-//
-//        // 加载port文件
-//        Port.getInstance();
-//    }
 
 }

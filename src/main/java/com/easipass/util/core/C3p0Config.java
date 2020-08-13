@@ -2,11 +2,8 @@ package com.easipass.util.core;
 
 import com.easipass.util.exception.ErrorException;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 /**
@@ -14,7 +11,7 @@ import java.util.Properties;
  *
  * @author ZJ
  * */
-public final class C3p0Properties {
+public final class C3p0Config {
 
     /**
      * 初始连接数
@@ -42,25 +39,32 @@ public final class C3p0Properties {
     private final int maxStatements;
 
     /**
+     * 获取连接超时时间
+     * */
+    private final int checkoutTimeout;
+
+    /**
      * 配置文件
      * */
-    private static final File C3P0_PROPERTIES_FILE = new File(Project.getInstance().getProjectRootPath(), "config/c3p0.properties");
+    private static final File FILE = new File(Resource.C3P0.getPath());
 
     /**
      * 单例
      * */
-    private static final C3p0Properties C_3_P_0_PROPERTIES = new C3p0Properties();
+    private static final C3p0Config C_3_P_0_CONFIG = new C3p0Config();
 
     /**
      * 构造函数
      * */
-    private C3p0Properties() {
+    private C3p0Config() {
         Properties properties = new Properties();
 
         try {
-            InputStream inputStream = new FileInputStream(C3P0_PROPERTIES_FILE);
-            properties.load(inputStream);
-            inputStream.close();
+            FileInputStream fileInputStream = new FileInputStream(FILE);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
+            properties.load(inputStreamReader);
+            inputStreamReader.close();
+            fileInputStream.close();
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
@@ -70,6 +74,7 @@ public final class C3p0Properties {
         this.minPoolSize = (int) properties.get("minPoolSize");
         this.maxIdleTime = (int) properties.get("maxIdleTime");
         this.maxStatements = (int) properties.get("maxStatements");
+        this.checkoutTimeout = (int) properties.get("checkoutTimeout");
     }
 
     /**
@@ -77,8 +82,8 @@ public final class C3p0Properties {
      *
      * @return 单例
      * */
-    public static C3p0Properties getC3P0Properties() {
-        return C_3_P_0_PROPERTIES;
+    public static C3p0Config getInstance() {
+        return C_3_P_0_CONFIG;
     }
 
     /**
@@ -92,6 +97,7 @@ public final class C3p0Properties {
         comboPooledDataSource.setMinPoolSize(this.minPoolSize);
         comboPooledDataSource.setMaxIdleTime(this.maxIdleTime);
         comboPooledDataSource.setMaxStatements(this.maxStatements);
+        comboPooledDataSource.setCheckoutTimeout(this.checkoutTimeout);
     }
 
 }

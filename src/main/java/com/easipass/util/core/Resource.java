@@ -40,7 +40,37 @@ public enum Resource {
     /**
      * 代理委托回执
      * */
-    AGENT_CUS_RESULT(Project.ROOT_PATH + "/resources/cusResult/agentCusResult.wts");
+    AGENT_CUS_RESULT(Project.ROOT_PATH + "/resources/cusResult/agentCusResult.wts"),
+
+    /**
+     * 端口配置文件
+     * */
+    PORT(Project.CONFIG_PATH + "/port"),
+
+    /**
+     * SWGD数据库配置文件
+     * */
+    SWGD_DATABASE(Project.CONFIG_PATH + "/config/SWGDDatabase"),
+
+    /**
+     * 回执上传sftp配置文件
+     * */
+    CUS_RESULT_UPLOAD_SFTP(Project.CONFIG_PATH + "/config/cusResultUploadSftp"),
+
+    /**
+     * 打卡配置路径
+     * */
+    DA_KA(Project.CONFIG_PATH + "/config/daKa"),
+
+    /**
+     * c3p0配置文件
+     * */
+    C3P0(Project.ROOT_PATH + "/config/c3p0"),
+
+    /**
+     * application配置文件
+     * */
+    APPLICATION_PROPERTIES(Project.ROOT_PATH + "/config/application.properties");
 
     /**
      * 路径

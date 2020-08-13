@@ -3,13 +3,13 @@ package com.easipass.util.core.cusMessage;
 import com.easipass.util.api.websocket.BaseWebsocketApi;
 import com.easipass.util.core.CusMessage;
 import com.easipass.util.core.VO.CusMessageComparisonVO;
-import com.easipass.util.core.oracle.SWGDOracle;
+import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.exception.CusMessageException;
 import com.easipass.util.exception.ErrorException;
-import com.easipass.util.exception.OracleException;
-import com.easipass.util.util.DateUtil;
-import com.easipass.util.util.StringUtil;
-import com.easipass.util.util.XmlUtil;
+import com.easipass.util.core.database.ConnectionFailException;
+import com.easipass.util.core.util.DateUtil;
+import com.easipass.util.core.util.StringUtil;
+import com.easipass.util.core.util.XmlUtil;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.springframework.web.multipart.MultipartFile;
@@ -193,11 +193,11 @@ public final class FormCusMessage extends CusMessage {
     @Override
     public void comparison(BaseWebsocketApi baseWebsocketApi) {
         // 数据库
-        SWGDOracle SWGDOracle = new SWGDOracle();
+        SWGDDatabase SWGDOracle = null;
 
         try {
             // 检查数据库连接
-            SWGDOracle.connect();
+            SWGDOracle = new SWGDDatabase();
 
             // ediNo
             baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[ediNo: " + this.ediNo + "]"));
@@ -518,11 +518,13 @@ public final class FormCusMessage extends CusMessage {
 
             // 比对完成
             baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[NONE]"));
-        } catch (OracleException e) {
+        } catch (ConnectionFailException e) {
             baseWebsocketApi.sendMessage(CusMessageComparisonVO.getErrorType(e.getMessage()));
         } finally {
             // 关闭数据库
-            SWGDOracle.close();
+            if (SWGDOracle != null) {
+                SWGDOracle.close();
+            }
             // 关闭websocket连接
             baseWebsocketApi.close();
         }

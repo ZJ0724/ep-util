@@ -101,22 +101,6 @@ public abstract class Database {
     }
 
     /**
-     * 获取字段内容
-     *
-     * @param resultSet resultSet
-     * @param filedName 字段名
-     *
-     * @return 字段值
-     * */
-    public static String getFiledData(ResultSet resultSet, String filedName) {
-        try {
-            return resultSet.getString(filedName);
-        } catch (SQLException e) {
-            throw new ErrorException(e.getMessage());
-        }
-    }
-
-    /**
      * 获取prepareStatement
      *
      * @param sql sql
@@ -142,6 +126,43 @@ public abstract class Database {
         } catch (SQLException e) {
             throw new ErrorException(e.getMessage());
         }
+    }
+
+    /**
+     * 获取字段内容
+     *
+     * @param resultSet resultSet
+     * @param filedName 字段名
+     * @param isNext 时候需要调用next()方法
+     *
+     * @return 字段值
+     * */
+    public static String getFiledData(ResultSet resultSet, String filedName, boolean isNext) {
+        if (isNext) {
+            try {
+                resultSet.next();
+            } catch (SQLException e) {
+                return null;
+            }
+        }
+
+        try {
+            return resultSet.getString(filedName);
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+    }
+
+    /**
+     * 获取字段内容
+     *
+     * @param resultSet resultSet
+     * @param filedName 字段名
+     *
+     * @return 字段值
+     * */
+    public static String getFiledData(ResultSet resultSet, String filedName) {
+        return getFiledData(resultSet, filedName, false);
     }
 
 }

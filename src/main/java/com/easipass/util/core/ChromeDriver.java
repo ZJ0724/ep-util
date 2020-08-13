@@ -1,12 +1,12 @@
 package com.easipass.util.core;
 
-import com.easipass.util.core.config.DaKaProperties;
+import com.easipass.util.core.Config.DaKaProperties;
 import com.easipass.util.core.resource.chromeDriver.EpUtilChromeDriverLinuxResource;
 import com.easipass.util.core.resource.chromeDriver.EpUtilChromeDriverWindowsResource;
 import com.easipass.util.exception.ChromeDriverException;
-import com.easipass.util.util.ConsoleUtil;
-import com.easipass.util.util.FileUtil;
-import com.easipass.util.util.ThreadUtil;
+import com.easipass.util.core.util.ConsoleUtil;
+import com.easipass.util.core.util.FileUtil;
+import com.easipass.util.core.util.ThreadUtil;
 import com.zj0724.uiAuto.WebDriver;
 import com.zj0724.uiAuto.exception.BaseException;
 import com.zj0724.uiAuto.exception.WebDriverException;

@@ -1,12 +1,12 @@
 package com.easipass.util.core.cusResult.formCusResult;
 
-import com.easipass.util.core.oracle.SWGDOracle;
+import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.cusResult.FormCusResult;
 import com.easipass.util.core.DTO.CusResultDTO;
 import com.easipass.util.core.resource.cusResult.formCusResult.TongXunFormCusResultResource;
-import com.easipass.util.util.Base64Util;
-import com.easipass.util.util.DateUtil;
-import com.easipass.util.util.XmlUtil;
+import com.easipass.util.core.util.Base64Util;
+import com.easipass.util.core.util.DateUtil;
+import com.easipass.util.core.util.XmlUtil;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import java.io.ByteArrayInputStream;
@@ -65,7 +65,7 @@ public final class TongXunFormCusResult extends FormCusResult {
         documentRootElement.element("Data").setText(data);
 
         // 设置FileName
-        String fileName = new SWGDOracle().queryFormHeadFileName(this.getEdiNo());
+        String fileName = new SWGDDatabase().queryFormHeadFileName(this.getEdiNo());
         if (fileName == null) {
             fileName = this.getName();
         }

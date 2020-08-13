@@ -3,7 +3,7 @@ package com.easipass.util.core.http.SWGDSupply;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.easipass.util.core.Http;
-import com.easipass.util.core.oracle.SWGDOracle;
+import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.exception.SupplySendException;
 import java.sql.ResultSet;
 
@@ -44,7 +44,7 @@ public abstract class AbstractSWGDSupplyHttp extends Http {
      * @return 字段值
      * */
     protected final String getSupplyUserFieldData(String filedName) {
-        SWGDOracle swgdOracle = new SWGDOracle();
+        SWGDDatabase swgdOracle = new SWGDDatabase();
 
         swgdOracle.connect();
 
@@ -56,7 +56,7 @@ public abstract class AbstractSWGDSupplyHttp extends Http {
             throw new SupplySendException("不存在第三方用户：" + this.sender);
         }
 
-        String result = SWGDOracle.getFiledData(resultSet, filedName);
+        String result = SWGDDatabase.getFiledData(resultSet, filedName);
 
         swgdOracle.close();
 

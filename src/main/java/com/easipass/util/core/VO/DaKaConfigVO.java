@@ -1,7 +1,7 @@
 package com.easipass.util.core.VO;
 
-import com.easipass.util.core.config.DaKaProperties;
-import com.easipass.util.util.ClassUtil;
+import com.easipass.util.core.Config.DaKaProperties;
+import com.easipass.util.core.util.ClassUtil;
 import java.util.List;
 
 /**

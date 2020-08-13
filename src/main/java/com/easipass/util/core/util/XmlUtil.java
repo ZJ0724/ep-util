@@ -1,5 +1,6 @@
-package com.easipass.util.util;
+package com.easipass.util.core.util;
 
+import com.easipass.util.core.Resource;
 import com.easipass.util.exception.ErrorException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -32,6 +33,25 @@ public class XmlUtil {
     public static Document getDocument_v2(InputStream InputStream) throws DocumentException {
         SAXReader saxReader = new SAXReader();
         return saxReader.read(InputStream);
+    }
+
+    /**
+     * get document by InputStream
+     *
+     * @param resource 资源
+     *
+     * @return 文档对象
+     */
+    public static Document getDocument(Resource resource) {
+        SAXReader saxReader = new SAXReader();
+        try {
+            InputStream inputStream = new FileInputStream(new File(resource.getPath()));
+            Document document = saxReader.read(inputStream);
+            inputStream.close();
+            return document;
+        } catch (IOException | DocumentException e) {
+            throw new ErrorException(e.getMessage());
+        }
     }
 
 }

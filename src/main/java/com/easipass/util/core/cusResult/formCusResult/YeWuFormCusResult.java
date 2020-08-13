@@ -1,14 +1,14 @@
 package com.easipass.util.core.cusResult.formCusResult;
 
 import com.easipass.util.core.Database;
-import com.easipass.util.core.oracle.SWGDOracle;
+import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.cusResult.FormCusResult;
 import com.easipass.util.core.DTO.CusResultDTO;
 import com.easipass.util.core.resource.cusResult.formCusResult.YeWuFormCusResultResource;
-import com.easipass.util.exception.CusResultException;
-import com.easipass.util.util.Base64Util;
-import com.easipass.util.util.DateUtil;
-import com.easipass.util.util.XmlUtil;
+import com.easipass.util.core.cusResult.CusResultException;
+import com.easipass.util.core.util.Base64Util;
+import com.easipass.util.core.util.DateUtil;
+import com.easipass.util.core.util.XmlUtil;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import java.io.ByteArrayInputStream;
@@ -69,7 +69,7 @@ public final class YeWuFormCusResult extends FormCusResult {
         documentRootElement.element("Data").setText(data);
 
         // 设置FileName
-        String fileName = new SWGDOracle().queryFormHeadFileName(this.getEdiNo());
+        String fileName = new SWGDDatabase().queryFormHeadFileName(this.getEdiNo());
         if (fileName == null) {
             fileName = this.getName();
         }
@@ -92,9 +92,7 @@ public final class YeWuFormCusResult extends FormCusResult {
      * @return 报关单号
      * */
     protected final String getPreEntryId() {
-        SWGDOracle swgdOracle = new SWGDOracle();
-
-        swgdOracle.connect();
+        SWGDDatabase swgdOracle = new SWGDDatabase();
 
         ResultSet resultSet = swgdOracle.queryFormHead(this.getEdiNo());
 
@@ -114,7 +112,7 @@ public final class YeWuFormCusResult extends FormCusResult {
         swgdOracle.close();
 
         if (preEntryId.startsWith("EDI")) {
-            return new SWGDOracle().queryDeclPort(this.getEdiNo()) + "000000000" + this.getEdiNo().substring(this.getEdiNo().length() - 5);
+            return new SWGDDatabase().queryDeclPort(this.getEdiNo()) + "000000000" + this.getEdiNo().substring(this.getEdiNo().length() - 5);
         } else {
             return preEntryId;
         }
@@ -132,7 +130,7 @@ public final class YeWuFormCusResult extends FormCusResult {
             return ediNo;
         }
 
-        return new SWGDOracle().queryEdiNo(ediNo);
+        return new SWGDDatabase().queryEdiNo(ediNo);
     }
 
 }

@@ -2,7 +2,6 @@ package com.easipass.util.core;
 
 import com.easipass.util.core.DTO.CusResultDTO;
 import com.easipass.util.core.sftp.Sftp83;
-import com.easipass.util.exception.BaseException;
 import com.easipass.util.exception.ErrorException;
 
 /**

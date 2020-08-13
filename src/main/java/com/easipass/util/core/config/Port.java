@@ -1,7 +1,8 @@
 package com.easipass.util.core.config;
 
-import com.easipass.util.core.Project;
-import com.easipass.util.util.FileUtil;
+import com.easipass.util.core.Resource;
+import com.easipass.util.exception.ErrorException;
+import com.easipass.util.core.util.FileUtil;
 import java.io.File;
 
 /**
@@ -14,27 +15,34 @@ public final class Port {
     /**
      * 端口
      * */
-    private int port = 8001;
+    private final int port;
 
     /**
      * 文件
      * */
-    private static final File FILE = new File(Project.CONFIG_PATH, "port");
+    private static final File FILE = new File(Resource.PORT.getPath());
 
     /**
      * 单例
      * */
-    private static Port PORT = null;
+    private static final Port PORT = new Port();
 
     /**
      * 构造函数
      * */
     private Port() {
         if (FILE.exists()) {
-            this.port = Integer.parseInt(FileUtil.getData(FILE));
+            try {
+                this.port = Integer.parseInt(FileUtil.getData(FILE));
+            } catch (NumberFormatException e) {
+                throw new ErrorException(e.getMessage());
+            }
         } else {
+            final int port = 8001;
+
             FileUtil.createFile(FILE);
-            FileUtil.setData(FILE, this.port + "");
+            FileUtil.setData(FILE, port + "");
+            this.port = port;
         }
     }
 
@@ -53,10 +61,6 @@ public final class Port {
      * @return 单例
      * */
     public static Port getInstance() {
-        if (PORT == null) {
-            PORT = new Port();
-        }
-
         return PORT;
     }
 

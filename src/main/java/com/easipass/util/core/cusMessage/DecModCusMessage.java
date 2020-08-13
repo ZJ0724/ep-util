@@ -3,11 +3,11 @@ package com.easipass.util.core.cusMessage;
 import com.easipass.util.api.websocket.BaseWebsocketApi;
 import com.easipass.util.core.CusMessage;
 import com.easipass.util.core.VO.CusMessageComparisonVO;
-import com.easipass.util.core.oracle.SWGDOracle;
+import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.exception.CusMessageException;
 import com.easipass.util.exception.ErrorException;
-import com.easipass.util.exception.OracleException;
-import com.easipass.util.util.XmlUtil;
+import com.easipass.util.core.database.ConnectionFailException;
+import com.easipass.util.core.util.XmlUtil;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.springframework.web.multipart.MultipartFile;
@@ -85,11 +85,11 @@ public final class DecModCusMessage extends CusMessage {
 
     @Override
     public void comparison(BaseWebsocketApi baseWebsocketApi) {
-        // 数据库
-        SWGDOracle SWGDOracle = new SWGDOracle();
+        SWGDDatabase SWGDOracle = null;
 
         try {
-            SWGDOracle.connect();
+            // 数据库
+            SWGDOracle = new SWGDDatabase();
 
             // 报关单号
             baseWebsocketApi.sendMessage(CusMessageComparisonVO.getTitleType("[preEntryId: " + this.preEntryId + "]"));
@@ -187,10 +187,12 @@ public final class DecModCusMessage extends CusMessage {
                     nodeMapping.comparison(baseWebsocketApi);
                 }
             }
-        } catch (OracleException e) {
+        } catch (ConnectionFailException e) {
             baseWebsocketApi.sendMessage(CusMessageComparisonVO.getErrorType(e.getMessage()));
         } finally {
-            SWGDOracle.close();
+            if (SWGDOracle != null) {
+                SWGDOracle.close();
+            }
             baseWebsocketApi.close();
         }
     }

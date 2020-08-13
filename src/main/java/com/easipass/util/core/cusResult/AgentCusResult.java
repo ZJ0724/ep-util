@@ -2,10 +2,10 @@ package com.easipass.util.core.cusResult;
 
 import com.easipass.util.core.CusResult;
 import com.easipass.util.core.DTO.CusResultDTO;
-import com.easipass.util.core.oracle.SWGDOracle;
-import com.easipass.util.core.resource.cusResult.AgentCusResultResource;
-import com.easipass.util.util.DateUtil;
-import com.easipass.util.util.XmlUtil;
+import com.easipass.util.core.Resource;
+import com.easipass.util.core.database.SWGDDatabase;
+import com.easipass.util.core.util.DateUtil;
+import com.easipass.util.core.util.XmlUtil;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
@@ -33,10 +33,17 @@ public final class AgentCusResult extends CusResult {
 
     @Override
     public String getData() {
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+        String agentCode = swgdDatabase.queryAgentCode(this.ediNo);
+
+        if (agentCode == null) {
+            throw new CusResultException("报关单: " + this.ediNo + "agentCode为null");
+        }
+
+        swgdDatabase.close();
+
         // 获取回执原节点
-        AgentCusResultResource agentCusResultResource = AgentCusResultResource.getInstance();
-        Document document = XmlUtil.getDocument(agentCusResultResource.getInputStream());
-        agentCusResultResource.closeInputStream();
+        Document document = XmlUtil.getDocument(Resource.AGENT_CUS_RESULT);
 
         // 获取根节点
         Element rootElement = document.getRootElement();
@@ -47,7 +54,7 @@ public final class AgentCusResult extends CusResult {
         ResponseInfo.element("ResponseNotes").setText(this.getNote());
         rootElement.element("ConsignNo").setText(getAgentSeqNo());
         rootElement.element("DecEntryID").setText(ediNo);
-        ResponseInfo.element("CopCusCode").setText(new SWGDOracle().queryAgentCode(ediNo));
+        ResponseInfo.element("CopCusCode").setText(agentCode);
 
         return document.asXML();
     }

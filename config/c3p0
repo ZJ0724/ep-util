@@ -3,3 +3,4 @@ maxIdleTime = 30
 maxPoolSize = 100
 minPoolSize = 10
 maxStatements = 200
+checkoutTimeout = 5000

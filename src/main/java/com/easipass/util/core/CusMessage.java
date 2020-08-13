@@ -283,9 +283,13 @@ public abstract class CusMessage {
          * @return 数据不为NULl这返回true
          * */
         public static boolean checkResultSet(ResultSet resultSet, String message, BaseWebsocketApi baseWebsocketApi) {
-            if (resultSet == null) {
-                baseWebsocketApi.sendMessage(CusMessageComparisonVO.getErrorType("数据库" + message + "数据不存在"));
-                return false;
+            try {
+                if (resultSet == null || !resultSet.next()) {
+                    baseWebsocketApi.sendMessage(CusMessageComparisonVO.getErrorType("数据库" + message + "数据不存在"));
+                    return false;
+                }
+            } catch (SQLException e) {
+                throw new ErrorException(e.getMessage());
             }
 
             return true;

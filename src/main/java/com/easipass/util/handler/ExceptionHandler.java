@@ -1,7 +1,7 @@
 package com.easipass.util.handler;
 
 import com.easipass.util.core.Response;
-import com.easipass.util.exception.BaseException;
+import com.easipass.util.core.BaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ResponseBody;

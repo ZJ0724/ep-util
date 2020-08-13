@@ -2,11 +2,11 @@ package com.easipass.util.core.cusResult.decModCusResult;
 
 import com.easipass.util.core.cusResult.DecModCusResult;
 import com.easipass.util.core.DTO.CusResultDTO;
-import com.easipass.util.core.oracle.SWGDOracle;
+import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.resource.cusResult.decModCusResult.YeWuDecModCusResultResource;
-import com.easipass.util.util.Base64Util;
-import com.easipass.util.util.DateUtil;
-import com.easipass.util.util.XmlUtil;
+import com.easipass.util.core.util.Base64Util;
+import com.easipass.util.core.util.DateUtil;
+import com.easipass.util.core.util.XmlUtil;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import java.io.ByteArrayInputStream;
@@ -67,7 +67,7 @@ public final class YeWuDecModCusResult extends DecModCusResult {
         documentRootElement.element("Data").setText(data);
 
         // 获取修撤单文件名
-        SWGDOracle swgdOracle = new SWGDOracle();
+        SWGDDatabase swgdOracle = new SWGDDatabase();
         String fileName = swgdOracle.queryDecModFileName(this.getPreEntryId());
 
         // 如果修撤单文件名为null，则将文件名字段设置成回执文件名

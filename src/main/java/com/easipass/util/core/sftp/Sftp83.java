@@ -2,7 +2,7 @@ package com.easipass.util.core.sftp;
 
 import com.easipass.util.core.CusResult;
 import com.easipass.util.core.Sftp;
-import com.easipass.util.core.config.Sftp83Properties;
+import com.easipass.util.core.Config.Sftp83Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

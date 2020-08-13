@@ -1,5 +1,7 @@
 package com.easipass.util.exception;
 
+import com.easipass.util.core.BaseException;
+
 /**
  * 谷歌驱动异常
  *

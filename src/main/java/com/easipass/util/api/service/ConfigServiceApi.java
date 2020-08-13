@@ -7,9 +7,9 @@ import com.easipass.util.core.Response;
 import com.easipass.util.core.VO.DaKaConfigVO;
 import com.easipass.util.core.VO.SWGDConfigVO;
 import com.easipass.util.core.VO.Sftp83ConfigVO;
-import com.easipass.util.core.config.DaKaProperties;
-import com.easipass.util.core.config.SWGDDatabaseProperties;
-import com.easipass.util.core.config.Sftp83Properties;
+import com.easipass.util.core.Config.DaKaProperties;
+import com.easipass.util.core.Config.SWGDDatabaseProperties;
+import com.easipass.util.core.Config.Sftp83Properties;
 import org.springframework.web.bind.annotation.*;
 
 /**

@@ -1,7 +1,7 @@
 package com.easipass.util.core.VO;
 
-import com.easipass.util.core.config.SWGDDatabaseProperties;
-import com.easipass.util.util.ClassUtil;
+import com.easipass.util.core.Config.SWGDDatabaseProperties;
+import com.easipass.util.core.util.ClassUtil;
 
 /**
  * SWGDConfigVO
