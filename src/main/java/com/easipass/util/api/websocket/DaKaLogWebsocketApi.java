@@ -1,6 +1,6 @@
 package com.easipass.util.api.websocket;
 
-import com.easipass.util.entity.DaKa;
+import com.easipass.util.core.DaKa;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

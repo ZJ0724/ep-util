@@ -1,7 +1,7 @@
 .idea
 .git
 target
-release
+.release
 EpUtilServer.iml
 epUtil.iml
 log

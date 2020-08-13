@@ -1,13 +1,13 @@
 package com.easipass.util.api.service;
 
-import com.easipass.util.entity.CusResult;
-import com.easipass.util.entity.Response;
-import com.easipass.util.entity.cusResult.AgentCusResult;
-import com.easipass.util.entity.cusResult.decModCusResult.QPDecModCusResult;
-import com.easipass.util.entity.cusResult.decModCusResult.YeWuDecModCusResult;
-import com.easipass.util.entity.cusResult.formCusResult.TongXunFormCusResult;
-import com.easipass.util.entity.cusResult.formCusResult.YeWuFormCusResult;
-import com.easipass.util.entity.DTO.CusResultDTO;
+import com.easipass.util.core.CusResult;
+import com.easipass.util.core.Response;
+import com.easipass.util.core.cusResult.AgentCusResult;
+import com.easipass.util.core.cusResult.decModCusResult.QPDecModCusResult;
+import com.easipass.util.core.cusResult.decModCusResult.YeWuDecModCusResult;
+import com.easipass.util.core.cusResult.formCusResult.TongXunFormCusResult;
+import com.easipass.util.core.cusResult.formCusResult.YeWuFormCusResult;
+import com.easipass.util.core.DTO.CusResultDTO;
 import com.zj0724.springbootUtil.annotation.NotNull;
 import org.springframework.web.bind.annotation.*;
 

@@ -109,15 +109,19 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.mchange/c3p0 -->
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.5.5</version>
+        </dependency>
     </dependencies>
 
     <build>
         <finalName>${project.artifactId}</finalName>
+
         <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <targetPath>resources</targetPath>
-            </resource>
             <resource>
                 <directory>${project.basedir}</directory>
                 <includes>
@@ -136,6 +140,7 @@
                 <targetPath>static</targetPath>
             </resource>
         </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

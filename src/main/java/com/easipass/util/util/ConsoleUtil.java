@@ -1,7 +1,7 @@
 package com.easipass.util.util;
 
-import com.easipass.util.entity.Project;
-import com.easipass.util.entity.SystemType;
+import com.easipass.util.core.Project;
+import com.easipass.util.core.SystemType;
 import com.easipass.util.exception.ErrorException;
 import java.io.IOException;
 

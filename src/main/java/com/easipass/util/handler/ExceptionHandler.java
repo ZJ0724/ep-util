@@ -1,6 +1,6 @@
 package com.easipass.util.handler;
 
-import com.easipass.util.entity.Response;
+import com.easipass.util.core.Response;
 import com.easipass.util.exception.BaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

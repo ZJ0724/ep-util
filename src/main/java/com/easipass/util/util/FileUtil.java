@@ -96,11 +96,32 @@ public final class FileUtil {
             }
         }
 
-        if (result == null) {
-            throw new ErrorException("获取文件数据异常");
-        }
-
         return result;
+    }
+
+    /**
+     * 创建文件
+     *
+     * @param file 文件
+     * */
+    public static void createFile(File file) {
+        if (!file.exists()) {
+            File p = file.getParentFile();
+
+            if (!p.exists()) {
+                if (!p.mkdirs()) {
+                    throw new ErrorException("创建文件夹失败");
+                }
+            }
+
+            try {
+                if (!file.createNewFile()) {
+                    throw new ErrorException("创建文件失败");
+                }
+            } catch (IOException e) {
+                throw new ErrorException(e.getMessage());
+            }
+        }
     }
 
 }

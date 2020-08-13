@@ -1,7 +1,7 @@
 package com.easipass.util.api.service;
 
-import com.easipass.util.entity.Response;
-import com.easipass.util.entity.http.SWGDSupply.SendCusFileSWGDSupplyHttp;
+import com.easipass.util.core.Response;
+import com.easipass.util.core.http.SWGDSupply.SendCusFileSWGDSupplyHttp;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

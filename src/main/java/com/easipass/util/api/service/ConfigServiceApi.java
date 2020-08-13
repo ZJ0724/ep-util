@@ -1,15 +1,15 @@
 package com.easipass.util.api.service;
 
-import com.easipass.util.entity.DTO.DaKaConfigDTO;
-import com.easipass.util.entity.DTO.SWGDConfigDTO;
-import com.easipass.util.entity.DTO.Sftp83ConfigDTO;
-import com.easipass.util.entity.Response;
-import com.easipass.util.entity.VO.DaKaConfigVO;
-import com.easipass.util.entity.VO.SWGDConfigVO;
-import com.easipass.util.entity.VO.Sftp83ConfigVO;
-import com.easipass.util.entity.config.DaKaProperties;
-import com.easipass.util.entity.config.SWGDProperties;
-import com.easipass.util.entity.config.Sftp83Properties;
+import com.easipass.util.core.DTO.DaKaConfigDTO;
+import com.easipass.util.core.DTO.SWGDConfigDTO;
+import com.easipass.util.core.DTO.Sftp83ConfigDTO;
+import com.easipass.util.core.Response;
+import com.easipass.util.core.VO.DaKaConfigVO;
+import com.easipass.util.core.VO.SWGDConfigVO;
+import com.easipass.util.core.VO.Sftp83ConfigVO;
+import com.easipass.util.core.config.DaKaProperties;
+import com.easipass.util.core.config.SWGDDatabaseProperties;
+import com.easipass.util.core.config.Sftp83Properties;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -50,7 +50,7 @@ public class ConfigServiceApi {
      * */
     @PostMapping("setSWGD")
     public Response setSWGD(@RequestBody SWGDConfigDTO swgdConfigDTO) {
-        SWGDProperties.getInstance().setDataByDTO(swgdConfigDTO);
+        SWGDDatabaseProperties.getInstance().setDataByDTO(swgdConfigDTO);
 
         return Response.returnTrue();
     }

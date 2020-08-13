@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 存放目录
-releasePath="release"
+releasePath=".release"
 # 应用名
 projectName="ep-util"
 # 版本

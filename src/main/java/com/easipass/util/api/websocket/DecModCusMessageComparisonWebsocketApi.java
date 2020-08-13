@@ -1,7 +1,7 @@
 package com.easipass.util.api.websocket;
 
-import com.easipass.util.entity.CusMessage;
-import com.easipass.util.entity.VO.CusMessageComparisonVO;
+import com.easipass.util.core.CusMessage;
+import com.easipass.util.core.VO.CusMessageComparisonVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

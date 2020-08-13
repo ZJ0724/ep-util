@@ -1,11 +1,11 @@
 package com.easipass.util;
 
-import com.easipass.util.entity.ChromeDriver;
-import com.easipass.util.entity.DaKa;
-import com.easipass.util.entity.Project;
-import com.easipass.util.entity.config.DaKaProperties;
-import com.easipass.util.entity.config.SWGDProperties;
-import com.easipass.util.entity.config.Sftp83Properties;
+import com.easipass.util.core.ChromeDriver;
+import com.easipass.util.core.DaKa;
+import com.easipass.util.core.Project;
+import com.easipass.util.core.config.DaKaProperties;
+import com.easipass.util.core.config.SWGDDatabaseProperties;
+import com.easipass.util.core.config.Sftp83Properties;
 import com.easipass.util.exception.BaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ public class Main {
             DaKaProperties.getInstance();
 
             // 加载SWGD配置
-            SWGDProperties.getInstance();
+            SWGDDatabaseProperties.getInstance();
 
             // 加载sftp83配置
             Sftp83Properties.getInstance();
