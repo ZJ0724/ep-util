@@ -4,7 +4,6 @@ import com.easipass.util.api.websocket.DaKaLogWebsocketApi;
 import com.easipass.util.core.config.DaKaConfig;
 import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.ThreadUtil;
-import com.easipass.util.entity.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
@@ -54,7 +53,7 @@ public final class DaKa {
         if (getDaKaSign()) {
             OpenAutoDaKa();
         } else {
-            this.addLog("关闭自动打卡");
+            this.addLog("未开启自动打卡");
         }
     }
 
@@ -71,20 +70,22 @@ public final class DaKa {
 
     /**
      * 开启自动打卡
-     *
-     * @return 响应
      * */
-    public Response OpenAutoDaKa() {
+    public void OpenAutoDaKa() {
         // 如果已开启自动打卡，不再重复开启
         if (this.status) {
-            return Response.returnFalse("已开启自动打卡");
+            return;
         }
 
         this.setDaKaSign(true);
         this.addLog("开启自动打卡");
 
-        new Thread(() -> {
+        Project.THREAD_POOL_EXECUTOR.execute(() -> {
             while (getDaKaSign()) {
+//                // 每5秒执行一次
+//                ThreadUtil.sleep(5000);
+//                log.info("比对打卡...");
+
                 // 检查日期是否符合
                 boolean dateOk = false;
                 for (String date : DA_KA_CONFIG.date) {
@@ -138,11 +139,7 @@ public final class DaKa {
                 // 打卡完等待1分钟
                 ThreadUtil.sleep(60000);
             }
-
-            this.addLog("关闭自动打卡");
-        }).start();
-
-        return Response.returnTrue();
+        });
     }
 
     /**
@@ -166,31 +163,28 @@ public final class DaKa {
             DA_KA_CONFIG.sign = "0";
         }
 
+        DA_KA_CONFIG.commit();
         this.status = daKaSign;
     }
 
     /**
      * 关闭自动打卡
-     *
-     * @return 响应
      * */
-    public Response closeAutoDaKa() {
+    public void closeAutoDaKa() {
         if (!this.status) {
-            return Response.returnFalse("自动打卡未开启");
+            return;
         }
 
         setDaKaSign(false);
 
-        return Response.returnTrue();
+        this.addLog("关闭自动打卡");
     }
 
     /**
      * 获取自动打卡状态
-     *
-     * @return 响应
      * */
-    public Response getStatus() {
-        return Response.returnTrue(this.status);
+    public boolean getStatus() {
+        return this.status;
     }
 
     /**
@@ -222,40 +216,27 @@ public final class DaKa {
 
     /**
      * 清空日志
-     *
-     * @return 响应
      * */
-    public Response cleanLog() {
+    public void cleanLog() {
         this.logs.clear();
-
-        return Response.returnTrue();
     }
 
     /**
      * 手动打卡
-     *
-     * @return 响应
      * */
-    public Response manualKaKa() {
+    public void manualKaKa() {
         ChromeDriver chromeDriver = null;
-        Response response;
 
         try {
             this.addLog("手动打卡...");
             chromeDriver = new ChromeDriver();
             chromeDriver.daKa();
-            response = Response.returnTrue();
             this.addLog("打卡完成！");
-        } catch (BaseException e) {
-            response = Response.returnFalse(e.getMessage());
-            this.addLog(e.getMessage());
         } finally {
             if (chromeDriver != null) {
                 chromeDriver.close();
             }
         }
-
-        return response;
     }
 
     /**

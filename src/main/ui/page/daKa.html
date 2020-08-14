@@ -101,11 +101,15 @@
             open() {
                 let that = this;
 
+                // 已开启打卡
+                if (that.status) {
+                    alertComponent.message("已开启打卡");
+                    return;
+                }
+
                 daKaServiceApi.openAutoDaKa().then(function () {
                     alertComponent.message("开启成功");
                     that.getStatus();
-                }).catch(function (message) {
-                    alertComponent.message(message);
                 });
             },
 
@@ -113,11 +117,15 @@
             close() {
                 let that = this;
 
+                // 自动打卡未开启
+                if (!that.status) {
+                    alertComponent.message("未开启自动打卡");
+                    return;
+                }
+
                 daKaServiceApi.closeAutoDaKa().then(function () {
                     alertComponent.message("关闭成功");
                     that.getStatus();
-                }).catch(function (message) {
-                    alertComponent.message(message);
                 });
             },
 
