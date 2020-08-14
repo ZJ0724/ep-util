@@ -1,9 +1,9 @@
 package com.easipass.util.core.cusResult.formCusResult;
 
+import com.easipass.util.core.DTO.CusResultDTO;
+import com.easipass.util.core.Resource;
 import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.cusResult.FormCusResult;
-import com.easipass.util.core.DTO.CusResultDTO;
-import com.easipass.util.core.resource.cusResult.formCusResult.TongXunFormCusResultResource;
 import com.easipass.util.core.util.Base64Util;
 import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.XmlUtil;
@@ -32,9 +32,7 @@ public final class TongXunFormCusResult extends FormCusResult {
     @Override
     public String getData() {
         //获取回执原document
-        TongXunFormCusResultResource tongXunFormCusResultResource = TongXunFormCusResultResource.getInstance();
-        Document document = XmlUtil.getDocument(tongXunFormCusResultResource.getInputStream());
-        tongXunFormCusResultResource.closeInputStream();
+        Document document = XmlUtil.getDocument(Resource.TONG_XUN_FORM_CUS_RESULT);
 
         //document根节点
         Element documentRootElement = document.getRootElement();
@@ -65,10 +63,15 @@ public final class TongXunFormCusResult extends FormCusResult {
         documentRootElement.element("Data").setText(data);
 
         // 设置FileName
-        String fileName = new SWGDDatabase().queryFormHeadFileName(this.getEdiNo());
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+        String fileName = swgdDatabase.queryFormHeadFileName(this.getEdiNo());
+
         if (fileName == null) {
             fileName = this.getName();
         }
+
+        swgdDatabase.close();
+
         documentRootElement.element("AddInfo").element("FileName").setText(fileName);
 
         // 设置创建时间

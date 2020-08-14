@@ -1,6 +1,6 @@
 package com.easipass.util.core.util;
 
-import com.easipass.util.exception.ErrorException;
+import com.easipass.util.core.exception.ErrorException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 

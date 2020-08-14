@@ -1,7 +1,7 @@
 package com.easipass.util.api.service;
 
 import com.easipass.util.core.Project;
-import com.easipass.util.core.Response;
+import com.easipass.util.entity.Response;
 import com.easipass.util.core.util.DateUtil;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +23,7 @@ public class SystemServiceApi {
      * */
     @GetMapping("getVersion")
     public Response getVersion() {
-        return Response.returnTrue(Project.getInstance().getVersion());
+        return Response.returnTrue(Project.VERSION);
     }
 
     /**

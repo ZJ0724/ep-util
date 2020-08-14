@@ -1,6 +1,6 @@
 package com.easipass.util.core;
 
-import com.easipass.util.exception.ErrorException;
+import com.easipass.util.core.exception.ErrorException;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -69,12 +69,12 @@ public final class C3p0Config {
             throw new ErrorException(e.getMessage());
         }
 
-        this.initialPoolSize = (int) properties.get("initialPoolSize");
-        this.maxPoolSize = (int) properties.get("maxPoolSize");
-        this.minPoolSize = (int) properties.get("minPoolSize");
-        this.maxIdleTime = (int) properties.get("maxIdleTime");
-        this.maxStatements = (int) properties.get("maxStatements");
-        this.checkoutTimeout = (int) properties.get("checkoutTimeout");
+        this.initialPoolSize = Integer.parseInt(properties.get("initialPoolSize").toString());
+        this.maxPoolSize = Integer.parseInt(properties.get("maxPoolSize").toString());
+        this.minPoolSize = Integer.parseInt(properties.get("minPoolSize").toString());
+        this.maxIdleTime = Integer.parseInt(properties.get("maxIdleTime").toString());
+        this.maxStatements = Integer.parseInt(properties.get("maxStatements").toString());
+        this.checkoutTimeout = Integer.parseInt(properties.get("checkoutTimeout").toString());
     }
 
     /**

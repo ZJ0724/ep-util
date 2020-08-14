@@ -1,13 +1,13 @@
 package com.easipass.util.api.service;
 
 import com.easipass.util.core.CusResult;
-import com.easipass.util.core.Response;
+import com.easipass.util.core.DTO.CusResultDTO;
+import com.easipass.util.entity.Response;
 import com.easipass.util.core.cusResult.AgentCusResult;
 import com.easipass.util.core.cusResult.decModCusResult.QPDecModCusResult;
 import com.easipass.util.core.cusResult.decModCusResult.YeWuDecModCusResult;
 import com.easipass.util.core.cusResult.formCusResult.TongXunFormCusResult;
 import com.easipass.util.core.cusResult.formCusResult.YeWuFormCusResult;
-import com.easipass.util.core.DTO.CusResultDTO;
 import com.zj0724.springbootUtil.annotation.NotNull;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,7 +40,9 @@ public class CusResultService {
      */
     @PostMapping(FORM_CUS_RESULT + "/uploadTongXun")
     public Response formCusResultUploadTongXun(@RequestParam("ediNo") @NotNull String ediNo, @RequestBody @NotNull CusResultDTO cusResultDTO) {
-        return new TongXunFormCusResult(cusResultDTO, ediNo).upload();
+        new TongXunFormCusResult(cusResultDTO, ediNo).upload();
+
+        return Response.returnTrue();
     }
 
     /**
@@ -53,7 +55,9 @@ public class CusResultService {
      * */
     @PostMapping(FORM_CUS_RESULT + "uploadYeWu")
     public Response formCusResultUploadYeWu(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("ediNo") @NotNull String ediNo) {
-        return new YeWuFormCusResult(cusResultDTO, ediNo).upload();
+        new YeWuFormCusResult(cusResultDTO, ediNo).upload();
+
+        return Response.returnTrue();
     }
 
     /**
@@ -69,7 +73,9 @@ public class CusResultService {
         CusResult tongXun = new TongXunFormCusResult(new CusResultDTO("0", "通讯回执上传成功"), ediNo);
         CusResult yeWu = new YeWuFormCusResult(cusResultDTO, ediNo);
 
-        return CusResult.disposableUpload(tongXun, yeWu);
+        CusResult.disposableUpload(tongXun, yeWu);
+
+        return Response.returnTrue();
     }
 
     /**
@@ -82,7 +88,9 @@ public class CusResultService {
      * */
     @PostMapping(DEC_MOD_RESULT + "uploadQP")
     public Response decModCusResultUploadQP(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("preEntryId") @NotNull String preEntryId) {
-        return new QPDecModCusResult(cusResultDTO, preEntryId).upload();
+        new QPDecModCusResult(cusResultDTO, preEntryId).upload();
+
+        return Response.returnTrue();
     }
 
     /**
@@ -95,7 +103,9 @@ public class CusResultService {
      * */
     @PostMapping(DEC_MOD_RESULT + "uploadYeWu")
     public Response decModCusResultUploadYeWu(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("preEntryId") @NotNull String preEntryId) {
-        return new YeWuDecModCusResult(cusResultDTO, preEntryId).upload();
+        new YeWuDecModCusResult(cusResultDTO, preEntryId).upload();
+
+        return Response.returnTrue();
     }
 
     /**
@@ -111,7 +121,9 @@ public class CusResultService {
         CusResult QP = new QPDecModCusResult(new CusResultDTO("0", "QP回执上传成功"), preEntryId);
         CusResult yeWu = new YeWuDecModCusResult(cusResultDTO, preEntryId);
 
-        return CusResult.disposableUpload(QP, yeWu);
+        CusResult.disposableUpload(QP, yeWu);
+
+        return Response.returnTrue();
     }
 
     /**
@@ -124,7 +136,9 @@ public class CusResultService {
      * */
     @PostMapping("agentCusResult/upload")
     public Response agentCusResultUpload(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("ediNo") @NotNull String ediNo) {
-        return new AgentCusResult(cusResultDTO, ediNo).upload();
+        new AgentCusResult(cusResultDTO, ediNo).upload();
+
+        return Response.returnTrue();
     }
 
 }

@@ -1,17 +1,20 @@
 package com.easipass.util.core;
 
 import com.alibaba.fastjson.JSONObject;
+import com.easipass.util.core.DTO.AbstractDTO;
 import com.easipass.util.core.config.Key;
-import com.easipass.util.exception.ConfigException;
-import com.easipass.util.exception.ErrorException;
+import com.easipass.util.core.util.ClassUtil;
+import com.easipass.util.core.exception.ConfigException;
+import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.util.FileUtil;
 import com.easipass.util.core.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 抽象配置类
@@ -28,7 +31,12 @@ public abstract class Config {
     /**
      * 所有带@Key注解的字段
      * */
-    private final Set<Field> fields;
+    private final List<Field> fields;
+
+    /**
+     * log
+     * */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
 
     /**
      * 构造函数
@@ -37,7 +45,7 @@ public abstract class Config {
      * */
     protected Config(Resource resource) {
         this.file = new File(resource.getPath());
-        this.fields = new HashSet<>();
+        this.fields = new ArrayList<>();
 
         // 检查配置文件是否存在，不存在创建默认配置文件
         if (!this.file.exists()) {
@@ -54,6 +62,7 @@ public abstract class Config {
             }
         }
 
+        setDefaultData();
         loadData(true);
         commit();
     }
@@ -85,8 +94,16 @@ public abstract class Config {
             Object data = properties.get(fieldName);
 
             if (data != null) {
+                Class<?> fC = field.getType();
+
                 try {
-                    field.set(this, data);
+                    if (fC == List.class) {
+                        field.set(this, StringUtil.parsList(data.toString()));
+                    } else if (fC == Integer.class) {
+                        field.set(this, Integer.parseInt(data.toString()));
+                    } else {
+                        field.set(this, data);
+                    }
                 } catch (IllegalAccessException e) {
                     throw new ConfigException(data + "数据格式错误");
                 }
@@ -129,6 +146,8 @@ public abstract class Config {
         }
 
         FileUtil.setData(this.file, commitData);
+
+        LOGGER.info(this.toString());
     }
 
     @Override
@@ -160,5 +179,22 @@ public abstract class Config {
             throw new ErrorException("配置文件不存在，请不要手动删除配置文件");
         }
     }
+
+    /**
+     * 设置数据通过DTO
+     *
+     * @param abstractDTO abstractDTO
+     * */
+    public final void setData(AbstractDTO abstractDTO) {
+        System.out.println(this.toString());
+        ClassUtil.assemblyData(abstractDTO, this);
+        System.out.println(this.toString());
+        commit();
+    }
+
+    /**
+     * 设置默认数据
+     * */
+    protected abstract void setDefaultData();
 
 }

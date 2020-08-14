@@ -1,9 +1,10 @@
 package com.easipass.util.core;
 
 import com.easipass.util.api.websocket.DaKaLogWebsocketApi;
-import com.easipass.util.core.Config.DaKaProperties;
+import com.easipass.util.core.config.DaKaConfig;
 import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.ThreadUtil;
+import com.easipass.util.entity.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public final class DaKa {
     /**
      * 打卡配置
      * */
-    private static final DaKaProperties DA_KA_PROPERTIES = DaKaProperties.getInstance();
+    private static final DaKaConfig DA_KA_CONFIG = DaKaConfig.getInstance();
 
     /**
      * 日志
@@ -86,7 +87,7 @@ public final class DaKa {
             while (getDaKaSign()) {
                 // 检查日期是否符合
                 boolean dateOk = false;
-                for (String date : DA_KA_PROPERTIES.getDate()) {
+                for (String date : DA_KA_CONFIG.date) {
                     if (DateUtil.getDate("yyyy-MM-dd").equals(date)) {
                         dateOk = true;
                     }
@@ -97,7 +98,7 @@ public final class DaKa {
 
                 // 检查星期是否符合
                 boolean weekOk = false;
-                for (String week : DA_KA_PROPERTIES.getWeek()) {
+                for (String week : DA_KA_CONFIG.week) {
                     if (DateUtil.getWeek().equals(week)) {
                         weekOk = true;
                     }
@@ -112,9 +113,9 @@ public final class DaKa {
                 }
 
                 // 匹配时间进行打卡
-                if (DateUtil.getNowTime().equals(DA_KA_PROPERTIES.getToWorkTime())) {
+                if (DateUtil.getNowTime().equals(DA_KA_CONFIG.toWorkTime)) {
                     this.addLog("开始上班打卡...");
-                } else if (DateUtil.getNowTime().equals(DA_KA_PROPERTIES.getOffWorkTime())) {
+                } else if (DateUtil.getNowTime().equals(DA_KA_CONFIG.offWorkTime)) {
                     this.addLog("开始下班打卡...");
                 } else {
                     continue;
@@ -123,7 +124,7 @@ public final class DaKa {
                 ChromeDriver chromeDriver = null;
 
                 try {
-                    chromeDriver = ChromeDriver.get();
+                    chromeDriver = new ChromeDriver();
                     chromeDriver.daKa();
                     this.addLog("打卡完成！");
                 } catch (BaseException e) {
@@ -150,7 +151,7 @@ public final class DaKa {
      * @return true: 开始打卡, false: 关闭打卡
      * */
     private boolean getDaKaSign() {
-        return DA_KA_PROPERTIES.getSign().equals("1");
+        return DA_KA_CONFIG.sign.equals("1");
     }
 
     /**
@@ -160,9 +161,9 @@ public final class DaKa {
      * */
     private void setDaKaSign(boolean daKaSign) {
         if (daKaSign) {
-            DA_KA_PROPERTIES.setSign("1");
+            DA_KA_CONFIG.sign = "1";
         } else {
-            DA_KA_PROPERTIES.setSign("0");
+            DA_KA_CONFIG.sign = "0";
         }
 
         this.status = daKaSign;
@@ -241,7 +242,7 @@ public final class DaKa {
 
         try {
             this.addLog("手动打卡...");
-            chromeDriver = ChromeDriver.get();
+            chromeDriver = new ChromeDriver();
             chromeDriver.daKa();
             response = Response.returnTrue();
             this.addLog("打卡完成！");

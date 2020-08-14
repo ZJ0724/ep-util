@@ -1,6 +1,6 @@
 package com.easipass.util.core;
 
-import com.easipass.util.exception.ErrorException;
+import com.easipass.util.core.exception.ErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.*;
@@ -18,6 +18,11 @@ public abstract class Database {
      * 连接
      * */
     private final Connection connection;
+
+    /**
+     * 数据库名
+     * */
+    private final String name;
 
     /**
      * PreparedStatement
@@ -39,10 +44,11 @@ public abstract class Database {
      *
      * @param connection 连接
      * */
-    protected Database(Connection connection) {
+    protected Database(Connection connection, String name) {
         this.connection = connection;
+        this.name = name;
 
-        log.info("数据库: {}, 已连接", this.connection);
+        log.info("数据库: {}, 已连接", this.name);
     }
 
     /**
@@ -63,7 +69,7 @@ public abstract class Database {
             throw new ErrorException(e.getMessage());
         }
 
-        log.info("oracle: {}, 已关闭", this.connection);
+        log.info("数据库: {}, 已关闭", this.name);
     }
 
     /**

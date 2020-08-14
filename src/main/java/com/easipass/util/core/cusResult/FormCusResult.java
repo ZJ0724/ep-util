@@ -1,11 +1,11 @@
 package com.easipass.util.core.cusResult;
 
+import com.easipass.util.core.DTO.CusResultDTO;
 import com.easipass.util.core.Database;
 import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.CusResult;
-import com.easipass.util.core.DTO.CusResultDTO;
-import com.easipass.util.exception.ErrorException;
-
+import com.easipass.util.core.exception.CusResultException;
+import com.easipass.util.core.exception.ErrorException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

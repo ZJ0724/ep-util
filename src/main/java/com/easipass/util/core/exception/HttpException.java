@@ -1,20 +1,20 @@
-package com.easipass.util.exception;
+package com.easipass.util.core.exception;
 
 import com.easipass.util.core.BaseException;
 
 /**
- * sftp异常
+ * http请求异常
  *
  * @author ZJ
  * */
-public final class SftpException extends BaseException {
+public class HttpException extends BaseException {
 
     /**
      * 构造函数
      *
      * @param message 异常信息
-     * */
-    public SftpException(String message) {
+     */
+    public HttpException(String message) {
         super(message);
     }
 

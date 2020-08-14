@@ -1,4 +1,4 @@
-package com.easipass.util.exception;
+package com.easipass.util.core.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

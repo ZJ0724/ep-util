@@ -1,5 +1,8 @@
 package com.easipass.util.core.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * string工具类
  *
@@ -26,6 +29,26 @@ public final class StringUtil {
         }
 
         return result.toString();
+    }
+
+    /**
+     * 将字符串转为集合
+     * */
+    public static List<String> parsList(String data) {
+        if (!(data.startsWith("[") && data.endsWith("]"))) {
+            return null;
+        }
+
+        List<String> result = new ArrayList<>();
+        data = data.substring(1, data.length() -1);
+        String[] strings = data.split(",");
+
+        for (String s : strings) {
+            s = s.replaceAll(" ", "");
+            result.add(s);
+        }
+
+        return result;
     }
 
 }

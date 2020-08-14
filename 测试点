@@ -1,5 +1,0 @@
-修改sftp端口号，传入字符串
-
-手动把配置文件字段名改错
-
-SWGDDatabase.queryDeclPort()

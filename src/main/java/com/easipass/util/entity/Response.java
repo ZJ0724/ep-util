@@ -1,4 +1,4 @@
-package com.easipass.util.core;
+package com.easipass.util.entity;
 
 import org.springframework.stereotype.Component;
 
@@ -96,8 +96,8 @@ public class Response implements com.zj0724.springbootUtil.Response<Response> {
      *
      * @return 响应
      * */
-    public static Response error() {
-        return new Response(FLAG_F, 500, null, null);
+    public static Response error(String errorMessage) {
+        return new Response(FLAG_F, 500, errorMessage, null);
     }
 
     /**

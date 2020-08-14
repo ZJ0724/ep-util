@@ -1,14 +1,11 @@
 package com.easipass.util.core.VO;
 
-import com.easipass.util.core.Config.Sftp83Properties;
-import com.easipass.util.core.util.ClassUtil;
-
 /**
  * sftp83ConfigVO
  *
  * @author ZJ
  * */
-public final class Sftp83ConfigVO {
+public final class CusResultUploadSftpConfigVO extends AbstractVO {
 
     /**
      * 地址
@@ -34,13 +31,6 @@ public final class Sftp83ConfigVO {
      * 上传路径
      * */
     private String uploadPath;
-
-    /**
-     * 构造函数
-     * */
-    public Sftp83ConfigVO() {
-        ClassUtil.assemblyData(Sftp83Properties.getInstance(), this);
-    }
 
     public String getUrl() {
         return url;
@@ -84,7 +74,7 @@ public final class Sftp83ConfigVO {
 
     @Override
     public String toString() {
-        return "Sftp83ConfigVO{" +
+        return "CusResultUploadSftpConfigVO{" +
                 "url='" + url + '\'' +
                 ", port=" + port +
                 ", username='" + username + '\'' +

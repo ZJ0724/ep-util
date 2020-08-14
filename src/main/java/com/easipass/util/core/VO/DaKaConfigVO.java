@@ -1,7 +1,5 @@
 package com.easipass.util.core.VO;
 
-import com.easipass.util.core.Config.DaKaProperties;
-import com.easipass.util.core.util.ClassUtil;
 import java.util.List;
 
 /**
@@ -9,7 +7,7 @@ import java.util.List;
  *
  * @author ZJ
  * */
-public final class DaKaConfigVO {
+public final class DaKaConfigVO extends AbstractVO {
 
     /**
      * 打卡日期
@@ -40,13 +38,6 @@ public final class DaKaConfigVO {
      * 打卡密码
      * */
     private String password;
-
-    /**
-     * 构造函数
-     * */
-    public DaKaConfigVO() {
-        ClassUtil.assemblyData(DaKaProperties.getInstance(), this);
-    }
 
     /**
      * set, get

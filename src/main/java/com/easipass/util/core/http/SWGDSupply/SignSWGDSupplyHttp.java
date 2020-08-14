@@ -1,7 +1,7 @@
 package com.easipass.util.core.http.SWGDSupply;
 
 import com.alibaba.fastjson.JSONObject;
-import com.easipass.util.exception.SupplySendException;
+import com.easipass.util.core.exception.SupplySendException;
 
 /**
  * 加签接口

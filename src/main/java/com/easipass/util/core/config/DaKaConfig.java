@@ -17,36 +17,37 @@ public final class DaKaConfig extends Config {
      * 打卡日期
      * */
     @Key
-    private List<String> date = new ArrayList<>();
+    public List<String> date;
+
     /**
      * 打卡星期
      * */
     @Key
-    private List<String> week = Arrays.asList("星期一", "星期二", "星期三", "星期四", "星期五");
+    public List<String> week;
 
     /**
      * 上班打卡时间
      * */
     @Key
-    private String toWorkTime = "09:00";
+    public String toWorkTime;
 
     /**
      * 下班打卡时间
      * */
     @Key
-    private String offWorkTime = "17:31";
+    public String offWorkTime;
 
     /**
      * 打卡账号
      * */
     @Key
-    private String username = "jzhou";
+    public String username;
 
     /**
      * 打卡密码
      * */
     @Key
-    private String password = "easipass";
+    public String password;
 
     /**
      * 打卡标识
@@ -55,7 +56,7 @@ public final class DaKaConfig extends Config {
      * 0: 关闭
      * */
     @Key
-    private String sign = "1";
+    public String sign;
 
     /**
      * 单例
@@ -70,43 +71,23 @@ public final class DaKaConfig extends Config {
     }
 
     /**
-     * getter
-     * */
-    public List<String> getDate() {
-        return date;
-    }
-
-    public List<String> getWeek() {
-        return week;
-    }
-
-    public String getToWorkTime() {
-        return toWorkTime;
-    }
-
-    public String getOffWorkTime() {
-        return offWorkTime;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getSign() {
-        return sign;
-    }
-
-    /**
      * 获取单例
      *
      * @return 单例
      * */
     public static DaKaConfig getInstance() {
         return DA_KA_CONFIG;
+    }
+
+    @Override
+    protected void setDefaultData() {
+        date = new ArrayList<>();
+        week = Arrays.asList("星期一", "星期二", "星期三", "星期四", "星期五");
+        toWorkTime = "09:00";
+        offWorkTime = "17:31";
+        username = "jzhou";
+        password = "easipass";
+        sign = "1";
     }
 
 }

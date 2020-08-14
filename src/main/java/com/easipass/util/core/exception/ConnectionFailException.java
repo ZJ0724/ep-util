@@ -1,4 +1,4 @@
-package com.easipass.util.core.database;
+package com.easipass.util.core.exception;
 
 import com.easipass.util.core.BaseException;
 
@@ -14,7 +14,7 @@ public final class ConnectionFailException extends BaseException {
      *
      * @param message 异常信息
      * */
-    protected ConnectionFailException(String message) {
+    public ConnectionFailException(String message) {
         super(message);
     }
 

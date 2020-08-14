@@ -1,7 +1,7 @@
 package com.easipass.util.core.util;
 
 import com.easipass.util.core.Resource;
-import com.easipass.util.exception.ErrorException;
+import com.easipass.util.core.exception.ErrorException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;

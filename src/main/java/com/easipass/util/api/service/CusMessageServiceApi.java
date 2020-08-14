@@ -1,7 +1,7 @@
 package com.easipass.util.api.service;
 
 import com.easipass.util.core.CusMessage;
-import com.easipass.util.core.Response;
+import com.easipass.util.entity.Response;
 import com.easipass.util.core.cusMessage.DecModCusMessage;
 import com.easipass.util.core.cusMessage.FormCusMessage;
 import com.zj0724.springbootUtil.annotation.SkipCheck;

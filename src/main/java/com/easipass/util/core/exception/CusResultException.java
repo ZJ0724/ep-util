@@ -1,4 +1,4 @@
-package com.easipass.util.core.cusResult;
+package com.easipass.util.core.exception;
 
 import com.easipass.util.core.BaseException;
 
@@ -14,7 +14,7 @@ public final class CusResultException extends BaseException {
      *
      * @param message 错误信息
      * */
-    protected CusResultException(String message) {
+    public CusResultException(String message) {
         super(message);
     }
 

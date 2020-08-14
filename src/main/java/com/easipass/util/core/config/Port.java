@@ -1,7 +1,7 @@
 package com.easipass.util.core.config;
 
 import com.easipass.util.core.Resource;
-import com.easipass.util.exception.ErrorException;
+import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.util.FileUtil;
 import java.io.File;
 
@@ -38,7 +38,7 @@ public final class Port {
                 throw new ErrorException(e.getMessage());
             }
         } else {
-            final int port = 8001;
+            final int port = 8002;
 
             FileUtil.createFile(FILE);
             FileUtil.setData(FILE, port + "");

@@ -1,8 +1,8 @@
 package com.easipass.util.core;
 
 import com.easipass.util.core.DTO.CusResultDTO;
-import com.easipass.util.core.sftp.Sftp83;
-import com.easipass.util.exception.ErrorException;
+import com.easipass.util.core.sftp.CusResultUploadSftp;
+import com.easipass.util.core.exception.ErrorException;
 
 /**
  * 回执
@@ -65,18 +65,13 @@ public abstract class CusResult {
 
     /**
      * 上传
-     *
-     * @return 响应
      * */
-    public final Response upload() {
-        Sftp83 sftp = null;
+    public final void upload() {
+        CusResultUploadSftp sftp = null;
 
         try {
-            sftp = new Sftp83();
-            sftp.connect();
+            sftp = new CusResultUploadSftp();
             sftp.uploadCusResult(this);
-        } catch (BaseException e) {
-            return Response.returnFalse(e.getMessage());
         } finally {
             if (sftp != null) {
                 sftp.close();
@@ -86,17 +81,13 @@ public abstract class CusResult {
         ChromeDriver chromeDriver = null;
 
         try {
-            chromeDriver = ChromeDriver.get();
+            chromeDriver = new ChromeDriver();
             chromeDriver.swgdRecvRun();
-        } catch (BaseException e) {
-            return Response.returnFalse(e.getMessage());
         } finally {
             if (chromeDriver != null) {
                 chromeDriver.close();
             }
         }
-
-        return Response.returnTrue();
     }
 
     /**
@@ -104,20 +95,17 @@ public abstract class CusResult {
      *
      * @param cusResult1 回执1
      * @param cusResult2 回执2
-     *
-     * @return 响应
      * */
-    public static Response disposableUpload(CusResult cusResult1, CusResult cusResult2) {
+    public static void disposableUpload(CusResult cusResult1, CusResult cusResult2) {
         // sftp83
-        Sftp83 sftp83 = null;
+        CusResultUploadSftp sftp83 = null;
         // 谷歌驱动
         ChromeDriver chromeDriver = null;
 
         try {
-            sftp83 = new Sftp83();
-            sftp83.connect();
+            sftp83 = new CusResultUploadSftp();
 
-            chromeDriver = ChromeDriver.get();
+            chromeDriver = new ChromeDriver();
 
             sftp83.uploadCusResult(cusResult1);
             chromeDriver.swgdRecvRun();
@@ -131,7 +119,7 @@ public abstract class CusResult {
             sftp83.uploadCusResult(cusResult2);
             chromeDriver.swgdRecvRun();
         } catch (BaseException e) {
-            return Response.returnFalse(e.getMessage());
+            throw (BaseException) e.getCause();
         } finally {
             if (sftp83 != null) {
                 sftp83.close();
@@ -140,8 +128,6 @@ public abstract class CusResult {
                 chromeDriver.close();
             }
         }
-
-        return Response.returnTrue();
     }
 
 }

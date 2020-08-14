@@ -1,7 +1,7 @@
 package com.easipass.util.core;
 
-import com.easipass.util.exception.ErrorException;
-import com.easipass.util.exception.HttpException;
+import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.exception.HttpException;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;

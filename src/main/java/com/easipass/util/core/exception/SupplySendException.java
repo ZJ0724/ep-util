@@ -1,4 +1,4 @@
-package com.easipass.util.exception;
+package com.easipass.util.core.exception;
 
 import com.easipass.util.core.BaseException;
 

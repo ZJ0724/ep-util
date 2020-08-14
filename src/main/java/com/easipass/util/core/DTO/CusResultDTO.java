@@ -7,7 +7,7 @@ import com.zj0724.springbootUtil.annotation.NotNull;
  *
  * @author ZJ
  * */
-public class CusResultDTO {
+public final class CusResultDTO {
 
     /**
      * 状态

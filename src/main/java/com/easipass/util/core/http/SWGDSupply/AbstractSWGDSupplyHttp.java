@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.easipass.util.core.Http;
 import com.easipass.util.core.database.SWGDDatabase;
-import com.easipass.util.exception.SupplySendException;
+import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.exception.SupplySendException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * AbstractSWGDSupplyHttp
@@ -44,23 +46,20 @@ public abstract class AbstractSWGDSupplyHttp extends Http {
      * @return 字段值
      * */
     protected final String getSupplyUserFieldData(String filedName) {
-        SWGDDatabase swgdOracle = new SWGDDatabase();
-
-        swgdOracle.connect();
-
         // 数据库第三方用户信息
-        ResultSet resultSet = swgdOracle.querySupplyUser(this.sender);
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+        ResultSet resultSet = swgdDatabase.querySupplyUser(this.sender);
 
-        if (resultSet == null) {
-            swgdOracle.close();
-            throw new SupplySendException("不存在第三方用户：" + this.sender);
+        try {
+            if (!resultSet.next()) {
+                throw new SupplySendException("不存在第三方用户：" + this.sender);
+            }
+            return SWGDDatabase.getFiledData(resultSet, filedName);
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            swgdDatabase.close();
         }
-
-        String result = SWGDDatabase.getFiledData(resultSet, filedName);
-
-        swgdOracle.close();
-
-        return result;
     }
 
     /**

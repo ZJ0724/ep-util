@@ -14,25 +14,25 @@ public final class SWGDDatabaseConfig extends Config {
      * 驱动类
      * */
     @Key
-    private String driverClass = "oracle.jdbc.OracleDriver";
+    public String driverClass;
 
     /**
      * url
      * */
     @Key
-    private String url = "jdbc:oracle:thin:@192.168.130.216:1521:testeport";
+    public String url;
 
     /**
      * username
      * */
     @Key
-    private String username = "devtester";
+    public String username;
 
     /**
      * password
      * */
     @Key
-    private String password = "easytester";
+    public String password;
 
     /**
      * 单例
@@ -47,31 +47,20 @@ public final class SWGDDatabaseConfig extends Config {
     }
 
     /**
-     * getter
-     * */
-    public String getDriverClass() {
-        return driverClass;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    /**
      * 获取单例
      *
      * @return 单例
      * */
     public static SWGDDatabaseConfig getInstance() {
         return SWGD_DATABASE_CONFIG;
+    }
+
+    @Override
+    protected void setDefaultData() {
+        driverClass = "oracle.jdbc.OracleDriver";
+        url = "jdbc:oracle:thin:@192.168.130.216:1521:testeport";
+        username = "devtester";
+        password = "easytester";
     }
 
 }

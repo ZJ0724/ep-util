@@ -2,16 +2,16 @@ import AbstractVO from "./AbstractVO.js";
 
 export default class DaKaConfigVO extends AbstractVO {
 
-    date;
+    date = "";
 
-    week;
+    week = "";
 
-    toWorkTime;
+    toWorkTime = "";
 
-    offWorkTime;
+    offWorkTime = "";
 
-    username;
+    username = "";
 
-    password;
+    password = "";
 
 }

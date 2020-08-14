@@ -1,7 +1,7 @@
 package com.easipass.util.api.service;
 
 import com.easipass.util.core.DaKa;
-import com.easipass.util.core.Response;
+import com.easipass.util.entity.Response;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

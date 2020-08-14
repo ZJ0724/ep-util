@@ -1,6 +1,6 @@
 package com.easipass.util.core;
 
-import com.easipass.util.exception.ErrorException;
+import com.easipass.util.core.exception.ErrorException;
 import com.jcraft.jsch.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +89,7 @@ public class Sftp {
             this.channelSftp = (ChannelSftp) session.openChannel("sftp");
             this.channelSftp.connect();
         }catch (JSchException e) {
-            throw new com.easipass.util.exception.SftpException("sftp: " + this.url + ", 连接失败");
+            throw new com.easipass.util.core.sftp.SftpException("sftp: " + this.url + ", 连接失败");
         }
 
         log.info("sftp: {}, 已连接", this.url);
@@ -142,7 +142,7 @@ public class Sftp {
      * */
     private void checkConnect() {
         if (!this.isConnect) {
-            throw new com.easipass.util.exception.SftpException("sftp: " + this.url + ", 未连接");
+            throw new com.easipass.util.core.sftp.SftpException("sftp: " + this.url + ", 未连接");
         }
     }
 

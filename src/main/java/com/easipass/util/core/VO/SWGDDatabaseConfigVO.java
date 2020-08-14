@@ -1,54 +1,46 @@
-package com.easipass.util.core.DTO;
+package com.easipass.util.core.VO;
 
 /**
- * sftp83ConfigDTO
+ * SWGDConfigVO
  *
  * @author ZJ
  * */
-public final class Sftp83ConfigDTO extends AbstractDTO {
+public final class SWGDDatabaseConfigVO extends AbstractVO {
 
     /**
-     * 地址
+     * 驱动类
+     * */
+    private String driverClass;
+
+    /**
+     * url
      * */
     private String url;
 
     /**
-     * 端口
-     * */
-    private Integer port;
-
-    /**
-     * 用户名
+     * username
      * */
     private String username;
 
     /**
-     * 密码
+     * password
      * */
     private String password;
 
-    /**
-     * 上传路径
-     * */
-    private String uploadPath;
+    public String getDriverClass() {
+        return driverClass;
+    }
 
-    /**
-     * set, get
-     * */
+    public void setDriverClass(String driverClass) {
+        this.driverClass = driverClass;
+    }
+
     public String getUrl() {
         return url;
     }
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public Integer getPort() {
-        return port;
-    }
-
-    public void setPort(Integer port) {
-        this.port = port;
     }
 
     public String getUsername() {
@@ -67,22 +59,13 @@ public final class Sftp83ConfigDTO extends AbstractDTO {
         this.password = password;
     }
 
-    public String getUploadPath() {
-        return uploadPath;
-    }
-
-    public void setUploadPath(String uploadPath) {
-        this.uploadPath = uploadPath;
-    }
-
     @Override
     public String toString() {
-        return "Sftp83ConfigDTO{" +
-                "url='" + url + '\'' +
-                ", port=" + port +
+        return "SWGDDatabaseConfigVO{" +
+                "driverClass='" + driverClass + '\'' +
+                ", url='" + url + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", uploadPath='" + uploadPath + '\'' +
                 '}';
     }
 

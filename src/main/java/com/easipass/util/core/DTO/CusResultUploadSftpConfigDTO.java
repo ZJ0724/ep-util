@@ -1,11 +1,11 @@
 package com.easipass.util.core.DTO;
 
 /**
- * SWGDDTO
+ * 上传回执sftp配置DTO
  *
  * @author ZJ
  * */
-public final class SWGDConfigDTO extends AbstractDTO {
+public final class CusResultUploadSftpConfigDTO extends AbstractDTO {
 
     /**
      * 地址
@@ -18,11 +18,6 @@ public final class SWGDConfigDTO extends AbstractDTO {
     private Integer port;
 
     /**
-     * sid
-     * */
-    private String sid;
-
-    /**
      * 用户名
      * */
     private String username;
@@ -31,6 +26,11 @@ public final class SWGDConfigDTO extends AbstractDTO {
      * 密码
      * */
     private String password;
+
+    /**
+     * 上传路径
+     * */
+    private String uploadPath;
 
     /**
      * set, get
@@ -51,14 +51,6 @@ public final class SWGDConfigDTO extends AbstractDTO {
         this.port = port;
     }
 
-    public String getSid() {
-        return sid;
-    }
-
-    public void setSid(String sid) {
-        this.sid = sid;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -75,15 +67,23 @@ public final class SWGDConfigDTO extends AbstractDTO {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        return "SWGDConfigDTO{" +
-                "url='" + url + '\'' +
-                ", port=" + port +
-                ", sid='" + sid + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public String getUploadPath() {
+        return uploadPath;
     }
 
+    public void setUploadPath(String uploadPath) {
+        this.uploadPath = uploadPath;
+    }
+
+    @Override
+    public String toString() {
+        return "CusResultUploadSftpConfigDTO{" +
+                "url='" + url + '\'' +
+                ", port=" + port +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", uploadPath='" + uploadPath + '\'' +
+                '}';
+    }
+    
 }

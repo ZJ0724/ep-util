@@ -1,19 +1,21 @@
 package com.easipass.util.core.cusResult.formCusResult;
 
+import com.easipass.util.core.DTO.CusResultDTO;
 import com.easipass.util.core.Database;
+import com.easipass.util.core.Resource;
 import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.cusResult.FormCusResult;
-import com.easipass.util.core.DTO.CusResultDTO;
-import com.easipass.util.core.resource.cusResult.formCusResult.YeWuFormCusResultResource;
-import com.easipass.util.core.cusResult.CusResultException;
+import com.easipass.util.core.exception.CusResultException;
 import com.easipass.util.core.util.Base64Util;
 import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.XmlUtil;
+import com.easipass.util.core.exception.ErrorException;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * 报关单业务回执
@@ -35,9 +37,7 @@ public final class YeWuFormCusResult extends FormCusResult {
     @Override
     public String getData() {
         //获取回执原document
-        YeWuFormCusResultResource yeWuFormCusResultResource = YeWuFormCusResultResource.getInstance();
-        Document document = XmlUtil.getDocument(yeWuFormCusResultResource.getInputStream());
-        yeWuFormCusResultResource.closeInputStream();
+        Document document = XmlUtil.getDocument(Resource.YE_WU_FORM_CUS_RESULT);
 
         //document根节点
         Element documentRootElement = document.getRootElement();
@@ -69,10 +69,15 @@ public final class YeWuFormCusResult extends FormCusResult {
         documentRootElement.element("Data").setText(data);
 
         // 设置FileName
-        String fileName = new SWGDDatabase().queryFormHeadFileName(this.getEdiNo());
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+        String fileName = swgdDatabase.queryFormHeadFileName(this.getEdiNo());
+
         if (fileName == null) {
             fileName = this.getName();
         }
+
+        swgdDatabase.close();
+
         documentRootElement.element("AddInfo").element("FileName").setText(fileName);
 
         // 设置创建时间
@@ -92,27 +97,30 @@ public final class YeWuFormCusResult extends FormCusResult {
      * @return 报关单号
      * */
     protected final String getPreEntryId() {
-        SWGDDatabase swgdOracle = new SWGDDatabase();
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+        ResultSet resultSet = swgdDatabase.queryFormHead(this.getEdiNo());
+        String declPort;
+        String preEntryId;
 
-        ResultSet resultSet = swgdOracle.queryFormHead(this.getEdiNo());
+        try {
+            if (!resultSet.next()) {
+                throw new CusResultException("数据库不存在ediNo: " + this.getEdiNo() + "数据");
+            }
 
-        if (resultSet == null) {
-            swgdOracle.close();
-            throw new CusResultException("数据库不存在ediNo: " + this.getEdiNo() + "数据");
+            declPort = Database.getFiledData(resultSet, "DECL_PORT");
+            preEntryId = Database.getFiledData(resultSet, "PRE_ENTRY_ID");
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            swgdDatabase.close();
         }
-
-        String declPort = Database.getFiledData(resultSet, "DECL_PORT");
 
         if (declPort == null) {
             throw new CusResultException("ediNo: " + this.getEdiNo() + "申报关区为空");
         }
 
-        String preEntryId = Database.getFiledData(resultSet, "PRE_ENTRY_ID");
-
-        swgdOracle.close();
-
         if (preEntryId.startsWith("EDI")) {
-            return new SWGDDatabase().queryDeclPort(this.getEdiNo()) + "000000000" + this.getEdiNo().substring(this.getEdiNo().length() - 5);
+            return declPort + "000000000" + this.getEdiNo().substring(this.getEdiNo().length() - 5);
         } else {
             return preEntryId;
         }
@@ -126,11 +134,15 @@ public final class YeWuFormCusResult extends FormCusResult {
      * @return ediNo
      * */
     private static String compatiblePreEntryId(String ediNo) {
-        if (ediNo.startsWith("EDI")) {
-            return ediNo;
+        String result = ediNo;
+
+        if (!ediNo.startsWith("EDI")) {
+            SWGDDatabase swgdDatabase = new SWGDDatabase();
+            result = swgdDatabase.queryEdiNo(ediNo);
+            swgdDatabase.close();
         }
 
-        return new SWGDDatabase().queryEdiNo(ediNo);
+        return result;
     }
 
 }

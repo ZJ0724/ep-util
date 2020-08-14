@@ -1,9 +1,9 @@
 package com.easipass.util.core.cusResult.decModCusResult;
 
-import com.easipass.util.core.cusResult.DecModCusResult;
 import com.easipass.util.core.DTO.CusResultDTO;
+import com.easipass.util.core.Resource;
+import com.easipass.util.core.cusResult.DecModCusResult;
 import com.easipass.util.core.database.SWGDDatabase;
-import com.easipass.util.core.resource.cusResult.decModCusResult.YeWuDecModCusResultResource;
 import com.easipass.util.core.util.Base64Util;
 import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.XmlUtil;
@@ -32,9 +32,7 @@ public final class YeWuDecModCusResult extends DecModCusResult {
     @Override
     public String getData() {
         //获取回执原document
-        YeWuDecModCusResultResource yeWuDecModCusResultResource = YeWuDecModCusResultResource.getInstance();
-        Document document = XmlUtil.getDocument(yeWuDecModCusResultResource.getInputStream());
-        yeWuDecModCusResultResource.closeInputStream();
+        Document document = XmlUtil.getDocument(Resource.YE_WU_DEC_MOD_CUS_RESULT);
 
         //document根节点
         Element documentRootElement = document.getRootElement();
@@ -67,14 +65,16 @@ public final class YeWuDecModCusResult extends DecModCusResult {
         documentRootElement.element("Data").setText(data);
 
         // 获取修撤单文件名
-        SWGDDatabase swgdOracle = new SWGDDatabase();
-        String fileName = swgdOracle.queryDecModFileName(this.getPreEntryId());
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+        String fileName = swgdDatabase.queryDecModFileName(this.getPreEntryId());
 
         // 如果修撤单文件名为null，则将文件名字段设置成回执文件名
         if (fileName == null) {
             fileName = this.getName();
-            swgdOracle.updateDecModFileName(this.getPreEntryId(), fileName);
+            swgdDatabase.updateDecModFileName(this.getPreEntryId(), fileName);
         }
+
+        swgdDatabase.close();
 
         //替换FileName
         documentRootElement.element("AddInfo").element("FileName").setText(fileName);

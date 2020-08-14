@@ -11,17 +11,17 @@
         <navigation></navigation>
         <div id="body">
             <ul class="nav nav-tabs" style="margin-top: 50px;">
-                <li @click="selectConfig(0)" role="presentation" :class="active === 0 ? 'active' : ''"><a href="javascript:">SWGD</a></li>
-                <li @click="selectConfig(1)" role="presentation" :class="active === 1 ? 'active' : ''"><a href="javascript:">sftp83</a></li>
+                <li @click="selectConfig(0)" role="presentation" :class="active === 0 ? 'active' : ''"><a href="javascript:">SWGD数据库</a></li>
+                <li @click="selectConfig(1)" role="presentation" :class="active === 1 ? 'active' : ''"><a href="javascript:">回执上传sftp</a></li>
             </ul>
 
             <div style="margin: 10% 30% 0 30%;">
                 <div :style="active === 0 ? '' : 'display: none'">
-                    <config :vo="SWGD.VO" :dto="SWGD.DTO" :get-api="SWGD.getApi" :set-api="SWGD.setApi"></config>
+                    <config :vo="SWGDDatabase.VO" :dto="SWGDDatabase.DTO" :get-api="SWGDDatabase.getApi" :set-api="SWGDDatabase.setApi"></config>
                 </div>
 
                 <div :style="active === 1 ? '' : 'display: none'">
-                    <config :vo="sftp83.VO" :dto="sftp83.DTO" :get-api="sftp83.getApi" :set-api="sftp83.setApi"></config>
+                    <config :vo="cusResultUploadSftpConfig.VO" :dto="cusResultUploadSftpConfig.DTO" :get-api="cusResultUploadSftpConfig.getApi" :set-api="cusResultUploadSftpConfig.setApi"></config>
                 </div>
             </div>
         </div>
@@ -31,10 +31,10 @@
 
 <script type="module">
 
-    import SWGDConfigVO from "../entity/VO/SWGDConfigVO.js";
-    import SWGDConfigDTO from "../entity/DTO/SWGDConfigDTO.js";
-    import Sftp83ConfigDTO from "../entity/DTO/Sftp83ConfigDTO.js";
-    import Sftp83ConfigVO from "../entity/VO/Sftp83ConfigVO.js";
+    import SWGDDatabaseConfigVO from "../entity/VO/SWGDDatabaseConfigVO.js";
+    import SWGDDatabaseConfigDTO from "../entity/DTO/SWGDDatabaseConfigDTO.js";
+    import CusResultUploadSftpConfigDTO from "../entity/DTO/CusResultUploadSftpConfigDTO.js";
+    import CusResultUploadSftpConfigVO from "../entity/VO/CusResultUploadSftpConfigVO.js";
     import configServiceApi from "../api/service/configServiceApi.js";
 
     new Vue({
@@ -43,18 +43,18 @@
         data: {
             active: 0,
 
-            SWGD: {
-                VO: new SWGDConfigVO(),
-                DTO: new SWGDConfigDTO(),
-                getApi: configServiceApi.getSWGD,
-                setApi: configServiceApi.setSWGD
+            SWGDDatabase: {
+                VO: new SWGDDatabaseConfigVO(),
+                DTO: new SWGDDatabaseConfigDTO(),
+                getApi: configServiceApi.getSWGDDatabaseConfig,
+                setApi: configServiceApi.setSWGDDatabaseConfig
             },
 
-            sftp83: {
-                VO: new Sftp83ConfigVO(),
-                DTO: new Sftp83ConfigDTO(),
-                getApi: configServiceApi.getSftp83,
-                setApi: configServiceApi.setSftp83
+            cusResultUploadSftpConfig: {
+                VO: new CusResultUploadSftpConfigVO(),
+                DTO: new CusResultUploadSftpConfigDTO(),
+                getApi: configServiceApi.getCusResultUploadSftpConfig,
+                setApi: configServiceApi.setCusResultUploadSftpConfig
             }
         },
 

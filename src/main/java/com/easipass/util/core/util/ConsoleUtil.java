@@ -2,7 +2,7 @@ package com.easipass.util.core.util;
 
 import com.easipass.util.core.Project;
 import com.easipass.util.core.SystemType;
-import com.easipass.util.exception.ErrorException;
+import com.easipass.util.core.exception.ErrorException;
 import java.io.IOException;
 
 /**
@@ -19,13 +19,11 @@ public class ConsoleUtil {
      * */
     public static void kill(String processName) {
         try {
-            Project project = Project.getInstance();
-
-            if (project.getSystemType() == SystemType.WINDOWS) {
+            if (Project.SYSTEM_TYPE == SystemType.WINDOWS) {
                 Runtime.getRuntime().exec("taskkill /im " + processName + " /F");
             }
 
-            if (project.getSystemType() == SystemType.LINUX) {
+            if (Project.SYSTEM_TYPE == SystemType.LINUX) {
                 Runtime.getRuntime().exec("ps -aux | grep " + processName + " | grep -v grep | awk '{print $2}' | xargs kill -9");
             }
         } catch (IOException e) {
@@ -39,7 +37,7 @@ public class ConsoleUtil {
      * @param path 文件路径
      * */
     public static void setChmod777(String path) {
-        if (Project.getInstance().getSystemType() == SystemType.LINUX) {
+        if (Project.SYSTEM_TYPE == SystemType.LINUX) {
             try {
                 Runtime.getRuntime().exec("chmod 777 " + path);
             } catch (IOException e) {

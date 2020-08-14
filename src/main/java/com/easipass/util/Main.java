@@ -1,12 +1,8 @@
 package com.easipass.util;
 
-import com.easipass.util.core.ChromeDriver;
-import com.easipass.util.core.DaKa;
-import com.easipass.util.core.Project;
-import com.easipass.util.core.Config.DaKaProperties;
-import com.easipass.util.core.Config.SWGDDatabaseProperties;
-import com.easipass.util.core.Config.Sftp83Properties;
-import com.easipass.util.core.BaseException;
+import com.easipass.util.core.*;
+import com.easipass.util.core.config.Port;
+import com.easipass.util.core.exception.ErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -27,43 +23,24 @@ public class Main {
      * */
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
-    /**
-     * 项目
-     * */
-    private static final Project PROJECT = Project.getInstance();
-
     public static void main(String[] args) {
         // 指定配置文件
-        System.setProperty("spring.config.location", PROJECT.getApplicationPropertiesPath());
+        System.setProperty("spring.config.location", Resource.APPLICATION_PROPERTIES.getPath());
+
+        // 指定端口
+        System.setProperty("server.port", Port.getInstance().getPort() + "");
 
         SpringApplication.run(Main.class, args);
 
-        try {
-            // 项目根目录
-            log.info("项目根目录: {}", PROJECT.getProjectRootPath());
-
-            // version
-            log.info("version: {}", PROJECT.getVersion());
-
-            // 加载daKa配置
-            DaKaProperties.getInstance();
-
-            // 加载SWGD配置
-            SWGDDatabaseProperties.getInstance();
-
-            // 加载sftp83配置
-            Sftp83Properties.getInstance();
-
-            // 校验谷歌浏览器
-            ChromeDriver.get().close();
-
-            // 检查是否开启自动打卡
-            DaKa.getInstance();
-
-            log.info("--- < 完成 > ---");
-        } catch (BaseException e) {
-            log.error(e.getMessage(), e);
+        // 检查项目
+        if (Project.VERSION == null || Project.SYSTEM_TYPE == null) {
+            throw new ErrorException("项目启动错误");
         }
+
+        // 检查是否开启自动打卡
+        DaKa.getInstance();
+
+        log.info("--- < 完成 > ---");
     }
 
 }

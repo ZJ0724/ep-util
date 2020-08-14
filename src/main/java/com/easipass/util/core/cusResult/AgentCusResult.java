@@ -4,6 +4,7 @@ import com.easipass.util.core.CusResult;
 import com.easipass.util.core.DTO.CusResultDTO;
 import com.easipass.util.core.Resource;
 import com.easipass.util.core.database.SWGDDatabase;
+import com.easipass.util.core.exception.CusResultException;
 import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.XmlUtil;
 import org.dom4j.Document;

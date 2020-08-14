@@ -1,15 +1,15 @@
 package com.easipass.util.api.service;
 
+import com.easipass.util.core.DTO.CusResultUploadSftpConfigDTO;
 import com.easipass.util.core.DTO.DaKaConfigDTO;
-import com.easipass.util.core.DTO.SWGDConfigDTO;
-import com.easipass.util.core.DTO.Sftp83ConfigDTO;
-import com.easipass.util.core.Response;
+import com.easipass.util.core.DTO.SWGDDatabaseConfigDTO;
+import com.easipass.util.core.VO.CusResultUploadSftpConfigVO;
 import com.easipass.util.core.VO.DaKaConfigVO;
-import com.easipass.util.core.VO.SWGDConfigVO;
-import com.easipass.util.core.VO.Sftp83ConfigVO;
-import com.easipass.util.core.Config.DaKaProperties;
-import com.easipass.util.core.Config.SWGDDatabaseProperties;
-import com.easipass.util.core.Config.Sftp83Properties;
+import com.easipass.util.core.VO.SWGDDatabaseConfigVO;
+import com.easipass.util.core.config.CusResultUploadSftpConfig;
+import com.easipass.util.core.config.DaKaConfig;
+import com.easipass.util.core.config.SWGDDatabaseConfig;
+import com.easipass.util.entity.Response;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * @author ZJ
  * */
 @RestController
-@RequestMapping(BaseServiceApi.URL +  "config")
+@RequestMapping(BaseServiceApi.URL + "config")
 public class ConfigServiceApi {
 
     /**
@@ -26,9 +26,9 @@ public class ConfigServiceApi {
      *
      * @return 响应
      * */
-    @PostMapping("setDaKa")
-    public Response setDaKa(@RequestBody DaKaConfigDTO daKaConfigDTO) {
-        DaKaProperties.getInstance().setDataByDTO(daKaConfigDTO);
+    @PostMapping("setDaKaConfig")
+    public Response setDaKaConfig(@RequestBody DaKaConfigDTO daKaConfigDTO) {
+        DaKaConfig.getInstance().setData(daKaConfigDTO);
 
         return Response.returnTrue();
     }
@@ -38,53 +38,81 @@ public class ConfigServiceApi {
      *
      * @return 响应
      * */
-    @GetMapping("getDaKa")
-    public Response getDaKa() {
-        return Response.returnTrue(new DaKaConfigVO());
+    @GetMapping("getDaKaConfig")
+    public Response getDaKaConfig() {
+        DaKaConfig daKaConfig = DaKaConfig.getInstance();
+
+        daKaConfig.loadData();
+
+        DaKaConfigVO daKaConfigVO = new DaKaConfigVO();
+
+        daKaConfigVO.setData(daKaConfig);
+
+        return Response.returnTrue(daKaConfigVO);
     }
 
     /**
-     * 设置SWGD配置
+     * 设置SWGD数据库配置
      *
      * @return 响应
      * */
-    @PostMapping("setSWGD")
-    public Response setSWGD(@RequestBody SWGDConfigDTO swgdConfigDTO) {
-        SWGDDatabaseProperties.getInstance().setDataByDTO(swgdConfigDTO);
+    @PostMapping("setSWGDDatabaseConfig")
+    public Response setSWGDDatabaseConfig(@RequestBody SWGDDatabaseConfigDTO swgdConfigDTO) {
+        SWGDDatabaseConfig swgdDatabaseConfig = SWGDDatabaseConfig.getInstance();
+
+        swgdDatabaseConfig.setData(swgdConfigDTO);
 
         return Response.returnTrue();
     }
 
     /**
-     * 获取SWGD配置
+     * 获取SWGD数据库配置
      *
      * @return 响应
      * */
-    @GetMapping("getSWGD")
-    public Response getSWGD() {
-        return Response.returnTrue(new SWGDConfigVO());
+    @GetMapping("getSWGDDatabaseConfig")
+    public Response getSWGDDatabaseConfig() {
+        SWGDDatabaseConfig swgdDatabaseConfig = SWGDDatabaseConfig.getInstance();
+
+        swgdDatabaseConfig.loadData();
+
+        SWGDDatabaseConfigVO swgdDatabaseConfigVO = new SWGDDatabaseConfigVO();
+
+        swgdDatabaseConfigVO.setData(swgdDatabaseConfig);
+
+        return Response.returnTrue(swgdDatabaseConfigVO);
     }
 
     /**
-     * 设置sftp83配置
+     * 设置回执上传sftp配置
      *
      * @return 响应
      * */
-    @PostMapping("setSftp83")
-    public Response setSftp83(@RequestBody Sftp83ConfigDTO sftp83ConfigDTO) {
-        Sftp83Properties.getInstance().setDataByDTO(sftp83ConfigDTO);
+    @PostMapping("setCusResultUploadSftpConfig")
+    public Response setCusResultUploadSftpConfig(@RequestBody CusResultUploadSftpConfigDTO cusResultUploadSftpConfigDTO) {
+        CusResultUploadSftpConfig cusResultUploadSftpConfig = CusResultUploadSftpConfig.getInstance();
+
+        cusResultUploadSftpConfig.setData(cusResultUploadSftpConfigDTO);
 
         return Response.returnTrue();
     }
 
     /**
-     * 获取sftp83配置
+     * 获取回执上传sftp配置
      *
      * @return 响应
      * */
-    @GetMapping("getSftp83")
-    public Response getSftp83() {
-        return Response.returnTrue(new Sftp83ConfigVO());
+    @GetMapping("getCusResultUploadSftpConfig")
+    public Response getCusResultUploadSftpConfig() {
+        CusResultUploadSftpConfig cusResultUploadSftpConfig = CusResultUploadSftpConfig.getInstance();
+
+        cusResultUploadSftpConfig.loadData();
+
+        CusResultUploadSftpConfigVO cusResultUploadSftpConfigVO = new CusResultUploadSftpConfigVO();
+
+        cusResultUploadSftpConfigVO.setData(cusResultUploadSftpConfig);
+
+        return Response.returnTrue(cusResultUploadSftpConfigVO);
     }
 
 }

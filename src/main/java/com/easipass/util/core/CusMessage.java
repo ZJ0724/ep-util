@@ -2,11 +2,10 @@ package com.easipass.util.core;
 
 import com.easipass.util.api.websocket.BaseWebsocketApi;
 import com.easipass.util.core.VO.CusMessageComparisonVO;
-import com.easipass.util.exception.ErrorException;
+import com.easipass.util.core.exception.ErrorException;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;

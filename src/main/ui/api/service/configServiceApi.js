@@ -5,53 +5,53 @@ let configServiceApi = {
     config: "config/",
 
     // 设置打卡配置
-    setDaKa(daKaConfigDTO) {
+    setDaKaConfig(daKaConfigDTO) {
         return baseServiceApi.sendHttp({
             type: "POST",
-            url: `${configServiceApi.config}setDaKa`,
+            url: `${configServiceApi.config}setDaKaConfig`,
             data: daKaConfigDTO
         });
     },
 
     // 获取打卡配置
-    getDaKa() {
+    getDaKaConfig() {
         return baseServiceApi.sendHttp({
             type: "GET",
-            url: `${configServiceApi.config}getDaKa`
+            url: `${configServiceApi.config}getDaKaConfig`
         });
     },
 
     // 设置SWGD配置
-    setSWGD(swgdConfigDTO) {
+    setSWGDDatabaseConfig(swgdConfigDTO) {
         return baseServiceApi.sendHttp({
             type: "POST",
-            url: `${configServiceApi.config}setSWGD`,
+            url: `${configServiceApi.config}setSWGDDatabaseConfig`,
             data: swgdConfigDTO
         });
     },
 
     // 获取SWGD配置
-    getSWGD() {
+    getSWGDDatabaseConfig() {
         return baseServiceApi.sendHttp({
             type: "GET",
-            url: `${configServiceApi.config}getSWGD`
+            url: `${configServiceApi.config}getSWGDDatabaseConfig`
         });
     },
 
     // 设置sftp83配置
-    setSftp83(sftp83ConfigDTO) {
+    setCusResultUploadSftpConfig(sftp83ConfigDTO) {
         return baseServiceApi.sendHttp({
             type: "POST",
-            url: `${configServiceApi.config}setSftp83`,
+            url: `${configServiceApi.config}setCusResultUploadSftpConfig`,
             data: sftp83ConfigDTO
         });
     },
 
     // 获取sftp83配置
-    getSftp83() {
+    getCusResultUploadSftpConfig() {
         return baseServiceApi.sendHttp({
             type: "GET",
-            url: `${configServiceApi.config}getSftp83`
+            url: `${configServiceApi.config}getCusResultUploadSftpConfig`
         });
     }
 

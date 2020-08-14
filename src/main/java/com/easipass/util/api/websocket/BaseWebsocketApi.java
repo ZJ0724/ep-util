@@ -1,6 +1,6 @@
 package com.easipass.util.api.websocket;
 
-import com.easipass.util.exception.ErrorException;
+import com.easipass.util.core.exception.ErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.websocket.OnError;

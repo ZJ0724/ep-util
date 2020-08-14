@@ -125,13 +125,15 @@
             <resource>
                 <directory>${project.basedir}</directory>
                 <includes>
-                    <include>config/*</include>
-                    <include>bin/*</include>
+                    <include>config/**</include>
+                    <include>bin/**</include>
+                    <include>resources/**</include>
                     <include>README.md</include>
                     <include>version</include>
                 </includes>
                 <targetPath>${buildPath}</targetPath>
             </resource>
+
             <resource>
                 <directory>src/main/ui</directory>
                 <includes>

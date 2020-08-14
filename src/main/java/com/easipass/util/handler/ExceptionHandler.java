@@ -1,6 +1,7 @@
 package com.easipass.util.handler;
 
-import com.easipass.util.core.Response;
+import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.entity.Response;
 import com.easipass.util.core.BaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,18 @@ public class ExceptionHandler {
     public Response baseException(Exception e) {
         log.info(e.getMessage());
         return Response.returnFalse(e.getMessage());
+    }
+
+    /**
+     * 错误异常
+     *
+     * @param e 异常
+     *
+     * @return 响应结果
+     * */
+    @org.springframework.web.bind.annotation.ExceptionHandler(ErrorException.class)
+    public Response errorException(Exception e) {
+        return Response.error(e.getMessage());
     }
 
 }
