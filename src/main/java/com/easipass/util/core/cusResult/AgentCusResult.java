@@ -1,7 +1,7 @@
 package com.easipass.util.core.cusResult;
 
 import com.easipass.util.core.CusResult;
-import com.easipass.util.core.DTO.CusResultDTO;
+import com.easipass.util.core.DTO.cusResult.CusResultDTO;
 import com.easipass.util.core.Resource;
 import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.exception.CusResultException;

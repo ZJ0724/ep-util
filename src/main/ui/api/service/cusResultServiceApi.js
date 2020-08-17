@@ -9,20 +9,20 @@ let cusResultServiceApi = {
     decModCusResult: "decModCusResult",
 
     // 上传报关单通讯回执
-    formCusResultUploadTongXun(ediNo, cusResultDTO) {
+    formCusResultUploadTongXun(data) {
         return baseServiceApi.sendHttp({
-            url: `${cusResultServiceApi.cusResult}/${cusResultServiceApi.formCusResult}/uploadTongXun?ediNo=` + ediNo,
+            url: `${cusResultServiceApi.cusResult}/${cusResultServiceApi.formCusResult}/uploadTongXun`,
             type: "POST",
-            data: cusResultDTO
+            data: data
         });
     },
 
     // 上传报关单业务回执
-    formCusResultUploadYeWu(ediNo, cusResultDTO) {
+    formCusResultUploadYeWu(data) {
         return baseServiceApi.sendHttp({
-            url: `${cusResultServiceApi.cusResult}/${cusResultServiceApi.formCusResult}/uploadYeWu?ediNo=` + ediNo,
+            url: `${cusResultServiceApi.cusResult}/${cusResultServiceApi.formCusResult}/uploadYeWu`,
             type: "POST",
-            data: cusResultDTO
+            data: data
         });
     },
 

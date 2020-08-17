@@ -1,9 +1,10 @@
 package com.easipass.util.core.cusResult.formCusResult;
 
-import com.easipass.util.core.DTO.CusResultDTO;
+import com.easipass.util.core.DTO.cusResult.TongXunFormCusResultDTO;
 import com.easipass.util.core.Resource;
 import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.cusResult.FormCusResult;
+import com.easipass.util.core.exception.CusResultException;
 import com.easipass.util.core.util.Base64Util;
 import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.XmlUtil;
@@ -22,11 +23,18 @@ public final class TongXunFormCusResult extends FormCusResult {
     /**
      * 构造函数
      *
-     * @param cusResultDTO cusResultDTO
-     * @param ediNo ediNo
+     * @param tongXunFormCusResultDTO tongXunFormCusResultDTO
      */
-    public TongXunFormCusResult(CusResultDTO cusResultDTO, String ediNo) {
-        super(cusResultDTO, ediNo);
+    public TongXunFormCusResult(TongXunFormCusResultDTO tongXunFormCusResultDTO) {
+        super(tongXunFormCusResultDTO.getCusResult(), tongXunFormCusResultDTO.getRelation().getEdiNo());
+
+        String seqNo = tongXunFormCusResultDTO.getCusResult().getSeqNo();
+
+        if ("".equals(seqNo)) {
+            throw new CusResultException("seqNo不能为空，选填请勾选\"自动生成生成\"");
+        }
+
+        this.setSeqNo(seqNo);
     }
 
     @Override

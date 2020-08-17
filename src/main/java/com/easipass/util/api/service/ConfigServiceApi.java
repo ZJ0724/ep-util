@@ -1,8 +1,8 @@
 package com.easipass.util.api.service;
 
-import com.easipass.util.core.DTO.CusResultUploadSftpConfigDTO;
-import com.easipass.util.core.DTO.DaKaConfigDTO;
-import com.easipass.util.core.DTO.SWGDDatabaseConfigDTO;
+import com.easipass.util.core.DTO.config.CusResultUploadSftpConfigDTO;
+import com.easipass.util.core.DTO.config.DaKaConfigDTO;
+import com.easipass.util.core.DTO.config.SWGDDatabaseConfigDTO;
 import com.easipass.util.core.VO.CusResultUploadSftpConfigVO;
 import com.easipass.util.core.VO.DaKaConfigVO;
 import com.easipass.util.core.VO.SWGDDatabaseConfigVO;

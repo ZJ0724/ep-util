@@ -1,6 +1,6 @@
 package com.easipass.util.core.cusResult.decModCusResult;
 
-import com.easipass.util.core.DTO.CusResultDTO;
+import com.easipass.util.core.DTO.cusResult.CusResultDTO;
 import com.easipass.util.core.Resource;
 import com.easipass.util.core.cusResult.DecModCusResult;
 import com.easipass.util.core.database.SWGDDatabase;

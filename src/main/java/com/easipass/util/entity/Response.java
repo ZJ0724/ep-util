@@ -61,8 +61,13 @@ public final class Response implements com.zj0724.util.springboot.parameterCheck
     public Response() {}
 
     @Override
-    public Response parameterCheckFalse(String s) {
+    public Response errorParameterCheckFalse(String s) {
         return new Response(FLAG_F, 501, s, null);
+    }
+
+    @Override
+    public Response tipParameterCheckFalse(String s) {
+        return returnFalse(s);
     }
 
     /**

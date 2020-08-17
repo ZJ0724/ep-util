@@ -10,7 +10,102 @@
     <div id="main">
         <navigation></navigation>
         <div id="body">
-            <cus-result-upload text="ediNo/preEntryId" :channel-list="channelList" :api="api"></cus-result-upload>
+            <div style="margin: 50px 25%;">
+                <div class="ep-panel">
+                    <div class="title">
+                        选择上传的报关单
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex;">
+                            <div style="width: 33%;">
+                                <div class="checkbox" style="margin: 0;">
+                                    <label>
+                                        <input @click="selectRelationM(0)" :checked="selectRelation === 0 ? 'checked' : ''" type="checkbox">
+                                        ediNo
+                                    </label>
+                                </div>
+                            </div>
+                            <div style="width: 33%;">
+                                <div class="checkbox" style="margin: 0;">
+                                    <label>
+                                        <input @click="selectRelationM(1)" :checked="selectRelation === 1 ? 'checked' : ''" type="checkbox">
+                                        preEntryId
+                                    </label>
+                                </div>
+                            </div>
+                            <div style="width: 34%;">
+                                <div class="checkbox" style="margin: 0;">
+                                    <label>
+                                        <input @click="selectRelationM(2)" :checked="selectRelation === 2 ? 'checked' : ''" type="checkbox">
+                                        seqNo
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 5px;">
+                            <input class="form-control input-sm" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ep-panel" style="margin-top: 50px;">
+                    <div class="title">
+                        回执数据
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex;">
+                            <div style="width: 50%;">
+                                preEntryId
+                            </div>
+                            <div style="width: 50%;display: flex;flex-direction: row-reverse;">
+                                <div class="checkbox" style="margin: 0;color: #00000080;">
+                                    <label>
+                                        <input type="checkbox">
+                                        自动获取
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 5px;">
+                            <input class="form-control input-sm" />
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <div>
+                            channel（状态）
+                        </div>
+
+                        <div style="margin-top: 10px;">
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" aria-label="" />
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        选择
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li style="padding: 5px 0;">
+                                            <a href="javascript:">123</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input-component style="margin-top: 20px;" text="note（备注）"></input-component>
+                </div>
+
+
+                <div style="margin-top: 50px;">
+                    <button @click="upload()" style="width: 100%;" class="btn btn-primary">上传</button>
+                </div>
+            </div>
         </div>
     </div>
 </body>
@@ -24,14 +119,23 @@
         el: "#main",
 
         data: {
-            channelList: [
-                {
-                    key: "P",
-                    value: "海关审核通过"
-                }
-            ],
+            selectRelation: null,
 
-            api: cusResultServiceApi.formCusResultUploadYeWu
+            DTO: {
+                relation: {},
+
+                cusResult: {
+                    preEntryId: "",
+                    channel: "",
+                    note: ""
+                }
+            }
+        },
+
+        methods: {
+            selectRelationM(selectRelation) {
+                this.selectRelation = selectRelation;
+            }
         }
     });
 

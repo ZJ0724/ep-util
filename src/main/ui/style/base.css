@@ -19,3 +19,8 @@ html, body, #main {
 [v-cloak] {
     display: none;
 }
+
+.title {
+    font-weight: bold;
+    font-size: 15px;
+}

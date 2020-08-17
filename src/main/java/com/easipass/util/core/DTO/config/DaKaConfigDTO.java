@@ -1,5 +1,6 @@
-package com.easipass.util.core.DTO;
+package com.easipass.util.core.DTO.config;
 
+import com.easipass.util.core.DTO.AbstractDTO;
 import java.util.List;
 
 /**

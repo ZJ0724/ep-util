@@ -1,6 +1,6 @@
 package com.easipass.util.core.cusResult.formCusResult;
 
-import com.easipass.util.core.DTO.CusResultDTO;
+import com.easipass.util.core.DTO.cusResult.YeWuFormCusResultDTO;
 import com.easipass.util.core.Database;
 import com.easipass.util.core.Resource;
 import com.easipass.util.core.database.SWGDDatabase;
@@ -32,11 +32,19 @@ public final class YeWuFormCusResult extends FormCusResult {
     /**
      * 构造函数
      *
-     * @param cusResultDTO cusResultDTO
-     * @param ediNo ediNo
+     * @param yeWuFormCusResultDTO yeWuFormCusResultDTO
      */
-    public YeWuFormCusResult(CusResultDTO cusResultDTO, String ediNo) {
-        super(cusResultDTO, compatiblePreEntryId(ediNo));
+    public YeWuFormCusResult(YeWuFormCusResultDTO yeWuFormCusResultDTO) {
+        super(yeWuFormCusResultDTO.getCusResult(), compatibleEdiNo(yeWuFormCusResultDTO.getRelation()));
+
+        // 当通过报关单号选择单子时，禁止修改报关单号
+        if (yeWuFormCusResultDTO.getRelation().getEdiNo() == null && yeWuFormCusResultDTO.getRelation().getPreEntryId() != null) {
+            if (yeWuFormCusResultDTO.getCusResult().getPreEntryId() != null) {
+                throw new CusResultException("使用报关单号选择时，禁止再次修改报关单号");
+            }
+        }
+
+        this.preEntryId = yeWuFormCusResultDTO.getCusResult().getPreEntryId();
     }
 
     @Override
@@ -150,22 +158,40 @@ public final class YeWuFormCusResult extends FormCusResult {
     }
 
     /**
-     * 兼容报关单号
+     * 兼容ediNo，默认使用ediNo
      *
-     * @param ediNo ediNo
+     * @param relation relation
      *
      * @return ediNo
      * */
-    private static String compatiblePreEntryId(String ediNo) {
-        String result = ediNo;
+    private static String compatibleEdiNo(YeWuFormCusResultDTO.Relation relation) {
+        if (relation.getEdiNo() != null) {
+            return relation.getEdiNo();
+        }
 
-        if (!ediNo.startsWith("EDI")) {
-            SWGDDatabase swgdDatabase = new SWGDDatabase();
-            result = swgdDatabase.queryEdiNo(ediNo);
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+        String ediNo = null;
+
+        try {
+            String seqNo = relation.getSeqNo();
+            String preEntryId = relation.getPreEntryId();
+
+            if (seqNo != null) {
+                ediNo = swgdDatabase.queryEdiNoBySeqNo(seqNo);
+            }
+
+            if (preEntryId != null) {
+                ediNo = swgdDatabase.queryEdiNoByPreEntryId(preEntryId);
+            }
+        } finally {
             swgdDatabase.close();
         }
 
-        return result;
+        if (ediNo == null) {
+            throw new CusResultException("报关单数据不存在");
+        }
+
+        return ediNo;
     }
 
 }

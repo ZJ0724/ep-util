@@ -1,8 +1,10 @@
 package com.easipass.util.core;
 
-import com.easipass.util.core.DTO.CusResultDTO;
+import com.easipass.util.core.DTO.cusResult.CusResultDTO;
+import com.easipass.util.core.exception.CusResultException;
 import com.easipass.util.core.sftp.CusResultUploadSftp;
 import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.util.StringUtil;
 
 /**
  * 回执
@@ -29,6 +31,14 @@ public abstract class CusResult {
     protected CusResult(CusResultDTO cusResultDTO) {
         this.channel = cusResultDTO.getChannel();
         this.note = cusResultDTO.getNote();
+
+        if (StringUtil.isEmpty(this.channel)) {
+            throw new CusResultException("channel不能为空");
+        }
+
+        if (StringUtil.isEmpty(this.note)) {
+            throw new CusResultException("note不能为空");
+        }
     }
 
     /**

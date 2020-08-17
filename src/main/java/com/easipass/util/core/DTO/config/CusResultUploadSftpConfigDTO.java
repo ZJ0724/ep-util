@@ -1,4 +1,6 @@
-package com.easipass.util.core.DTO;
+package com.easipass.util.core.DTO.config;
+
+import com.easipass.util.core.DTO.AbstractDTO;
 
 /**
  * 上传回执sftp配置DTO

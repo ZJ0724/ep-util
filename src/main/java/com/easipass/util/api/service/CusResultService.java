@@ -1,7 +1,9 @@
 package com.easipass.util.api.service;
 
 import com.easipass.util.core.CusResult;
-import com.easipass.util.core.DTO.CusResultDTO;
+import com.easipass.util.core.DTO.cusResult.CusResultDTO;
+import com.easipass.util.core.DTO.cusResult.TongXunFormCusResultDTO;
+import com.easipass.util.core.DTO.cusResult.YeWuFormCusResultDTO;
 import com.easipass.util.entity.Response;
 import com.easipass.util.core.cusResult.AgentCusResult;
 import com.easipass.util.core.cusResult.decModCusResult.QPDecModCusResult;
@@ -9,6 +11,7 @@ import com.easipass.util.core.cusResult.decModCusResult.YeWuDecModCusResult;
 import com.easipass.util.core.cusResult.formCusResult.TongXunFormCusResult;
 import com.easipass.util.core.cusResult.formCusResult.YeWuFormCusResult;
 import com.zj0724.util.springboot.parameterCheck.NotNull;
+import com.zj0724.util.springboot.parameterCheck.OpenParameterCheck;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
  * */
 @RestController
 @RequestMapping(BaseServiceApi.URL + "cusResult")
+@OpenParameterCheck
 public class CusResultService {
 
     /**
@@ -33,14 +37,13 @@ public class CusResultService {
     /**
      * 上传报关单通讯回执
      *
-     * @param cusResultDTO 请求体数据
-     * @param ediNo ediNo
+     * @param tongXunFormCusResultDTO tongXunFormCusResultDTO
      *
      * @return 响应
      */
     @PostMapping(FORM_CUS_RESULT + "/uploadTongXun")
-    public Response formCusResultUploadTongXun(@RequestParam("ediNo") @NotNull String ediNo, @RequestBody @NotNull CusResultDTO cusResultDTO) {
-        TongXunFormCusResult tongXunFormCusResult = new TongXunFormCusResult(cusResultDTO, ediNo);
+    public Response formCusResultUploadTongXun(@RequestBody @NotNull TongXunFormCusResultDTO tongXunFormCusResultDTO) {
+        TongXunFormCusResult tongXunFormCusResult = new TongXunFormCusResult(tongXunFormCusResultDTO);
 
         tongXunFormCusResult.upload();
 
@@ -50,18 +53,17 @@ public class CusResultService {
     /**
      * 上传报关单业务回执
      *
-     * @param cusResultDTO 请求体数据
-     * @param ediNo ediNo
+     * @param yeWuFormCusResultDTO yeWuFormCusResultDTO
      *
      * @return 响应
      * */
     @PostMapping(FORM_CUS_RESULT + "uploadYeWu")
-    public Response formCusResultUploadYeWu(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("ediNo") @NotNull String ediNo) {
-        YeWuFormCusResult yeWuFormCusResult = new YeWuFormCusResult(cusResultDTO, ediNo);
+    public Response formCusResultUploadYeWu(@RequestBody @NotNull YeWuFormCusResultDTO yeWuFormCusResultDTO) {
+        YeWuFormCusResult yeWuFormCusResult = new YeWuFormCusResult(yeWuFormCusResultDTO);
 
         yeWuFormCusResult.upload();
 
-        return Response.returnTrue("上传成功\nseqNo: " + yeWuFormCusResult.getSeqNo() + "\nPreEntryId: " + yeWuFormCusResult.getPreEntryId());
+        return Response.returnTrue("上传成功\nseqNo: " + yeWuFormCusResult.getSeqNo() + "\npreEntryId: " + yeWuFormCusResult.getPreEntryId());
     }
 
     /**
@@ -74,12 +76,12 @@ public class CusResultService {
      * */
     @PostMapping(FORM_CUS_RESULT + "disposableUpload")
     public Response formCusResultDisposableUpload(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("ediNo") @NotNull String ediNo) {
-        TongXunFormCusResult tongXun = new TongXunFormCusResult(new CusResultDTO("0", "通讯回执上传成功"), ediNo);
-        YeWuFormCusResult yeWu = new YeWuFormCusResult(cusResultDTO, ediNo);
+//        TongXunFormCusResult tongXun = new TongXunFormCusResult(new CusResultDTO("0", "通讯回执上传成功"), ediNo);
+//        YeWuFormCusResult yeWu = new YeWuFormCusResult(cusResultDTO, ediNo);
+//
+//        CusResult.disposableUpload(tongXun, yeWu);
 
-        CusResult.disposableUpload(tongXun, yeWu);
-
-        return Response.returnTrue("上传成功\nseqNo: " + yeWu.getSeqNo() + "\nPreEntryId: " + yeWu.getPreEntryId());
+        return Response.returnTrue("上传成功\nseqNo");
     }
 
     /**

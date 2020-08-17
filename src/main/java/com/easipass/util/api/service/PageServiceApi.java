@@ -1,6 +1,5 @@
 package com.easipass.util.api.service;
 
-import com.zj0724.util.springboot.parameterCheck.Skip;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @author ZJ
  * */
 @Controller
-@Skip
 public class PageServiceApi {
 
     /**

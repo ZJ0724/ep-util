@@ -220,8 +220,19 @@ public final class SWGDDatabase extends Database {
      *
      * @return ediNo
      * */
-    public String queryEdiNo(String preEntryId) {
+    public String queryEdiNoByPreEntryId(String preEntryId) {
         return Database.getFiledData(this.query("SELECT EDI_NO FROM SWGD.T_SWGD_FORM_HEAD WHERE PRE_ENTRY_ID = ?", preEntryId), "EDI_NO", true);
+    }
+
+    /**
+     * 查询ediNo
+     *
+     * @param seqNo seqNo
+     *
+     * @return ediNo
+     * */
+    public String queryEdiNoBySeqNo(String seqNo) {
+        return Database.getFiledData(this.query("SELECT EDI_NO FROM SWGD.T_SWGD_FORM_HEAD WHERE SEQ_NO = ?", seqNo), "EDI_NO", true);
     }
 
     /**

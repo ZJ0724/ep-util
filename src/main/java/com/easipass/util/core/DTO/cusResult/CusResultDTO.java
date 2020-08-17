@@ -1,24 +1,20 @@
-package com.easipass.util.core.DTO;
-
-import com.zj0724.util.springboot.parameterCheck.NotNull;
+package com.easipass.util.core.DTO.cusResult;
 
 /**
  * 回执DTO
  *
  * @author ZJ
  * */
-public final class CusResultDTO {
+public class CusResultDTO {
 
     /**
      * 状态
      * */
-    @NotNull
     private String channel;
 
     /**
      * 备注
      * */
-    @NotNull
     private String note;
 
     /**

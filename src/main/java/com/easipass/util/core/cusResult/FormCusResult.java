@@ -1,11 +1,12 @@
 package com.easipass.util.core.cusResult;
 
-import com.easipass.util.core.DTO.CusResultDTO;
+import com.easipass.util.core.DTO.cusResult.CusResultDTO;
 import com.easipass.util.core.Database;
 import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.CusResult;
 import com.easipass.util.core.exception.CusResultException;
 import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.util.StringUtil;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -35,6 +36,10 @@ public abstract class FormCusResult extends CusResult {
     protected FormCusResult(CusResultDTO cusResultDTO, String ediNo) {
         super(cusResultDTO);
         this.ediNo = ediNo;
+
+        if (StringUtil.isEmpty(this.ediNo)) {
+            throw new CusResultException("ediNo不能为null");
+        }
     }
 
     /**
@@ -78,6 +83,15 @@ public abstract class FormCusResult extends CusResult {
      * */
     public final String getEdiNo() {
         return this.ediNo;
+    }
+
+    /**
+     * setSeqNo
+     *
+     * @param seqNo seqNo
+     * */
+    public final void setSeqNo(String seqNo) {
+        this.seqNo = seqNo;
     }
 
 }
