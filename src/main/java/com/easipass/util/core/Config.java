@@ -186,9 +186,7 @@ public abstract class Config {
      * @param abstractDTO abstractDTO
      * */
     public final void setData(AbstractDTO abstractDTO) {
-        System.out.println(this.toString());
         ClassUtil.assemblyData(abstractDTO, this);
-        System.out.println(this.toString());
         commit();
     }
 

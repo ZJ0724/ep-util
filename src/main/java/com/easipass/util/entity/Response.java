@@ -1,5 +1,7 @@
 package com.easipass.util.entity;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.springframework.stereotype.Component;
 
 /**
@@ -115,12 +117,7 @@ public final class Response implements com.zj0724.util.springboot.parameterCheck
 
     @Override
     public String toString() {
-        return "Response{" +
-                "flag=" + flag +
-                ", errorCode=" + errorCode +
-                ", errorMessage=" + errorMessage +
-                ", data=" + data +
-                '}';
+        return JSON.toJSONString(this, SerializerFeature.WriteMapNullValue);
     }
 
     /**
@@ -161,6 +158,13 @@ public final class Response implements com.zj0724.util.springboot.parameterCheck
      * */
     public static Response error(String errorMessage) {
         return new Response(FLAG_F, 500, errorMessage, null);
+    }
+
+    /**
+     * ip黑名单
+     * */
+    public static Response ipError() {
+        return new Response(FLAG_F, 400, "ip not found", null);
     }
 
 }
