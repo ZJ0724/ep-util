@@ -39,7 +39,7 @@ public final class YeWuFormCusResult extends FormCusResult {
         super(yeWuFormCusResultDTO.getCusResult(), compatibleEdiNo(yeWuFormCusResultDTO.getRelation()));
 
         // 当通过报关单号选择单子时，禁止修改报关单号
-        if ("2".equals(yeWuFormCusResultDTO.getRelation().getType())) {
+        if ("1".equals(yeWuFormCusResultDTO.getRelation().getType())) {
             if (!StringUtil.isEmpty(yeWuFormCusResultDTO.getCusResult().getPreEntryId())) {
                 throw new CusResultException("使用报关单号选择时，禁止再次修改报关单号");
             }
@@ -196,7 +196,7 @@ public final class YeWuFormCusResult extends FormCusResult {
         swgdDatabase.close();
 
         if (ediNo == null) {
-            throw new CusResultException("未找到类型");
+            throw new CusResultException("未找到对应报关单");
         }
 
         return ediNo;
