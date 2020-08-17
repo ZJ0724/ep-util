@@ -40,9 +40,11 @@ public class CusResultService {
      */
     @PostMapping(FORM_CUS_RESULT + "/uploadTongXun")
     public Response formCusResultUploadTongXun(@RequestParam("ediNo") @NotNull String ediNo, @RequestBody @NotNull CusResultDTO cusResultDTO) {
-        new TongXunFormCusResult(cusResultDTO, ediNo).upload();
+        TongXunFormCusResult tongXunFormCusResult = new TongXunFormCusResult(cusResultDTO, ediNo);
 
-        return Response.returnTrue();
+        tongXunFormCusResult.upload();
+
+        return Response.returnTrue("上传成功\nseqNo: " + tongXunFormCusResult.getSeqNo());
     }
 
     /**
@@ -55,9 +57,11 @@ public class CusResultService {
      * */
     @PostMapping(FORM_CUS_RESULT + "uploadYeWu")
     public Response formCusResultUploadYeWu(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("ediNo") @NotNull String ediNo) {
-        new YeWuFormCusResult(cusResultDTO, ediNo).upload();
+        YeWuFormCusResult yeWuFormCusResult = new YeWuFormCusResult(cusResultDTO, ediNo);
 
-        return Response.returnTrue();
+        yeWuFormCusResult.upload();
+
+        return Response.returnTrue("上传成功\nseqNo: " + yeWuFormCusResult.getSeqNo() + "\nPreEntryId: " + yeWuFormCusResult.getPreEntryId());
     }
 
     /**
@@ -70,12 +74,12 @@ public class CusResultService {
      * */
     @PostMapping(FORM_CUS_RESULT + "disposableUpload")
     public Response formCusResultDisposableUpload(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("ediNo") @NotNull String ediNo) {
-        CusResult tongXun = new TongXunFormCusResult(new CusResultDTO("0", "通讯回执上传成功"), ediNo);
-        CusResult yeWu = new YeWuFormCusResult(cusResultDTO, ediNo);
+        TongXunFormCusResult tongXun = new TongXunFormCusResult(new CusResultDTO("0", "通讯回执上传成功"), ediNo);
+        YeWuFormCusResult yeWu = new YeWuFormCusResult(cusResultDTO, ediNo);
 
         CusResult.disposableUpload(tongXun, yeWu);
 
-        return Response.returnTrue();
+        return Response.returnTrue("上传成功\nseqNo: " + yeWu.getSeqNo() + "\nPreEntryId: " + yeWu.getPreEntryId());
     }
 
     /**

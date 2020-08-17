@@ -16,7 +16,15 @@ import java.sql.SQLException;
  * */
 public abstract class FormCusResult extends CusResult {
 
+    /**
+     * ediNo
+     * */
     private final String ediNo;
+
+    /**
+     * seqNo
+     * */
+    private String seqNo;
 
     /**
      * 构造函数
@@ -34,7 +42,11 @@ public abstract class FormCusResult extends CusResult {
      *
      * @return seqNo
      * */
-    protected final String getSeqNo() {
+    public final String getSeqNo() {
+        if (this.seqNo != null) {
+            return this.seqNo;
+        }
+
         SWGDDatabase swgdOracle = new SWGDDatabase();
         ResultSet resultSet = swgdOracle.queryFormHead(this.ediNo);
         String seqNo;
@@ -51,10 +63,12 @@ public abstract class FormCusResult extends CusResult {
         }
 
         if (seqNo == null || "".equals(seqNo)) {
-            return "seqNo00000000" + this.ediNo.substring(this.ediNo.length() - 5);
-        } else {
-            return seqNo;
+            seqNo = "seqNo00000000" + this.ediNo.substring(this.ediNo.length() - 5);
         }
+
+        this.seqNo = seqNo;
+
+        return seqNo;
     }
 
     /**
@@ -62,7 +76,7 @@ public abstract class FormCusResult extends CusResult {
      *
      * @return ediNo
      * */
-    protected final String getEdiNo() {
+    public final String getEdiNo() {
         return this.ediNo;
     }
 

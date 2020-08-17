@@ -25,6 +25,11 @@ import java.sql.SQLException;
 public final class YeWuFormCusResult extends FormCusResult {
 
     /**
+     * 报关单号
+     * */
+    private String preEntryId;
+
+    /**
      * 构造函数
      *
      * @param cusResultDTO cusResultDTO
@@ -96,7 +101,11 @@ public final class YeWuFormCusResult extends FormCusResult {
      *
      * @return 报关单号
      * */
-    protected final String getPreEntryId() {
+    public final String getPreEntryId() {
+        if (this.preEntryId != null) {
+            return this.preEntryId;
+        }
+
         SWGDDatabase swgdDatabase = new SWGDDatabase();
         ResultSet resultSet = swgdDatabase.queryFormHead(this.getEdiNo());
         String declPort;
@@ -132,10 +141,12 @@ public final class YeWuFormCusResult extends FormCusResult {
         }
 
         if (preEntryId.startsWith("EDI")) {
-            return declPort + "0000" + ieFlag + "0000" + this.getEdiNo().substring(this.getEdiNo().length() - 5);
-        } else {
-            return preEntryId;
+            preEntryId = declPort + "0000" + ieFlag + "0000" + this.getEdiNo().substring(this.getEdiNo().length() - 5);
         }
+
+        this.preEntryId = preEntryId;
+
+        return preEntryId;
     }
 
     /**

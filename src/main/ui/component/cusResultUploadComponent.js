@@ -86,8 +86,8 @@ export default (function () {
                 uploadButton.disabled = true;
                 uploadButton.text = "正在上传...";
 
-                api(param, cusResultDTO).then(function () {
-                    alertComponent.popup("上传成功");
+                api(param, cusResultDTO).then(function (message) {
+                    alertComponent.popup(message);
                 }).catch(function (message) {
                     alertComponent.popup(message);
                 }).finally(function () {
