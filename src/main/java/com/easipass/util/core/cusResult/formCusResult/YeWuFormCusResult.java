@@ -101,6 +101,7 @@ public final class YeWuFormCusResult extends FormCusResult {
         ResultSet resultSet = swgdDatabase.queryFormHead(this.getEdiNo());
         String declPort;
         String preEntryId;
+        String ieFlag;
 
         try {
             if (!resultSet.next()) {
@@ -109,6 +110,7 @@ public final class YeWuFormCusResult extends FormCusResult {
 
             declPort = Database.getFiledData(resultSet, "DECL_PORT");
             preEntryId = Database.getFiledData(resultSet, "PRE_ENTRY_ID");
+            ieFlag = Database.getFiledData(resultSet, "IE_FLAG");
         } catch (SQLException e) {
             throw new ErrorException(e.getMessage());
         } finally {
@@ -119,8 +121,18 @@ public final class YeWuFormCusResult extends FormCusResult {
             throw new CusResultException("ediNo: " + this.getEdiNo() + "申报关区为空");
         }
 
+        if (ieFlag == null) {
+            throw new CusResultException("ediNo: " + this.getEdiNo() + "IE_FLAG为空");
+        } else {
+            ieFlag = this.getIeFlag(ieFlag);
+        }
+
+        if (ieFlag == null) {
+            throw new ErrorException("ediNo: " + this.getEdiNo() + "未识别报关单进出口类型");
+        }
+
         if (preEntryId.startsWith("EDI")) {
-            return declPort + "000000000" + this.getEdiNo().substring(this.getEdiNo().length() - 5);
+            return declPort + "0000" + ieFlag + "0000" + this.getEdiNo().substring(this.getEdiNo().length() - 5);
         } else {
             return preEntryId;
         }

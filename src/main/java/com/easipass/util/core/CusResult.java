@@ -91,6 +91,26 @@ public abstract class CusResult {
     }
 
     /**
+     * 进出口标识
+     *
+     * @param ieFlag ieFlag
+     *
+     * @return 进口是1 出口是0
+     * */
+    public final String getIeFlag(String ieFlag) {
+        switch (ieFlag) {
+            case "0" : case "2" : case "4" : case "6" : case "8" : case "A" :
+                return "O";
+
+            case "1" : case "3" : case "5" : case "7" : case "9" : case "B" :
+            case "D" :  case "F" :
+                return "1";
+        }
+
+        return null;
+    }
+
+    /**
      * 一次性上传回执
      *
      * @param cusResult1 回执1
