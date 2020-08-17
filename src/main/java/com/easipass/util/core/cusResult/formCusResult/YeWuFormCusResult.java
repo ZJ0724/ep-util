@@ -193,6 +193,8 @@ public final class YeWuFormCusResult extends FormCusResult {
             ediNo = data;
         }
 
+        swgdDatabase.close();
+
         if (ediNo == null) {
             throw new CusResultException("未找到类型");
         }

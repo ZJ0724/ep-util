@@ -61,7 +61,7 @@ public class CusResultService {
     public Response formCusResultUploadYeWu(@RequestBody @NotNull YeWuFormCusResultDTO yeWuFormCusResultDTO) {
         YeWuFormCusResult yeWuFormCusResult = new YeWuFormCusResult(yeWuFormCusResultDTO);
 
-//        yeWuFormCusResult.upload();
+        yeWuFormCusResult.upload();
 
         return Response.returnTrue("上传成功\nseqNo: " + yeWuFormCusResult.getSeqNo() + "\npreEntryId: " + yeWuFormCusResult.getPreEntryId());
     }
