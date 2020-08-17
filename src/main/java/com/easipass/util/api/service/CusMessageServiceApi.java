@@ -4,7 +4,6 @@ import com.easipass.util.core.CusMessage;
 import com.easipass.util.entity.Response;
 import com.easipass.util.core.cusMessage.DecModCusMessage;
 import com.easipass.util.core.cusMessage.FormCusMessage;
-import com.zj0724.springbootUtil.annotation.SkipCheck;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
  * */
 @RestController
 @RequestMapping(BaseServiceApi.URL + "cusMessage")
-@SkipCheck
 public class CusMessageServiceApi {
 
     private static final String UPLOAD = "upload/";

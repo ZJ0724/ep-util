@@ -19,10 +19,7 @@
         <buildPath>${project.build.directory}/build/${project.artifactId}</buildPath>
         <skipTests>true</skipTests>
 
-        <springbootUtilFile>${project.basedir}/src/main/lib/springbootUtil-1.0.2.jar</springbootUtilFile>
-        <springbootUtilGroupId>com.zj0724</springbootUtilGroupId>
-        <springbootUtilArtifactId>springbootUtil</springbootUtilArtifactId>
-        <springbootUtilVersion>1.0.2</springbootUtilVersion>
+        <utilVersion>1.0.0</utilVersion>
     </properties>
 
     <!--依赖-->
@@ -81,12 +78,6 @@
         </dependency>
 
         <dependency>
-            <groupId>${springbootUtilGroupId}</groupId>
-            <artifactId>${springbootUtilArtifactId}</artifactId>
-            <version>${springbootUtilVersion}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.zj0724</groupId>
             <artifactId>uiAuto</artifactId>
             <version>2.2.1</version>
@@ -115,6 +106,13 @@
             <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
             <version>0.9.5.5</version>
+        </dependency>
+
+        <!-- util -->
+        <dependency>
+            <groupId>com.zj0724</groupId>
+            <artifactId>util</artifactId>
+            <version>${utilVersion}</version>
         </dependency>
     </dependencies>
 
@@ -184,19 +182,6 @@
                 <version>2.5.2</version>
                 <executions>
                     <execution>
-                        <id>springbootUtil</id>
-                        <phase>clean</phase>
-                        <configuration>
-                            <file>${springbootUtilFile}</file>
-                            <groupId>${springbootUtilGroupId}</groupId>
-                            <artifactId>${springbootUtilArtifactId}</artifactId>
-                            <version>${springbootUtilVersion}</version>
-                        </configuration>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                    </execution>
-                    <execution>
                         <id>uiAuto</id>
                         <phase>clean</phase>
                         <configuration>
@@ -217,6 +202,21 @@
                             <groupId>com.zj0724</groupId>
                             <artifactId>ojdbc6</artifactId>
                             <version>11.2.0.3</version>
+                            <packaging>jar</packaging>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>util</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <file>${project.basedir}/src/main/lib/util-1.0.0.jar</file>
+                            <groupId>com.zj0724</groupId>
+                            <artifactId>util</artifactId>
+                            <version>${utilVersion}</version>
                             <packaging>jar</packaging>
                         </configuration>
                         <goals>

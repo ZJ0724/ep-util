@@ -1,6 +1,6 @@
 package com.easipass.util.core.DTO;
 
-import com.zj0724.springbootUtil.annotation.NotNull;
+import com.zj0724.util.springboot.parameterCheck.NotNull;
 
 /**
  * 回执DTO

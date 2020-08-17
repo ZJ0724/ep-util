@@ -3,11 +3,12 @@ package com.easipass.util;
 import com.easipass.util.core.*;
 import com.easipass.util.core.config.Port;
 import com.easipass.util.core.exception.ErrorException;
+import com.zj0724.util.springboot.ParameterCheck;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 
 /**
  * main
@@ -15,7 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @author ZJ
  * */
 @SpringBootApplication
-@ComponentScan(basePackageClasses = {Main.class, com.zj0724.springbootUtil.Main.class})
+@Import({ParameterCheck.class})
 public class Main {
 
     /**

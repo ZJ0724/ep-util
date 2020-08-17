@@ -42,6 +42,9 @@ public final class ChromeDriver {
 
         if (systemType == SystemType.LINUX) {
             resource = Resource.CHROME_DRIVER_LINUX;
+
+            // 设置777权限
+            ConsoleUtil.setChmod777(resource.getPath());
         }
     }
 

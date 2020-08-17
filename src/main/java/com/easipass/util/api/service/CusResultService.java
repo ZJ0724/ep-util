@@ -8,7 +8,7 @@ import com.easipass.util.core.cusResult.decModCusResult.QPDecModCusResult;
 import com.easipass.util.core.cusResult.decModCusResult.YeWuDecModCusResult;
 import com.easipass.util.core.cusResult.formCusResult.TongXunFormCusResult;
 import com.easipass.util.core.cusResult.formCusResult.YeWuFormCusResult;
-import com.zj0724.springbootUtil.annotation.NotNull;
+import com.zj0724.util.springboot.parameterCheck.NotNull;
 import org.springframework.web.bind.annotation.*;
 
 /**
