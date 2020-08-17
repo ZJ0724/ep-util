@@ -146,9 +146,11 @@ public abstract class Database {
     public static String getFiledData(ResultSet resultSet, String filedName, boolean isNext) {
         if (isNext) {
             try {
-                resultSet.next();
+                if (!resultSet.next()) {
+                    return null;
+                }
             } catch (SQLException e) {
-                return null;
+                throw new ErrorException(e.getMessage());
             }
         }
 
