@@ -30,10 +30,6 @@ public final class TongXunFormCusResult extends FormCusResult {
 
         String seqNo = tongXunFormCusResultDTO.getCusResult().getSeqNo();
 
-        if ("".equals(seqNo)) {
-            throw new CusResultException("seqNo不能为空，选填请勾选\"自动生成生成\"");
-        }
-
         this.setSeqNo(seqNo);
     }
 

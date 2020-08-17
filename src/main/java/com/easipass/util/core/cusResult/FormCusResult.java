@@ -48,7 +48,7 @@ public abstract class FormCusResult extends CusResult {
      * @return seqNo
      * */
     public final String getSeqNo() {
-        if (this.seqNo != null) {
+        if (!StringUtil.isEmpty(this.seqNo)) {
             return this.seqNo;
         }
 

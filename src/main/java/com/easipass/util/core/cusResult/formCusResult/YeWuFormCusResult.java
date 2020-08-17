@@ -8,6 +8,7 @@ import com.easipass.util.core.cusResult.FormCusResult;
 import com.easipass.util.core.exception.CusResultException;
 import com.easipass.util.core.util.Base64Util;
 import com.easipass.util.core.util.DateUtil;
+import com.easipass.util.core.util.StringUtil;
 import com.easipass.util.core.util.XmlUtil;
 import com.easipass.util.core.exception.ErrorException;
 import org.dom4j.Document;
@@ -38,8 +39,8 @@ public final class YeWuFormCusResult extends FormCusResult {
         super(yeWuFormCusResultDTO.getCusResult(), compatibleEdiNo(yeWuFormCusResultDTO.getRelation()));
 
         // 当通过报关单号选择单子时，禁止修改报关单号
-        if (yeWuFormCusResultDTO.getRelation().getEdiNo() == null && yeWuFormCusResultDTO.getRelation().getPreEntryId() != null) {
-            if (yeWuFormCusResultDTO.getCusResult().getPreEntryId() != null) {
+        if ("2".equals(yeWuFormCusResultDTO.getRelation().getType())) {
+            if (!StringUtil.isEmpty(yeWuFormCusResultDTO.getCusResult().getPreEntryId())) {
                 throw new CusResultException("使用报关单号选择时，禁止再次修改报关单号");
             }
         }
@@ -110,7 +111,7 @@ public final class YeWuFormCusResult extends FormCusResult {
      * @return 报关单号
      * */
     public final String getPreEntryId() {
-        if (this.preEntryId != null) {
+        if (!StringUtil.isEmpty(this.preEntryId)) {
             return this.preEntryId;
         }
 
@@ -165,30 +166,35 @@ public final class YeWuFormCusResult extends FormCusResult {
      * @return ediNo
      * */
     private static String compatibleEdiNo(YeWuFormCusResultDTO.Relation relation) {
-        if (relation.getEdiNo() != null) {
-            return relation.getEdiNo();
+        String type = relation.getType();
+
+        if (StringUtil.isEmpty(type)) {
+            throw new CusResultException("未选择上传的报关单");
+        }
+
+        String data = relation.getData();
+
+        if (StringUtil.isEmpty(data)) {
+            throw new CusResultException("报关单数据不能为空");
         }
 
         SWGDDatabase swgdDatabase = new SWGDDatabase();
         String ediNo = null;
 
-        try {
-            String seqNo = relation.getSeqNo();
-            String preEntryId = relation.getPreEntryId();
+        if ("2".equals(type)) {
+            ediNo = swgdDatabase.queryEdiNoBySeqNo(data);
+        }
 
-            if (seqNo != null) {
-                ediNo = swgdDatabase.queryEdiNoBySeqNo(seqNo);
-            }
+        if ("1".equals(type)) {
+            ediNo = swgdDatabase.queryEdiNoByPreEntryId(data);
+        }
 
-            if (preEntryId != null) {
-                ediNo = swgdDatabase.queryEdiNoByPreEntryId(preEntryId);
-            }
-        } finally {
-            swgdDatabase.close();
+        if ("0".equals(type)) {
+            ediNo = data;
         }
 
         if (ediNo == null) {
-            throw new CusResultException("报关单数据不存在");
+            throw new CusResultException("未找到类型");
         }
 
         return ediNo;

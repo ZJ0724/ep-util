@@ -36,42 +36,33 @@ public final class YeWuFormCusResultDTO {
      * */
     public static final class Relation {
         /**
-         * ediNo
+         * type
+         *
+         * 0：ediNo
+         * 1：preEntryId
+         * 2：seqNo
          * */
-        private String ediNo;
+        private String type;
 
         /**
-         * preEntryId
+         * 数据
          * */
-        private String preEntryId;
+        private String data;
 
-        /**
-         * seqNo
-         * */
-        private String seqNo;
-
-        public String getEdiNo() {
-            return ediNo;
+        public String getType() {
+            return type;
         }
 
-        public void setEdiNo(String ediNo) {
-            this.ediNo = ediNo;
+        public void setType(String type) {
+            this.type = type;
         }
 
-        public String getPreEntryId() {
-            return preEntryId;
+        public String getData() {
+            return data;
         }
 
-        public void setPreEntryId(String preEntryId) {
-            this.preEntryId = preEntryId;
-        }
-
-        public String getSeqNo() {
-            return seqNo;
-        }
-
-        public void setSeqNo(String seqNo) {
-            this.seqNo = seqNo;
+        public void setData(String data) {
+            this.data = data;
         }
     }
 

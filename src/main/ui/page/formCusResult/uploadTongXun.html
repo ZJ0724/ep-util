@@ -89,7 +89,7 @@
         el: "#main",
 
         data: {
-            autoCheck: false,
+            autoCheck: true,
 
             channelList: [
                 {
@@ -131,8 +131,9 @@
             autoCheckM() {
                 this.autoCheck = !this.autoCheck;
 
+
                 if (this.autoCheck) {
-                    this.DTO.cusResult.seqNo = null;
+                    this.DTO.cusResult.preEntryId = "";
                 }
             },
 

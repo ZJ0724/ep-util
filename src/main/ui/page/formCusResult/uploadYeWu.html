@@ -21,7 +21,7 @@
                             <div style="width: 33%;">
                                 <div class="checkbox" style="margin: 0;">
                                     <label>
-                                        <input @click="selectRelationM(0)" :checked="selectRelation === 0 ? 'checked' : ''" type="checkbox">
+                                        <input @click="selectRelation('0')" :checked="DTO.relation.type === '0' ? 'checked' : ''" type="checkbox">
                                         ediNo
                                     </label>
                                 </div>
@@ -29,7 +29,7 @@
                             <div style="width: 33%;">
                                 <div class="checkbox" style="margin: 0;">
                                     <label>
-                                        <input @click="selectRelationM(1)" :checked="selectRelation === 1 ? 'checked' : ''" type="checkbox">
+                                        <input @click="selectRelation('1')" :checked="DTO.relation.type === '1' ? 'checked' : ''" type="checkbox">
                                         preEntryId
                                     </label>
                                 </div>
@@ -37,7 +37,7 @@
                             <div style="width: 34%;">
                                 <div class="checkbox" style="margin: 0;">
                                     <label>
-                                        <input @click="selectRelationM(2)" :checked="selectRelation === 2 ? 'checked' : ''" type="checkbox">
+                                        <input @click="selectRelation('2')" :checked="DTO.relation.type === '2' ? 'checked' : ''" type="checkbox">
                                         seqNo
                                     </label>
                                 </div>
@@ -45,7 +45,7 @@
                         </div>
 
                         <div style="margin-top: 5px;">
-                            <input class="form-control input-sm" />
+                            <input v-model="DTO.relation.data" class="form-control input-sm" />
                         </div>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                             <div style="width: 50%;display: flex;flex-direction: row-reverse;">
                                 <div class="checkbox" style="margin: 0;color: #00000080;">
                                     <label>
-                                        <input type="checkbox">
+                                        <input @click="autoCheckM()" :checked="autoCheck ? 'checked' : ''" type="checkbox">
                                         自动获取
                                     </label>
                                 </div>
@@ -71,7 +71,7 @@
                         </div>
 
                         <div style="margin-top: 5px;">
-                            <input class="form-control input-sm" />
+                            <input :disabled="autoCheck" v-model="DTO.cusResult.preEntryId" class="form-control input-sm" />
                         </div>
                     </div>
 
@@ -82,15 +82,15 @@
 
                         <div style="margin-top: 10px;">
                             <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" aria-label="" />
+                                <input v-model="DTO.cusResult.channel" type="text" class="form-control" aria-label="" />
                                 <div class="input-group-btn">
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         选择
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li style="padding: 5px 0;">
-                                            <a href="javascript:">123</a>
+                                        <li v-for="channel in channelList" :key="channel.key" style="padding: 5px 0;">
+                                            <a @click="selectChannel(channel.key)" href="javascript:">{{channel.key}}（{{channel.value}}）</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -98,7 +98,7 @@
                         </div>
                     </div>
 
-                    <input-component style="margin-top: 20px;" text="note（备注）"></input-component>
+                    <input-component style="margin-top: 20px;" text="note（备注）" :value.sync="DTO.cusResult.note"></input-component>
                 </div>
 
 
@@ -114,27 +114,63 @@
 <script type="module">
 
     import cusResultServiceApi from "../../api/service/cusResultServiceApi.js";
+    import alertComponent from "../../component/alertComponent.js";
+    import loadingComponent from "../../component/loadingComponent.js";
 
     new Vue({
         el: "#main",
 
         data: {
-            selectRelation: null,
-
             DTO: {
-                relation: {},
+                relation: {
+                    type: "",
+                    data: ""
+                },
 
                 cusResult: {
                     preEntryId: "",
                     channel: "",
                     note: ""
                 }
-            }
+            },
+
+            autoCheck: true,
+
+            channelList: [
+                {
+                    key: "P",
+                    value: "海关审核通过"
+                }
+            ]
         },
 
         methods: {
-            selectRelationM(selectRelation) {
-                this.selectRelation = selectRelation;
+            selectRelation(type) {
+                this.DTO.relation.type = type;
+            },
+
+            selectChannel(channel) {
+                this.DTO.cusResult.channel = channel;
+            },
+
+            upload() {
+                loadingComponent.open();
+
+                cusResultServiceApi.formCusResultUploadYeWu(this.DTO).then(function (message) {
+                    alertComponent.popup(message);
+                }).catch(function (message) {
+                    alertComponent.message(message);
+                }).finally(function () {
+                    loadingComponent.close();
+                });
+            },
+
+            autoCheckM() {
+                this.autoCheck = !this.autoCheck;
+
+                if (this.autoCheck) {
+                    this.DTO.cusResult.preEntryId = "";
+                }
             }
         }
     });
