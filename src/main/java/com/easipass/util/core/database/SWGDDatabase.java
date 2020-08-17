@@ -280,4 +280,23 @@ public final class SWGDDatabase extends Database {
         return this.query("SELECT * FROM SWGD.T_SWGD_SUPPLY_USER WHERE SENDER = ?", SENDER);
     }
 
+    /**
+     * 表头时候存在
+     *
+     * @param ediNo ediNo
+     *
+     * @return 存在返回true
+     * */
+    public boolean formHeadIsExist(String ediNo) {
+        try {
+            if (this.queryFormHead(ediNo).next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        return false;
+    }
+
 }

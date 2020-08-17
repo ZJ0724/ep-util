@@ -40,6 +40,17 @@ public abstract class FormCusResult extends CusResult {
         if (StringUtil.isEmpty(this.ediNo)) {
             throw new CusResultException("ediNo不能为null");
         }
+
+        // 检查报关单是否存在
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+
+        try {
+            if (!swgdDatabase.formHeadIsExist(this.ediNo)) {
+                throw new CusResultException("未找到对应报关单");
+            }
+        } finally {
+            swgdDatabase.close();
+        }
     }
 
     /**
