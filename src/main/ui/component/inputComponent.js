@@ -7,7 +7,7 @@ export default (function () {
                 <div>
                     {{text}}
                 </div>
-                <div style="margin-top: 5px;">
+                <div style="margin-top: 10px;">
                     <input v-model="myValue" class="form-control input-sm" />
                 </div>
             </div>
