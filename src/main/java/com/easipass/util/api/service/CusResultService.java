@@ -1,6 +1,5 @@
 package com.easipass.util.api.service;
 
-import com.easipass.util.core.CusResult;
 import com.easipass.util.core.DTO.cusResult.CusResultDTO;
 import com.easipass.util.core.DTO.cusResult.TongXunFormCusResultDTO;
 import com.easipass.util.core.DTO.cusResult.YeWuFormCusResultDTO;
@@ -61,7 +60,7 @@ public class CusResultService {
     public Response formCusResultUploadYeWu(@RequestBody @NotNull YeWuFormCusResultDTO yeWuFormCusResultDTO) {
         YeWuFormCusResult yeWuFormCusResult = new YeWuFormCusResult(yeWuFormCusResultDTO);
 
-        yeWuFormCusResult.upload();
+        yeWuFormCusResult.uploadAll();
 
         return Response.returnTrue("上传成功\nseqNo: " + yeWuFormCusResult.getSeqNo() + "\npreEntryId: " + yeWuFormCusResult.getPreEntryId());
     }
@@ -69,19 +68,12 @@ public class CusResultService {
     /**
      * 一次性上传报关单回执
      *
-     * @param cusResultDTO 请求体数据
-     * @param ediNo ediNo
-     *
      * @return 响应
      * */
+    @Deprecated
     @PostMapping(FORM_CUS_RESULT + "disposableUpload")
-    public Response formCusResultDisposableUpload(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("ediNo") @NotNull String ediNo) {
-//        TongXunFormCusResult tongXun = new TongXunFormCusResult(new CusResultDTO("0", "通讯回执上传成功"), ediNo);
-//        YeWuFormCusResult yeWu = new YeWuFormCusResult(cusResultDTO, ediNo);
-//
-//        CusResult.disposableUpload(tongXun, yeWu);
-
-        return Response.returnTrue("上传成功\nseqNo");
+    public Response formCusResultDisposableUpload() {
+        return Response.returnFalse("已弃用");
     }
 
     /**
@@ -117,19 +109,12 @@ public class CusResultService {
     /**
      * 一次性上传修撤单回执
      *
-     * @param cusResultDTO 请求体数据
-     * @param preEntryId 报关单号
-     *
      * @return 响应
      * */
+    @Deprecated
     @PostMapping(DEC_MOD_RESULT + "disposableUpload")
-    public Response decModCusResultDisposableUpload(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("preEntryId") @NotNull String preEntryId) {
-        CusResult QP = new QPDecModCusResult(new CusResultDTO("0", "QP回执上传成功"), preEntryId);
-        CusResult yeWu = new YeWuDecModCusResult(cusResultDTO, preEntryId);
-
-        CusResult.disposableUpload(QP, yeWu);
-
-        return Response.returnTrue();
+    public Response decModCusResultDisposableUpload() {
+        return Response.returnFalse("已弃用");
     }
 
     /**

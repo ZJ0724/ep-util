@@ -159,6 +159,31 @@ public final class YeWuFormCusResult extends FormCusResult {
     }
 
     /**
+     * 上传所有，默认上传通讯回执
+     * */
+    public void uploadAll() {
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+        String seqNo;
+
+        try {
+            seqNo = SWGDDatabase.getFiledData(swgdDatabase.queryFormHead(this.getEdiNo()), "SEQ_NO", true);
+        } finally {
+            swgdDatabase.close();
+        }
+
+        if (seqNo == null) {
+            new TongXunFormCusResult(
+                    this.getEdiNo(),
+                    this.getSeqNo(),
+                    "0",
+                    "通讯回执上传成功"
+                    ).upload();
+        }
+
+        this.upload();
+    }
+
+    /**
      * 兼容ediNo，默认使用ediNo
      *
      * @param relation relation

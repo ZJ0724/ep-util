@@ -1,10 +1,10 @@
 package com.easipass.util.core.cusResult.formCusResult;
 
+import com.easipass.util.core.DTO.cusResult.CusResultDTO;
 import com.easipass.util.core.DTO.cusResult.TongXunFormCusResultDTO;
 import com.easipass.util.core.Resource;
 import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.cusResult.FormCusResult;
-import com.easipass.util.core.exception.CusResultException;
 import com.easipass.util.core.util.Base64Util;
 import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.XmlUtil;
@@ -23,14 +23,29 @@ public final class TongXunFormCusResult extends FormCusResult {
     /**
      * 构造函数
      *
+     * @param ediNo ediNo
+     * @param seqNo seqNo
+     * @param channel channel
+     * @param note note
+     */
+    public TongXunFormCusResult(String ediNo, String seqNo, String channel, String note) {
+        super(new CusResultDTO(channel, note), ediNo);
+
+        this.setSeqNo(seqNo);
+    }
+
+    /**
+     * 构造函数
+     *
      * @param tongXunFormCusResultDTO tongXunFormCusResultDTO
      */
     public TongXunFormCusResult(TongXunFormCusResultDTO tongXunFormCusResultDTO) {
-        super(tongXunFormCusResultDTO.getCusResult(), tongXunFormCusResultDTO.getRelation().getEdiNo());
-
-        String seqNo = tongXunFormCusResultDTO.getCusResult().getSeqNo();
-
-        this.setSeqNo(seqNo);
+        this(
+                tongXunFormCusResultDTO.getRelation().getEdiNo(),
+                tongXunFormCusResultDTO.getCusResult().getSeqNo(),
+                tongXunFormCusResultDTO.getCusResult().getChannel(),
+                tongXunFormCusResultDTO.getCusResult().getNote()
+                );
     }
 
     @Override

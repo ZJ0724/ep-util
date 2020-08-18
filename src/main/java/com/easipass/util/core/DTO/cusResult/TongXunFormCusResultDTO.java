@@ -15,6 +15,13 @@ public final class TongXunFormCusResultDTO {
     @NotNull("cusResult节点缺失")
     private CusResult cusResult;
 
+    public TongXunFormCusResultDTO() {}
+
+    public TongXunFormCusResultDTO(Relation relation, CusResult cusResult) {
+        this.relation = relation;
+        this.cusResult = cusResult;
+    }
+
     public Relation getRelation() {
         return relation;
     }
@@ -67,6 +74,13 @@ public final class TongXunFormCusResultDTO {
          * seqNo
          * */
         private String seqNo;
+
+        public CusResult() {}
+
+        public CusResult(String channel, String note, String seqNo) {
+            super(channel, note);
+            this.seqNo = seqNo;
+        }
 
         public String getSeqNo() {
             return seqNo;
