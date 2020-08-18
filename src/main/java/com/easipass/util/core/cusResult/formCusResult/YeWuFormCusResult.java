@@ -172,15 +172,17 @@ public final class YeWuFormCusResult extends FormCusResult {
         }
 
         if (seqNo == null) {
-            new TongXunFormCusResult(
+            TongXunFormCusResult tongXunFormCusResult = new TongXunFormCusResult(
                     this.getEdiNo(),
                     this.getSeqNo(),
                     "0",
                     "通讯回执上传成功"
-                    ).upload();
-        }
+                    );
 
-        this.upload();
+            uploadMore(tongXunFormCusResult, this);
+        } else {
+            this.upload();
+        }
     }
 
     /**

@@ -93,7 +93,7 @@
                                         选择
                                         <span class="caret"></span>
                                     </button>
-                                    <ul class="dropdown-menu">
+                                    <ul class="dropdown-menu" style="max-height: 300px;overflow: auto;">
                                         <li v-for="channel in channelList" :key="channel.key" style="padding: 5px 0;">
                                             <a @click="selectChannel(channel.key)" href="javascript:">{{channel.key}}（{{channel.value}}）</a>
                                         </li>
@@ -177,6 +177,102 @@
                 {
                     key: "P",
                     value: "海关审核通过"
+                },
+                {
+                    key: "N",
+                    value: "随附单据重传补传"
+                },
+                {
+                    key: "A",
+                    value: "放行前删除"
+                },
+                {
+                    key: "B",
+                    value: "担保验放"
+                },
+                {
+                    key: "C",
+                    value: "报关单查验"
+                },
+                {
+                    key: "D",
+                    value: "放行后删除"
+                },
+                {
+                    key: "E",
+                    value: "放行后删除"
+                },
+                {
+                    key: "F",
+                    value: "放行交单"
+                },
+                {
+                    key: "G",
+                    value: "接单交单"
+                },
+                {
+                    key: "H",
+                    value: "挂起"
+                },
+                {
+                    key: "I",
+                    value: "无纸放行通知"
+                },
+                {
+                    key: "L",
+                    value: "入预录入库成功"
+                },
+                {
+                    key: "R",
+                    value: "结关"
+                },
+                {
+                    key: "W",
+                    value: "无纸验放通知"
+                },
+                {
+                    key: "X",
+                    value: "准予进港"
+                },
+                {
+                    key: "Z",
+                    value: "退回修改"
+                },
+                {
+                    key: "T",
+                    value: "需交税费"
+                },
+                {
+                    key: "M",
+                    value: "报关单重审"
+                },
+                {
+                    key: "S",
+                    value: "'QP'处理失败"
+                },
+                {
+                    key: "J",
+                    value: "'QP'通关无纸化审结"
+                },
+                {
+                    key: "Y",
+                    value: "申报失败"
+                },
+                {
+                    key: "U",
+                    value: "重新申报"
+                },
+                {
+                    key: "#",
+                    value: "准予进卡"
+                },
+                {
+                    key: "K",
+                    value: "担保放行"
+                },
+                {
+                    key: "CCC",
+                    value: "报关单查验"
                 }
             ],
 
