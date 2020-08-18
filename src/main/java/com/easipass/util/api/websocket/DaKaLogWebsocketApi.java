@@ -1,6 +1,8 @@
 package com.easipass.util.api.websocket;
 
-import com.easipass.util.entity.DaKa;
+import com.easipass.util.core.DaKa;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import javax.websocket.OnClose;
 import javax.websocket.OnOpen;
@@ -19,6 +21,11 @@ import java.util.List;
 public class DaKaLogWebsocketApi extends BaseWebsocketApi {
 
     private final String id = new Date().getTime() + "";
+
+    /**
+     * 日志
+     * */
+    private static final Logger log = LoggerFactory.getLogger(DaKaLogWebsocketApi.class);
 
     /**
      * 打卡
@@ -44,7 +51,7 @@ public class DaKaLogWebsocketApi extends BaseWebsocketApi {
     @OnClose
     public void onClose() {
         DA_KA.deleteDaKaLogWebsocket(this);
-        LOG.info(this.session.toString() + "已关闭");
+        log.info("{}已关闭", this.session.toString());
     }
 
     /**

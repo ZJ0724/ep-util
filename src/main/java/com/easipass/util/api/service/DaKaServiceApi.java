@@ -1,6 +1,6 @@
 package com.easipass.util.api.service;
 
-import com.easipass.util.entity.DaKa;
+import com.easipass.util.core.DaKa;
 import com.easipass.util.entity.Response;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +28,9 @@ public class DaKaServiceApi {
      * */
     @PostMapping("openAutoDaKa")
     public Response openAutoDaKa() {
-        return DA_KA.OpenAutoDaKa();
+        DA_KA.OpenAutoDaKa();
+
+        return Response.returnTrue();
     }
 
     /**
@@ -38,7 +40,9 @@ public class DaKaServiceApi {
      * */
     @PostMapping("closeAutoDaKa")
     public Response closeAutoDaKa() {
-        return DA_KA.closeAutoDaKa();
+        DA_KA.closeAutoDaKa();
+
+        return Response.returnTrue();
     }
 
     /**
@@ -48,7 +52,7 @@ public class DaKaServiceApi {
      * */
     @GetMapping("getStatus")
     public Response getStatus() {
-        return DA_KA.getStatus();
+        return Response.returnTrue(DA_KA.getStatus());
     }
     /**
      * 清空日志
@@ -57,7 +61,9 @@ public class DaKaServiceApi {
      * */
     @PostMapping("cleanLog")
     public Response cleanLog() {
-        return DA_KA.cleanLog();
+        DA_KA.cleanLog();
+
+        return Response.returnTrue();
     }
 
     /**
@@ -67,7 +73,9 @@ public class DaKaServiceApi {
      * */
     @PostMapping("manualKaKa")
     public Response manualKaKa() {
-        return DA_KA.manualKaKa();
+        DA_KA.manualKaKa();
+
+        return Response.returnTrue();
     }
 
 }

@@ -1,5 +1,7 @@
 package com.easipass.util.entity;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.springframework.stereotype.Component;
 
 /**
@@ -8,7 +10,7 @@ import org.springframework.stereotype.Component;
  * @author ZJ
  * */
 @Component
-public class Response implements com.zj0724.springbootUtil.Response<Response> {
+public final class Response implements com.zj0724.util.springboot.parameterCheck.Response<Response> {
 
     /**
      * 类型
@@ -60,69 +62,14 @@ public class Response implements com.zj0724.springbootUtil.Response<Response> {
      * */
     public Response() {}
 
-    /**
-     * 返回正确
-     *
-     * @param data 数据
-     *
-     * @return 响应
-     * */
-    public static Response returnTrue(Object data) {
-        return new Response(FLAG_T, null, null, data);
-    }
-
-    /**
-     * 返回正确
-     *
-     * @return 响应
-     * */
-    public static Response returnTrue() {
-        return new Response(FLAG_T, null, null, null);
-    }
-
-    /**
-     * 返回错误
-     *
-     * @param errorMsg 错误信息
-     *
-     * @return 响应
-     * */
-    public static Response returnFalse(Object errorMsg) {
-        return new Response(FLAG_F, null, errorMsg, null);
-    }
-
-    /**
-     * 后台错误
-     *
-     * @return 响应
-     * */
-    public static Response error() {
-        return new Response(FLAG_F, 500, null, null);
-    }
-
-    /**
-     * 请求参数有误或缺失
-     *
-     * @param errorMessage 错误信息
-     *
-     * @return 响应
-     * */
-    public static Response paramMissing(String errorMessage) {
-        return new Response(FLAG_F, 400, errorMessage, null);
-    }
-
-    /**
-     * 配置文件错误
-     *
-     * @return 响应
-     * */
-    public static Response configError() {
-        return new Response(FLAG_F, 501, "配置文件错误，请不要手动修改配置文件", null);
+    @Override
+    public Response errorParameterCheckFalse(String s) {
+        return new Response(FLAG_F, 501, s, null);
     }
 
     @Override
-    public Response paramError(String s) {
-        return paramMissing(s);
+    public Response tipParameterCheckFalse(String s) {
+        return returnFalse(s);
     }
 
     /**
@@ -170,12 +117,54 @@ public class Response implements com.zj0724.springbootUtil.Response<Response> {
 
     @Override
     public String toString() {
-        return "Response{" +
-                "flag=" + flag +
-                ", errorCode=" + errorCode +
-                ", errorMessage=" + errorMessage +
-                ", data=" + data +
-                '}';
+        return JSON.toJSONString(this, SerializerFeature.WriteMapNullValue);
+    }
+
+    /**
+     * 返回正确
+     *
+     * @param data 数据
+     *
+     * @return 响应
+     * */
+    public static Response returnTrue(Object data) {
+        return new Response(FLAG_T, null, null, data);
+    }
+
+    /**
+     * 返回正确
+     *
+     * @return 响应
+     * */
+    public static Response returnTrue() {
+        return new Response(FLAG_T, null, null, null);
+    }
+
+    /**
+     * 返回错误
+     *
+     * @param errorMsg 错误信息
+     *
+     * @return 响应
+     * */
+    public static Response returnFalse(Object errorMsg) {
+        return new Response(FLAG_F, null, errorMsg, null);
+    }
+
+    /**
+     * 后台错误
+     *
+     * @return 响应
+     * */
+    public static Response error(String errorMessage) {
+        return new Response(FLAG_F, 500, errorMessage, null);
+    }
+
+    /**
+     * ip黑名单
+     * */
+    public static Response ipError() {
+        return new Response(FLAG_F, 400, "ip not found", null);
     }
 
 }

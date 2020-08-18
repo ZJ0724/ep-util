@@ -15,10 +15,6 @@ export default [
             {
                 path: "uploadYeWu.html",
                 name: "上传业务回执"
-            },
-            {
-                path: "disposableUpload.html",
-                name: "一次性上传回执"
             }
         ]
     },
@@ -34,10 +30,6 @@ export default [
             {
                 path: "uploadYeWu.html",
                 name: "上传业务回执"
-            },
-            {
-                path: "disposableUpload.html",
-                name: "一次性上传回执"
             }
         ]
     },

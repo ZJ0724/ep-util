@@ -1,8 +1,6 @@
 package com.easipass.util.test;
 
-import com.easipass.util.entity.Http;
-import com.easipass.util.entity.http.SWGDSupply.AesSWGDSupplyHttp;
-import com.easipass.util.entity.http.SWGDSupply.SignSWGDSupplyHttp;
+import com.easipass.util.core.http.SWGDSupply.SignSWGDSupplyHttp;
 
 public class Main {
 

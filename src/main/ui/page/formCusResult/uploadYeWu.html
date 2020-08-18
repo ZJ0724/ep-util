@@ -10,7 +10,138 @@
     <div id="main">
         <navigation></navigation>
         <div id="body">
-            <cus-result-upload text="ediNo/preEntryId" :channel-list="channelList" :api="api"></cus-result-upload>
+            <div style="margin: 50px 25%;">
+                <div class="ep-panel">
+                    <div style="display: flex;">
+                        <div class="title" style="width: 50%;">
+                            选择报关单
+                        </div>
+                        <div style="display: flex;flex-direction: row-reverse;width: 50%;">
+                            <button @click="openDescription()" style="padding: 0;" type="button" class="btn btn-link">说明</button>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex;">
+                            <div>
+                                <div class="checkbox" style="margin: 0;">
+                                    <label>
+                                        <input @click="selectRelation('0')" :checked="DTO.relation.type === '0' ? 'checked' : ''" type="checkbox">
+                                        ediNo
+                                    </label>
+                                </div>
+                            </div>
+                            <div style="margin-left: 20px;">
+                                <div class="checkbox" style="margin: 0;">
+                                    <label>
+                                        <input @click="selectRelation('1')" :checked="DTO.relation.type === '1' ? 'checked' : ''" type="checkbox">
+                                        preEntryId
+                                    </label>
+                                </div>
+                            </div>
+                            <div style="margin-left: 20px;">
+                                <div class="checkbox" style="margin: 0;">
+                                    <label>
+                                        <input @click="selectRelation('2')" :checked="DTO.relation.type === '2' ? 'checked' : ''" type="checkbox">
+                                        seqNo
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 10px;">
+                            <input v-model="DTO.relation.data" class="form-control input-sm" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ep-panel" style="margin-top: 50px;">
+                    <div class="title">
+                        回执数据
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex;">
+                            <div style="width: 50%;">
+                                preEntryId
+                            </div>
+                            <div style="width: 50%;display: flex;flex-direction: row-reverse;">
+                                <div class="checkbox" style="margin: 0;color: #00000080;">
+                                    <label>
+                                        <input @click="autoCheckM()" :checked="autoCheck ? 'checked' : ''" type="checkbox">
+                                        自动获取
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 10px;">
+                            <input :disabled="autoCheck" v-model="DTO.cusResult.preEntryId" class="form-control input-sm" />
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <div>
+                            channel（状态）
+                        </div>
+
+                        <div style="margin-top: 10px;">
+                            <div class="input-group input-group-sm">
+                                <input v-model="DTO.cusResult.channel" type="text" class="form-control" aria-label="" />
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        选择
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li v-for="channel in channelList" :key="channel.key" style="padding: 5px 0;">
+                                            <a @click="selectChannel(channel.key)" href="javascript:">{{channel.key}}（{{channel.value}}）</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input-component style="margin-top: 20px;" text="note（备注）" :value.sync="DTO.cusResult.note"></input-component>
+                </div>
+
+
+                <div style="margin-top: 50px;">
+                    <button @click="upload()" style="width: 100%;" class="btn btn-primary">上传</button>
+                </div>
+            </div>
+
+            <!-- 说明弹窗 -->
+            <div v-cloak :style="description ? '' : 'display: none'" style="position: fixed;top: 25%;left: 34%;z-index: 999;">
+                <div class="panel panel-default" style="width: 70%;">
+                    <div class="panel-body" style="font-weight: bold;box-shadow: #0000004d 0px 0px 20px 0px;">
+                        <div class="title">
+                            说明
+                        </div>
+
+                        <div style="color: #1E9FFF;margin-top: 30px;">
+                            选择报关单
+                        </div>
+
+                        <div style="margin-top: 10px;">
+                            可通过ediNo（edi编号）、preEntryId（报关单号）、seqNo（统一编号）进行查找需要上传回执的报关单，如果查询不到，则不进行上传。
+                        </div>
+
+                        <div style="margin-top: 30px;color: #1E9FFF;">
+                            默认上传通讯回执
+                        </div>
+
+                        <div style="margin-top: 10px;">
+                            如果上传回执的报关单seqNo为空，则自动上传一条通讯回执。（自动生成seqNo）
+                        </div>
+
+                        <div style="margin-top: 30px;display: flex;flex-direction: row-reverse;">
+                            <button @click="closeDescription()" class="btn btn-primary">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
@@ -19,11 +150,29 @@
 <script type="module">
 
     import cusResultServiceApi from "../../api/service/cusResultServiceApi.js";
+    import alertComponent from "../../component/alertComponent.js";
+    import loadingComponent from "../../component/loadingComponent.js";
+    import maskComponent from "../../component/maskComponent.js";
 
     new Vue({
         el: "#main",
 
         data: {
+            DTO: {
+                relation: {
+                    type: "",
+                    data: ""
+                },
+
+                cusResult: {
+                    preEntryId: "",
+                    channel: "",
+                    note: ""
+                }
+            },
+
+            autoCheck: true,
+
             channelList: [
                 {
                     key: "P",
@@ -31,7 +180,47 @@
                 }
             ],
 
-            api: cusResultServiceApi.formCusResultUploadYeWu
+            description: false
+        },
+
+        methods: {
+            selectRelation(type) {
+                this.DTO.relation.type = type;
+            },
+
+            selectChannel(channel) {
+                this.DTO.cusResult.channel = channel;
+            },
+
+            upload() {
+                loadingComponent.open();
+
+                cusResultServiceApi.formCusResultUploadYeWu(this.DTO).then(function (message) {
+                    alertComponent.popup(message);
+                }).catch(function (message) {
+                    alertComponent.message(message);
+                }).finally(function () {
+                    loadingComponent.close();
+                });
+            },
+
+            autoCheckM() {
+                this.autoCheck = !this.autoCheck;
+
+                if (this.autoCheck) {
+                    this.DTO.cusResult.preEntryId = "";
+                }
+            },
+
+            openDescription() {
+                maskComponent.open();
+                this.description = true;
+            },
+
+            closeDescription() {
+                maskComponent.close();
+                this.description = false;
+            }
         }
     });
 
