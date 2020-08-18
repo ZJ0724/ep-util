@@ -22,17 +22,9 @@
                         </div>
 
                         <div  style="margin-top: 10px;">
-                            <input v-model="DTO.relation.ediNo" class="form-control input-sm" />
+                            <input @input="searchFormHead()" @blur="search.display = false" @focus="search.display = true" v-model="DTO.relation.ediNo" class="form-control input-sm" />
 
-                            <div style="position: relative;top: -39px;width: 100%;" class="layui-unselect layui-form-select layui-form-selected">
-                                <dl class="layui-anim layui-anim-upbit">
-                                    <dd class="select">北京</dd>
-                                    <dd class="select">上海</dd>
-                                    <dd class="select">广州</dd>
-                                    <dd class="select">深圳</dd>
-                                    <dd class="select">杭州</dd>
-                                </dl>
-                            </div>
+                            <list @select="selectEdiNo" :display="search.display" :data="search.data"></list>
                         </div>
                     </div>
                 </div>
@@ -102,6 +94,7 @@
     import cusResultServiceApi from "../../api/service/cusResultServiceApi.js";
     import alertComponent from "../../component/alertComponent.js";
     import loadingComponent from "../../component/loadingComponent.js";
+    import searchServiceApi from "../../api/service/searchServiceApi.js";
 
     new Vue({
         el: "#main",
@@ -130,6 +123,12 @@
                     channel: "",
                     note: ""
                 }
+            },
+
+            search: {
+                display: false,
+
+                data: []
             }
         },
 
@@ -157,6 +156,24 @@
 
             selectChannel(channel) {
                 this.DTO.cusResult.channel = channel;
+            },
+
+            searchFormHead() {
+                let that = this;
+
+                searchServiceApi.formHead({
+                    type: "0",
+                    data: that.DTO.relation.ediNo
+                }).then(function (data) {
+                    that.search.data = data;
+                }).catch(function (message) {
+                    alertComponent.message(message);
+                });
+            },
+
+            selectEdiNo(ediNo) {
+                this.DTO.relation.ediNo = ediNo;
+                this.search.display = false;
             }
         }
     });

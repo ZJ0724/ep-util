@@ -5,6 +5,7 @@ import com.easipass.util.core.Database;
 import com.easipass.util.core.config.SWGDDatabaseConfig;
 import com.easipass.util.core.exception.ConnectionFailException;
 import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.exception.SearchException;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
@@ -305,30 +306,41 @@ public final class SWGDDatabase extends Database {
      * 查询报关单数据
      *
      * @param type type
-     * @param value 数据
+     * @param data 数据
      *
      * @return 查询到的数据
      * */
-    public static List<String> queryFormHead(String type, String value) {
+    public static List<String> queryFormHead(String type, String data) {
+        if ("0".equals(type)) {
+            type = "EDI_NO";
+        } else if ("1".equals(type)) {
+            type = "PRE_ENTRY_ID";
+        } else if ("2".equals(type)) {
+            type = "SEQ_NO";
+        } else {
+            throw new SearchException("未找到对应类型");
+        }
+
+        if (data == null) {
+            data = "";
+        }
+
         List<String> result = new ArrayList<>();
         SWGDDatabase swgdDatabase = new SWGDDatabase();
 
-        if ("0".equals(type)) {
-            type = "EDI_NO";
-        }
-
-        if ("1".equals(type)) {
-            type = "EDI_NO";
-        }
-
         try {
-            ResultSet resultSet = swgdDatabase.query("SELECT * FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO LIKE '%332%' AND ROWNUM <= 5 ORDER BY CREATE_TIME DESC;")
-        } finally {
+            ResultSet resultSet = swgdDatabase.query("SELECT * FROM SWGD.T_SWGD_FORM_HEAD WHERE ? LIKE '%?%' AND ROWNUM <= 5 ORDER BY CREATE_TIME DESC;", type, data);
 
+            while (resultSet.next()) {
+                result.add(getFiledData(resultSet, "EDI_NO"));
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            swgdDatabase.close();
         }
 
-
-        ResultSet
+        return result;
     }
 
 }

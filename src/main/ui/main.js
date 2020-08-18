@@ -4,3 +4,4 @@ import cusResultUploadComponent from "./component/cusResultUploadComponent.js";
 import navigationComponent from "./component/navigationComponent.js";
 import cusMessageComparisonComponent from "./component/cusMessageComparisonComponent.js";
 import inputComponent from "./component/inputComponent.js";
+import listComponent from "./component/listComponent.js";
