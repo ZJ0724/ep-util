@@ -10,7 +10,6 @@ import com.easipass.util.core.util.StringUtil;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.ResultSet;

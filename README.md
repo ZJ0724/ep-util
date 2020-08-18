@@ -2,16 +2,9 @@
 
 
 
-## 端口设置
+## 端口
 
 默认端口为：`8002`
-
-修改端口：修改  `config` 文件下的 `application.properties` 文件
-
-```properties
- # 端口号
- server.port = 8002
-```
 
 
 
