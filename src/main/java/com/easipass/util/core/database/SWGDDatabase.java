@@ -6,6 +6,7 @@ import com.easipass.util.core.config.SWGDDatabaseConfig;
 import com.easipass.util.core.exception.ConnectionFailException;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.SearchException;
+import com.easipass.util.core.util.StringUtil;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -329,12 +330,13 @@ public final class SWGDDatabase extends Database {
             throw new SearchException("未找到对应类型");
         }
 
-        if (data == null) {
-            data = "";
+        List<String> result = new ArrayList<>();
+
+        if (StringUtil.isEmpty(data)) {
+             return result;
         }
 
-        String sql = "SELECT * FROM SWGD.T_SWGD_FORM_HEAD WHERE " + type + "LIKE '%" + data + "%' AND ROWNUM <= 5 ORDER BY CREATE_TIME DESC";
-        List<String> result = new ArrayList<>();
+        String sql = "SELECT * FROM SWGD.T_SWGD_FORM_HEAD WHERE " + type + " LIKE '%" + data + "%' AND ROWNUM <= 5 ORDER BY CREATE_TIME DESC";
         SWGDDatabase swgdDatabase = new SWGDDatabase();
 
         LOGGER.info(sql);

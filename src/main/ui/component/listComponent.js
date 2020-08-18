@@ -3,7 +3,7 @@ export default (function () {
         template: `
             <div :style="display ? '' : 'display: none'" style="position: relative;top: -39px;width: 100%;" class="layui-unselect layui-form-select layui-form-selected">
                 <dl class="layui-anim layui-anim-upbit">
-                    <dd @click="select(d)" v-for="d in data" :key="d" class="select">{{d}}</dd>
+                    <dd @mousedown="select(d)" v-for="d in data" :key="d" class="select">{{d}}</dd>
                 </dl>
             </div>
         `,
