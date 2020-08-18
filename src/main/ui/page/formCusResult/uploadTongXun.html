@@ -16,7 +16,25 @@
                         选择报关单
                     </div>
 
-                    <input-component style="margin-top: 20px;" text="ediNo" :value.sync="DTO.relation.ediNo"></input-component>
+                    <div style="margin-top: 20px;">
+                        <div>
+                            ediNo
+                        </div>
+
+                        <div  style="margin-top: 10px;">
+                            <input v-model="DTO.relation.ediNo" class="form-control input-sm" />
+
+                            <div style="position: relative;top: -39px;width: 100%;" class="layui-unselect layui-form-select layui-form-selected">
+                                <dl class="layui-anim layui-anim-upbit">
+                                    <dd class="select">北京</dd>
+                                    <dd class="select">上海</dd>
+                                    <dd class="select">广州</dd>
+                                    <dd class="select">深圳</dd>
+                                    <dd class="select">杭州</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="ep-panel" style="margin-top: 50px;">
@@ -142,5 +160,7 @@
             }
         }
     });
+
+
 
 </script>

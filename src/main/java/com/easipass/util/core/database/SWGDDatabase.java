@@ -10,6 +10,8 @@ import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * SWGD数据库
@@ -297,6 +299,36 @@ public final class SWGDDatabase extends Database {
         }
 
         return false;
+    }
+
+    /**
+     * 查询报关单数据
+     *
+     * @param type type
+     * @param value 数据
+     *
+     * @return 查询到的数据
+     * */
+    public static List<String> queryFormHead(String type, String value) {
+        List<String> result = new ArrayList<>();
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+
+        if ("0".equals(type)) {
+            type = "EDI_NO";
+        }
+
+        if ("1".equals(type)) {
+            type = "EDI_NO";
+        }
+
+        try {
+            ResultSet resultSet = swgdDatabase.query("SELECT * FROM SWGD.T_SWGD_FORM_HEAD WHERE EDI_NO LIKE '%332%' AND ROWNUM <= 5 ORDER BY CREATE_TIME DESC;")
+        } finally {
+
+        }
+
+
+        ResultSet
     }
 
 }

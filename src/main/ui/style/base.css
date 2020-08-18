@@ -24,3 +24,7 @@ html, body, #main {
     font-weight: bold;
     font-size: 15px;
 }
+
+.select {
+    line-height: 32px;
+}
