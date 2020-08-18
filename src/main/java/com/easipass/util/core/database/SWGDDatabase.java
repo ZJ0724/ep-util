@@ -7,6 +7,9 @@ import com.easipass.util.core.exception.ConnectionFailException;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.SearchException;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -42,6 +45,11 @@ public final class SWGDDatabase extends Database {
         COMBO_POOLED_DATA_SOURCE.setUser(SWGD_DATABASE_CONFIG.username);
         COMBO_POOLED_DATA_SOURCE.setPassword(SWGD_DATABASE_CONFIG.password);
     }
+
+    /**
+     * log
+     * */
+    private static final Logger LOGGER = LoggerFactory.getLogger(SWGDDatabase.class);
 
     /**
      * 构造函数
@@ -325,11 +333,14 @@ public final class SWGDDatabase extends Database {
             data = "";
         }
 
+        String sql = "SELECT * FROM SWGD.T_SWGD_FORM_HEAD WHERE " + type + "LIKE '%" + data + "%' AND ROWNUM <= 5 ORDER BY CREATE_TIME DESC";
         List<String> result = new ArrayList<>();
         SWGDDatabase swgdDatabase = new SWGDDatabase();
 
+        LOGGER.info(sql);
+
         try {
-            ResultSet resultSet = swgdDatabase.query("SELECT * FROM SWGD.T_SWGD_FORM_HEAD WHERE ? LIKE '%?%' AND ROWNUM <= 5 ORDER BY CREATE_TIME DESC;", type, data);
+            ResultSet resultSet = swgdDatabase.query(sql);
 
             while (resultSet.next()) {
                 result.add(getFiledData(resultSet, "EDI_NO"));
