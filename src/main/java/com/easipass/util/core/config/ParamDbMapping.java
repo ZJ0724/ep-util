@@ -55,7 +55,9 @@ public final class ParamDbMapping {
             data = StringUtil.append(data, row.getData(), "\n");
         }
 
-        data = data.substring(0, data.length() - 1);
+        if (!StringUtil.isEmpty(data)) {
+            data = data.substring(0, data.length() - 1);
+        }
 
         FileUtil.setData(FILE, data);
     }
