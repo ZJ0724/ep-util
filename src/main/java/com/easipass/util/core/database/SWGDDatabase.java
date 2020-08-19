@@ -59,21 +59,6 @@ public final class SWGDDatabase extends Database {
     }
 
     /**
-     * 获取连接
-     *
-     * @return Connection
-     * */
-    private static Connection getConnection() {
-        try {
-            // 验证driverCLass
-            Class.forName(SWGD_DATABASE_CONFIG.driverClass);
-            return COMBO_POOLED_DATA_SOURCE.getConnection();
-        } catch (SQLException |ClassNotFoundException e) {
-            throw new ConnectionFailException("SWGD数据库连接失败");
-        }
-    }
-
-    /**
      * 设置修撤单文件名
      * */
     public void updateDecModFileName(String preEntryId, String fileName) {
@@ -311,6 +296,44 @@ public final class SWGDDatabase extends Database {
     }
 
     /**
+     * 获取参数库表数据量
+     *
+     * @param tableName 表名
+     *
+     * @return 数据量
+     * */
+    public Integer getParamDbDataCount(String tableName) {
+        try {
+            int version = 0;
+            ResultSet versionResultSet = this.query("SELECT PARAMS_VERSION FROM SWGDPARA.T_PARAMS_VERSION WHERE TABLE_NAME = '" + tableName + "'");
+
+            // 获取版本
+            while (versionResultSet.next()) {
+                int v = Integer.parseInt(getFiledData(versionResultSet, "PARAMS_VERSION"));
+
+                if (v > version) {
+                    version = v;
+                }
+            }
+
+            if (version == 0) {
+                return null;
+            }
+
+            // 数量
+            String countS = getFiledData(this.query("SELECT COUNT(*) COUNT FROM SWGDPARA." + tableName + " WHERE PARAMS_VERSION = '" + version + "'"), "COUNT", true);
+
+            if (StringUtil.isEmpty(countS)) {
+                return 0;
+            }
+
+            return Integer.parseInt(countS);
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+    /**
      * 查询报关单数据
      *
      * @param type type
@@ -410,6 +433,21 @@ public final class SWGDDatabase extends Database {
         }
 
         return result;
+    }
+
+    /**
+     * 获取连接
+     *
+     * @return Connection
+     * */
+    private static Connection getConnection() {
+        try {
+            // 验证driverCLass
+            Class.forName(SWGD_DATABASE_CONFIG.driverClass);
+            return COMBO_POOLED_DATA_SOURCE.getConnection();
+        } catch (SQLException |ClassNotFoundException e) {
+            throw new ConnectionFailException("SWGD数据库连接失败");
+        }
     }
 
 }

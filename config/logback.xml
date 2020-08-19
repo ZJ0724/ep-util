@@ -11,7 +11,7 @@
 
     <!-- 文件 -->
     <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>log/logFile.log</file>
+        <file>${user.home}/.ep-util/log/logFile.log</file>
 
         <encoder>
             <pattern>${pattern}</pattern>

@@ -1,6 +1,7 @@
 package com.easipass.util.core;
 
 import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.exception.SqlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.*;
@@ -130,7 +131,7 @@ public abstract class Database {
 
             return preparedStatement;
         } catch (SQLException e) {
-            throw new ErrorException(e.getMessage());
+            throw new SqlException(e.getMessage());
         }
     }
 

@@ -43,4 +43,9 @@ public final class Project {
      * */
     public static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(5, 5, 1000, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>());
 
+    /**
+     * 缓存目录
+     * */
+    public static final String CACHE_PATH = CONFIG_PATH + "/cache";
+
 }
