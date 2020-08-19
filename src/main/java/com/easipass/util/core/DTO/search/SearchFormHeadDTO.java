@@ -1,4 +1,4 @@
-package com.easipass.util.core.DTO;
+package com.easipass.util.core.DTO.search;
 
 /**
  * SearchFormHeadDTO

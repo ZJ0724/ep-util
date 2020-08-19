@@ -22,7 +22,7 @@
                         </div>
 
                         <div  style="margin-top: 10px;">
-                            <input @input="searchFormHead()" @blur="search.display = false" @focus="search.display = true" v-model="DTO.relation.ediNo" class="form-control input-sm" />
+                            <input @input="searchFormHead()" @blur="search.display = false" @focus="search.display = true;searchFormHead()" v-model="DTO.relation.ediNo" class="form-control input-sm" />
 
                             <list @select="selectEdiNo" :display="search.display" :data="search.data"></list>
                         </div>

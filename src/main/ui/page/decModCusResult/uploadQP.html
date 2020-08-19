@@ -16,7 +16,17 @@
                         选择修撤单
                     </div>
 
-                    <input-component style="margin-top: 20px;" text="preEntryId" :value.sync="DTO.relation.preEntryId"></input-component>
+                    <div style="margin-top: 20px;">
+                        <div>
+                            preEntryId
+                        </div>
+
+                        <div  style="margin-top: 10px;">
+                            <input @input="searchData()" @blur="search.display = false" @focus="search.display = true;searchData()" v-model="DTO.relation.preEntryId" class="form-control input-sm" />
+
+                            <list @select="selectData" :display="search.display" :data="search.data"></list>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="ep-panel" style="margin-top: 50px;">
@@ -64,6 +74,7 @@
     import cusResultServiceApi from "../../api/service/cusResultServiceApi.js";
     import loadingComponent from "../../component/loadingComponent.js";
     import alertComponent from "../../component/alertComponent.js";
+    import searchServiceApi from "../../api/service/searchServiceApi.js";
 
     new Vue({
         el: "#main",
@@ -89,7 +100,13 @@
                     key: "1",
                     value: "QP审核失败"
                 }
-            ]
+            ],
+
+            search: {
+                display: false,
+
+                data: []
+            }
         },
 
         methods: {
@@ -107,6 +124,21 @@
                 }).finally(function () {
                     loadingComponent.close();
                 });
+            },
+
+            searchData() {
+                let that = this;
+
+                searchServiceApi.decMod(that.DTO.relation.preEntryId).then(function (data) {
+                    that.search.data = data;
+                }).catch(function (message) {
+                    alertComponent.message(message);
+                });
+            },
+
+            selectData(data) {
+                this.DTO.relation.preEntryId = data;
+                this.search.display = false;
             }
         }
     });

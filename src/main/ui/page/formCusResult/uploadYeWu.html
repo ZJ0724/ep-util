@@ -24,33 +24,29 @@
                     <div style="margin-top: 20px;">
                         <div style="display: flex;">
                             <div>
-                                <div class="checkbox" style="margin: 0;">
-                                    <label>
-                                        <input @click="selectRelation('0')" :checked="DTO.relation.type === '0' ? 'checked' : ''" type="checkbox">
-                                        ediNo
-                                    </label>
-                                </div>
+                                <label class="radio-inline">
+                                    <input @click="selectRelationType('0')" :checked="DTO.relation.type === '0' ? true : false" type="radio" name="relationType" />
+                                    ediNo
+                                </label>
                             </div>
                             <div style="margin-left: 20px;">
-                                <div class="checkbox" style="margin: 0;">
-                                    <label>
-                                        <input @click="selectRelation('1')" :checked="DTO.relation.type === '1' ? 'checked' : ''" type="checkbox">
-                                        preEntryId
-                                    </label>
-                                </div>
+                                <label class="radio-inline">
+                                    <input @click="selectRelationType('1')" :checked="DTO.relation.type === '1' ? true : false" type="radio" name="relationType" />
+                                    preEntryId
+                                </label>
                             </div>
                             <div style="margin-left: 20px;">
-                                <div class="checkbox" style="margin: 0;">
-                                    <label>
-                                        <input @click="selectRelation('2')" :checked="DTO.relation.type === '2' ? 'checked' : ''" type="checkbox">
-                                        seqNo
-                                    </label>
-                                </div>
+                                <label class="radio-inline">
+                                    <input @click="selectRelationType('2')" :checked="DTO.relation.type === '2' ? true : false" type="radio" name="relationType" />
+                                    seqNo
+                                </label>
                             </div>
                         </div>
 
                         <div style="margin-top: 10px;">
-                            <input v-model="DTO.relation.data" class="form-control input-sm" />
+                            <input @input="searchFormHead()" @blur="search.display = false" @focus="search.display = true;searchFormHead()" v-model="DTO.relation.data" class="form-control input-sm" />
+
+                            <list @select="selectData" :display="search.display" :data="search.data"></list>
                         </div>
                     </div>
                 </div>
@@ -153,6 +149,7 @@
     import alertComponent from "../../component/alertComponent.js";
     import loadingComponent from "../../component/loadingComponent.js";
     import maskComponent from "../../component/maskComponent.js";
+    import searchServiceApi from "../../api/service/searchServiceApi.js";
 
     new Vue({
         el: "#main",
@@ -160,7 +157,7 @@
         data: {
             DTO: {
                 relation: {
-                    type: "",
+                    type: "0",
                     data: ""
                 },
 
@@ -276,12 +273,21 @@
                 }
             ],
 
-            description: false
+            description: false,
+
+            search: {
+                display: false,
+
+                data: []
+            }
         },
 
         methods: {
-            selectRelation(type) {
+            selectRelationType(type) {
                 this.DTO.relation.type = type;
+
+                // 切换后重新搜索报关单
+                this.searchFormHead();
             },
 
             selectChannel(channel) {
@@ -316,6 +322,24 @@
             closeDescription() {
                 maskComponent.close();
                 this.description = false;
+            },
+
+            searchFormHead() {
+                let that = this;
+
+                searchServiceApi.formHead({
+                    type: that.DTO.relation.type,
+                    data: that.DTO.relation.data
+                }).then(function (data) {
+                    that.search.data = data;
+                }).catch(function (message) {
+                    alertComponent.message(message);
+                });
+            },
+
+            selectData(data) {
+                this.DTO.relation.data = data;
+                this.search.display = false;
             }
         }
     });

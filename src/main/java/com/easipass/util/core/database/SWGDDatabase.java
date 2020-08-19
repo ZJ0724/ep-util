@@ -329,14 +329,13 @@ public final class SWGDDatabase extends Database {
             throw new SearchException("未找到对应类型");
         }
 
-        List<String> result = new ArrayList<>();
-
-        if (StringUtil.isEmpty(data)) {
-             return result;
+        if (data == null) {
+            data = "";
         }
 
-        String sql = "SELECT * FROM SWGD.T_SWGD_FORM_HEAD WHERE " + type + " LIKE '%" + data + "%' AND ROWNUM <= 5 ORDER BY CREATE_TIME DESC";
+        List<String> result = new ArrayList<>();
         SWGDDatabase swgdDatabase = new SWGDDatabase();
+        String sql = "SELECT * FROM (SELECT * FROM SWGD.T_SWGD_FORM_HEAD ORDER BY CREATE_TIME DESC) WHERE ROWNUM <= 5 AND " + type + " LIKE '%" + data + "%'";
 
         LOGGER.info(sql);
 
@@ -344,7 +343,65 @@ public final class SWGDDatabase extends Database {
             ResultSet resultSet = swgdDatabase.query(sql);
 
             while (resultSet.next()) {
-                result.add(getFiledData(resultSet, "EDI_NO"));
+                result.add(getFiledData(resultSet, type));
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            swgdDatabase.close();
+        }
+
+        return result;
+    }
+
+    /**
+     * 搜索修撤单
+     *
+     * @param preEntryId preEntryId
+     *
+     * @return 修撤单集合
+     * */
+    public static List<String> searchDecMod(String preEntryId) {
+        List<String> result = new ArrayList<>();
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+
+        if (preEntryId == null) {
+            preEntryId = "";
+        }
+
+        try {
+            ResultSet resultSet = swgdDatabase.query("SELECT * FROM (SELECT * FROM SWGD.T_SWGD_DECMOD_HEAD WHERE PRE_ENTRY_ID LIKE '%" + preEntryId + "%' ORDER BY CREATE_TIME DESC) WHERE ROWNUM <= 5");
+
+            while (resultSet.next()) {
+                result.add(SWGDDatabase.getFiledData(resultSet, "PRE_ENTRY_ID"));
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            swgdDatabase.close();
+        }
+
+        return result;
+    }
+
+    /**
+     * 搜索代理委托
+     *
+     * @param ediNo ediNo
+     * */
+    public static List<String> searchAgent(String ediNo) {
+        List<String> result = new ArrayList<>();
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+
+        if (ediNo == null) {
+            ediNo = "";
+        }
+
+        try {
+            ResultSet resultSet = swgdDatabase.query("SELECT * FROM (SELECT * FROM SWGD.T_SWGD_AGENT_LIST WHERE EDI_NO LIKE '%" + ediNo + "%' ORDER BY CREATE_TIME DESC) WHERE ROWNUM <= 5");
+
+            while (resultSet.next()) {
+                result.add(SWGDDatabase.getFiledData(resultSet, "EDI_NO"));
             }
         } catch (SQLException e) {
             throw new ErrorException(e.getMessage());

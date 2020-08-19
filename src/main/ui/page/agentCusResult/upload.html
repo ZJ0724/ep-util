@@ -16,7 +16,17 @@
                         选择代理委托数据
                     </div>
 
-                    <input-component style="margin-top: 20px;" text="ediNo" :value.sync="DTO.relation.ediNo"></input-component>
+                    <div style="margin-top: 20px;">
+                        <div>
+                            ediNo
+                        </div>
+
+                        <div  style="margin-top: 10px;">
+                            <input @input="searchData()" @blur="search.display = false" @focus="search.display = true;searchData()" v-model="DTO.relation.ediNo" class="form-control input-sm" />
+
+                            <list @select="selectData" :display="search.display" :data="search.data"></list>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="ep-panel" style="margin-top: 50px;">
@@ -64,6 +74,7 @@
     import cusResultServiceApi from "../../api/service/cusResultServiceApi.js";
     import alertComponent from "../../component/alertComponent.js";
     import loadingComponent from "../../component/loadingComponent.js";
+    import searchServiceApi from "../../api/service/searchServiceApi.js";
 
     new Vue({
         el: "#main",
@@ -89,7 +100,13 @@
                     key: "1",
                     value: "导入接口数据导入失败！"
                 }
-            ]
+            ],
+
+            search: {
+                display: false,
+
+                data: []
+            }
         },
 
         methods: {
@@ -107,6 +124,21 @@
                 }).finally(function () {
                     loadingComponent.close();
                 });
+            },
+
+            searchData() {
+                let that = this;
+
+                searchServiceApi.agent(that.DTO.relation.ediNo).then(function (data) {
+                    that.search.data = data;
+                }).catch(function (message) {
+                    alertComponent.message(message);
+                });
+            },
+
+            selectData(data) {
+                this.DTO.relation.ediNo = data;
+                this.search.display = false;
             }
         }
     });

@@ -1,13 +1,10 @@
 package com.easipass.util.api.service;
 
-import com.easipass.util.core.DTO.SearchFormHeadDTO;
 import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.entity.Response;
 import com.zj0724.util.springboot.parameterCheck.NotNull;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.zj0724.util.springboot.parameterCheck.OpenParameterCheck;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * SearchServiceApi
@@ -16,18 +13,44 @@ import org.springframework.web.bind.annotation.RestController;
  * */
 @RestController
 @RequestMapping(BaseServiceApi.URL + "search")
+@OpenParameterCheck
 public class SearchServiceApi {
 
     /**
      * 搜索报关单
      *
-     * @param searchFormHeadDTO searchFormHeadDTO
+     * @param type type
+     * @param data data
      *
      * @return Response
      * */
-    @PostMapping("formHead")
-    public Response formHead(@RequestBody @NotNull SearchFormHeadDTO searchFormHeadDTO) {
-        return Response.returnTrue(SWGDDatabase.queryFormHead(searchFormHeadDTO.getType(), searchFormHeadDTO.getData()));
+    @GetMapping("formHead")
+    public Response formHead(@RequestParam @NotNull String type, @RequestParam @NotNull String data) {
+        return Response.returnTrue(SWGDDatabase.queryFormHead(type, data));
+    }
+
+    /**
+     * 搜索修撤单
+     *
+     * @param preEntryId preEntryId
+     *
+     * @return Response
+     * */
+    @GetMapping("decMod")
+    public Response decMod(@RequestParam @NotNull String preEntryId) {
+        return Response.returnTrue(SWGDDatabase.searchDecMod(preEntryId));
+    }
+
+    /**
+     * 搜索代理委托
+     *
+     * @param ediNo ediNo
+     *
+     * @return Response
+     * */
+    @GetMapping("agent")
+    public Response agent(@RequestParam @NotNull String ediNo) {
+        return Response.returnTrue(SWGDDatabase.searchAgent(ediNo));
     }
 
 }
