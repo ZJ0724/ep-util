@@ -1,6 +1,7 @@
 package com.easipass.util.core.cusResult.decModCusResult;
 
 import com.easipass.util.core.DTO.cusResult.CusResultDTO;
+import com.easipass.util.core.DTO.cusResult.DecModCusResultDTO;
 import com.easipass.util.core.Resource;
 import com.easipass.util.core.cusResult.DecModCusResult;
 import com.easipass.util.core.database.SWGDDatabase;
@@ -21,12 +22,18 @@ public final class QPDecModCusResult extends DecModCusResult {
 
     /**
      * 构造函数
+     * */
+    public QPDecModCusResult(String preEntryId, String channel, String note) {
+        super(new CusResultDTO(channel, note), preEntryId);
+    }
+
+    /**
+     * 构造函数
      *
-     * @param cusResultDTO cusResultDTO
-     * @param preEntryId   报关单号
+     * @param decModCusResultDTO qpDecModCusResultDTO
      */
-    public QPDecModCusResult(CusResultDTO cusResultDTO, String preEntryId) {
-        super(cusResultDTO, preEntryId);
+    public QPDecModCusResult(DecModCusResultDTO decModCusResultDTO) {
+        this(decModCusResultDTO.getRelation().getPreEntryId(), decModCusResultDTO.getCusResult().getChannel(), decModCusResultDTO.getCusResult().getNote());
     }
 
     @Override

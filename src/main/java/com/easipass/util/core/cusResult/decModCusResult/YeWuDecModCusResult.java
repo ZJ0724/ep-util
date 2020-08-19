@@ -1,6 +1,6 @@
 package com.easipass.util.core.cusResult.decModCusResult;
 
-import com.easipass.util.core.DTO.cusResult.CusResultDTO;
+import com.easipass.util.core.DTO.cusResult.DecModCusResultDTO;
 import com.easipass.util.core.Resource;
 import com.easipass.util.core.cusResult.DecModCusResult;
 import com.easipass.util.core.database.SWGDDatabase;
@@ -22,11 +22,10 @@ public final class YeWuDecModCusResult extends DecModCusResult {
     /**
      * 构造函数
      *
-     * @param cusResultDTO cusResultDTO
-     * @param preEntryId   报关单号
+     * @param decModCusResultDTO decModCusResultDTO
      */
-    public YeWuDecModCusResult(CusResultDTO cusResultDTO, String preEntryId) {
-        super(cusResultDTO, preEntryId);
+    public YeWuDecModCusResult(DecModCusResultDTO decModCusResultDTO) {
+        super(decModCusResultDTO.getCusResult(), decModCusResultDTO.getRelation().getPreEntryId());
     }
 
     @Override
@@ -85,6 +84,28 @@ public final class YeWuDecModCusResult extends DecModCusResult {
     @Override
     public String getName() {
         return "yeWuDecModCusResult-" + this.getDecModSeqNo() + "-" + DateUtil.getTime();
+    }
+
+    /**
+     * 默认上传QP回执
+     * */
+    public void uploadAll() {
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+        String decModSeqNo;
+
+        try {
+            decModSeqNo = SWGDDatabase.getFiledData(swgdDatabase.queryDecModHead(this.getPreEntryId()), "DECMODSEQNO", true);
+        } finally {
+            swgdDatabase.close();
+        }
+
+        if (decModSeqNo == null) {
+            QPDecModCusResult qpDecModCusResult = new QPDecModCusResult(this.getPreEntryId(), this.getChannel(), this.getNote());
+
+            uploadMore(qpDecModCusResult, this);
+        } else {
+            this.upload();
+        }
     }
 
 }

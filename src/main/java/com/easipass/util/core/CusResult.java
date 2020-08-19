@@ -110,7 +110,7 @@ public abstract class CusResult {
     public final String getIeFlag(String ieFlag) {
         switch (ieFlag) {
             case "0" : case "2" : case "4" : case "6" : case "8" : case "A" :
-                return "O";
+                return "0";
 
             case "1" : case "3" : case "5" : case "7" : case "9" : case "B" :
             case "D" :  case "F" :
@@ -121,12 +121,12 @@ public abstract class CusResult {
     }
 
     /**
-     * 一次性上传回执
+     * 上传多份回执
      *
      * @param cusResult1 回执1
      * @param cusResult2 回执2
      * */
-    public static void disposableUpload(CusResult cusResult1, CusResult cusResult2) {
+    public static void uploadMore(CusResult cusResult1, CusResult cusResult2) {
         // sftp83
         CusResultUploadSftp sftp83 = null;
         // 谷歌驱动
@@ -134,7 +134,6 @@ public abstract class CusResult {
 
         try {
             sftp83 = new CusResultUploadSftp();
-
             chromeDriver = new ChromeDriver();
 
             sftp83.uploadCusResult(cusResult1);
@@ -148,8 +147,6 @@ public abstract class CusResult {
 
             sftp83.uploadCusResult(cusResult2);
             chromeDriver.swgdRecvRun();
-        } catch (BaseException e) {
-            throw (BaseException) e.getCause();
         } finally {
             if (sftp83 != null) {
                 sftp83.close();

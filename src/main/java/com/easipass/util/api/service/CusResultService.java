@@ -1,8 +1,6 @@
 package com.easipass.util.api.service;
 
-import com.easipass.util.core.DTO.cusResult.CusResultDTO;
-import com.easipass.util.core.DTO.cusResult.TongXunFormCusResultDTO;
-import com.easipass.util.core.DTO.cusResult.YeWuFormCusResultDTO;
+import com.easipass.util.core.DTO.cusResult.*;
 import com.easipass.util.entity.Response;
 import com.easipass.util.core.cusResult.AgentCusResult;
 import com.easipass.util.core.cusResult.decModCusResult.QPDecModCusResult;
@@ -79,31 +77,29 @@ public class CusResultService {
     /**
      * 上传修撤单QP回执
      *
-     * @param cusResultDTO 请求体数据
-     * @param preEntryId 报关单号
+     * @param decModCusResultDTO qpDecModCusResultDTO
      *
      * @return 响应
      * */
     @PostMapping(DEC_MOD_RESULT + "uploadQP")
-    public Response decModCusResultUploadQP(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("preEntryId") @NotNull String preEntryId) {
-        new QPDecModCusResult(cusResultDTO, preEntryId).upload();
+    public Response decModCusResultUploadQP(@RequestBody DecModCusResultDTO decModCusResultDTO) {
+        new QPDecModCusResult(decModCusResultDTO).upload();
 
-        return Response.returnTrue();
+        return Response.returnTrue("上传成功");
     }
 
     /**
      * 上传修撤单业务回执
      *
-     * @param cusResultDTO 请求体数据
-     * @param preEntryId 报关单号
+     * @param decModCusResultDTO DecModCusResultDTO
      *
      * @return 响应
      * */
     @PostMapping(DEC_MOD_RESULT + "uploadYeWu")
-    public Response decModCusResultUploadYeWu(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("preEntryId") @NotNull String preEntryId) {
-        new YeWuDecModCusResult(cusResultDTO, preEntryId).upload();
+    public Response decModCusResultUploadYeWu(@RequestBody DecModCusResultDTO decModCusResultDTO) {
+        new YeWuDecModCusResult(decModCusResultDTO).uploadAll();
 
-        return Response.returnTrue();
+        return Response.returnTrue("上传成功");
     }
 
     /**
@@ -120,16 +116,15 @@ public class CusResultService {
     /**
      * 上传代理委托回执
      *
-     * @param cusResultDTO 请求体数据
-     * @param ediNo ediNo
+     * @param agentCusResultDTO agentCusResultDTO
      *
      * @return 响应
      * */
     @PostMapping("agentCusResult/upload")
-    public Response agentCusResultUpload(@RequestBody @NotNull CusResultDTO cusResultDTO, @RequestParam("ediNo") @NotNull String ediNo) {
-        new AgentCusResult(cusResultDTO, ediNo).upload();
+    public Response agentCusResultUpload(@RequestBody AgentCusResultDTO agentCusResultDTO) {
+        new AgentCusResult(agentCusResultDTO).upload();
 
-        return Response.returnTrue();
+        return Response.returnTrue("上传成功");
     }
 
 }

@@ -16,7 +16,17 @@
                         选择报关单
                     </div>
 
-                    <input-component style="margin-top: 20px;" text="ediNo" :value.sync="DTO.relation.ediNo"></input-component>
+                    <div style="margin-top: 20px;">
+                        <div>
+                            ediNo
+                        </div>
+
+                        <div  style="margin-top: 10px;">
+                            <input @input="searchFormHead()" @blur="search.display = false" @focus="search.display = true;searchFormHead()" v-model="DTO.relation.ediNo" class="form-control input-sm" />
+
+                            <list @select="selectEdiNo" :display="search.display" :data="search.data"></list>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="ep-panel" style="margin-top: 50px;">
@@ -84,6 +94,7 @@
     import cusResultServiceApi from "../../api/service/cusResultServiceApi.js";
     import alertComponent from "../../component/alertComponent.js";
     import loadingComponent from "../../component/loadingComponent.js";
+    import searchServiceApi from "../../api/service/searchServiceApi.js";
 
     new Vue({
         el: "#main",
@@ -112,6 +123,12 @@
                     channel: "",
                     note: ""
                 }
+            },
+
+            search: {
+                display: false,
+
+                data: []
             }
         },
 
@@ -139,8 +156,28 @@
 
             selectChannel(channel) {
                 this.DTO.cusResult.channel = channel;
+            },
+
+            searchFormHead() {
+                let that = this;
+
+                searchServiceApi.formHead({
+                    type: "0",
+                    data: that.DTO.relation.ediNo
+                }).then(function (data) {
+                    that.search.data = data;
+                }).catch(function (message) {
+                    alertComponent.message(message);
+                });
+            },
+
+            selectEdiNo(ediNo) {
+                this.DTO.relation.ediNo = ediNo;
+                this.search.display = false;
             }
         }
     });
+
+
 
 </script>

@@ -5,11 +5,17 @@ import com.easipass.util.core.Database;
 import com.easipass.util.core.config.SWGDDatabaseConfig;
 import com.easipass.util.core.exception.ConnectionFailException;
 import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.exception.SearchException;
+import com.easipass.util.core.util.StringUtil;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * SWGD数据库
@@ -39,6 +45,11 @@ public final class SWGDDatabase extends Database {
         COMBO_POOLED_DATA_SOURCE.setUser(SWGD_DATABASE_CONFIG.username);
         COMBO_POOLED_DATA_SOURCE.setPassword(SWGD_DATABASE_CONFIG.password);
     }
+
+    /**
+     * log
+     * */
+    private static final Logger LOGGER = LoggerFactory.getLogger(SWGDDatabase.class);
 
     /**
      * 构造函数
@@ -297,6 +308,108 @@ public final class SWGDDatabase extends Database {
         }
 
         return false;
+    }
+
+    /**
+     * 查询报关单数据
+     *
+     * @param type type
+     * @param data 数据
+     *
+     * @return 查询到的数据
+     * */
+    public static List<String> queryFormHead(String type, String data) {
+        if ("0".equals(type)) {
+            type = "EDI_NO";
+        } else if ("1".equals(type)) {
+            type = "PRE_ENTRY_ID";
+        } else if ("2".equals(type)) {
+            type = "SEQ_NO";
+        } else {
+            throw new SearchException("未找到对应类型");
+        }
+
+        if (data == null) {
+            data = "";
+        }
+
+        List<String> result = new ArrayList<>();
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+        String sql = "SELECT * FROM (SELECT * FROM SWGD.T_SWGD_FORM_HEAD ORDER BY CREATE_TIME DESC) WHERE ROWNUM <= 5 AND " + type + " LIKE '%" + data + "%'";
+
+        LOGGER.info(sql);
+
+        try {
+            ResultSet resultSet = swgdDatabase.query(sql);
+
+            while (resultSet.next()) {
+                result.add(getFiledData(resultSet, type));
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            swgdDatabase.close();
+        }
+
+        return result;
+    }
+
+    /**
+     * 搜索修撤单
+     *
+     * @param preEntryId preEntryId
+     *
+     * @return 修撤单集合
+     * */
+    public static List<String> searchDecMod(String preEntryId) {
+        List<String> result = new ArrayList<>();
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+
+        if (preEntryId == null) {
+            preEntryId = "";
+        }
+
+        try {
+            ResultSet resultSet = swgdDatabase.query("SELECT * FROM (SELECT * FROM SWGD.T_SWGD_DECMOD_HEAD WHERE PRE_ENTRY_ID LIKE '%" + preEntryId + "%' ORDER BY CREATE_TIME DESC) WHERE ROWNUM <= 5");
+
+            while (resultSet.next()) {
+                result.add(SWGDDatabase.getFiledData(resultSet, "PRE_ENTRY_ID"));
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            swgdDatabase.close();
+        }
+
+        return result;
+    }
+
+    /**
+     * 搜索代理委托
+     *
+     * @param ediNo ediNo
+     * */
+    public static List<String> searchAgent(String ediNo) {
+        List<String> result = new ArrayList<>();
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+
+        if (ediNo == null) {
+            ediNo = "";
+        }
+
+        try {
+            ResultSet resultSet = swgdDatabase.query("SELECT * FROM (SELECT * FROM SWGD.T_SWGD_AGENT_LIST WHERE EDI_NO LIKE '%" + ediNo + "%' ORDER BY CREATE_TIME DESC) WHERE ROWNUM <= 5");
+
+            while (resultSet.next()) {
+                result.add(SWGDDatabase.getFiledData(resultSet, "EDI_NO"));
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            swgdDatabase.close();
+        }
+
+        return result;
     }
 
 }
