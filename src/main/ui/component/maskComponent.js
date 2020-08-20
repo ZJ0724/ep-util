@@ -9,7 +9,7 @@ export default {
             return;
         }
 
-        let div = `<div id="${this.id}" class="layui-anim layui-anim-fadein" style="background-color: #0c0c0c38;position: fixed;top: 0;width: 100%; height: 100%;z-index: 100;"></div>`;
+        let div = `<div id="${this.id}" class="layui-anim layui-anim-fadein" style="background-color: #0c0c0c38;position: fixed;top: 0;width: 100%; height: 100%;z-index: 2;"></div>`;
 
         document.getElementById("main").append(documentUtil.parseDocument(div));
     },

@@ -85,6 +85,13 @@ let configServiceApi = {
             url: `${configServiceApi.config}${this.paramDbMapping}/update?index=${index}`,
             data: data
         });
+    },
+
+    paramDbMappingGetCount() {
+        return baseServiceApi.sendHttp({
+            type: "GET",
+            url: `${configServiceApi.config}${this.paramDbMapping}/getCount`
+        });
     }
 
 };

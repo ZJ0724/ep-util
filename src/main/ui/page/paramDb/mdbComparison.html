@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="/base.js"></script>
+    <script type="module" src="/main.js"></script>
+</head>
+<body>
+    <div id="main">
+        <navigation></navigation>
+
+        <div id="body">
+            <div style="margin: 0 30%;">
+                <input style="display: none;" id="file" type="file" />
+                <button @click="selectFile()" style="width: 100%;" type="button" class="btn btn-primary">选择文件...</button>
+            </div>
+
+            <!-- 比对信息弹窗 -->
+            <div v-cloak :style="comparisonMessage.display ? '' : 'display: none'" class="ep-panel" style="position: fixed;width: calc(100% - 40%);left: 0;margin: 50px 20%;top: 0;box-shadow: #0000004d 0 0 20px 0;overflow: auto;height: calc(100% - 100px);z-index: 3;">
+                <div>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>数据库表名</th>
+                            <th>数据库数量</th>
+                            <th>mdb表名</th>
+                            <th>mdb数量</th>
+                            <th>信息</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="(item, key) in comparisonMessage.data" :key="key">
+                            <td>{{item.dbName}}</td>
+                            <td>{{item.dbCount}}</td>
+                            <td>{{item.mdbName}}</td>
+                            <td>{{item.mdbCount}}</td>
+                            <td :style="item.flag ? 'color: green' : 'color: red'">{{item.message}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 20px;display: flex;flex-direction: row-reverse;">
+                    <button @click="comparisonMessage.display = false" type="button" class="btn btn-primary">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script type="module">
+
+    import maskComponent from "../../component/maskComponent.js";
+    import paramDbServiceApi from "../../api/service/paramDbServiceApi.js";
+    import alertComponent from "../../component/alertComponent.js";
+    import loadingComponent from "../../component/loadingComponent.js";
+
+    new Vue({
+        el: "#main",
+
+        data: {
+            comparisonMessage: {
+                display: false,
+
+                data: []
+            }
+        },
+
+        methods: {
+            selectFile() {
+                let fileInput = document.getElementById("file");
+                let comparisonMessage = this.comparisonMessage;
+
+                fileInput.addEventListener("change", function () {
+                    loadingComponent.open();
+
+                    let file = fileInput.files[0];
+
+                    paramDbServiceApi.mdbComparison(file).then(function (data) {
+                        for (let value of data) {
+                            comparisonMessage.data.push(value);
+                        }
+                        comparisonMessage.display = true;
+                    }).catch(function (message) {
+                        maskComponent.close();
+                        alertComponent.popup(message);
+                    }).finally(function () {
+                        loadingComponent.close();
+                        fileInput.value = "";
+                    });
+                });
+
+                fileInput.click();
+            }
+        },
+
+        watch: {
+            "comparisonMessage.display": function (newData) {
+                if (newData) {
+                    maskComponent.open();
+                } else {
+                    maskComponent.close();
+                    this.comparisonMessage.data = [];
+                }
+            }
+        }
+    });
+
+</script>

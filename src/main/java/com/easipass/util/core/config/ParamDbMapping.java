@@ -161,6 +161,7 @@ public final class ParamDbMapping {
         this.rows.add(new Row("WRAP_TYPE", "WRAP_TYPE"));
         this.rows.add(new Row("WRAP_TYPE_STD", "WrapTypeStd"));
         this.rows.add(new Row("YLXQ_CHECK", "YLQX_check"));
+        this.rows.add(new Row("CONTA_MODEL", "CONTA_MODEL"));
     }
 
     /**
@@ -217,6 +218,24 @@ public final class ParamDbMapping {
 
         this.rows.get(i).setData(row);
         commit();
+    }
+
+    /**
+     * 获取一共多少条
+     *
+     * @return 条数
+     * */
+    public int getCount() {
+        return this.rows.size();
+    }
+
+    /**
+     * 获取rows
+     *
+     * @return List<Row>
+     * */
+    public List<Row> getRows() {
+        return this.rows;
     }
 
     /**

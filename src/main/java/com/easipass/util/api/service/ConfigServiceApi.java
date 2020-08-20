@@ -183,4 +183,14 @@ public class ConfigServiceApi {
         return Response.returnTrue();
     }
 
+    /**
+     * 获取ParamDbMapping一共多少条
+     *
+     * @return Response
+     * */
+    @GetMapping(PARAM_DB_MAPPING + "getCount")
+    public Response paramDbMappingGetCount() {
+        return Response.returnTrue(PARAM_DB_MAPPING_INSTANCE.getCount());
+    }
+
 }

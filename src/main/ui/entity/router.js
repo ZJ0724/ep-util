@@ -72,6 +72,17 @@ export default [
     },
 
     {
+        path: "paramDb/",
+        name: "参数库",
+        children: [
+            {
+                path: "mdbComparison.html",
+                name: "mdb文件表数据数量比对"
+            }
+        ]
+    },
+
+    {
         path: "config.html",
         name: "配置"
     }
