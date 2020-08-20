@@ -9,6 +9,8 @@ import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.FileUtil;
 import com.easipass.util.core.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +34,11 @@ public final class ParamDbComparator {
      * 构造函数
      * */
     private ParamDbComparator() {}
+
+    /**
+     * 日志
+     * */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParamDbComparator.class);
 
     /**
      * 比对mdb文件
@@ -122,15 +129,13 @@ public final class ParamDbComparator {
             throw new ErrorException(e.getMessage());
         }
 
-        List<ComparisonMessage> result = this.mdbComparison(file.getAbsolutePath());
-
-        Project.THREAD_POOL_EXECUTOR.execute(() -> {
-            if (!file.delete()) {
-                throw new ErrorException("删除mdb文件失败");
+        try {
+            return this.mdbComparison(file.getAbsolutePath());
+        } finally {
+            if (file.delete()) {
+                LOGGER.info("已删除文件：" + file.getAbsolutePath());
             }
-        });
-
-        return result;
+        }
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.easipass.util.core.database;
 
 import com.easipass.util.core.Database;
-import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.exception.ConnectionFailException;
 import com.easipass.util.core.exception.SqlException;
 import com.easipass.util.core.util.StringUtil;
 import java.sql.Connection;
@@ -35,7 +35,7 @@ public final class MdbDatabase extends Database {
         try {
             return DriverManager.getConnection("jdbc:ucanaccess://" + path);
         } catch (SQLException e) {
-            throw new ErrorException(e.getMessage());
+            throw new ConnectionFailException("mdb文件错误");
         }
     }
 
