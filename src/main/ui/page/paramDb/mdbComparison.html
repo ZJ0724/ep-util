@@ -12,7 +12,6 @@
 
         <div id="body">
             <div style="margin: 0 30%;">
-                <input style="display: none;" id="file" type="file" />
                 <button @click="selectFile()" style="width: 100%;" type="button" class="btn btn-primary">选择文件...</button>
             </div>
 
@@ -70,9 +69,10 @@
 
         methods: {
             selectFile() {
-                let fileInput = document.getElementById("file");
+                let fileInput = document.createElement("input");
                 let comparisonMessage = this.comparisonMessage;
 
+                fileInput.setAttribute("type", "file");
                 fileInput.addEventListener("change", function () {
                     loadingComponent.open();
 
@@ -88,7 +88,6 @@
                         alertComponent.popup(message);
                     }).finally(function () {
                         loadingComponent.close();
-                        fileInput.value = "";
                     });
                 });
 

@@ -6,6 +6,7 @@ import com.easipass.util.core.config.ParamDbMapping;
 import com.easipass.util.core.database.MdbDatabase;
 import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.util.ConsoleUtil;
 import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.FileUtil;
 import com.easipass.util.core.util.StringUtil;
@@ -128,6 +129,9 @@ public final class ParamDbComparator {
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
+
+        // 设置权限
+        ConsoleUtil.setChmod777(file.getAbsolutePath());
 
         try {
             return this.mdbComparison(file.getAbsolutePath());

@@ -7,7 +7,6 @@ export default (function () {
         template: `
             <div style="margin-top: 25%;" class="center">
                 <div style="width: 300px;">
-                    <input id="file" type="file" style="display: none;" />
                     <button @click="select()" style="width: 100%;" type="button" class="btn btn-primary">选择报文...</button>
                 </div>
                 
@@ -80,12 +79,12 @@ export default (function () {
 
         methods: {
             select() {
-                let fileInput = document.getElementById("file");
+                let fileInput = document.createElement("input");
                 let that = this;
 
+                fileInput.setAttribute("type", "file");
                 fileInput.addEventListener("change", function () {
                     that.comparison(fileInput.files[0]);
-                    fileInput.value = "";
                 });
 
                 fileInput.click();
