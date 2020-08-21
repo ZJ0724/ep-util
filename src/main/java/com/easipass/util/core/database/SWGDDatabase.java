@@ -296,44 +296,6 @@ public final class SWGDDatabase extends Database {
     }
 
     /**
-     * 获取参数库表数据量
-     *
-     * @param tableName 表名
-     *
-     * @return 数据量
-     * */
-    public Integer getParamDbDataCount(String tableName) {
-        try {
-            int version = 0;
-            ResultSet versionResultSet = this.query("SELECT PARAMS_VERSION FROM SWGDPARA.T_PARAMS_VERSION WHERE TABLE_NAME = '" + tableName + "'");
-
-            // 获取版本
-            while (versionResultSet.next()) {
-                int v = Integer.parseInt(getFiledData(versionResultSet, "PARAMS_VERSION"));
-
-                if (v > version) {
-                    version = v;
-                }
-            }
-
-            if (version == 0) {
-                return null;
-            }
-
-            // 数量
-            String countS = getFiledData(this.query("SELECT COUNT(*) COUNT FROM SWGDPARA." + tableName + " WHERE PARAMS_VERSION = '" + version + "'"), "COUNT", true);
-
-            if (StringUtil.isEmpty(countS)) {
-                return 0;
-            }
-
-            return Integer.parseInt(countS);
-        } catch (SQLException e) {
-            return null;
-        }
-    }
-
-    /**
      * 清空参数库表数据
      *
      * @param tableName 表名
@@ -460,6 +422,129 @@ public final class SWGDDatabase extends Database {
             return COMBO_POOLED_DATA_SOURCE.getConnection();
         } catch (SQLException |ClassNotFoundException e) {
             throw new ConnectionFailException("SWGD数据库连接失败");
+        }
+    }
+
+    /**
+     * 获取参数库表名
+     *
+     * @param groupName 组名
+     * @param fieldName 字段名
+     *
+     * @return 参数库表名
+     * */
+    public static List<String> getParamDbTables(String groupName, String fieldName) {
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+        List<String> result = new ArrayList<>();
+        ResultSet resultSet = swgdDatabase.query("SELECT * FROM SWGDPARA.T_PARAMS_GROUP_TABLE WHERE GROUP_NAME = '" + groupName + "'");
+
+        try {
+            while (resultSet.next()) {
+                String tableName = SWGDDatabase.getFiledData(resultSet, fieldName);
+                result.add(tableName);
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            swgdDatabase.close();
+        }
+
+        return result;
+    }
+
+    /**
+     * 获取字段
+     *
+     * @param tableName 表名
+     * @param fieldName 字段名
+     *
+     * @return 字段集合
+     * */
+    public static List<String> getParamDbFields(String tableName, String fieldName) {
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+        List<String> result = new ArrayList<>();
+        ResultSet resultSet = swgdDatabase.query("SELECT * FROM SWGDPARA.T_PARAMS_MATCH WHERE TABLE_NAME = '" + tableName + "'");
+
+        try {
+            while (resultSet.next()) {
+                String filed = SWGDDatabase.getFiledData(resultSet, fieldName);
+                result.add(filed);
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            swgdDatabase.close();
+        }
+
+        return result;
+    }
+
+    /**
+     * 获取表版本
+     *
+     * @param tableName 表名
+     *
+     * @return 版本
+     * */
+    public static String getParamDbTableVersion(String tableName) {
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+        String version;
+
+        try {
+            ResultSet resultSet = swgdDatabase.query("SELECT * FROM SWGDPARA.T_PARAMS_VERSION_CURRENT WHERE TABLE_NAME = '"+ tableName + "'");
+
+            if (resultSet.next()) {
+                version = getFiledData(resultSet, "PARAMS_VERSION");
+            } else {
+                ResultSet resultSet1 = swgdDatabase.query("SELECT * FROM SWGDPARA.T_PARAMS_VERSION WHERE TABLE_NAME = '" + tableName + "'");
+                int v = 0;
+
+                while (resultSet1.next()) {
+                    int v1 = Integer.parseInt(getFiledData(resultSet1, "PARAMS_VERSION"));
+
+                    if (v1 > v) {
+                        v = v1;
+                    }
+                }
+
+                version = v + "";
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            swgdDatabase.close();
+        }
+
+        return version;
+    }
+
+    /**
+     * 获取参数库表数据量
+     *
+     * @param tableName 表名
+     *
+     * @return 数据量
+     * */
+    public static Integer getParamDbDataCount(String tableName) {
+        String version = getParamDbTableVersion(tableName);
+
+        if (StringUtil.isEmpty(version)) {
+            return null;
+        }
+
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+
+        try {
+            // 数量
+            String countS = getFiledData(swgdDatabase.query("SELECT COUNT(*) COUNT FROM SWGDPARA." + tableName + " WHERE PARAMS_VERSION = '" + version + "'"), "COUNT", true);
+
+            if (StringUtil.isEmpty(countS)) {
+                return 0;
+            }
+
+            return Integer.parseInt(countS);
+        } finally {
+            swgdDatabase.close();
         }
     }
 

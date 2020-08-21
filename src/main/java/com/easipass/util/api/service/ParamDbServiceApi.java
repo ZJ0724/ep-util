@@ -2,10 +2,7 @@ package com.easipass.util.api.service;
 
 import com.easipass.util.core.ParamDbComparator;
 import com.easipass.util.entity.Response;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -24,9 +21,9 @@ public class ParamDbServiceApi {
      *
      * @return Response
      * */
-    @PostMapping("mdbComparison")
-    public Response mdbComparison(@RequestParam("mdb") MultipartFile multipartFile) {
-        return Response.returnTrue(ParamDbComparator.getInstance().mdbComparison(multipartFile));
+    @PostMapping("importComparison")
+    public Response importComparison(@RequestParam("mdb") MultipartFile multipartFile, @RequestParam("groupName") String groupName) {
+        return Response.returnTrue(ParamDbComparator.getInstance().importComparison(groupName, multipartFile));
     }
 
 }

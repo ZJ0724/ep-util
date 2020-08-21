@@ -179,4 +179,27 @@ public abstract class Database {
         return getFiledData(resultSet, filedName, false);
     }
 
+    /**
+     * 获取字段类型
+     *
+     * @param resultSet resultSet
+     * @param fieldName 字段名
+     *
+     * @return 字段类型
+     * */
+    public static String getColumnTypeName(ResultSet resultSet, String fieldName) {
+        try {
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            for (int i = 1 ; i <= metaData.getColumnCount(); i++) {
+                if (fieldName.equals(metaData.getColumnName(i))) {
+                    return metaData.getColumnTypeName(i);
+                }
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        return null;
+    }
+
 }

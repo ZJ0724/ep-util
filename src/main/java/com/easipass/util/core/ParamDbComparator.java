@@ -2,7 +2,6 @@ package com.easipass.util.core;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.easipass.util.core.config.ParamDbMapping;
 import com.easipass.util.core.database.MdbDatabase;
 import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.exception.ErrorException;
@@ -16,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,78 +43,133 @@ public final class ParamDbComparator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParamDbComparator.class);
 
     /**
-     * 比对mdb文件
+     * 导入数据比对
      *
+     * @param groupName 组名
      * @param path mdb文件路径
      *
      * @return 比对信息
      * */
-    public List<ComparisonMessage> mdbComparison(String path) {
-        SWGDDatabase swgdDatabase = new SWGDDatabase();
-        MdbDatabase mdbDatabase = new MdbDatabase(path);
+    public List<ComparisonMessage> importComparison(String groupName, String path) {
+        // mdb表名集合
+        List<String> mdbTables = SWGDDatabase.getParamDbTables(groupName, "SOURCE_TABLE_NAME");
+        // 数据库表名集合
+        List<String> dbTables = SWGDDatabase.getParamDbTables(groupName, "TARGET_TABLE_NAME");
         List<ComparisonMessage> result = new ArrayList<>();
 
-        try {
-            // 遍历配置
-            List<ParamDbMapping.Row> rows = ParamDbMapping.getInstance().getRows();
+        // 遍历mdb
+        for (int i = 0 ;i < mdbTables.size(); i++) {
+            ComparisonMessage comparisonMessage = new ComparisonMessage();
+            String mdbTableName = mdbTables.get(i);
+            String dbTable = dbTables.get(i);
 
-            for (ParamDbMapping.Row row : rows) {
-                ComparisonMessage comparisonMessage = new ComparisonMessage();
-                // 数据库表
-                String dbName = row.getDbName();
-                Integer dbCount = swgdDatabase.getParamDbDataCount(dbName);
-                // mdb表
-                String mdbName = row.getMdbName();
-                Integer mdbCount = mdbDatabase.getTableCount(mdbName);
+            comparisonMessage.mdbName = mdbTableName;
+            comparisonMessage.dbName = dbTable;
 
-                comparisonMessage.dbName = dbName;
-                comparisonMessage.mdbName = mdbName;
-
-                if (dbCount == null) {
-                    comparisonMessage.message = StringUtil.append(comparisonMessage.message, "数据库" + dbName + "表不存在");
-                } else {
-                    comparisonMessage.dbCount = dbCount;
-                }
-
-                if (mdbCount == null) {
-                    String message = "mdb文件" + mdbName + "表不存在";
-
-                    if (!StringUtil.isEmpty(comparisonMessage.message)) {
-                        comparisonMessage.message = StringUtil.append(comparisonMessage.message, "，", message);
-                    } else {
-                        comparisonMessage.message = StringUtil.append(comparisonMessage.message, message);
-                    }
-                } else {
-                    comparisonMessage.mdbCount = mdbCount;
-                }
-
-                if (dbCount != null && mdbCount != null) {
-                    if (dbCount.equals(mdbCount)) {
-                        comparisonMessage.flag = true;
-                        comparisonMessage.message = StringUtil.append(comparisonMessage.message, "OK");
-                    } else {
-                        comparisonMessage.message = StringUtil.append(comparisonMessage.message, "ERROR");
-                    }
-                }
-
+            if (StringUtil.isEmpty(mdbTableName)) {
+                comparisonMessage.flag = false;
+                comparisonMessage.message = "存在mdb表名为空";
                 result.add(comparisonMessage);
+                continue;
             }
-        } finally {
-            swgdDatabase.close();
-            mdbDatabase.close();
+
+            // 版本
+            String version = SWGDDatabase.getParamDbTableVersion(dbTable);
+
+            if (StringUtil.isEmpty(version)) {
+                comparisonMessage.flag = false;
+                comparisonMessage.message = "参数库无版本";
+                result.add(comparisonMessage);
+                continue;
+            }
+
+            Integer c = SWGDDatabase.getParamDbDataCount(dbTable);
+            if (c != null) {
+                comparisonMessage.dbCount = c;
+            }
+
+            // mdb字段
+            List<String> mdbFields = SWGDDatabase.getParamDbFields(dbTable, "SOURCE_NAME");
+            // 数据库字段
+            List<String> dbFields = SWGDDatabase.getParamDbFields(dbTable, "TARGET_NAME");
+
+            // mdb表数据
+            MdbDatabase mdbDatabase = new MdbDatabase(path);
+            ResultSet mdbResultSet = mdbDatabase.getTableData(mdbTableName);
+
+            Integer mdbCount = mdbDatabase.getTableCount(mdbTableName);
+            if (mdbCount != null) {
+                comparisonMessage.mdbCount = mdbCount;
+            }
+
+            try {
+                while (mdbResultSet.next()) {
+                    // mdb单条数据
+                    List<String> dataList = new ArrayList<>();
+
+                    for (String field : mdbFields) {
+                        String fieldValue = MdbDatabase.getFiledData(mdbResultSet, field);
+
+                        if (fieldValue == null) {
+                            fieldValue = "";
+                        }
+
+                        dataList.add(fieldValue.replaceAll("'", "''"));
+                    }
+
+                    SWGDDatabase swgdDatabase = new SWGDDatabase();
+                    String sql = "SELECT * FROM SWGDPARA." + dbTable + " WHERE 1 = 1 AND PARAMS_VERSION = '" + version + "'";
+
+                    for (int j = 0; j < dataList.size(); j ++) {
+                        String data = dataList.get(j);
+
+                        if (!StringUtil.isEmptyAll(data)) {
+                            String type = Database.getColumnTypeName(swgdDatabase.query("SELECT * FROM SWGDPARA." + dbTable + " WHERE ROWNUM <= 1"), dbFields.get(j));
+
+                            if (StringUtil.isEmpty(type)) {
+                                throw new ErrorException("表：" + dbTable + " - " + dbFields.get(j) + "未找到");
+                            }
+
+                            if (type.equals("TIMESTAMP")) {
+                                sql = StringUtil.append(sql, " AND ", dbFields.get(j), " = ", "TO_DATE('" + data.substring(0, data.length() - 7) + "','yyyy-mm-dd hh24:mi:ss')");
+                                continue;
+                            }
+
+                            System.out.println(mdbFields.get(j) + " " + type);
+
+                            sql = StringUtil.append(sql, " AND ", dbFields.get(j), " = '", data, "'");
+                        }
+                    }
+
+                    System.out.println(sql);
+
+                    if (!swgdDatabase.query(sql).next()) {
+                        comparisonMessage.flag = false;
+                        comparisonMessage.message = StringUtil.append(comparisonMessage.message,"，" , sql);
+                    }
+
+                    swgdDatabase.close();
+                }
+            } catch (SQLException e) {
+                throw new ErrorException(e.getMessage());
+            } finally {
+                mdbDatabase.close();
+            }
+
+            result.add(comparisonMessage);
         }
 
         return result;
     }
 
     /**
-     * 比对mdb文件
+     * 导入数据比对
      *
      * @param multipartFile multipartFile
      *
      * @return List<ComparisonMessage>
      * */
-    public List<ComparisonMessage> mdbComparison(MultipartFile multipartFile) {
+    public List<ComparisonMessage> importComparison(String groupName, MultipartFile multipartFile) {
         File file = new File(Project.CACHE_PATH, DateUtil.getTime() + ".mdb");
         InputStream inputStream;
         try {
@@ -134,7 +190,7 @@ public final class ParamDbComparator {
         ConsoleUtil.setChmod777(file.getAbsolutePath());
 
         try {
-            return this.mdbComparison(file.getAbsolutePath());
+            return this.importComparison(groupName, file.getAbsolutePath());
         } finally {
             if (file.delete()) {
                 LOGGER.info("已删除文件：" + file.getAbsolutePath());
@@ -161,7 +217,7 @@ public final class ParamDbComparator {
         /**
          * 是否比对通过
          * */
-        public boolean flag = false;
+        public boolean flag = true;
 
         /**
          * 数据库表名

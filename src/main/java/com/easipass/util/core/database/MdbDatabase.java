@@ -6,6 +6,7 @@ import com.easipass.util.core.exception.SqlException;
 import com.easipass.util.core.util.StringUtil;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -58,6 +59,17 @@ public final class MdbDatabase extends Database {
         } catch (SqlException e) {
             return null;
         }
+    }
+
+    /**
+     * 获取表数据
+     *
+     * @param tableName 表名
+     *
+     * @return ResultSet
+     * */
+    public ResultSet getTableData(String tableName) {
+        return this.query("SELECT * FROM " + tableName);
     }
 
 }
