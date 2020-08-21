@@ -81,7 +81,12 @@ public abstract class Database {
      */
     public final void update(String sql, Object... params) {
         try {
-            getPreparedStatement(sql, params).execute();
+            PreparedStatement preparedStatement = getPreparedStatement(sql, params);
+
+            preparedStatement.execute();
+
+            preparedStatement.close();
+            this.preparedStatements.remove(preparedStatement);
         } catch (SQLException e) {
             throw new ErrorException(e.getMessage());
         }
@@ -115,7 +120,7 @@ public abstract class Database {
      *
      * @return PreparedStatement
      * */
-    private PreparedStatement getPreparedStatement(String sql, Object... params) {
+    public PreparedStatement getPreparedStatement(String sql, Object... params) {
         try {
             PreparedStatement preparedStatement = this.connection.prepareStatement(sql);
 

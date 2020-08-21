@@ -334,6 +334,19 @@ public final class SWGDDatabase extends Database {
     }
 
     /**
+     * 清空参数库表数据
+     *
+     * @param tableName 表名
+     * */
+    public void deleteParamDbTable(String tableName) {
+        String sql = StringUtil.append("DELETE FROM SWGDPARA.", tableName);
+
+        LOGGER.info(sql);
+
+        this.update(sql);
+    }
+
+    /**
      * 查询报关单数据
      *
      * @param type type
