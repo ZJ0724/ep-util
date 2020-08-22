@@ -1,21 +1,18 @@
 package com.easipass.util.test;
 
-import com.easipass.util.core.database.SWGDDatabase;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.SimpleFormatter;
 
 public class databaseTest {
 
     public static void main(String[] args) throws Exception {
 
-        SWGDDatabase swgdDatabase = new SWGDDatabase();
 
+        String a = "ada\n\r".toString();
 
-        PreparedStatement preparedStatement = swgdDatabase.getPreparedStatement("SELECT * FROM SWGDPARA.CLASSIFY");
-
-        preparedStatement.close();
-        preparedStatement.close();
+        System.out.println(a);
 
     }
 

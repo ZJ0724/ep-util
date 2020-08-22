@@ -2,6 +2,8 @@ package com.easipass.util.test;
 
 import com.easipass.util.core.ParamDbComparator;
 
+import java.util.List;
+
 public class Main {
 
     public static void main(String[] args) throws Exception {
@@ -9,8 +11,7 @@ public class Main {
 
         ParamDbComparator paramDbComparator = ParamDbComparator.getInstance();
 
-
-        System.out.println(paramDbComparator.importComparison("parameterDb.mdb", "C:\\Users\\ZJ\\Desktop\\参数库\\备份\\parameterDb.mdb"));
+        System.out.println(paramDbComparator.importComparison("test", "C:\\Users\\ZJ\\Desktop\\参数库\\备份\\parameterDb.mdb"));
     }
 
 }

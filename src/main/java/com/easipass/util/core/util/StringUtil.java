@@ -70,7 +70,7 @@ public final class StringUtil {
      * @return 是null返回true
      * */
     public static boolean isEmptyAll(String s) {
-        return s.replaceAll(" ", "").equals("");
+        return s.replaceAll(" ", "").replaceAll("\n", "").replaceAll("\r", "").equals("");
     }
 
 }
