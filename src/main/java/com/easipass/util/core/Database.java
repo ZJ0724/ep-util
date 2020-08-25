@@ -49,7 +49,7 @@ public abstract class Database {
         this.connection = connection;
         this.name = name;
 
-        log.info("数据库: {}, 已连接", this.name);
+        log.debug("数据库: {}, 已连接", this.name);
     }
 
     /**
@@ -70,7 +70,7 @@ public abstract class Database {
             throw new ErrorException(e.getMessage());
         }
 
-        log.info("数据库: {}, 已关闭", this.name);
+        log.debug("数据库: {}, 已关闭", this.name);
     }
 
     /**
@@ -187,7 +187,7 @@ public abstract class Database {
      *
      * @return 字段类型
      * */
-    public static String getColumnTypeName(ResultSet resultSet, String fieldName) {
+    public static String getFieldType(ResultSet resultSet, String fieldName) {
         try {
             ResultSetMetaData metaData = resultSet.getMetaData();
             for (int i = 1 ; i <= metaData.getColumnCount(); i++) {

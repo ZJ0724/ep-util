@@ -1,8 +1,9 @@
 package com.easipass.util.core.database;
 
 import com.easipass.util.core.Database;
-import com.easipass.util.core.exception.ConnectionFailException;
+import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.SqlException;
+import com.easipass.util.core.exception.WarningException;
 import com.easipass.util.core.util.StringUtil;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,7 +22,7 @@ public final class MdbDatabase extends Database {
      *
      * @param path 路径
      */
-    public MdbDatabase(String path) {
+    public MdbDatabase(String path) throws WarningException {
         super(getConnection(path), path);
     }
 
@@ -32,24 +33,26 @@ public final class MdbDatabase extends Database {
      *
      * @return Connection
      * */
-    private static Connection getConnection(String path) {
+    private static Connection getConnection(String path) throws WarningException {
         try {
             return DriverManager.getConnection("jdbc:ucanaccess://" + path);
         } catch (SQLException e) {
-            throw new ConnectionFailException("mdb文件错误");
+            throw new WarningException("不是正确的mdb文件");
         }
     }
 
     /**
-     * 获取数据数量
+     * 获取表数据数量
      *
      * @param tableName 表名
      *
      * @return 数据数量
      * */
-    public Integer getTableCount(String tableName) {
+    public static int getTableCount(String path, String tableName) throws WarningException {
+        MdbDatabase mdbDatabase = new MdbDatabase(path);
+
         try {
-            String count = getFiledData(this.query("SELECT COUNT(*) COUNT FROM " + tableName), "COUNT", true);
+            String count = getFiledData(mdbDatabase.query("SELECT COUNT(*) COUNT FROM " + tableName), "COUNT", true);
 
             if (StringUtil.isEmpty(count)) {
                 return 0;
@@ -57,19 +60,31 @@ public final class MdbDatabase extends Database {
 
             return Integer.parseInt(count);
         } catch (SqlException e) {
-            return null;
+            throw new ErrorException(e.getMessage());
+        } finally {
+            mdbDatabase.close();
         }
     }
 
     /**
-     * 获取表数据
+     * 检查数据是否存在
      *
-     * @param tableName 表名
+     * @param sql sql
      *
-     * @return ResultSet
+     * @return sql能查到数据返回true
      * */
-    public ResultSet getTableData(String tableName) {
-        return this.query("SELECT * FROM " + tableName);
+    public static boolean dataIsExist(String path, String sql) throws WarningException {
+        MdbDatabase mdbDatabase = new MdbDatabase(path);
+
+        try {
+            ResultSet resultSet = mdbDatabase.query(sql);
+
+            return resultSet.next();
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            mdbDatabase.close();
+        }
     }
 
 }
