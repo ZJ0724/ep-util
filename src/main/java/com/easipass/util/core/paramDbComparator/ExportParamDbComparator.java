@@ -107,6 +107,23 @@ public final class ExportParamDbComparator extends ParamDbComparator {
                                     // mdb字段
                                     String mdbFieldName = mdbTableFields.get(j);
 
+                                    // COMPLEX.CODE_S || CIQ_CODE.HS_CODE || CLASSIFY || LICENSEN.CODE_T.CODE_S
+                                    if (
+                                            ("COMPLEX".equals(dbTableName) && "CODE_S".equals(mdbFieldName)) ||
+                                                    ("CIQ_CODE".equals(dbTableName) && "HS_CODE".equals(mdbFieldName)) ||
+                                                    ("CLASSIFY".equals(dbTableName)) ||
+                                                    ("LICENSEN".equals(dbTableName) && (("CODE_T".equals(mdbFieldName)) || ("CODE_S".equals(mdbFieldName)))) ||
+                                                    ("AREA_PRE".equals(dbTableName) && (("USE_TO".equals(mdbFieldName)) || ("TRADE_MODE".equals(mdbFieldName)) || ("GOODS_T2".equals(mdbFieldName)) || ("GOODS_T1".equals(mdbFieldName)) || ("DOCU_CODE".equals(mdbFieldName)) || ("DISTRICT_T".equals(mdbFieldName)) || ("CODE_FLAG".equals(mdbFieldName)))) ||
+                                                    ("TRADE_MO".equals(dbTableName) && (("TRADE_MODE".equals(mdbFieldName)) || ("DISTRICT_T".equals(mdbFieldName)))) ||
+                                                    ("CTA_INF_REC".equals(dbTableName))
+                                    ) {
+                                        if ("__00".equals(data)) {
+                                            data = "";
+                                            sql = StringUtil.append(sql, " AND ", mdbFieldName, " = '", data, "'");
+                                            continue;
+                                        }
+                                    }
+
                                     // null
                                     if (StringUtil.isEmptyAll(data)) {
                                         continue;

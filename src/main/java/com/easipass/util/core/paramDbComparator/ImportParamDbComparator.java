@@ -107,6 +107,17 @@ public final class ImportParamDbComparator extends ParamDbComparator {
                                     // 数据库字段
                                     String dbFieldName = dbTableFields.get(j);
 
+                                    // COMPLEX.CODE_S
+                                    if ("COMPLEX".equals(dbTableName)) {
+                                        if ("CODE_S".equals(dbFieldName)) {
+                                            if (StringUtil.isEmptyAll(data)) {
+                                                data = "__00";
+                                                sql = StringUtil.append(sql, " AND ", dbFieldName, " = '", data, "'");
+                                                continue;
+                                            }
+                                        }
+                                    }
+
                                     // null
                                     if (StringUtil.isEmptyAll(data)) {
                                         continue;

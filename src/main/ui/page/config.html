@@ -13,7 +13,7 @@
             <ul class="nav nav-tabs" style="margin-top: 50px;">
                 <li @click="selectConfig(0)" role="presentation" :class="active === 0 ? 'active' : ''"><a href="javascript:">SWGD数据库</a></li>
                 <li @click="selectConfig(1)" role="presentation" :class="active === 1 ? 'active' : ''"><a href="javascript:">回执上传sftp</a></li>
-                <li @click="selectConfig(2)" role="presentation" :class="active === 2 ? 'active' : ''"><a href="javascript:">参数库映射</a></li>
+<!--                <li @click="selectConfig(2)" role="presentation" :class="active === 2 ? 'active' : ''"><a href="javascript:">参数库映射</a></li>-->
             </ul>
 
             <div style="margin-top: 50px;">
@@ -25,44 +25,44 @@
                     <config :vo="cusResultUploadSftpConfig.VO" :dto="cusResultUploadSftpConfig.DTO" :get-api="cusResultUploadSftpConfig.getApi" :set-api="cusResultUploadSftpConfig.setApi"></config>
                 </div>
 
-                <div v-cloak :style="active === 2 ? '' : 'display: none'">
-                    <div class="ep-panel">
-                        <div style="display: flex;">
-                            <button @click="paramDbMapping.add.display = true" type="button" class="btn btn-primary btn-sm">添加</button>
-                            <div style="display: flex;align-items: center;margin-left: 20px;">
-                                一共{{paramDbMapping.count}}条。
-                            </div>
-                        </div>
-                    </div>
+<!--                <div v-cloak :style="active === 2 ? '' : 'display: none'">-->
+<!--                    <div class="ep-panel">-->
+<!--                        <div style="display: flex;">-->
+<!--                            <button @click="paramDbMapping.add.display = true" type="button" class="btn btn-primary btn-sm">添加</button>-->
+<!--                            <div style="display: flex;align-items: center;margin-left: 20px;">-->
+<!--                                一共{{paramDbMapping.count}}条。-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
 
-                    <div style="margin-top: 20px;" class="ep-panel">
-                        <table class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th>数据库表名</th>
-                                <th>mdb表名</th>
-                                <th>操作</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="(item, key) in paramDbMapping.data" :key="key">
-                                <td>{{item.dbName}}</td>
-                                <td>{{item.mdbName}}</td>
-                                <td>
-                                    <button @click="openUpdate(key, item)" type="button" class="btn btn-default btn-sm">编辑</button>
-                                    <button @click="deleteParamDbMapping(key)" type="button" class="btn btn-danger btn-sm">删除</button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+<!--                    <div style="margin-top: 20px;" class="ep-panel">-->
+<!--                        <table class="table table-hover">-->
+<!--                            <thead>-->
+<!--                            <tr>-->
+<!--                                <th>数据库表名</th>-->
+<!--                                <th>mdb表名</th>-->
+<!--                                <th>操作</th>-->
+<!--                            </tr>-->
+<!--                            </thead>-->
+<!--                            <tbody>-->
+<!--                            <tr v-for="(item, key) in paramDbMapping.data" :key="key">-->
+<!--                                <td>{{item.dbName}}</td>-->
+<!--                                <td>{{item.mdbName}}</td>-->
+<!--                                <td>-->
+<!--                                    <button @click="openUpdate(key, item)" type="button" class="btn btn-default btn-sm">编辑</button>-->
+<!--                                    <button @click="deleteParamDbMapping(key)" type="button" class="btn btn-danger btn-sm">删除</button>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            </tbody>-->
+<!--                        </table>-->
+<!--                    </div>-->
 
-                    <!-- 编辑弹窗 -->
-                    <param-db-mapping title="编辑" :data="paramDbMapping.update.data" :display.sync="paramDbMapping.update.display" @ok="updateParamDbMapping"></param-db-mapping>
+<!--                    &lt;!&ndash; 编辑弹窗 &ndash;&gt;-->
+<!--                    <param-db-mapping title="编辑" :data="paramDbMapping.update.data" :display.sync="paramDbMapping.update.display" @ok="updateParamDbMapping"></param-db-mapping>-->
 
-                    <!-- 添加弹窗 -->
-                    <param-db-mapping title="添加" :data="paramDbMapping.add.data" :display.sync="paramDbMapping.add.display" @ok="addParamDbMapping"></param-db-mapping>
-                </div>
+<!--                    &lt;!&ndash; 添加弹窗 &ndash;&gt;-->
+<!--                    <param-db-mapping title="添加" :data="paramDbMapping.add.data" :display.sync="paramDbMapping.add.display" @ok="addParamDbMapping"></param-db-mapping>-->
+<!--                </div>-->
             </div>
         </div>
     </div>
@@ -83,7 +83,7 @@
         el: "#main",
 
         data: {
-            active: 2,
+            active: 0,
 
             SWGDDatabase: {
                 VO: new SWGDDatabaseConfigVO(),

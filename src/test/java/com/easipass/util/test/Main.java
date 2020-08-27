@@ -9,15 +9,15 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
 
-//        ParamDbComparator paramDbComparator = new ImportParamDbComparator();
-
-//        paramDbComparator.comparison("parameterDb.mdb", "C:\\Users\\ZJ\\Desktop\\参数库\\备份\\parameterDb.mdb");
-
-
-        ParamDbComparator paramDbComparator = new ExportParamDbComparator();
-
+        ParamDbComparator paramDbComparator = new ImportParamDbComparator();
 
         paramDbComparator.comparison("parameterDb.mdb", "C:\\Users\\ZJ\\Desktop\\参数库\\Update\\Data\\parameterDb.mdb");
+
+
+//        ParamDbComparator paramDbComparator = new ExportParamDbComparator();
+//
+//
+//        paramDbComparator.comparison("parameterDb.mdb", "C:\\Users\\ZJ\\Desktop\\参数库\\Update\\Data\\parameterDb.mdb");
 
     }
 

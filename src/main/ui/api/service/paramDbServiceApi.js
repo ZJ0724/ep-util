@@ -4,10 +4,10 @@ export default {
 
     paramDb: "paramDb",
 
-    mdbComparison(file) {
+    upload(file) {
         return baseServiceApi.sendHttp({
             type: "POST",
-            url: `${this.paramDb}/mdbComparison`,
+            url: `${this.paramDb}/upload`,
             data: {
                 mdb: file
             },

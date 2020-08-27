@@ -76,8 +76,8 @@ export default [
         name: "参数库",
         children: [
             {
-                path: "mdbComparison.html",
-                name: "mdb文件表数据数量比对"
+                path: "importParamDbComparison.html",
+                name: "导入比对"
             }
         ]
     },

@@ -25,7 +25,7 @@ public class SearchServiceApi {
      * @return Response
      * */
     @GetMapping("formHead")
-    public Response formHead(@RequestParam @NotNull String type, @RequestParam @NotNull String data) {
+    public Response formHead(@RequestParam @NotNull String type, @RequestParam String data) {
         return Response.returnTrue(SWGDDatabase.queryFormHead(type, data));
     }
 

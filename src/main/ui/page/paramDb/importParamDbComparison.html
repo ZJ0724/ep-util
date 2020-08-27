@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="/base.js"></script>
+    <script type="module" src="/main.js"></script>
+</head>
+<body>
+    <div id="main">
+        <navigation></navigation>
+
+        <div id="body">
+            <div style="padding: 0 25%;">
+                <div class="ep-panel">
+                    <div>
+                        组名
+                    </div>
+
+                    <div style="margin-top: 10px;">
+                        <label style="width: 100%;">
+                            <input class="form-control input-sm" />
+                        </label>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        选择文件
+                    </div>
+
+                    <div style="margin-top: 10px;display: flex;">
+                        <label style="width: 90%;">
+                            <input class="form-control input-sm" disabled />
+                        </label>
+                        <div style="width: 10%;">
+                            <button style="width: 100%;" class="btn btn-default btn-sm">...</button>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button style="width: 100%;" class="btn btn-primary">开始比对</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script type="module">
+
+    new Vue({
+        el: "#main"
+    });
+
+</script>

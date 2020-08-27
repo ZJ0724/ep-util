@@ -49,7 +49,7 @@ public abstract class Database {
         this.connection = connection;
         this.name = name;
 
-        log.debug("数据库: {}, 已连接", this.name);
+//        log.debug("数据库: {}, 已连接", this.name);
     }
 
     /**
@@ -70,7 +70,7 @@ public abstract class Database {
             throw new ErrorException(e.getMessage());
         }
 
-        log.debug("数据库: {}, 已关闭", this.name);
+//        log.debug("数据库: {}, 已关闭", this.name);
     }
 
     /**
