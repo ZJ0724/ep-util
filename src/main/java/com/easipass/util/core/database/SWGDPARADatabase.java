@@ -36,18 +36,6 @@ public final class SWGDPARADatabase extends Database {
      * */
     public static final String SWGDPARA = "SWGDPARA";
 
-    static {
-        C3p0Config.getInstance().setData(COMBO_POOLED_DATA_SOURCE);
-        try {
-            COMBO_POOLED_DATA_SOURCE.setDriverClass(SWGD_DATABASE_CONFIG.driverClass);
-        } catch (PropertyVetoException e) {
-            throw new ErrorException(e.getMessage());
-        }
-        COMBO_POOLED_DATA_SOURCE.setJdbcUrl(SWGD_DATABASE_CONFIG.url);
-        COMBO_POOLED_DATA_SOURCE.setUser(SWGD_DATABASE_CONFIG.username);
-        COMBO_POOLED_DATA_SOURCE.setPassword(SWGD_DATABASE_CONFIG.password);
-    }
-
     /**
      * 构造函数
      */
@@ -63,8 +51,18 @@ public final class SWGDPARADatabase extends Database {
     private static Connection getConnection() throws WarningException {
         try {
             Class.forName(SWGD_DATABASE_CONFIG.driverClass);
+            C3p0Config.getInstance().setData(COMBO_POOLED_DATA_SOURCE);
+            try {
+                COMBO_POOLED_DATA_SOURCE.setDriverClass(SWGD_DATABASE_CONFIG.driverClass);
+            } catch (PropertyVetoException e) {
+                throw new ErrorException(e.getMessage());
+            }
+            COMBO_POOLED_DATA_SOURCE.setJdbcUrl(SWGD_DATABASE_CONFIG.url);
+            COMBO_POOLED_DATA_SOURCE.setUser(SWGD_DATABASE_CONFIG.username);
+            COMBO_POOLED_DATA_SOURCE.setPassword(SWGD_DATABASE_CONFIG.password);
+
             return COMBO_POOLED_DATA_SOURCE.getConnection();
-        } catch (SQLException |ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new WarningException(SWGDPARA + "连接失败");
         }
     }

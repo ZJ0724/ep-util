@@ -50,6 +50,13 @@ public abstract class ParamDbComparator {
     }
 
     /**
+     * 删除websocket
+     * */
+    public final void deleteWebsocket() {
+        this.baseWebsocketApi = null;
+    }
+
+    /**
      * 兼容日期
      *
      * @param date date
@@ -97,7 +104,7 @@ public abstract class ParamDbComparator {
         /**
          * 当前比对进度
          * */
-        public int currentProgress = 0;
+        public String currentProgress = "";
 
         /**
          * 一共多少个表

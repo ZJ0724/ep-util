@@ -7,6 +7,7 @@ import com.easipass.util.core.database.MdbDatabase;
 import com.easipass.util.core.database.SWGDPARADatabase;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.WarningException;
+import com.easipass.util.core.util.MathUtil;
 import com.easipass.util.core.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 参数库导入比对器
@@ -43,6 +45,9 @@ public final class ImportParamDbComparator extends ParamDbComparator {
             result.AllTable = dbTables.size();
 
             CountDownLatch countDownLatch = new CountDownLatch(mdbTables.size());
+
+            // 当前比对了多少个表
+            AtomicInteger count = new AtomicInteger();
 
             // 遍历mdb
             for (int i = 0; i < mdbTables.size(); i++) {
@@ -154,15 +159,17 @@ public final class ImportParamDbComparator extends ParamDbComparator {
                         finishMessage.messages.add(e.getMessage());
                         finishMessage.flag = false;
                     } finally {
+                        count.incrementAndGet();
+
                         if (finishMessage.flag) {
                             finishMessage.messages.add("SUCCESS");
                         }
-                        result.currentProgress++;
                         result.finishMessages.add(finishMessage);
-                        countDownLatch.countDown();
-
+                        result.currentProgress = MathUtil.getPercentage(count.doubleValue(), result.AllTable);
                         // 发送websocket
                         this.sendData(result.toString());
+
+                        countDownLatch.countDown();
                     }
                 });
             }

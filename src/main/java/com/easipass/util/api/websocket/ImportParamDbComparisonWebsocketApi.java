@@ -2,8 +2,12 @@ package com.easipass.util.api.websocket;
 
 import com.easipass.util.core.ParamDbComparator;
 import com.easipass.util.core.Project;
+import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.paramDbComparator.ImportParamDbComparator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import javax.websocket.OnClose;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.PathParam;
@@ -20,6 +24,21 @@ import java.io.File;
 public class ImportParamDbComparisonWebsocketApi extends BaseWebsocketApi {
 
     /**
+     * ParamDbComparator
+     * */
+    private ParamDbComparator paramDbComparator;
+
+    /**
+     * file
+     * */
+    private File file;
+
+    /**
+     * log
+     * */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImportParamDbComparisonWebsocketApi.class);
+
+    /**
      * 建立连接
      *
      * @param session session
@@ -30,13 +49,27 @@ public class ImportParamDbComparisonWebsocketApi extends BaseWebsocketApi {
     public void onOpen(Session session, @PathParam("groupName") String groupName, @PathParam("fileName") String fileName) {
         super.onOpen(session);
 
-        ParamDbComparator paramDbComparator = new ImportParamDbComparator();
-        File file = new File(Project.CACHE_PATH, fileName);
+        try {
+            this.paramDbComparator = new ImportParamDbComparator();
+            this.file = new File(Project.CACHE_PATH, fileName);
 
-        paramDbComparator.addWebsocket(this);
-        paramDbComparator.comparison(groupName, file.getAbsolutePath());
+            this.paramDbComparator.addWebsocket(this);
+            this.paramDbComparator.comparison(groupName, this.file.getAbsolutePath());
+        } finally {
+            this.close();
+        }
+    }
 
-        this.close();
+    /**
+     * 监听连接关闭
+     * */
+    @OnClose
+    public void onClose() {
+        LOGGER.info("ImportParamDbComparisonWebsocketApi已关闭");
+        this.paramDbComparator.deleteWebsocket();
+        if (!this.file.delete()) {
+            throw new ErrorException("mdb文件删除失败");
+        }
     }
 
 }
