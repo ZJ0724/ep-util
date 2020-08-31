@@ -122,7 +122,7 @@ public abstract class Database {
      * */
     public PreparedStatement getPreparedStatement(String sql, Object... params) {
         try {
-            PreparedStatement preparedStatement = this.connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = this.connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
             if (params != null) {
                 int paramsLength = params.length;
