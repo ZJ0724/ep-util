@@ -14,12 +14,12 @@
             <div style="padding: 0 25%;">
                 <div class="ep-panel">
                     <div>
-                        组名
+                        表名
                     </div>
 
                     <div style="margin-top: 10px;">
                         <label style="width: 100%;">
-                            <input v-model="page.groupName" class="form-control input-sm" />
+                            <input v-model="page.tableName" class="form-control input-sm" />
                         </label>
                     </div>
 
@@ -67,8 +67,8 @@
                                 <tr>
                                     <th>数据库表名</th>
                                     <th>数据库数量</th>
-                                    <th>mdb表名</th>
-                                    <th>mdb数量</th>
+                                    <th>excel表名</th>
+                                    <th>excel数量</th>
                                     <th>信息</th>
                                 </tr>
                                 </thead>
@@ -99,7 +99,7 @@
 
     import paramDbServiceApi from "../../api/service/paramDbServiceApi.js";
     import alertComponent from "../../component/alertComponent.js";
-    import ImportParamDbComparisonWebsocketApi from "../../api/websocket/ImportParamDbComparisonWebsocketApi.js";
+    import ExcelImportParamDbComparisonWebsocketApi from "../../api/websocket/ExcelImportParamDbComparisonWebsocketApi.js";
     import maskComponent from "../../component/maskComponent.js";
     import loadingComponent from "../../component/loadingComponent.js";
 
@@ -108,7 +108,7 @@
 
         data: {
             page: {
-                groupName: "parameterDb.mdb",
+                tableName: "",
                 file: ""
             },
 
@@ -150,8 +150,8 @@
             comparison() {
                 let that = this;
 
-                if (that.page.groupName === "") {
-                    alertComponent.message("组名不能为空");
+                if (that.page.tableName === "") {
+                    alertComponent.message("表名不能为空");
                     return;
                 }
 
@@ -162,7 +162,7 @@
 
                 loadingComponent.open();
 
-                let webSocket = new ImportParamDbComparisonWebsocketApi(that.page.groupName, that.file);
+                let webSocket = new ExcelImportParamDbComparisonWebsocketApi(that.page.tableName, that.file);
 
                 webSocket.onmessage(function (message) {
                     loadingComponent.close();

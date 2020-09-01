@@ -3,7 +3,7 @@ package com.easipass.util.api.websocket;
 import com.easipass.util.core.ParamDbComparator;
 import com.easipass.util.core.Project;
 import com.easipass.util.core.exception.ErrorException;
-import com.easipass.util.core.paramDbComparator.ImportParamDbComparator;
+import com.easipass.util.core.paramDbComparator.ExcelImportParamDbComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -15,13 +15,13 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.File;
 
 /**
- * 参数库导入websocket
+ * 参数库excel导入websocket
  *
  * @author ZJ
  * */
 @Component
-@ServerEndpoint(BaseWebsocketApi.URL + "importParamDbComparison/{groupName}/{fileName}")
-public class ImportParamDbComparisonWebsocketApi extends BaseWebsocketApi {
+@ServerEndpoint(BaseWebsocketApi.URL + "excelImportParamDbComparison/{tableName}/{fileName}")
+public class ExcelImportParamDbComparisonWebsocketApi extends BaseWebsocketApi {
 
     /**
      * ParamDbComparator
@@ -36,22 +36,22 @@ public class ImportParamDbComparisonWebsocketApi extends BaseWebsocketApi {
     /**
      * log
      * */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ImportParamDbComparisonWebsocketApi.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExcelImportParamDbComparisonWebsocketApi.class);
 
     /**
      * 建立连接
      *
      * @param session session
-     * @param groupName 组名
+     * @param tableName 表名
      * @param fileName 文件名
      * */
     @OnOpen
-    public void onOpen(Session session, @PathParam("groupName") String groupName, @PathParam("fileName") String fileName) {
+    public void onOpen(Session session, @PathParam("tableName") String tableName, @PathParam("fileName") String fileName) {
         super.onOpen(session);
 
         try {
             this.file = new File(Project.CACHE_PATH, fileName);
-            this.paramDbComparator = new ImportParamDbComparator(groupName, this.file.getAbsolutePath());
+            this.paramDbComparator = new ExcelImportParamDbComparator(tableName, this.file.getAbsolutePath());
 
             this.paramDbComparator.addWebsocket(this);
             this.paramDbComparator.comparison();
@@ -65,10 +65,10 @@ public class ImportParamDbComparisonWebsocketApi extends BaseWebsocketApi {
      * */
     @OnClose
     public void onClose() {
-        LOGGER.info("ImportParamDbComparisonWebsocketApi已关闭");
+        LOGGER.info("ExcelImportParamDbComparisonWebsocketApi已关闭");
         this.paramDbComparator.deleteWebsocket();
         if (!this.file.delete()) {
-            throw new ErrorException("mdb文件删除失败");
+            throw new ErrorException("excel文件删除失败");
         }
     }
 

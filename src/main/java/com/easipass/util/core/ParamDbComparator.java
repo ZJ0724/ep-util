@@ -22,12 +22,9 @@ public abstract class ParamDbComparator {
     /**
      * 比对
      *
-     * @param groupName 分组名
-     * @param mdbPath mdb文件路径
-     *
      * @return 比对信息
      * */
-    public abstract ComparisonMessage comparison(String groupName, String mdbPath);
+    public abstract ComparisonMessage comparison();
 
     /**
      * 添加websocket
@@ -144,14 +141,14 @@ public abstract class ParamDbComparator {
             public int dbCount = 0;
 
             /**
-             * mdb表名
+             * 资源表名
              * */
-            public String mdbName = "";
+            public String resourceName = "";
 
             /**
-             * mdb数量
+             * 资源表数量
              * */
-            public int mdbCount = 0;
+            public int resourceCount = 0;
 
             /**
              * 信息

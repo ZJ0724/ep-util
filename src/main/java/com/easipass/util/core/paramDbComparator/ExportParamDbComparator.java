@@ -26,12 +26,33 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class ExportParamDbComparator extends ParamDbComparator {
 
     /**
+     * 组名
+     * */
+    private final String groupName;
+
+    /**
+     * mdb文件路径
+     * */
+    private final String mdbPath;
+
+    /**
      * 日志
      * */
     private static final Logger LOGGER = LoggerFactory.getLogger(ExportParamDbComparator.class);
 
+    /**
+     * 构造函数
+     *
+     * @param groupName 组名
+     * @param mdbPath mdb文件路径
+     * */
+    public ExportParamDbComparator(String groupName, String mdbPath) {
+        this.groupName = groupName;
+        this.mdbPath = mdbPath;
+    }
+
     @Override
-    public ComparisonMessage comparison(String groupName, String mdbPath) {
+    public ComparisonMessage comparison() {
         // 比对信息
         ParamDbComparator.ComparisonMessage result = new ComparisonMessage();
 
@@ -72,13 +93,13 @@ public final class ExportParamDbComparator extends ParamDbComparator {
                         }
 
                         finishMessage.dbName = dbTableName;
-                        finishMessage.mdbName = mdbTableName;
+                        finishMessage.resourceName = mdbTableName;
 
                         // 数据库表数据数量
                         finishMessage.dbCount = SWGDPARADatabase.getTableCount(dbTableName);
 
                         // mdb表数据数量
-                        finishMessage.mdbCount = MdbDatabase.getTableCount(mdbPath, mdbTableName);
+                        finishMessage.resourceCount = MdbDatabase.getTableCount(mdbPath, mdbTableName);
 
                         // 版本
                         String version = SWGDPARADatabase.getTableVersion(dbTableName);

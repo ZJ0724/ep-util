@@ -26,12 +26,33 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class ImportParamDbComparator extends ParamDbComparator {
 
     /**
+     * 组名
+     * */
+    private final String groupName;
+
+    /**
+     * mdb文件路径
+     * */
+    private final String mdbPath;
+
+    /**
      * 日志
      * */
     private static final Logger LOGGER = LoggerFactory.getLogger(ImportParamDbComparator.class);
 
+    /**
+     * 构造函数
+     *
+     * @param groupName 组名
+     * @param mdbPath mdb文件路径
+     * */
+    public ImportParamDbComparator(String groupName, String mdbPath) {
+        this.groupName = groupName;
+        this.mdbPath = mdbPath;
+    }
+
     @Override
-    public ParamDbComparator.ComparisonMessage comparison(String groupName, String mdbPath) {
+    public ParamDbComparator.ComparisonMessage comparison() {
         // 比对信息
         ParamDbComparator.ComparisonMessage result = new ComparisonMessage();
 
@@ -71,11 +92,11 @@ public final class ImportParamDbComparator extends ParamDbComparator {
                             throw new WarningException("存在为空的数据库表名");
                         }
 
-                        finishMessage.mdbName = mdbTableName;
+                        finishMessage.resourceName = mdbTableName;
                         finishMessage.dbName = dbTableName;
 
                         // mdb表数据数量
-                        finishMessage.mdbCount = MdbDatabase.getTableCount(mdbPath, mdbTableName);
+                        finishMessage.resourceCount = MdbDatabase.getTableCount(mdbPath, mdbTableName);
 
                         // 数据库表数据数量
                         finishMessage.dbCount = SWGDPARADatabase.getTableCount(dbTableName);

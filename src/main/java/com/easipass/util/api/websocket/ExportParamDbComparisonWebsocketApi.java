@@ -50,11 +50,11 @@ public class ExportParamDbComparisonWebsocketApi extends BaseWebsocketApi {
         super.onOpen(session);
 
         try {
-            this.paramDbComparator = new ExportParamDbComparator();
             this.file = new File(Project.CACHE_PATH, fileName);
+            this.paramDbComparator = new ExportParamDbComparator(groupName, this.file.getAbsolutePath());
 
             this.paramDbComparator.addWebsocket(this);
-            this.paramDbComparator.comparison(groupName, this.file.getAbsolutePath());
+            this.paramDbComparator.comparison();
         } finally {
             this.close();
         }

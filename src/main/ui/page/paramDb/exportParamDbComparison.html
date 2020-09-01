@@ -76,8 +76,8 @@
                                 <tr v-for="(item, key) in comparisonMessage.finishMessages" :key="key">
                                     <td>{{item.dbName}}</td>
                                     <td>{{item.dbCount}}</td>
-                                    <td>{{item.dbName}}</td>
-                                    <td>{{item.mdbCount}}</td>
+                                    <td>{{item.resourceName}}</td>
+                                    <td>{{item.resourceCount}}</td>
                                     <td>
                                         <div :style="item.flag ? 'color: green' : 'color: red'" v-for="(m, k) in item.messages" :key="k">
                                             {{m}}
