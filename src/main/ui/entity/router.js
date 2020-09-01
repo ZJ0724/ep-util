@@ -78,6 +78,10 @@ export default [
             {
                 path: "importParamDbComparison.html",
                 name: "导入比对"
+            },
+            {
+                path: "exportParamDbComparison.html",
+                name: "导出比对"
             }
         ]
     },

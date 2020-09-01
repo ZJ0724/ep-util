@@ -104,7 +104,7 @@ public abstract class ParamDbComparator {
         /**
          * 当前比对进度
          * */
-        public String currentProgress = "";
+        public String currentProgress = "0%";
 
         /**
          * 一共多少个表

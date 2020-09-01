@@ -49,6 +49,9 @@ public final class ImportParamDbComparator extends ParamDbComparator {
             // 当前比对了多少个表
             AtomicInteger count = new AtomicInteger();
 
+            // 发送websocket
+            this.sendData(result.toString());
+
             // 遍历mdb
             for (int i = 0; i < mdbTables.size(); i++) {
                 final int finalI = i;

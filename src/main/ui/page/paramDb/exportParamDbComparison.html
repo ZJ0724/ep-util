@@ -99,7 +99,7 @@
 
     import paramDbServiceApi from "../../api/service/paramDbServiceApi.js";
     import alertComponent from "../../component/alertComponent.js";
-    import ImportParamDbComparisonWebsocketApi from "../../api/websocket/ImportParamDbComparisonWebsocketApi.js";
+    import ExportParamDbComparisonWebsocketApi from "../../api/websocket/ExportParamDbComparisonWebsocketApi.js";
     import maskComponent from "../../component/maskComponent.js";
     import loadingComponent from "../../component/loadingComponent.js";
 
@@ -162,7 +162,7 @@
 
                 loadingComponent.open();
 
-                let webSocket = new ImportParamDbComparisonWebsocketApi(that.page.groupName, that.file);
+                let webSocket = new ExportParamDbComparisonWebsocketApi(that.page.groupName, that.file);
 
                 webSocket.onmessage(function (message) {
                     loadingComponent.close();
