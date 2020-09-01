@@ -6,7 +6,6 @@ import com.easipass.util.core.config.SWGDDatabaseConfig;
 import com.easipass.util.core.exception.ConnectionFailException;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.SearchException;
-import com.easipass.util.core.util.StringUtil;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,21 +55,6 @@ public final class SWGDDatabase extends Database {
      */
     public SWGDDatabase() {
         super(getConnection(), "SWGD");
-    }
-
-    /**
-     * 获取连接
-     *
-     * @return Connection
-     * */
-    private static Connection getConnection() {
-        try {
-            // 验证driverCLass
-            Class.forName(SWGD_DATABASE_CONFIG.driverClass);
-            return COMBO_POOLED_DATA_SOURCE.getConnection();
-        } catch (SQLException |ClassNotFoundException e) {
-            throw new ConnectionFailException("SWGD数据库连接失败");
-        }
     }
 
     /**
@@ -410,6 +394,21 @@ public final class SWGDDatabase extends Database {
         }
 
         return result;
+    }
+
+    /**
+     * 获取连接
+     *
+     * @return Connection
+     * */
+    private static Connection getConnection() {
+        try {
+            // 验证driverCLass
+            Class.forName(SWGD_DATABASE_CONFIG.driverClass);
+            return COMBO_POOLED_DATA_SOURCE.getConnection();
+        } catch (SQLException |ClassNotFoundException e) {
+            throw new ConnectionFailException("SWGD数据库连接失败");
+        }
     }
 
 }

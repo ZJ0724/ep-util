@@ -70,7 +70,12 @@ public enum Resource {
     /**
      * application配置文件
      * */
-    APPLICATION_PROPERTIES(Project.ROOT_PATH + "/config/application.properties");
+    APPLICATION_PROPERTIES(Project.ROOT_PATH + "/config/application.properties"),
+
+    /**
+     * paramDbMapping
+     * */
+    PARAM_DB_MAPPING(Project.CONFIG_PATH + "/config/paramDbMapping");
 
     /**
      * 路径

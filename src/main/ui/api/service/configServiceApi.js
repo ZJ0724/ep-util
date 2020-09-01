@@ -4,6 +4,8 @@ let configServiceApi = {
 
     config: "config/",
 
+    paramDbMapping: "paramDbMapping",
+
     // 设置打卡配置
     setDaKaConfig(daKaConfigDTO) {
         return baseServiceApi.sendHttp({
@@ -52,6 +54,43 @@ let configServiceApi = {
         return baseServiceApi.sendHttp({
             type: "GET",
             url: `${configServiceApi.config}getCusResultUploadSftpConfig`
+        });
+    },
+
+    getParamDbMapping() {
+        return baseServiceApi.sendHttp({
+            type: "GET",
+            url: `${configServiceApi.config}${this.paramDbMapping}/get`
+        });
+    },
+
+    addParamDbMapping(data) {
+        return baseServiceApi.sendHttp({
+            type: "POST",
+            url: `${configServiceApi.config}${this.paramDbMapping}/add`,
+            data: data
+        });
+    },
+
+    deleteParamDbMapping(index) {
+        return baseServiceApi.sendHttp({
+            type: "POST",
+            url: `${configServiceApi.config}${this.paramDbMapping}/delete?index=${index}`
+        });
+    },
+
+    updateParamDbMapping(index, data) {
+        return baseServiceApi.sendHttp({
+            type: "POST",
+            url: `${configServiceApi.config}${this.paramDbMapping}/update?index=${index}`,
+            data: data
+        });
+    },
+
+    paramDbMappingGetCount() {
+        return baseServiceApi.sendHttp({
+            type: "GET",
+            url: `${configServiceApi.config}${this.paramDbMapping}/getCount`
         });
     }
 

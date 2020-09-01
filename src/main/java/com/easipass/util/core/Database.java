@@ -1,6 +1,7 @@
 package com.easipass.util.core;
 
 import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.exception.SqlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.*;
@@ -48,7 +49,7 @@ public abstract class Database {
         this.connection = connection;
         this.name = name;
 
-        log.info("数据库: {}, 已连接", this.name);
+//        log.debug("数据库: {}, 已连接", this.name);
     }
 
     /**
@@ -69,7 +70,7 @@ public abstract class Database {
             throw new ErrorException(e.getMessage());
         }
 
-        log.info("数据库: {}, 已关闭", this.name);
+//        log.debug("数据库: {}, 已关闭", this.name);
     }
 
     /**
@@ -80,7 +81,12 @@ public abstract class Database {
      */
     public final void update(String sql, Object... params) {
         try {
-            getPreparedStatement(sql, params).execute();
+            PreparedStatement preparedStatement = getPreparedStatement(sql, params);
+
+            preparedStatement.execute();
+
+            preparedStatement.close();
+            this.preparedStatements.remove(preparedStatement);
         } catch (SQLException e) {
             throw new ErrorException(e.getMessage());
         }
@@ -114,9 +120,9 @@ public abstract class Database {
      *
      * @return PreparedStatement
      * */
-    private PreparedStatement getPreparedStatement(String sql, Object... params) {
+    public PreparedStatement getPreparedStatement(String sql, Object... params) {
         try {
-            PreparedStatement preparedStatement = this.connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = this.connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
             if (params != null) {
                 int paramsLength = params.length;
@@ -130,7 +136,7 @@ public abstract class Database {
 
             return preparedStatement;
         } catch (SQLException e) {
-            throw new ErrorException(e.getMessage());
+            throw new SqlException(e.getMessage());
         }
     }
 
@@ -171,6 +177,29 @@ public abstract class Database {
      * */
     public static String getFiledData(ResultSet resultSet, String filedName) {
         return getFiledData(resultSet, filedName, false);
+    }
+
+    /**
+     * 获取字段类型
+     *
+     * @param resultSet resultSet
+     * @param fieldName 字段名
+     *
+     * @return 字段类型
+     * */
+    public static String getFieldType(ResultSet resultSet, String fieldName) {
+        try {
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            for (int i = 1 ; i <= metaData.getColumnCount(); i++) {
+                if (fieldName.equals(metaData.getColumnName(i))) {
+                    return metaData.getColumnTypeName(i);
+                }
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        return null;
     }
 
 }

@@ -72,6 +72,26 @@ export default [
     },
 
     {
+        path: "paramDb/",
+        name: "参数库",
+        children: [
+            {
+                path: "importParamDbComparison.html",
+                name: "导入比对"
+            },
+            {
+                path: "exportParamDbComparison.html",
+                name: "导出比对"
+            },
+
+            {
+                path: "excelImportParamDbComparison.html",
+                name: "excel导入比对"
+            }
+        ]
+    },
+
+    {
         path: "config.html",
         name: "配置"
     }

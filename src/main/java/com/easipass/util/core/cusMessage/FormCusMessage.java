@@ -307,6 +307,10 @@ public final class FormCusMessage extends CusMessage {
                         String codeT = NodeMapping.getDbValue(resultSet, "CODE_T");
                         String codeS = NodeMapping.getDbValue(resultSet, "CODE_S");
 
+                        if (StringUtil.isEmpty(codeS)) {
+                            codeS = "00";
+                        }
+
                         nodeMapping.setDbValue(codeT + codeS);
                     }
 

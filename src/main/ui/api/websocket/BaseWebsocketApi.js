@@ -6,6 +6,10 @@ export default class BaseWebsocketApi {
         url = document.location.origin + "/websocket/" + url;
         url = url.replace("http", "ws").replace("https", "ws");
         this.websocket = new WebSocket(url);
+
+        window.onunload = () => {
+            this.websocket.close();
+        };
     }
 
     // 等待连接完成

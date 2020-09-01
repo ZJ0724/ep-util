@@ -10,6 +10,7 @@ import com.easipass.util.core.config.CusResultUploadSftpConfig;
 import com.easipass.util.core.config.DaKaConfig;
 import com.easipass.util.core.config.SWGDDatabaseConfig;
 import com.easipass.util.entity.Response;
+import com.zj0724.util.springboot.parameterCheck.OpenParameterCheck;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
  * */
 @RestController
 @RequestMapping(BaseServiceApi.URL + "config")
+@OpenParameterCheck
 public class ConfigServiceApi {
 
     /**

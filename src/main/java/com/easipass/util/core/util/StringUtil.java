@@ -55,9 +55,22 @@ public final class StringUtil {
      * 判断是否为null
      *
      * @param s 数据
+     *
+     * @return 是null返回true
      * */
     public static boolean isEmpty(String s) {
         return s == null || "".equals(s);
+    }
+
+    /**
+     * 判断是否为null
+     *
+     * @param s 数据
+     *
+     * @return 是null返回true
+     * */
+    public static boolean isEmptyAll(String s) {
+        return s.replaceAll(" ", "").replaceAll("\n", "").replaceAll("\r", "").equals("");
     }
 
 }

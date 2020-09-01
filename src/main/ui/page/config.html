@@ -13,16 +13,56 @@
             <ul class="nav nav-tabs" style="margin-top: 50px;">
                 <li @click="selectConfig(0)" role="presentation" :class="active === 0 ? 'active' : ''"><a href="javascript:">SWGD数据库</a></li>
                 <li @click="selectConfig(1)" role="presentation" :class="active === 1 ? 'active' : ''"><a href="javascript:">回执上传sftp</a></li>
+<!--                <li @click="selectConfig(2)" role="presentation" :class="active === 2 ? 'active' : ''"><a href="javascript:">参数库映射</a></li>-->
             </ul>
 
-            <div style="margin: 10% 30% 0 30%;">
-                <div :style="active === 0 ? '' : 'display: none'">
+            <div style="margin-top: 50px;">
+                <div v-cloak style="margin: 0 30%;" :style="active === 0 ? '' : 'display: none'">
                     <config :vo="SWGDDatabase.VO" :dto="SWGDDatabase.DTO" :get-api="SWGDDatabase.getApi" :set-api="SWGDDatabase.setApi"></config>
                 </div>
 
-                <div :style="active === 1 ? '' : 'display: none'">
+                <div v-cloak style="margin: 0 30%;" :style="active === 1 ? '' : 'display: none'">
                     <config :vo="cusResultUploadSftpConfig.VO" :dto="cusResultUploadSftpConfig.DTO" :get-api="cusResultUploadSftpConfig.getApi" :set-api="cusResultUploadSftpConfig.setApi"></config>
                 </div>
+
+<!--                <div v-cloak :style="active === 2 ? '' : 'display: none'">-->
+<!--                    <div class="ep-panel">-->
+<!--                        <div style="display: flex;">-->
+<!--                            <button @click="paramDbMapping.add.display = true" type="button" class="btn btn-primary btn-sm">添加</button>-->
+<!--                            <div style="display: flex;align-items: center;margin-left: 20px;">-->
+<!--                                一共{{paramDbMapping.count}}条。-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    <div style="margin-top: 20px;" class="ep-panel">-->
+<!--                        <table class="table table-hover">-->
+<!--                            <thead>-->
+<!--                            <tr>-->
+<!--                                <th>数据库表名</th>-->
+<!--                                <th>mdb表名</th>-->
+<!--                                <th>操作</th>-->
+<!--                            </tr>-->
+<!--                            </thead>-->
+<!--                            <tbody>-->
+<!--                            <tr v-for="(item, key) in paramDbMapping.data" :key="key">-->
+<!--                                <td>{{item.dbName}}</td>-->
+<!--                                <td>{{item.mdbName}}</td>-->
+<!--                                <td>-->
+<!--                                    <button @click="openUpdate(key, item)" type="button" class="btn btn-default btn-sm">编辑</button>-->
+<!--                                    <button @click="deleteParamDbMapping(key)" type="button" class="btn btn-danger btn-sm">删除</button>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            </tbody>-->
+<!--                        </table>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; 编辑弹窗 &ndash;&gt;-->
+<!--                    <param-db-mapping title="编辑" :data="paramDbMapping.update.data" :display.sync="paramDbMapping.update.display" @ok="updateParamDbMapping"></param-db-mapping>-->
+
+<!--                    &lt;!&ndash; 添加弹窗 &ndash;&gt;-->
+<!--                    <param-db-mapping title="添加" :data="paramDbMapping.add.data" :display.sync="paramDbMapping.add.display" @ok="addParamDbMapping"></param-db-mapping>-->
+<!--                </div>-->
             </div>
         </div>
     </div>
@@ -36,6 +76,8 @@
     import CusResultUploadSftpConfigDTO from "../entity/DTO/CusResultUploadSftpConfigDTO.js";
     import CusResultUploadSftpConfigVO from "../entity/VO/CusResultUploadSftpConfigVO.js";
     import configServiceApi from "../api/service/configServiceApi.js";
+    import maskComponent from "../component/maskComponent.js";
+    import alertComponent from "../component/alertComponent.js";
 
     new Vue({
         el: "#main",
@@ -55,6 +97,32 @@
                 DTO: new CusResultUploadSftpConfigDTO(),
                 getApi: configServiceApi.getCusResultUploadSftpConfig,
                 setApi: configServiceApi.setCusResultUploadSftpConfig
+            },
+
+            paramDbMapping: {
+                data: [],
+
+                update: {
+                    display: false,
+
+                    index: null,
+
+                    data: {
+                        dbName: "",
+                        mdbName: ""
+                    }
+                },
+
+                add: {
+                    display: false,
+
+                    data: {
+                        dbName: "",
+                        mdbName: ""
+                    }
+                },
+
+                count: null
             }
         },
 
@@ -62,6 +130,143 @@
             // 切换配置选项
             selectConfig(active) {
                 this.active = active;
+            },
+
+            getParamDbMapping() {
+                let that = this;
+
+                configServiceApi.getParamDbMapping().then(function (data) {
+                    that.paramDbMapping.data = data;
+
+                    // 获取条数
+                    configServiceApi.paramDbMappingGetCount().then(function (count) {
+                        that.paramDbMapping.count = count;
+                    });
+                });
+            },
+
+            deleteParamDbMapping(index) {
+                let that = this;
+
+                configServiceApi.deleteParamDbMapping(index).then(function () {
+                    that.getParamDbMapping();
+                });
+            },
+
+            openUpdate(index, data) {
+                this.paramDbMapping.update.index = index;
+                this.paramDbMapping.update.data = data;
+                this.paramDbMapping.update.display = true;
+            },
+
+            updateParamDbMapping(data) {
+                let update = this.paramDbMapping.update;
+                let that = this;
+
+                configServiceApi.updateParamDbMapping(update.index, data).then(function () {
+                    that.getParamDbMapping();
+                    update.display = false;
+                    alertComponent.message("成功");
+                }).catch(function (message) {
+                    alertComponent.message(message);
+                });
+            },
+
+            addParamDbMapping(data) {
+                let that = this;
+                let add = this.paramDbMapping.add;
+
+                configServiceApi.addParamDbMapping(data).then(function () {
+                    that.getParamDbMapping();
+                    add.display = false;
+                    alertComponent.message("成功");
+                }).catch(function (message) {
+                    alertComponent.message(message);
+                });
+            }
+        },
+
+        created() {
+            this.getParamDbMapping();
+        },
+
+        components: {
+            paramDbMapping: {
+                template: `
+                    <div :style="display ? '' : 'display: none'" style="position: fixed;top: 30%;width: 400px;left: 37%;z-index: 999;">
+                        <div class="panel panel-default" style="padding: 20px;box-shadow: #0000004d 0 0 20px 0;">
+                            <div class="title" style="font-size: 18px;">
+                                {{title}}
+                            </div>
+
+                            <div style="margin-top: 20px;">
+                                数据库表名
+                            </div>
+
+                            <div style="margin-top: 10px;">
+                                <input v-model="myData.dbName" class="form-control input-sm" />
+                            </div>
+
+                            <div style="margin-top: 20px;">
+                                mdb表名
+                            </div>
+
+                            <div style="margin-top: 10px;">
+                                <input v-model="myData.mdbName" class="form-control input-sm" />
+                            </div>
+
+                            <div style="margin-top: 20px;">
+                                <button @click="ok()" style="width: 100%;" type="button" class="btn btn-primary btn-sm">确定</button>
+                            </div>
+
+                            <div style="margin-top: 10px;">
+                                <button @click="close()" style="width: 100%;" type="button" class="btn btn-default btn-sm">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                `,
+
+                props: ["display", "data", "title"],
+
+                data() {
+                    return {
+                        myData: {
+                            dbName: "",
+                            mdbName: ""
+                        }
+                    }
+                },
+
+                methods: {
+                    close() {
+                        this.display = false;
+                        this.$emit("update:display", false);
+                    },
+
+                    ok() {
+                        this.$emit("ok", this.myData);
+                    }
+                },
+
+                watch: {
+                    display(newData) {
+                        if (newData) {
+                            maskComponent.open();
+                        } else {
+                            maskComponent.close();
+
+                            for (let key in this.myData) {
+                                this.myData[key] = "";
+                            }
+                        }
+                    },
+
+                    data() {
+                        for (let key in this.myData) {
+                            this.myData[key] = this.data[key];
+                        }
+                    }
+                }
             }
         }
     });
