@@ -2,8 +2,6 @@ package com.easipass.util.core;
 
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.SqlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,11 +19,6 @@ public abstract class Database {
     private final Connection connection;
 
     /**
-     * 数据库名
-     * */
-    private final String name;
-
-    /**
      * PreparedStatement
      * */
     private final Set<PreparedStatement> preparedStatements = new HashSet<>();
@@ -36,20 +29,12 @@ public abstract class Database {
     private final Set<ResultSet> resultSets = new HashSet<>();
 
     /**
-     * 日志
-     * */
-    private static final Logger log = LoggerFactory.getLogger(Database.class);
-
-    /**
      * 构造函数
      *
      * @param connection 连接
      * */
-    protected Database(Connection connection, String name) {
+    protected Database(Connection connection) {
         this.connection = connection;
-        this.name = name;
-
-//        log.debug("数据库: {}, 已连接", this.name);
     }
 
     /**

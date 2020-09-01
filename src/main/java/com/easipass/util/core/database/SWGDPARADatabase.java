@@ -40,7 +40,7 @@ public final class SWGDPARADatabase extends Database {
      * 构造函数
      */
     public SWGDPARADatabase() throws WarningException {
-        super(getConnection(), SWGDPARA);
+        super(getConnection());
     }
 
     /**

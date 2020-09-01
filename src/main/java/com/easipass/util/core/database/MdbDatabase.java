@@ -23,7 +23,7 @@ public final class MdbDatabase extends Database {
      * @param path 路径
      */
     public MdbDatabase(String path) throws WarningException {
-        super(getConnection(path), path);
+        super(getConnection(path));
     }
 
     /**
