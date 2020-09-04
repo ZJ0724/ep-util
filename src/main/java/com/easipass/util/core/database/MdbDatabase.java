@@ -60,7 +60,7 @@ public final class MdbDatabase extends Database {
 
             return Integer.parseInt(count);
         } catch (SqlException e) {
-            throw new ErrorException(e.getMessage());
+            throw new WarningException(e.getMessage());
         } finally {
             mdbDatabase.close();
         }
