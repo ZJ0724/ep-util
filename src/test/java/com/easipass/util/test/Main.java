@@ -12,9 +12,10 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
 
-//        Database database = new MdbDatabase("C:\\Users\\ZJ\\.kitten\\data.accdb");
 
+        ExcelUtil excelUtil = new ExcelUtil("C:\\Users\\14762\\Desktop\\下载\\AGREEMENT_RATE_20200904(1).xlsx", 0);
 
+        System.out.println(excelUtil.getAllRow());
 
     }
 
