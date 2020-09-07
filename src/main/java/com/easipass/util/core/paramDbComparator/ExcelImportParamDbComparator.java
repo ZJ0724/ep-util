@@ -94,9 +94,14 @@ public class ExcelImportParamDbComparator extends ParamDbComparator {
                     // 单个数据
                     String data = excelUtil.getData(i, cell);
 
-                    if (data == null) {
-                        throw new WarningException("存在数据为null");
+                    // null
+                    if (StringUtil.isEmptyAll(data)) {
+                        continue;
                     }
+
+//                    if (data == null) {
+//                        throw new WarningException("存在数据为null");
+//                    }
 
                     data = data.replaceAll("'", "''");
 

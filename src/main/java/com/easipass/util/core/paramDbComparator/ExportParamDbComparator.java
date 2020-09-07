@@ -144,7 +144,8 @@ public final class ExportParamDbComparator extends ParamDbComparator {
                                                     ("LICENSEN".equals(dbTableName) && (("CODE_T".equals(mdbFieldName)) || ("CODE_S".equals(mdbFieldName)))) ||
                                                     ("AREA_PRE".equals(dbTableName) && (("USE_TO".equals(mdbFieldName)) || ("TRADE_MODE".equals(mdbFieldName)) || ("GOODS_T2".equals(mdbFieldName)) || ("GOODS_T1".equals(mdbFieldName)) || ("DOCU_CODE".equals(mdbFieldName)) || ("DISTRICT_T".equals(mdbFieldName)) || ("CODE_FLAG".equals(mdbFieldName)))) ||
                                                     ("TRADE_MO".equals(dbTableName) && (("TRADE_MODE".equals(mdbFieldName)) || ("DISTRICT_T".equals(mdbFieldName)))) ||
-                                                    ("CTA_INF_REC".equals(dbTableName))
+                                                    ("CTA_INF_REC".equals(dbTableName)) ||
+                                                    ("QUATA".equals(dbTableName) && (("COUNTRY_CO".equals(mdbFieldName)) || ("CODE_T".equals(mdbFieldName)) || ("CODE_S".equals(mdbFieldName))))
                                     ) {
                                         if ("__00".equals(data)) {
                                             data = "";
@@ -201,11 +202,12 @@ public final class ExportParamDbComparator extends ParamDbComparator {
                         }
                         count.incrementAndGet();
                         result.finishMessages.add(finishMessage);
-                        countDownLatch.countDown();
                         result.currentProgress = MathUtil.getPercentage(count.doubleValue(), result.AllTable);
 
                         // 发送websocket
                         this.sendData(result.toString());
+
+                        countDownLatch.countDown();
                     }
                 });
             }

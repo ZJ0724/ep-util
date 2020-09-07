@@ -23,7 +23,7 @@ public final class MdbDatabase extends Database {
      * @param path 路径
      */
     public MdbDatabase(String path) throws WarningException {
-        super(getConnection(path), path);
+        super(getConnection(path));
     }
 
     /**
@@ -60,7 +60,7 @@ public final class MdbDatabase extends Database {
 
             return Integer.parseInt(count);
         } catch (SqlException e) {
-            throw new ErrorException(e.getMessage());
+            throw new WarningException(e.getMessage());
         } finally {
             mdbDatabase.close();
         }

@@ -1,10 +1,11 @@
 package com.easipass.util.core.util;
 
 import com.easipass.util.core.exception.WarningException;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import com.monitorjbl.xlsx.StreamingReader;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,9 +20,9 @@ import java.util.List;
 public final class ExcelUtil {
 
     /**
-     * xssfSheet
+     * 数据集合
      * */
-    private final XSSFSheet xssfSheet;
+    private final List<List<String>> data = new ArrayList<>();
 
     /**
      * 构造函数
@@ -34,9 +35,15 @@ public final class ExcelUtil {
 
         try {
             fileInputStream = new FileInputStream(new File(path));
-            XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
-
-            this.xssfSheet = xssfWorkbook.getSheetAt(sheetIndex);
+            Workbook workbook = StreamingReader.builder().rowCacheSize(100).bufferSize(4096).open(fileInputStream);
+            Sheet sheet = workbook.getSheetAt(sheetIndex);
+            for (Row row : sheet) {
+                List<String> strings = new ArrayList<>();
+                for (Cell cell : row) {
+                    strings.add(cell.getStringCellValue());
+                }
+                this.data.add(strings);
+            }
         } catch (IOException | org.apache.poi.EmptyFileException e) {
             throw new WarningException(e.getMessage());
         } finally {
@@ -56,7 +63,7 @@ public final class ExcelUtil {
      * @return 总行数
      * */
     public int getAllRow() {
-        return this.xssfSheet.getLastRowNum() + 1;
+        return data.size();
     }
 
     /**
@@ -67,15 +74,11 @@ public final class ExcelUtil {
      * @return 单行所有数据
      * */
     public List<String> getRowData(int rowIndex) {
-        List<String> result = new ArrayList<>();
-
-        int allCell = this.xssfSheet.getRow(rowIndex).getLastCellNum();
-
-        for (int i = 0; i < allCell; i++) {
-            result.add(this.getData(rowIndex, i));
+        if (rowIndex >= data.size()) {
+            return new ArrayList<>();
         }
 
-        return result;
+        return data.get(rowIndex);
     }
 
     /**
@@ -87,19 +90,13 @@ public final class ExcelUtil {
      * @return 数据
      * */
     public String getData(int rowIndex, int cellIndex) {
-        XSSFRow xssfRow = this.xssfSheet.getRow(rowIndex);
+        List<String> rowData = this.getRowData(rowIndex);
 
-        if (xssfRow == null) {
+        if (cellIndex >= rowData.size()) {
             return null;
         }
 
-        XSSFCell xssfCell = xssfRow.getCell(cellIndex);
-
-        if (xssfCell == null) {
-            return null;
-        }
-
-        return xssfCell.getStringCellValue();
+        return rowData.get(cellIndex);
     }
 
 }

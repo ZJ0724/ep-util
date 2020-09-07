@@ -54,7 +54,7 @@ public final class SWGDDatabase extends Database {
      * 构造函数
      */
     public SWGDDatabase() {
-        super(getConnection(), "SWGD");
+        super(getConnection());
     }
 
     /**
