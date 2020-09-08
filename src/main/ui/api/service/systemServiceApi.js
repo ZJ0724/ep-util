@@ -17,6 +17,21 @@ export default {
             type: "GET",
             url: this.system + "getTime"
         });
+    },
+
+    getCache() {
+        return baseServiceApi.sendHttp({
+            type: "GET",
+            url: this.system + "getCache"
+        });
+    },
+
+    deleteCacheFile(data) {
+        return baseServiceApi.sendHttp({
+            type: "POST",
+            url: this.system + "deleteCacheFile",
+            data: data
+        });
     }
 
 }

@@ -13,6 +13,28 @@
         <div id="body">
             <panel text="version" :data="version"></panel>
             <panel style="margin-top: 20px;" text="time" :data="time"></panel>
+
+            <div class="ep-panel" style="margin-top: 20px;">
+                <div style="font-weight: bold;">
+                    缓存文件管理
+                </div>
+
+                <div>
+                    <!-- 无 -->
+                    <div v-cloak v-if="cache.length === 0" style="margin-top: 10px;color: #0c0c0c73;">
+                        无
+                    </div>
+
+                    <div v-cloak v-for="(item, key) in cache" style="display: flex;margin-top: 10px;" :key="key">
+                        <div v-cloak style="width: 50%;">
+                            {{item}}
+                        </div>
+                        <div v-cloak style="width: 50%;display: flex;flex-direction: row-reverse;">
+                            <a @click="deleteCacheFile(item)" style="cursor: pointer;">删除</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
@@ -28,7 +50,9 @@
         data: {
             version: null,
 
-            time: null
+            time: null,
+
+            cache: []
         },
 
         mounted() {
@@ -41,6 +65,8 @@
             systemServiceApi.getTime().then(function (time) {
                 that.time = time;
             });
+
+            that.getCache();
         },
 
         components: {
@@ -57,6 +83,24 @@
                     `,
 
                 props: ["text", "data"]
+            }
+        },
+
+        methods: {
+            deleteCacheFile(fileName) {
+                let that = this;
+
+                systemServiceApi.deleteCacheFile({fileName}).then(function () {
+                    that.getCache();
+                });
+            },
+
+            getCache() {
+                let that = this;
+
+                systemServiceApi.getCache().then(function (cache) {
+                    that.cache = cache;
+                });
             }
         }
     });
