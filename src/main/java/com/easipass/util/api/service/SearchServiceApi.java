@@ -37,7 +37,7 @@ public class SearchServiceApi {
      * @return Response
      * */
     @GetMapping("decMod")
-    public Response decMod(@RequestParam @NotNull String preEntryId) {
+    public Response decMod(@RequestParam String preEntryId) {
         return Response.returnTrue(SWGDDatabase.searchDecMod(preEntryId));
     }
 
@@ -49,7 +49,7 @@ public class SearchServiceApi {
      * @return Response
      * */
     @GetMapping("agent")
-    public Response agent(@RequestParam @NotNull String ediNo) {
+    public Response agent(@RequestParam String ediNo) {
         return Response.returnTrue(SWGDDatabase.searchAgent(ediNo));
     }
 
