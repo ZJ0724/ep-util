@@ -26,6 +26,8 @@
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
+
+        <maxHistory>10</maxHistory>
     </appender>
 
     <root level="debug">
