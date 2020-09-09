@@ -239,17 +239,24 @@ public final class SWGDPARADatabase extends Database {
         return result;
     }
 
-//    /**
-//     * 清空参数库表数据
-//     *
-//     * @param tableName 表名
-//     * */
-//    public static void deleteParamDbTable(String tableName) {
-//        String sql = StringUtil.append("DELETE FROM SWGDPARA.", tableName);
-//
-//        LOGGER.info(sql);
-//
-//        this.update(sql);
-//    }
+    /**
+     * 组名是否存在
+     *
+     * @param groupName 组名
+     *
+     * @return 存在返回true
+     * */
+    public static boolean groupNameIsExist(String groupName) throws WarningException {
+        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
+        ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM SWGDPARA.T_PARAMS_GROUP WHERE GROUP_NAME = ?", groupName);
+
+        try {
+            return resultSet.next();
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            swgdparaDatabase.close();
+        }
+    }
 
 }
