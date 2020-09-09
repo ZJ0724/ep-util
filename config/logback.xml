@@ -19,6 +19,8 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${user.home}/.ep-util/log/logFile-%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <maxHistory>10</maxHistory>
         </rollingPolicy>
 
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
@@ -26,8 +28,6 @@
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
-
-        <maxHistory>10</maxHistory>
     </appender>
 
     <root level="debug">
