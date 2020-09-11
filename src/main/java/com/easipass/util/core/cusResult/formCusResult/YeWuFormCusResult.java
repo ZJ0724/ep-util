@@ -74,6 +74,7 @@ public final class YeWuFormCusResult extends FormCusResult {
         dataDocumentRootElement.element("NOTICE_DATE").setText(DateUtil.getDate());
         dataDocumentRootElement.element("CHANNEL").setText(this.getChannel());
         dataDocumentRootElement.element("NOTE").setText(this.getNote());
+        dataDocumentRootElement.element("D_DATE").setText(DateUtil.getDate("yyyy-MM-dd"));
         data = dataDocument.asXML();
 
         //加密
