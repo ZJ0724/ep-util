@@ -1,10 +1,10 @@
 package com.easipass.util.core;
 
+import com.alibaba.fastjson.JSONObject;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.SqlException;
 import java.sql.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 数据库
@@ -123,6 +123,53 @@ public abstract class Database {
         } catch (SQLException e) {
             throw new SqlException(e.getMessage());
         }
+    }
+
+    /**
+     * queryToJson
+     *
+     * @param sql sql
+     *
+     * @return List<JSONObject>
+     * */
+    public final List<JSONObject> queryToJson(String sql) {
+        List<JSONObject> result = new ArrayList<>();
+        ResultSet resultSet = this.query(sql);
+        ResultSetMetaData resultSetMetaData;
+        int columnCount;
+        try {
+            resultSetMetaData = resultSet.getMetaData();
+            columnCount = resultSetMetaData.getColumnCount();
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+        List<String> columns = new ArrayList<>();
+
+        // 获取所有字段
+        for (int i = 1; i <= columnCount; i++) {
+            try {
+                columns.add(resultSetMetaData.getColumnName(i));
+            } catch (SQLException e) {
+                throw new ErrorException(e.getMessage());
+            }
+        }
+
+        // 遍历数据
+        try {
+            while (resultSet.next()) {
+                JSONObject jsonObject = new JSONObject(true);
+
+                for (String column : columns) {
+                    jsonObject.put(column, resultSet.getString(column));
+                }
+
+                result.add(jsonObject);
+            }
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        return result;
     }
 
     /**

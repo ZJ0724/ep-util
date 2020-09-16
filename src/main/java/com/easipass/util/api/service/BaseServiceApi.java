@@ -10,6 +10,6 @@ public class BaseServiceApi {
     /**
      * 前置URL
      * */
-    protected static final String URL = "/api/";
+    public static final String URL = "/api/";
 
 }

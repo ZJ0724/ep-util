@@ -1,5 +1,6 @@
 package com.easipass.util.core.database;
 
+import com.alibaba.fastjson.JSONObject;
 import com.easipass.util.core.C3p0Config;
 import com.easipass.util.core.Database;
 import com.easipass.util.core.config.SWGDDatabaseConfig;
@@ -49,6 +50,11 @@ public final class SWGDDatabase extends Database {
      * log
      * */
     private static final Logger LOGGER = LoggerFactory.getLogger(SWGDDatabase.class);
+
+    /**
+     * SWGD
+     * */
+    private static final String SWGD = "SWGD";
 
     /**
      * 构造函数
@@ -408,6 +414,23 @@ public final class SWGDDatabase extends Database {
             return COMBO_POOLED_DATA_SOURCE.getConnection();
         } catch (SQLException |ClassNotFoundException e) {
             throw new ConnectionFailException("SWGD数据库连接失败");
+        }
+    }
+
+    /**
+     * 获取表头
+     *
+     * @param ediNo ediNo
+     *
+     * @return List<JSONObject>
+     * */
+    public static List<JSONObject> queryFormHeadToJson(String ediNo) {
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+
+        try {
+            return swgdDatabase.queryToJson("SELECT * FROM " + SWGD + ".T_SWGD_FORM_HEAD WHERE EDI_NO = " + ediNo);
+        } finally {
+            swgdDatabase.close();
         }
     }
 
