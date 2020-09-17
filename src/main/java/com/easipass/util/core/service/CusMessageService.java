@@ -12,6 +12,8 @@ import java.util.List;
 
 /**
  * 报文服务
+ *
+ * @author ZJ
  * */
 @Service
 public final class CusMessageService {
