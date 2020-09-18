@@ -54,7 +54,7 @@ public final class SWGDDatabase extends Database {
     /**
      * SWGD
      * */
-    private static final String SWGD = "SWGD";
+    public static final String SWGD = "SWGD";
 
     /**
      * 构造函数
@@ -428,7 +428,24 @@ public final class SWGDDatabase extends Database {
         SWGDDatabase swgdDatabase = new SWGDDatabase();
 
         try {
-            return swgdDatabase.queryToJson("SELECT * FROM " + SWGD + ".T_SWGD_FORM_HEAD WHERE EDI_NO = " + ediNo);
+            return swgdDatabase.queryToJson("SELECT * FROM " + SWGD + ".T_SWGD_FORM_HEAD WHERE EDI_NO = '" + ediNo + "'");
+        } finally {
+            swgdDatabase.close();
+        }
+    }
+
+    /**
+     * 通过sql查询
+     *
+     * @param sql sql
+     *
+     * @return List<JSONObject>
+     * */
+    public static List<JSONObject> queryBySql(String sql) {
+        SWGDDatabase swgdDatabase = new SWGDDatabase();
+
+        try {
+            return swgdDatabase.queryToJson(sql);
         } finally {
             swgdDatabase.close();
         }

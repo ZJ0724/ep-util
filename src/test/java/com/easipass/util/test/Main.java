@@ -17,14 +17,6 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        CusMessageService.ComparisonMessage comparisonMessage = new CusMessageService.ComparisonMessage();
-
-        comparisonMessage.setFlag(true);
-        comparisonMessage.addMessage("12");
-        comparisonMessage.addMessage("5757");
-
-        System.out.println(comparisonMessage);
-
     }
 
 }

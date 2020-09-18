@@ -93,7 +93,7 @@ public abstract class Database {
 
             return resultSet;
         }catch (SQLException e) {
-            throw new ErrorException(e.getMessage());
+            throw new ErrorException(e.getMessage() + sql);
         }
     }
 

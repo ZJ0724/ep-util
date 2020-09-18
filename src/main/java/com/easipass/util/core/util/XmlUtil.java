@@ -11,6 +11,10 @@ public class XmlUtil {
 
     /**
      * 获取document by InputStream
+     *
+     * @param InputStream InputStream
+     *
+     * @return Document
      */
     public static Document getDocument(InputStream InputStream) {
         try {
