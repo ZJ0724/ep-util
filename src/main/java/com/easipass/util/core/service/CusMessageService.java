@@ -1,7 +1,6 @@
 package com.easipass.util.core.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.easipass.util.core.CusMessage;
 import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.exception.ComparisonException;
 import com.easipass.util.core.exception.CusMessageException;
@@ -147,10 +146,16 @@ public final class CusMessageService {
         // 报文DecLists节点
         Element DecLists = rootElement.element("DecLists");
 
+        if (DecLists == null) {
+            result.addMessage("缺少<DecLists>节点");
+        }
+
         // 数据库表体数据必须和子节点数一致
-        if (databaseFormListList.size() != DecLists.elements().size()) {
-            result.addMessage("[表体] 节点与数据库数量不一致");
-        } else {
+        else if (databaseFormListList.size() != DecLists.elements().size()) {
+            result.addMessage(formatMessage("表体", "报文节点数量与数据库数量不一致"));
+        }
+
+        else {
             for (int i = 0; i < databaseFormListList.size(); i++) {
                 // 数据库单个表体
                 JSONObject databaseFormList = null;
@@ -161,7 +166,7 @@ public final class CusMessageService {
                     }
                 }
                 if (databaseFormList == null) {
-                    result.addMessage("[表体 - " + (i + 1) + "] 数据库不存在");
+                    result.addMessage(formatMessage("表体 - " + (i + 1), "数据库中不存在"));
                     continue;
                 }
 
@@ -174,11 +179,33 @@ public final class CusMessageService {
                     }
                 }
                 if (DecList == null) {
-                    result.addMessage("[表体 - " + (i + 1) + "] 报文不存在");
+                    result.addMessage(formatMessage("表体 - " + (i + 1), "报文中不存在"));
                     continue;
                 }
 
+                for (NodeMapping nodeMapping : FormCusMessageNodeMapping.DecListNodeMapping) {
+                    String nodeValue = getNodeValue(DecList, nodeMapping.node);
+                    String dbValue = getDbValue(databaseFormList, nodeMapping.dbField);
 
+                    // ProdValidDt特殊处理
+                    if (nodeMapping.node.equals("ProdValidDt")) {
+                        dbValue = DateUtil.formatDateYYYYMMdd(dbValue);
+                    }
+
+                    // 特殊处理CodeTS
+                    if ("CodeTS".equals(nodeMapping.node)) {
+                        String codeT = getDbValue(databaseFormList, "CODE_T");
+                        String codeS = getDbValue(databaseFormList, "CODE_S");
+
+                        if (StringUtil.isEmpty(codeS)) {
+                            codeS = "00";
+                        }
+
+                        dbValue = codeT + codeS;
+                    }
+
+                    result.comparison(nodeValue, dbValue, nodeMapping, "表体 - " + (i + 1));
+                }
             }
         }
 
@@ -220,6 +247,32 @@ public final class CusMessageService {
         return jsonObject.getString(dbField);
     }
 
+    /**
+     * 格式化信息
+     *
+     * @param messages 信息，最后一位是信息，前面都是节点位置
+     *
+     * @return 格式化后的信息
+     * */
+    private static String formatMessage(String... messages) {
+        String result = "";
+
+        for (int i = 0; i < messages.length; i++) {
+            String message = "[" + messages[i] + "]";
+            if  (i != 0 && i != messages.length - 1) {
+                message = " - " + message;
+            }
+
+            if (i == messages.length - 1) {
+                result = result + " : " + messages[i];
+                break;
+            }
+
+            result = StringUtil.append(result, message);
+        }
+
+        return result;
+    }
     /**
      * 比对信息
      *
@@ -279,12 +332,19 @@ public final class CusMessageService {
          * @param nodeValue 节点值
          * @param dbValue 数据库值
          * @param nodeMapping nodeMapping
-         * @param title 标题
+         * @param titles 标题
          * */
-        public void comparison(String nodeValue, String dbValue, NodeMapping nodeMapping, String title) {
+        public void comparison(String nodeValue, String dbValue, NodeMapping nodeMapping, String... titles) {
+            String[] messages = new String[titles.length + 2];
+
+            System.arraycopy(titles, 0, messages, 0, titles.length);
+            messages[messages.length - 2] = nodeMapping.node + "(" + nodeMapping.name + ")";
+
             if (nodeMapping.notNull) {
                 if (nodeValue == null) {
-                    this.addMessage("[" + title + "] - <" + nodeMapping.node + "(" + nodeMapping.name + ")> 为空");
+                    messages[messages.length - 1] = "为空";
+                    this.addMessage(formatMessage(messages));
+                    return;
                 }
             }
 
@@ -296,7 +356,8 @@ public final class CusMessageService {
             }
 
             if (!dbValue.equals(nodeValue)) {
-                this.addMessage("[" + title + "] - <" + nodeMapping.node + "(" + nodeMapping.name + ")>, 数据库值: " + dbValue + "; 节点值: " + nodeValue);
+                messages[messages.length - 1] = "数据库值: " + dbValue + "; 节点值: " + nodeValue;
+                this.addMessage(formatMessage(messages));
             }
         }
 
@@ -424,7 +485,6 @@ public final class CusMessageService {
             DecListNodeMapping.add(new NodeMapping("TradeCurr", "TRADE_CURR_STD", "成交币制"));
             DecListNodeMapping.add(new NodeMapping("DeclTotal", "DECL_TOTAL", "申报总价"));
             DecListNodeMapping.add(new NodeMapping("GQty", "G_QTY", "申报数量"));
-
             DecListNodeMapping.add(new NodeMapping("FirstQty", "QTY_CONV", "法定第一数量"));
             DecListNodeMapping.add(new NodeMapping("SecondQty", "QTY_2", "法定第二数量"));
             DecListNodeMapping.add(new NodeMapping("GUnit", "G_UNIT_STD", "申报计量单位"));
@@ -435,43 +495,28 @@ public final class CusMessageService {
             DecListNodeMapping.add(new NodeMapping("DestinationCountry", "DESTINATION_COUNTRY_STD", "目的国"));
             DecListNodeMapping.add(new NodeMapping("CiqCode", "CIQ_CODE", "检验检疫编码"));
             DecListNodeMapping.add(new NodeMapping("DeclGoodsEname", "DECL_GOODS_ENAME", "商品英文名称"));
-
-            DecListNodeMapping.add(new NodeMapping("", "", ""));
-            DecListNodeMapping.add(new NodeMapping("", "", ""));
-            DecListNodeMapping.add(new NodeMapping("", "", ""));
-            DecListNodeMapping.add(new NodeMapping("", "", ""));
-            DecListNodeMapping.add(new NodeMapping("", "", ""));
-            DecListNodeMapping.add(new NodeMapping("", "", ""));
-            DecListNodeMapping.add(new NodeMapping("", "", ""));
-            DecListNodeMapping.add(new NodeMapping("", "", ""));
-            DecListNodeMapping.add(new NodeMapping("", "", ""));
-            DecListNodeMapping.add(new NodeMapping("", "", ""));
-
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("", "", ""));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("", "", ""));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("", "", ""));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("OrigPlaceCode", "原产地区代码", "ORIG_PLACE_CODE"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("Purpose", "用途代码", "PURPOSE"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("ProdValidDt", "产品有效期", "PROD_VALID_DT"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("ProdQgp", "产品保质期", "PROD_QGP"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("GoodsAttr", "货物属性代码", "GOODS_ATTR"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("Stuff", "成份/原料/组份", "STUFF"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("Uncode", "UN编码", "UN_CODE"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("DangName", "危险货物名称", "DANG_NAME"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("DangPackType", "危包类别", "DANG_PACK_TYPE"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("DangPackSpec", "危包规格", "DANG_PACK_SPEC"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("EngManEntCnm", "境外生产企业名称", "ENG_MAN_ENT_CNM"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("NoDangFlag", "?", "NO_DANG_FLAG"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("DestCode", "目的地代码", "DEST_CODE"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("GoodsSpec", "检验检疫货物规格", "GOODS_SPEC"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("GoodsModel", "货物型号", "GOODS_MODEL"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("GoodsBrand", "货物品牌", "GOODS_BRAND"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("ProduceDate", "生产日期", "PRODUCE_DATE"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("ProdBatchNo", "生产批号", "PROD_BATCH_NO"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("DistrictCode", "境内目的地/境内货源地", "DISTRICT_CODE"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("CiqName", "检验检疫名称", "CIQ_NAME"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("MnufctrRegno", "生产单位注册号", "MNUFCTR_REGNO"));
-            FORM_LIST_MAPPING.add(new CusMessage.NodeMapping("MnufctrRegName", "生产单位名称", "MNUFCTR_REG_NAME"));
+            DecListNodeMapping.add(new NodeMapping("OrigPlaceCode", "ORIG_PLACE_CODE", "原产地区代码"));
+            DecListNodeMapping.add(new NodeMapping("Purpose", "PURPOSE", "用途代码"));
+            DecListNodeMapping.add(new NodeMapping("ProdValidDt", "PROD_VALID_DT", "产品有效期"));
+            DecListNodeMapping.add(new NodeMapping("ProdQgp", "PROD_QGP", "产品保质期"));
+            DecListNodeMapping.add(new NodeMapping("GoodsAttr", "GOODS_ATTR", "货物属性代码"));
+            DecListNodeMapping.add(new NodeMapping("Stuff", "STUFF", "成份/原料/组份"));
+            DecListNodeMapping.add(new NodeMapping("Uncode", "UN_CODE", "UN编码"));
+            DecListNodeMapping.add(new NodeMapping("DangName", "DANG_NAME", "危险货物名称"));
+            DecListNodeMapping.add(new NodeMapping("DangPackType", "DANG_PACK_TYPE", "危包类别"));
+            DecListNodeMapping.add(new NodeMapping("DangPackSpec", "DANG_PACK_SPEC", "危包规格"));
+            DecListNodeMapping.add(new NodeMapping("EngManEntCnm", "ENG_MAN_ENT_CNM", "境外生产企业名称"));
+            DecListNodeMapping.add(new NodeMapping("NoDangFlag", "NO_DANG_FLAG", "?"));
+            DecListNodeMapping.add(new NodeMapping("DestCode", "DEST_CODE", "目的地代码"));
+            DecListNodeMapping.add(new NodeMapping("GoodsSpec", "GOODS_SPEC", "检验检疫货物规格"));
+            DecListNodeMapping.add(new NodeMapping("GoodsModel", "GOODS_MODEL", "货物型号"));
+            DecListNodeMapping.add(new NodeMapping("GoodsBrand", "GOODS_BRAND", "货物品牌"));
+            DecListNodeMapping.add(new NodeMapping("ProduceDate", "PRODUCE_DATE", "生产日期"));
+            DecListNodeMapping.add(new NodeMapping("ProdBatchNo", "PROD_BATCH_NO", "生产批号"));
+            DecListNodeMapping.add(new NodeMapping("DistrictCode", "DISTRICT_CODE", "境内目的地/境内货源地"));
+            DecListNodeMapping.add(new NodeMapping("CiqName", "CIQ_NAME", "检验检疫名称"));
+            DecListNodeMapping.add(new NodeMapping("MnufctrRegno", "MNUFCTR_REGNO", "生产单位注册号"));
+            DecListNodeMapping.add(new NodeMapping("MnufctrRegName", "MNUFCTR_REG_NAME", "生产单位名称"));
         }
 
     }
