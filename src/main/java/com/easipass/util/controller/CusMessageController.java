@@ -51,4 +51,30 @@ public class CusMessageController {
         }
     }
 
+    /**
+     * 比对修撤单
+     *
+     * @param multipartFile multipartFile
+     *
+     * @return Response
+     * */
+    @PostMapping("decModCusMessageComparison")
+    public Response decModCusMessageComparison(@RequestParam("decModCusMessage") MultipartFile multipartFile) {
+        InputStream inputStream;
+        CusMessageService.ComparisonMessage comparisonMessage;
+        try {
+            inputStream = multipartFile.getInputStream();
+            comparisonMessage = cusMessageService.decModComparison(inputStream);
+            inputStream.close();
+        } catch (IOException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        if (comparisonMessage.isFlag()) {
+            return Response.returnTrue(comparisonMessage.getMessages());
+        } else {
+            return Response.returnFalse(comparisonMessage.getMessages());
+        }
+    }
+
 }

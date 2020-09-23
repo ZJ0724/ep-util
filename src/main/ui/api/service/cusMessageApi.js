@@ -8,5 +8,14 @@ export default {
             dataType: "file",
             data: data
         });
+    },
+
+    decModCusMessageComparison(data) {
+        return baseServiceApi.sendHttp({
+            type: "POST",
+            url: "cusMessage/decModCusMessageComparison",
+            dataType: "file",
+            data: data
+        });
     }
 }

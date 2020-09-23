@@ -26,7 +26,9 @@ public final class CusMessageService {
     /**
      * 比对报关单报文
      *
-     * @param inputStream multipartFile
+     * @param inputStream inputStream
+     *
+     * @return ComparisonMessage
      * */
     public ComparisonMessage formComparison(InputStream inputStream) {
         // 比对信息
@@ -426,6 +428,151 @@ public final class CusMessageService {
     }
 
     /**
+     * 比对修撤单报文
+     *
+     * @param inputStream inputStream
+     *
+     * @return ComparisonMessage
+     * */
+    public ComparisonMessage decModComparison(InputStream inputStream) {
+        // 比对信息
+        ComparisonMessage result = new ComparisonMessage();
+
+        // 报文document
+        Document document;
+        try {
+            document = XmlUtil.getDocument_v2(inputStream);
+        } catch (DocumentException e) {
+            throw new CusMessageException("报文格式错误: " + e.getMessage());
+        }
+
+        // 根节点
+        Element rootElement = document.getRootElement();
+
+        // preEntryId
+        Element EntryIdElement = rootElement.element("EntryId");
+        String preEntryId = EntryIdElement != null ? EntryIdElement.getText() : null;
+        if (StringUtil.isEmpty(preEntryId)) {
+            throw new CusMessageException("缺少preEntryId");
+        }
+
+        // 比对表头
+
+        // 数据库表头信息
+        List<JSONObject> databaseDecModHeadList = SWGDDatabase.queryBySql("SELECT * FROM " + SWGDDatabase.SWGD + ".T_SWGD_DECMOD_HEAD WHERE PRE_ENTRY_ID = '" + preEntryId + "'");
+        JSONObject databaseDecModHead;
+        if (databaseDecModHeadList.size() != 1) {
+            throw new CusMessageException("数据库数据异常(preEntryId: " + preEntryId + ")");
+        } else {
+            databaseDecModHead = databaseDecModHeadList.get(0);
+        }
+
+        // 报关单表头
+        List<JSONObject> databaseFormHeadList = SWGDDatabase.queryBySql("SELECT * FROM " + SWGDDatabase.SWGD + ".T_SWGD_FORM_HEAD WHERE PRE_ENTRY_ID = '" + preEntryId + "'");
+        JSONObject databaseFormHead;
+        if (databaseFormHeadList.size() != 1) {
+            throw new CusMessageException("数据库报关单数据异常(preEntryId: " + preEntryId + ")");
+        } else {
+            databaseFormHead = databaseFormHeadList.get(0);
+        }
+
+        for (NodeMapping nodeMapping : DecModCusMessageNodeMapping.HEAD) {
+            String dbValue = getDbValue(databaseDecModHead, nodeMapping.dbField);
+
+            // CustomsCode
+            if ("CustomsCode".equals(nodeMapping.node)) {
+                dbValue = getDbValue(databaseFormHead, "DECL_PORT");
+            }
+
+            // TradeCode
+            if ("TradeCode".equals(nodeMapping.node)) {
+                dbValue = getDbValue(databaseFormHead, "TRADE_CO");
+            }
+
+            // TradeName
+            if ("TradeName".equals(nodeMapping.node)) {
+                dbValue = getDbValue(databaseFormHead, "TRADE_NAME");
+            }
+
+            // AgentName
+            if ("AgentName".equals(nodeMapping.node)) {
+                dbValue = getDbValue(databaseFormHead, "AGENT_NAME");
+            }
+
+            // IeFlag
+            if ("IeFlag".equals(nodeMapping.node)) {
+                switch (getDbValue(databaseFormHead, "IE_FLAG")) {
+                    case "0" : case "2" : case "4" : case "6" : case "8" : case "A" :
+                        dbValue = "E";
+                        break;
+                    case "1" : case "3" : case "5" : case "7" : case "9" : case "B" :
+                    case "D" : case "F" :
+                        dbValue = "I";
+                        break;
+                    default :
+                        dbValue = null;
+                        break;
+                }
+            }
+
+            // IcCode
+            if ("IcCode".equals(nodeMapping.node)) {
+                dbValue = dbValue + "|" + getDbValue(databaseDecModHead, "CERT_NO");
+            }
+
+            // TradeCreditCode
+            if ("TradeCreditCode".equals(nodeMapping.node)) {
+                dbValue = getDbValue(databaseFormHead, "TRADE_CO_SCC");
+            }
+
+            // AgentCreditCode
+            if ("AgentCreditCode".equals(nodeMapping.node)) {
+                dbValue = getDbValue(databaseFormHead, "AGENT_CODE_SCC");
+            }
+
+            result.comparison(getNodeValue(rootElement, nodeMapping.node), dbValue, nodeMapping, "表头");
+        }
+
+        // 比对表体
+        // 数据库表体
+        List<JSONObject> databaseDecModListList = SWGDDatabase.queryBySql("SELECT * FROM " + SWGDDatabase.SWGD + ".T_SWGD_DECMOD_LIST WHERE HEAD_ID = '" + databaseDecModHead.get("ID") + "' ORDER BY ID");
+        // 报文表体
+        Element Items = rootElement.element("Items");
+        List<Element> ItemList = Items == null ? new ArrayList<>() : Items.elements("Item");
+
+        if (databaseDecModListList.size() != ItemList.size()) {
+            result.addMessage(formatMessage("表体", "报文节点数量与数据库数量不一致"));
+        } else {
+            for (int i = 0; i < databaseDecModListList.size(); i++) {
+                JSONObject jsonObject = databaseDecModListList.get(i);
+                Element element = ItemList.get(i);
+
+                for (NodeMapping nodeMapping : DecModCusMessageNodeMapping.LIST) {
+                    String dbValue = getDbValue(jsonObject, nodeMapping.dbField);
+
+                    // No
+                    if ("No".equals(nodeMapping.node)) {
+                        dbValue = (i + 1) + "";
+                    }
+
+                    result.comparison(getNodeValue(element, nodeMapping.node), dbValue, nodeMapping, "表体 - " + (i + 1));
+                }
+            }
+        }
+
+        if (result.getMessages().size() == 0) {
+            result.setFlag(true);
+            result.addMessage("比对完成，无差异");
+        } else {
+            result.setFlag(false);
+        }
+
+        result.addMessage(0, "");
+
+        return result;
+    }
+
+    /**
      * 获取报文节点值
      *
      * @param element 节点
@@ -479,6 +626,7 @@ public final class CusMessageService {
 
         return result;
     }
+
     /**
      * 比对信息
      *
@@ -852,6 +1000,59 @@ public final class CusMessageService {
             DecRoyaltyFeeNodeMapping.add(new NodeMapping("IssueDateTime", "ISSUE_DATE_TIME", "合同/协议签约时间"));
             DecRoyaltyFeeNodeMapping.add(new NodeMapping("PeriodStartDate", "PERIOD_START_DATE", "本次支付对应的计提周期起始时间"));
             DecRoyaltyFeeNodeMapping.add(new NodeMapping("PeriodEndDate", "PERIOD_END_DATE", "本次支付对应的计提周期终止时间"));
+        }
+
+    }
+
+    /**
+     * 修撤单报文节点映射
+     *
+     * @author ZJ
+     * */
+    private static final class DecModCusMessageNodeMapping {
+
+        /**
+         * 表头
+         * */
+        public static final List<NodeMapping> HEAD = new ArrayList<>();
+
+        static {
+            HEAD.add(new NodeMapping("DecModSeqNo", "DECMODSEQNO", "修撤单统一编号"));
+            HEAD.add(new NodeMapping("DecModType", "DECMODTYPE", "修撤单类型"));
+            HEAD.add(new NodeMapping("EntryId", "PRE_ENTRY_ID", "报关单号"));
+            HEAD.add(new NodeMapping("CustomsCode", "?", "申报地海关"));
+            HEAD.add(new NodeMapping("TradeCode", "?", "收发货人代码"));
+            HEAD.add(new NodeMapping("TradeName", "?", "收发货人名称"));
+            HEAD.add(new NodeMapping("AgentCode", "TRADE_CODE", "企业代码"));
+            HEAD.add(new NodeMapping("AgentName", "?", "企业名称"));
+            HEAD.add(new NodeMapping("DecModNote", "DECMODNOTE", "修撤单原因"));
+            HEAD.add(new NodeMapping("CheckMark", "CHECKMARK", "审查表识"));
+            HEAD.add(new NodeMapping("DecSeqNo", "DECSEQNO", "报关单统一编号"));
+            HEAD.add(new NodeMapping("Sign", "SIGNTXT", "加签信息"));
+            HEAD.add(new NodeMapping("SignTime", "SIGN_TIME", "加签时间"));
+            HEAD.add(new NodeMapping("IeFlag", "?", "进出口标识"));
+            HEAD.add(new NodeMapping("OperType", "OPERTYPE", "操作类型"));
+            HEAD.add(new NodeMapping("IcCode", "IC_CODE", "IC卡号"));
+            HEAD.add(new NodeMapping("EntOpName", "ENTOPNAME", "联系人"));
+            HEAD.add(new NodeMapping("EntOpTele", "ENTOPTELE", "联系方式"));
+            HEAD.add(new NodeMapping("FeedDept", "FEEDDEPT", "岗位"));
+            HEAD.add(new NodeMapping("TradeCreditCode", "?", "境内收发货人统一社会信用代码"));
+            HEAD.add(new NodeMapping("AgentCreditCode", "?", "申报单位统一社会信用代码"));
+        }
+
+        /**
+         * 表体
+         * */
+        public static final List<NodeMapping> LIST = new ArrayList<>();
+
+        static {
+            LIST.add(new NodeMapping("No", "?", "序号"));
+            LIST.add(new NodeMapping("FieldCode", "QP_FIELDCODE", "字段代码"));
+            LIST.add(new NodeMapping("FieldName", "QP_FIELDNAME", "字段名"));
+            LIST.add(new NodeMapping("OldValue", "OLDVALUE", "字段原值"));
+            LIST.add(new NodeMapping("NewValue", "NEWVALUE", "字段新值"));
+            LIST.add(new NodeMapping("OldName", "OLDNAME", "字段原值参数表对应中文名称"));
+            LIST.add(new NodeMapping("NewName", "NEWNAME", "字段新值参数表对应中文名称"));
         }
 
     }
