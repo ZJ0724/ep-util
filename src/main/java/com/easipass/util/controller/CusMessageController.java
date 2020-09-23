@@ -20,7 +20,7 @@ import java.io.InputStream;
  * */
 @RestController
 @RequestMapping(BaseServiceApi.URL + "cusMessage")
-public final class CusMessageController {
+public class CusMessageController {
 
     @Resource
     private CusMessageService cusMessageService;

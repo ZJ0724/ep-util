@@ -76,6 +76,10 @@ public final class FileUtil {
      * @return 文件内容
      * */
     public static String getData(File file) {
+        if (!file.exists()) {
+            return null;
+        }
+
         InputStream inputStream = null;
         String result;
 

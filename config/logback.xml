@@ -30,8 +30,27 @@
         </filter>
     </appender>
 
+    <appender name="error" class="ch.qos.logback.core.FileAppender">
+        <file>${user.home}/.ep-util/log/error.log</file>
+
+        <append>true</append>
+
+        <encoder>
+            <pattern>${pattern}</pattern>
+        </encoder>
+
+        <prudent>false</prudent>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
     <root level="INFO">
         <appender-ref ref="console" />
         <appender-ref ref="file" />
+        <appender-ref ref="error" />
     </root>
 </configuration>

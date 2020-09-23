@@ -35,6 +35,19 @@
                     </div>
                 </div>
             </div>
+
+            <div class="ep-panel" style="margin-top: 20px;">
+                <div style="display: flex;">
+                    <div style="font-weight: bold;width: 50%;">
+                        错误日志
+                    </div>
+                    <div style="display: flex;flex-direction: row-reverse;width: 50%;">
+                        <a @click="cleanErrorLog()" style="cursor: pointer;">清空</a>
+                    </div>
+                </div>
+
+                <div style="white-space: pre-line;margin-top: 10px;" v-html="errorLog"></div>
+            </div>
         </div>
     </div>
 </body>
@@ -43,6 +56,7 @@
 <script type="module">
 
     import systemServiceApi from "./api/service/systemServiceApi.js";
+    import systemApi from "./api/service/systemApi.js";
 
     new Vue({
         el: "#main",
@@ -52,7 +66,9 @@
 
             time: null,
 
-            cache: []
+            cache: [],
+
+            errorLog: ""
         },
 
         mounted() {
@@ -67,6 +83,8 @@
             });
 
             that.getCache();
+
+            that.getErrorLog();
         },
 
         components: {
@@ -100,6 +118,23 @@
 
                 systemServiceApi.getCache().then(function (cache) {
                     that.cache = cache;
+                });
+            },
+
+            getErrorLog() {
+                let that = this;
+
+                systemApi.getErrorLog().then(function (data) {
+                    data = data.replaceAll("\t", "&ensp;&ensp;&ensp;&ensp;");
+                    that.errorLog = data;
+                });
+            },
+
+            cleanErrorLog() {
+                let that = this;
+
+                systemApi.cleanErrorLog().then(function () {
+                    that.getErrorLog();
                 });
             }
         }
