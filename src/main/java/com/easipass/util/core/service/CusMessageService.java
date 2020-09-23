@@ -424,6 +424,8 @@ public final class CusMessageService {
             result.setFlag(false);
         }
 
+        result.addMessageInFirst("ediNo: " + ediNo);
+
         return result;
     }
 
@@ -567,7 +569,7 @@ public final class CusMessageService {
             result.setFlag(false);
         }
 
-        result.addMessage(0, "");
+        result.addMessageInFirst("preEntryId: " + preEntryId);
 
         return result;
     }
@@ -660,6 +662,15 @@ public final class CusMessageService {
          * */
         private void addMessage(String message) {
             this.messages.add(message);
+        }
+
+        /**
+         * addMessage
+         *
+         * @param message message
+         * */
+        private void addMessageInFirst(String message) {
+            this.messages.add(0, message);
         }
 
         /**
