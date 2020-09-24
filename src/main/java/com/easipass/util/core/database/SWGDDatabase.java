@@ -61,7 +61,7 @@ public final class SWGDDatabase extends Database {
      * 设置修撤单文件名
      * */
     public void updateDecModFileName(String preEntryId, String fileName) {
-        this.update("UPDATE SWGD.T_SWGD_DECMOD_HEAD SET FILE_NAME = ? WHERE PRE_ENTRY_ID = ?", preEntryId, fileName);
+        this.update("UPDATE SWGD.T_SWGD_DECMOD_HEAD SET FILE_NAME = ? WHERE PRE_ENTRY_ID = ?", fileName, preEntryId);
     }
 
     /**
