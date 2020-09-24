@@ -55,6 +55,8 @@ public final class YeWuDecModCusResult extends DecModCusResult {
         HzApprovalResultElement.element("DestResourceId").setText(this.getDecModSeqNo());
         HzApprovalResultElement.element("FeedbackResults").setText(this.getChannel());
         HzApprovalResultElement.element("ResultNote").setText(this.getNote());
+        HzApprovalResultElement.element("FeedbackTime").setText(DateUtil.getTime("yyyy-MM-dd HH:mm:ss"));
+
         data = dataDocument.asXML();
 
         //加密
@@ -100,7 +102,7 @@ public final class YeWuDecModCusResult extends DecModCusResult {
         }
 
         if (decModSeqNo == null) {
-            QPDecModCusResult qpDecModCusResult = new QPDecModCusResult(this.getPreEntryId(), this.getChannel(), this.getNote());
+            QPDecModCusResult qpDecModCusResult = new QPDecModCusResult(this.getPreEntryId(), "0", "QP回执上传成功");
 
             uploadMore(qpDecModCusResult, this);
         } else {
