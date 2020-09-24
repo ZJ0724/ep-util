@@ -89,11 +89,6 @@ export default [
                 name: "excel导入比对"
             }
         ]
-    },
-
-    {
-        path: "config.html",
-        name: "配置"
     }
 
 ]

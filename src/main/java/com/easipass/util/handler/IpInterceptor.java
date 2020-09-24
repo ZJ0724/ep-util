@@ -1,6 +1,7 @@
 package com.easipass.util.handler;
 
 import com.easipass.util.entity.Response;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -27,12 +28,12 @@ public final class IpInterceptor implements HandlerInterceptor, WebMvcConfigurer
         hostSet.add("localhost:8002");
         hostSet.add("192.168.12.241:8002");
         hostSet.add("192.168.12.241:10000");
-
+        hostSet.add("192.168.137.100:8002");
         hostSet.add("192.168.74.100:8002");
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
         String host = request.getHeader("Host");
 
         for (String h : hostSet) {

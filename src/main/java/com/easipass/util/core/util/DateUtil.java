@@ -100,6 +100,10 @@ public final class DateUtil {
 
     /**
      * 将日期转换成yyyyMMdd
+     *
+     * @param date date
+     *
+     * @return String
      * */
     public static String formatDateYYYYMMdd(String date) {
         if (date == null) {

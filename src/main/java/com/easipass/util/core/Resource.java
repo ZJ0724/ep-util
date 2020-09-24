@@ -45,7 +45,7 @@ public enum Resource {
     /**
      * 端口配置文件
      * */
-    PORT(Project.CONFIG_PATH + "/port"),
+    PORT(Project.ROOT_PATH + "/config/port"),
 
     /**
      * SWGD数据库配置文件

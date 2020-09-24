@@ -13,6 +13,41 @@
         <div id="body">
             <panel text="version" :data="version"></panel>
             <panel style="margin-top: 20px;" text="time" :data="time"></panel>
+
+            <div class="ep-panel" style="margin-top: 20px;">
+                <div style="font-weight: bold;">
+                    缓存文件管理
+                </div>
+
+                <div>
+                    <!-- 无 -->
+                    <div v-cloak v-if="cache.length === 0" style="margin-top: 10px;color: #0c0c0c73;">
+                        无
+                    </div>
+
+                    <div v-cloak v-for="(item, key) in cache" style="display: flex;margin-top: 10px;" :key="key">
+                        <div v-cloak style="width: 50%;">
+                            {{item}}
+                        </div>
+                        <div v-cloak style="width: 50%;display: flex;flex-direction: row-reverse;">
+                            <a @click="deleteCacheFile(item)" style="cursor: pointer;">删除</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ep-panel" style="margin-top: 20px;">
+                <div style="display: flex;">
+                    <div style="font-weight: bold;width: 50%;">
+                        错误日志
+                    </div>
+                    <div style="display: flex;flex-direction: row-reverse;width: 50%;">
+                        <a @click="cleanErrorLog()" style="cursor: pointer;">清空</a>
+                    </div>
+                </div>
+
+                <div style="white-space: pre-line;margin-top: 10px;" v-html="errorLog"></div>
+            </div>
         </div>
     </div>
 </body>
@@ -21,6 +56,7 @@
 <script type="module">
 
     import systemServiceApi from "./api/service/systemServiceApi.js";
+    import systemApi from "./api/service/systemApi.js";
 
     new Vue({
         el: "#main",
@@ -28,7 +64,11 @@
         data: {
             version: null,
 
-            time: null
+            time: null,
+
+            cache: [],
+
+            errorLog: ""
         },
 
         mounted() {
@@ -41,6 +81,10 @@
             systemServiceApi.getTime().then(function (time) {
                 that.time = time;
             });
+
+            that.getCache();
+
+            that.getErrorLog();
         },
 
         components: {
@@ -57,6 +101,41 @@
                     `,
 
                 props: ["text", "data"]
+            }
+        },
+
+        methods: {
+            deleteCacheFile(fileName) {
+                let that = this;
+
+                systemServiceApi.deleteCacheFile({fileName}).then(function () {
+                    that.getCache();
+                });
+            },
+
+            getCache() {
+                let that = this;
+
+                systemServiceApi.getCache().then(function (cache) {
+                    that.cache = cache;
+                });
+            },
+
+            getErrorLog() {
+                let that = this;
+
+                systemApi.getErrorLog().then(function (data) {
+                    data = data.replaceAll("\t", "&ensp;&ensp;&ensp;&ensp;");
+                    that.errorLog = data;
+                });
+            },
+
+            cleanErrorLog() {
+                let that = this;
+
+                systemApi.cleanErrorLog().then(function () {
+                    that.getErrorLog();
+                });
             }
         }
     });

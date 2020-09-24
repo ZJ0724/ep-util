@@ -21,7 +21,7 @@ public final class ChromeDriver {
     /**
      * 驱动
      * */
-    private WebDriver webDriver;
+    private final WebDriver webDriver;
 
     /**
      * 日志
@@ -81,8 +81,7 @@ public final class ChromeDriver {
             this.webDriver.findElementByXpath("//span[text()=' node.server']").click();
             this.webDriver.findElementByXpath("//div[text()='job.swgdRecv']").parent().next().next().next().children(1).children(1).children(1).children(3).children(1).click();
         } catch (org.openqa.selenium.WebDriverException | BaseException e) {
-            this.webDriver = null;
-            throw new ErrorException(e.getMessage());
+            throw new BaseException(e.getMessage()) {};
         }
     }
 
@@ -109,8 +108,7 @@ public final class ChromeDriver {
             this.webDriver.findElementByCssSelector("body > table.flash > tbody > tr > td:nth-child(1) > div > table:nth-child(1) > tbody > tr:nth-child(7) > td:nth-child(1) > div > img").click();
             this.webDriver.findElementByCssSelector("#Image1").click();
         } catch (org.openqa.selenium.WebDriverException | BaseException e) {
-            this.webDriver = null;
-            throw new ErrorException(e.getMessage());
+            throw new com.easipass.util.core.BaseException(e.getMessage()) {};
         }
     }
 

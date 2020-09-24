@@ -57,6 +57,11 @@ public final class ImportParamDbComparator extends ParamDbComparator {
         ParamDbComparator.ComparisonMessage result = new ComparisonMessage();
 
         try {
+            // 验证组名是否存在
+            if (!SWGDPARADatabase.groupNameIsExist(this.groupName)) {
+                throw new WarningException("组名: " + this.groupName + "不存在");
+            }
+
             // mdb表名集合
             final List<String> mdbTables = SWGDPARADatabase.getGroupTables(groupName, "SOURCE_TABLE_NAME");
             // 数据库表名集合

@@ -2,7 +2,6 @@ package com.easipass.util.core.database;
 
 import com.easipass.util.core.C3p0Config;
 import com.easipass.util.core.Database;
-import com.easipass.util.core.config.SWGDDatabaseConfig;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.WarningException;
 import com.easipass.util.core.util.StringUtil;
@@ -27,11 +26,6 @@ public final class SWGDPARADatabase extends Database {
     private static final ComboPooledDataSource COMBO_POOLED_DATA_SOURCE = new ComboPooledDataSource();
 
     /**
-     * SWGDDatabaseConfig
-     * */
-    private static final SWGDDatabaseConfig SWGD_DATABASE_CONFIG = SWGDDatabaseConfig.getInstance();
-
-    /**
      * SWGDPARA
      * */
     public static final String SWGDPARA = "SWGDPARA";
@@ -50,16 +44,16 @@ public final class SWGDPARADatabase extends Database {
      * */
     private static Connection getConnection() throws WarningException {
         try {
-            Class.forName(SWGD_DATABASE_CONFIG.driverClass);
+            Class.forName("oracle.jdbc.OracleDriver");
             C3p0Config.getInstance().setData(COMBO_POOLED_DATA_SOURCE);
             try {
-                COMBO_POOLED_DATA_SOURCE.setDriverClass(SWGD_DATABASE_CONFIG.driverClass);
+                COMBO_POOLED_DATA_SOURCE.setDriverClass("oracle.jdbc.OracleDriver");
             } catch (PropertyVetoException e) {
                 throw new ErrorException(e.getMessage());
             }
-            COMBO_POOLED_DATA_SOURCE.setJdbcUrl(SWGD_DATABASE_CONFIG.url);
-            COMBO_POOLED_DATA_SOURCE.setUser(SWGD_DATABASE_CONFIG.username);
-            COMBO_POOLED_DATA_SOURCE.setPassword(SWGD_DATABASE_CONFIG.password);
+            COMBO_POOLED_DATA_SOURCE.setJdbcUrl("jdbc:oracle:thin:@192.168.130.216:1521:testeport");
+            COMBO_POOLED_DATA_SOURCE.setUser("devtester");
+            COMBO_POOLED_DATA_SOURCE.setPassword("easytester");
 
             return COMBO_POOLED_DATA_SOURCE.getConnection();
         } catch (SQLException | ClassNotFoundException e) {
@@ -239,17 +233,24 @@ public final class SWGDPARADatabase extends Database {
         return result;
     }
 
-//    /**
-//     * 清空参数库表数据
-//     *
-//     * @param tableName 表名
-//     * */
-//    public static void deleteParamDbTable(String tableName) {
-//        String sql = StringUtil.append("DELETE FROM SWGDPARA.", tableName);
-//
-//        LOGGER.info(sql);
-//
-//        this.update(sql);
-//    }
+    /**
+     * 组名是否存在
+     *
+     * @param groupName 组名
+     *
+     * @return 存在返回true
+     * */
+    public static boolean groupNameIsExist(String groupName) throws WarningException {
+        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
+        ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM SWGDPARA.T_PARAMS_GROUP WHERE GROUP_NAME = ?", groupName);
+
+        try {
+            return resultSet.next();
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            swgdparaDatabase.close();
+        }
+    }
 
 }

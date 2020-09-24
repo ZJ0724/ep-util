@@ -232,6 +232,8 @@ public final class DaKa {
             chromeDriver = new ChromeDriver();
             chromeDriver.daKa();
             this.addLog("打卡完成！");
+        } catch (BaseException e) {
+            this.addLog(e.getMessage());
         } finally {
             if (chromeDriver != null) {
                 chromeDriver.close();

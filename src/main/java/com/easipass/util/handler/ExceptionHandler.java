@@ -47,4 +47,16 @@ public class ExceptionHandler {
         return Response.error(e.getMessage());
     }
 
+    /**
+     * 上传文件异常
+     *
+     * @param e e
+     *
+     * @return Resource
+     * */
+    @org.springframework.web.bind.annotation.ExceptionHandler(org.springframework.web.multipart.MultipartException.class)
+    public Response multipartException(Exception e) {
+        return Response.returnFalse(e.getMessage());
+    }
+
 }
