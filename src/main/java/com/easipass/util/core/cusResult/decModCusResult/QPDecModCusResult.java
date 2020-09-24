@@ -44,6 +44,9 @@ public final class QPDecModCusResult extends DecModCusResult {
         //document根节点
         Element documentRootElement = document.getRootElement();
 
+        // 替换CreatTime
+        documentRootElement.element("TransInfo").element("CreatTime").setText(DateUtil.getTime("yyyy-MM-dd HH:mm:ss"));
+
         //data节点数据
         String data = documentRootElement.element("Data").getText();
 
