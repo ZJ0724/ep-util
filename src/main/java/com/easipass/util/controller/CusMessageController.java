@@ -44,11 +44,7 @@ public class CusMessageController {
             throw new ErrorException(e.getMessage());
         }
 
-        if (comparisonMessage.isFlag()) {
-            return Response.returnTrue(comparisonMessage.getMessages());
-        } else {
-            return Response.returnFalse(comparisonMessage.getMessages());
-        }
+        return Response.returnTrue(comparisonMessage);
     }
 
     /**
@@ -70,11 +66,7 @@ public class CusMessageController {
             throw new ErrorException(e.getMessage());
         }
 
-        if (comparisonMessage.isFlag()) {
-            return Response.returnTrue(comparisonMessage.getMessages());
-        } else {
-            return Response.returnFalse(comparisonMessage.getMessages());
-        }
+        return Response.returnTrue(comparisonMessage);
     }
 
 }

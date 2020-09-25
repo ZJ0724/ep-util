@@ -15,6 +15,7 @@
 
         <encoder>
             <pattern>${pattern}</pattern>
+            <charset class="java.nio.charset.Charset">UTF-8</charset>
         </encoder>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -37,6 +38,7 @@
 
         <encoder>
             <pattern>${pattern}</pattern>
+            <charset class="java.nio.charset.Charset">UTF-8</charset>
         </encoder>
 
         <prudent>false</prudent>

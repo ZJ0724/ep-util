@@ -60,13 +60,11 @@
 </html>
 
 <script type="module">
-
-    import daKaServiceApi from "../api/service/daKaServiceApi.js";
-    import alertComponent from "../component/alertComponent.js";
-    import DaKaLogWebsocketApi from "../api/websocket/DaKaLogWebsocketApi.js";
     import DaKaConfigDTO from "../entity/DTO/DaKaConfigDTO.js";
     import DaKaConfigVO from "../entity/VO/DaKaConfigVO.js";
     import configServiceApi from "../api/service/configServiceApi.js";
+    import daKaApi from "../api/service/daKaApi.js";
+    import alertComponent from "../component/alertComponent.js";
 
     new Vue({
         el: "#main",
@@ -75,8 +73,6 @@
             status: null,
 
             logs: [],
-
-            DaKaLogWebsocket: new DaKaLogWebsocketApi(),
 
             daKaConfig: {
                 show: false,
@@ -92,7 +88,7 @@
             getStatus() {
                 let that = this;
 
-                daKaServiceApi.getStatus().then(function (data) {
+                daKaApi.getStatus().then(function (data) {
                     that.status = data;
                 });
             },
@@ -101,14 +97,7 @@
             open() {
                 let that = this;
 
-                // 已开启打卡
-                if (that.status) {
-                    alertComponent.message("已开启打卡");
-                    return;
-                }
-
-                daKaServiceApi.openAutoDaKa().then(function () {
-                    alertComponent.message("开启成功");
+                daKaApi.open().then(function () {
                     that.getStatus();
                 });
             },
@@ -117,14 +106,7 @@
             close() {
                 let that = this;
 
-                // 自动打卡未开启
-                if (!that.status) {
-                    alertComponent.message("未开启自动打卡");
-                    return;
-                }
-
-                daKaServiceApi.closeAutoDaKa().then(function () {
-                    alertComponent.message("关闭成功");
+                daKaApi.close().then(function () {
                     that.getStatus();
                 });
             },
@@ -137,11 +119,9 @@
                 manualDaKaButton.setAttribute("disabled", true);
                 manualDaKaButton.innerHTML = "正在手动打卡...";
 
-                daKaServiceApi.manualKaKa().then(function () {
-                    alertComponent.message("完成");
-                }).catch(function (message) {
-                    alertComponent.message(message);
-                }).finally(function () {
+                daKaApi.manual().then(function (data) {
+                    alertComponent.popup(data);
+                }).catch().finally(function () {
                     manualDaKaButton.removeAttribute("disabled");
                     manualDaKaButton.innerHTML = manualDaKaButtonText;
                 });
@@ -151,24 +131,24 @@
             cleanLog() {
                 let that = this;
 
-                daKaServiceApi.cleanLog().then(function () {
-                    that.logs = [];
+                daKaApi.cleanLog().then(function () {
+                    that.getLog();
+                });
+            },
+
+            // 获取日志
+            getLog() {
+                let that = this;
+
+                daKaApi.getLog().then(function (data) {
+                    that.logs = data;
                 });
             }
         },
 
         mounted() {
-            let that = this;
-
-            that.getStatus();
-
-            that.DaKaLogWebsocket.onmessage(function (message) {
-                that.logs.push(message);
-            });
-
-            window.onunload = function () {
-                that.DaKaLogWebsocket.close();
-            }
+            this.getStatus();
+            this.getLog();
         }
     });
 

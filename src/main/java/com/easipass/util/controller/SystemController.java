@@ -3,10 +3,9 @@ package com.easipass.util.controller;
 import com.easipass.util.api.service.BaseServiceApi;
 import com.easipass.util.core.service.SystemService;
 import com.easipass.util.entity.Response;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * SystemController
@@ -30,11 +29,13 @@ public class SystemController {
     /**
      * 清空错误日志
      *
+     * @param requestBody requestBody
+     *
      * @return Response
      * */
     @PostMapping("cleanErrorLog")
-    public Response cleanErrorLog() {
-        new SystemService().cleanErrorLog();
+    public Response cleanErrorLog(@RequestBody Map<String, String> requestBody) {
+        new SystemService().cleanErrorLog(requestBody.get("key"));
         return Response.returnTrue();
     }
 

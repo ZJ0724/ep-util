@@ -38,7 +38,7 @@
                     cusMessageApi.formCusMessageComparison({
                         formCusMessage: fileInput.files[0]
                     }).then(function (message) {
-                        alertComponent.popup(message);
+                        alertComponent.popup(message.messages);
                     }).catch(function (message) {
                         alertComponent.popup(message);
                     }).finally(function () {
