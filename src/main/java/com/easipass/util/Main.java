@@ -6,6 +6,7 @@ import com.easipass.util.core.exception.ErrorException;
 import com.zj0724.util.springboot.ParameterCheck;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
@@ -25,13 +26,22 @@ public class Main {
     private static final Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
+        System.out.println("                        _   _ _ \n" +
+                "  ___ _ __        _   _| |_(_) |\n" +
+                " / _ \\ '_ \\ _____| | | | __| | |\n" +
+                "|  __/ |_) |_____| |_| | |_| | |\n" +
+                " \\___| .__/       \\__,_|\\__|_|_|\n" +
+                "     |_|                        ");
+
         // 指定配置文件
         System.setProperty("spring.config.location", Resource.APPLICATION_PROPERTIES.getPath());
 
         // 指定端口
         System.setProperty("server.port", Port.getInstance().getPort() + "");
 
-        SpringApplication.run(Main.class, args);
+        SpringApplication springApplication = new SpringApplication(Main.class);
+        springApplication.setBannerMode(Banner.Mode.OFF);
+        springApplication.run(args);
 
         // 检查项目
         if (Project.VERSION == null || Project.SYSTEM_TYPE == null) {

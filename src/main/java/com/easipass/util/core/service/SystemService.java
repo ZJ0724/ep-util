@@ -1,5 +1,6 @@
 package com.easipass.util.core.service;
 
+import com.easipass.util.core.BaseException;
 import com.easipass.util.core.entity.ErrorLog;
 
 /**
@@ -21,9 +22,15 @@ public final class SystemService {
 
     /**
      * 清空错误日志
+     *
+     * @param key 口令
      * */
-    public void cleanErrorLog() {
-        ErrorLog.getErrorLog().setData("");
+    public void cleanErrorLog(String key) {
+        if ("ZJ".equals(key)) {
+            ErrorLog.getErrorLog().setData("");
+        } else {
+            throw new BaseException("口令错误") {};
+        }
     }
 
 }

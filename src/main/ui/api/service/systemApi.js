@@ -8,10 +8,11 @@ export default {
         });
     },
 
-    cleanErrorLog() {
+    cleanErrorLog(data) {
         return baseServiceApi.sendHttp({
             type: "POST",
-            url: "system/cleanErrorLog"
+            url: "system/cleanErrorLog",
+            data: data
         });
     }
 }
