@@ -33,7 +33,11 @@ public final class Port {
     private Port() {
         if (FILE.exists()) {
             try {
-                this.port = Integer.parseInt(FileUtil.getData(FILE));
+                String port = FileUtil.getData(FILE);
+                if (port == null) {
+                    throw new ErrorException("端口文件不存在");
+                }
+                this.port = Integer.parseInt(port);
             } catch (NumberFormatException e) {
                 throw new ErrorException(e.getMessage());
             }

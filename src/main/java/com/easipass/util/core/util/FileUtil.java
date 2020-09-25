@@ -16,15 +16,26 @@ public final class FileUtil {
      *
      * @param file 文件
      * @param data 数据
+     * @param append 是否追加数据
      * */
-    public static void setData(File file, String data) {
+    public static void setData(File file, String data, boolean append) {
         try {
-            OutputStream outputStream = new FileOutputStream(file);
+            OutputStream outputStream = new FileOutputStream(file, append);
             outputStream.write(data.getBytes(StandardCharsets.UTF_8));
             outputStream.close();
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
+    }
+
+    /**
+     * 写入文件数据
+     *
+     * @param file 文件
+     * @param data 数据
+     * */
+    public static void setData(File file, String data) {
+        setData(file, data, false);
     }
 
     /**

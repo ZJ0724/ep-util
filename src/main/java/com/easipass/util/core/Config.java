@@ -124,7 +124,7 @@ public abstract class Config {
     /**
      * 提交数据
      * */
-    protected final void commit() {
+    public final void commit() {
         init();
 
         // 保存数据
