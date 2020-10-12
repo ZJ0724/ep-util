@@ -209,6 +209,18 @@ public final class CusMessageService {
                         dbValue = codeT + codeS;
                     }
 
+                    // 特殊处理ciqCode
+                    if ("CiqCode".equals(nodeMapping.node)) {
+                        String fileDataSource = getDbValue(databaseFormHead, "FILE_DATASOURCE");
+
+                        // 如果清空了ciqCode，从tmpCiqCode取值
+                        if (!StringUtil.isEmpty(fileDataSource)) {
+                            if ("2".equals(fileDataSource.substring(1, 2))) {
+                                dbValue = getDbValue(databaseFormList, "TMP_CIQ_CODE");
+                            }
+                        }
+                    }
+
                     result.comparison(nodeValue, dbValue, nodeMapping, "表体 - " + (i + 1));
                 }
 
@@ -797,6 +809,7 @@ public final class CusMessageService {
             DecHeadNodeMapping.add(new NodeMapping("WrapType", "WRAP_TYPE_STD", "包装种类"));
             DecHeadNodeMapping.add(new NodeMapping("TypistNo", "I_C_CODE", "IC卡号"));
             DecHeadNodeMapping.add(new NodeMapping("BillType", "BILL_TYPE", "备案清单类型"));
+            DecHeadNodeMapping.add(new NodeMapping("DataSource", "FILE_DATASOURCE", "DataSource"));
             DecHeadNodeMapping.add(new NodeMapping("PromiseItmes", "PROMISE_ITMES", "承诺事项"));
             DecHeadNodeMapping.add(new NodeMapping("TradeAreaCode", "TRADE_AREA_CODE_STD", "贸易国别"));
             DecHeadNodeMapping.add(new NodeMapping("CheckFlow", "CHECK_FLOW", "查验分流"));
