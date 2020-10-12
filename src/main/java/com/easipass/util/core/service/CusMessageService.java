@@ -145,6 +145,13 @@ public final class CusMessageService {
             }
         }
 
+        // 比对两段转入节点
+        Element DecTpAccessType = rootElement.element("DecTpAccessType");
+
+        for (NodeMapping nodeMapping : FormCusMessageNodeMapping.DecTpAccessTypeMapping) {
+            result.comparison(getNodeValue(DecTpAccessType, nodeMapping.node), getDbValue(databaseFormHead, nodeMapping.dbField), nodeMapping, "两段转入");
+        }
+
         // 比对表体
         // 数据库表体数据
         List<JSONObject> databaseFormListList = SWGDDatabase.queryBySql("SELECT * FROM " + SWGDDatabase.SWGD + ".T_SWGD_FORM_LIST WHERE HEAD_ID = (SELECT ID FROM " + SWGDDatabase.SWGD + ".T_SWGD_FORM_HEAD WHERE EDI_NO = '" + ediNo + "')");
@@ -595,6 +602,10 @@ public final class CusMessageService {
      * @return 子节点值
      * */
     private static String getNodeValue(Element element, String node) {
+        if (element == null) {
+            return null;
+        }
+
         Element element1 = element.element(node);
         if (element1 == null) {
             return null;
@@ -845,6 +856,18 @@ public final class CusMessageService {
             DecHeadNodeMapping.add(new NodeMapping("TradeCiqCode", "TRADE_CIQ_CODE", "境内收发货人检验检疫编码"));
             DecHeadNodeMapping.add(new NodeMapping("OwnerCiqCode", "OWNER_CIQ_CODE", "消费使用/生产销售单位检验检疫编码"));
             DecHeadNodeMapping.add(new NodeMapping("DeclCiqCode", "DECL_CIQ_CODE", "申报单位检验检疫编码"));
+        }
+
+        /**
+         * 两段转入
+         * */
+        public static final List<NodeMapping> DecTpAccessTypeMapping = new ArrayList<>();
+
+        static {
+            DecTpAccessTypeMapping.add(new NodeMapping("TransitionApply", "TRANSITION_APPLY", "转场申请"));
+            DecTpAccessTypeMapping.add(new NodeMapping("TransitionSite", "TRANSITION_SITE", "转入场所场地"));
+            DecTpAccessTypeMapping.add(new NodeMapping("ConditionalLiftoffApply", "CONDITIONAL_LIFTOFF_APPLY", "附条件提离申请"));
+            DecTpAccessTypeMapping.add(new NodeMapping("PortDestMergeCheckApply", "PORT_DEST_MERGE_CHECK_APPLY", "口岸与目的地合并检查申请"));
         }
 
         /**
