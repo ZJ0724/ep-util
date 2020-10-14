@@ -220,11 +220,18 @@ public final class SWGDPARADatabase extends Database {
 
         try {
             ResultSet resultSet = swgdparaDatabase.query(sql);
-
             return resultSet.next();
-        } catch (SQLException e) {
+        }
+
+        catch (SQLException e) {
             throw new ErrorException(e.getMessage());
-        } finally {
+        }
+
+        catch (BaseException e) {
+            return false;
+        }
+
+        finally {
             swgdparaDatabase.close();
         }
     }
@@ -239,8 +246,35 @@ public final class SWGDPARADatabase extends Database {
      * */
     public static List<JSONObject> getTableData(String tableName, String version) {
         SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
+        try {
+            return swgdparaDatabase.queryToJson("SELECT * FROM " + SCHEMA + "." + tableName + " WHERE PARAMS_VERSION = '" + version + "'");
+        } catch (BaseException e) {
+            return null;
+        } finally {
+            swgdparaDatabase.close();
+        }
+    }
 
-        return swgdparaDatabase.queryToJson("SELECT * FROM " + SCHEMA + "." + tableName + " WHERE PARAMS_VERSION = '" + version + "'");
+    /**
+     * 表是否存在
+     *
+     * @param tableName 表名
+     *
+     * @return 存在返回true
+     * */
+    public static boolean tableIsExist(String tableName) {
+        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
+
+        try {
+            swgdparaDatabase.query("SELECT * FROM " + SCHEMA + "." + tableName + " WHERE ROWNUM <= 1");
+            return true;
+        }
+        catch (BaseException e) {
+            return false;
+        }
+        finally {
+            swgdparaDatabase.close();
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package com.easipass.util.core.database;
 
 import com.alibaba.fastjson.JSONObject;
+import com.easipass.util.core.BaseException;
 import com.easipass.util.core.Database;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.SqlException;
@@ -76,14 +77,26 @@ public final class MdbDatabase extends Database {
      * @return sql能查到数据返回true
      * */
     public static boolean dataIsExist(String path, String sql) {
+        MdbDatabase mdbDatabase = null;
+
         try {
-            MdbDatabase mdbDatabase = new MdbDatabase(path);
+            mdbDatabase = new MdbDatabase(path);
             ResultSet resultSet = mdbDatabase.query(sql);
-            boolean result = resultSet.next();
-            mdbDatabase.close();
-            return result;
-        } catch (SQLException | WarningException e) {
+            return resultSet.next();
+        }
+
+        catch (SQLException | WarningException e) {
             throw new ErrorException(e.getMessage());
+        }
+
+        catch (BaseException e) {
+            return false;
+        }
+
+        finally {
+            if (mdbDatabase != null) {
+                mdbDatabase.close();
+            }
         }
     }
 
@@ -96,13 +109,21 @@ public final class MdbDatabase extends Database {
      * @return 数据
      * */
     public static List<JSONObject> getTableData(String path, String tableName) {
+        MdbDatabase mdbDatabase = null;
+
         try {
-            MdbDatabase mdbDatabase = new MdbDatabase(path);
+            mdbDatabase = new MdbDatabase(path);
             List<JSONObject> result = mdbDatabase.queryToJson("SELECT * FROM " + tableName);
             mdbDatabase.close();
             return result;
         } catch (WarningException e) {
             throw new ErrorException(e.getMessage());
+        } catch (SqlException e) {
+            return null;
+        } finally {
+            if (mdbDatabase != null) {
+                mdbDatabase.close();
+            }
         }
     }
 

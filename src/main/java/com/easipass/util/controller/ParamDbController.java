@@ -106,4 +106,44 @@ public class ParamDbController {
         }
     }
 
+    /**
+     * 导出比对
+     *
+     * @param tableName 表名
+     * @param multipartFile 文件
+     *
+     * @return Response
+     * */
+    @PostMapping("excelImportComparator")
+    public Response excelImportComparator(@RequestParam(value = "tableName", required = false) String tableName, @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
+        if (StringUtil.isEmpty(tableName)) {
+            return Response.returnFalse("表名不能为空");
+        }
+        if (multipartFile == null) {
+            return Response.returnFalse("请选择文件");
+        }
+
+        File file;
+
+        try {
+            InputStream inputStream = multipartFile.getInputStream();
+            file = new File(Project.CACHE_PATH, DateUtil.getTime() + "-" + multipartFile.getOriginalFilename());
+            FileUtil.createFile(file, inputStream);
+            inputStream.close();
+        } catch (IOException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        ParamDbService paramDbService = new ParamDbService();
+        ParamDbService.Result result = paramDbService.excelImportComparator(tableName, file.getAbsolutePath());
+
+        FileUtil.delete(file);
+
+        if (result.flag) {
+            return Response.returnTrue(result.message);
+        } else {
+            return Response.returnFalse(result.message);
+        }
+    }
+
 }

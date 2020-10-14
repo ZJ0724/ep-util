@@ -25,5 +25,17 @@ export default {
             },
             dataType: "file"
         });
+    },
+
+    excelImportComparator(tableName, file) {
+        return baseServiceApi.sendHttp({
+            type: "POST",
+            url: `${this.url}/excelImportComparator`,
+            data: {
+                tableName: tableName,
+                file: file
+            },
+            dataType: "file"
+        });
     }
 }
