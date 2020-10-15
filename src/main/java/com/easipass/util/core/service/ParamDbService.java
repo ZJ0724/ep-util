@@ -1,5 +1,6 @@
 package com.easipass.util.core.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.easipass.util.core.BaseException;
 import com.easipass.util.core.Project;
@@ -184,6 +185,8 @@ public final class ParamDbService {
             result.message.add("比对完成，无差异");
         }
 
+        log.info(result.toString());
+
         return result;
     }
 
@@ -295,6 +298,9 @@ public final class ParamDbService {
                                             continue;
                                         }
 
+                                        // 单引号处理
+                                        data = data.replaceAll("'", "''");
+
                                         // 字段类型
                                         String fieldType = SWGDPARADatabase.getFieldType(dbTableName, dbTableField);
 
@@ -351,6 +357,8 @@ public final class ParamDbService {
             result.flag = true;
             result.message.add("比对完成，无差异");
         }
+
+        log.info(result.toString());
 
         return result;
     }
@@ -503,6 +511,8 @@ public final class ParamDbService {
             result.message.add("比对完成，无差异");
         }
 
+        log.info(result.toString());
+
         return result;
     }
 
@@ -550,6 +560,11 @@ public final class ParamDbService {
          * 信息
          * */
         public List<String> message = new ArrayList<>();
+
+        @Override
+        public String toString() {
+            return JSON.toJSONString(this);
+        }
 
     }
 
