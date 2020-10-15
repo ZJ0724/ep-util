@@ -37,5 +37,17 @@ export default {
             },
             dataType: "file"
         });
+    },
+
+    excelImport(tableName, file) {
+        return baseServiceApi.sendHttp({
+            type: "POST",
+            url: `${this.url}/excelImport`,
+            data: {
+                tableName: tableName,
+                file: file
+            },
+            dataType: "file"
+        });
     }
 }

@@ -83,10 +83,13 @@ export default [
                 path: "exportParamDbComparison.html",
                 name: "导出比对"
             },
-
             {
                 path: "excelImportParamDbComparison.html",
                 name: "excel导入比对"
+            },
+            {
+                path: "excelImport.html",
+                name: "excel导入"
             }
         ]
     }

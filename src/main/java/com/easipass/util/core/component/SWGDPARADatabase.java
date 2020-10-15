@@ -277,4 +277,78 @@ public final class SWGDPARADatabase extends Database {
         }
     }
 
+    /**
+     * 版本加1
+     *
+     * @param tableName 表名
+     *
+     * @return 加1后的版本
+     * */
+    public static String versionAddOne(String tableName) {
+        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
+
+        try {
+            // 版本数据集合
+            List<JSONObject> versionDataList = swgdparaDatabase.queryToJson("SELECT * FROM (SELECT * FROM " + SWGDPARADatabase.SCHEMA + ".T_PARAMS_VERSION WHERE TABLE_NAME = '" + tableName + "' ORDER BY PARAMS_VERSION DESC) WHERE ROWNUM <= 1");
+
+            if (versionDataList.size() == 0) {
+                throw new ErrorException("未找到版本");
+            }
+
+            // 版本数据
+            JSONObject versionData = versionDataList.get(0);
+            // 版本
+            String version = versionData.get("PARAMS_VERSION") + "";
+
+            if (StringUtil.isEmpty(version)) {
+                throw new ErrorException("版本为null");
+            }
+
+            // 将版本转为int
+            int versionInt;
+
+            try {
+                versionInt = Integer.parseInt(version);
+            } catch (Exception e) {
+                throw new ErrorException("版本不是int");
+            }
+
+            // 加1后的版本
+            String newVersion = (versionInt + 1) + "";
+            // ID
+            String id = versionData.get("ID") + "";
+
+            if (StringUtil.isEmpty(id)) {
+                throw new ErrorException("id为null");
+            }
+
+            swgdparaDatabase.update("UPDATE " + SWGDPARADatabase.SCHEMA + ".T_PARAMS_VERSION SET PARAMS_VERSION = '" + newVersion + "' WHERE ID = '" + id + "'");
+
+            return newVersion;
+        } finally {
+            swgdparaDatabase.close();
+        }
+    }
+
+    /**
+     * 插入数据
+     *
+     * @param sql sql
+     *
+     * @return 插入成功返回true
+     * */
+    public static boolean insert(String sql) {
+        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
+
+        try {
+            swgdparaDatabase.update(sql);
+            return true;
+        } catch (BaseException e) {
+            return false;
+        }
+        finally {
+            swgdparaDatabase.close();
+        }
+    }
+
 }

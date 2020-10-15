@@ -520,6 +520,164 @@ public final class ParamDbService {
     }
 
     /**
+     * excel导入
+     * @param tableName 表名
+     * @param excelPath excel路径
+     *
+     * @return 比对结果
+     * */
+    public Result excelImport(String tableName, String excelPath) {
+        Result result = new Result();
+
+        // 表名是否存在
+        if (!SWGDPARADatabase.tableIsExist(tableName)) {
+            result.message.add(tableName + "不存在");
+            return result;
+        }
+
+        // 获取新版本
+        String version;
+
+        try {
+            version = SWGDPARADatabase.versionAddOne(tableName);
+        } catch (ErrorException e) {
+            result.message.add(tableName + ": " + e.getMessage());
+            return result;
+        }
+
+        // excel
+        ExcelUtil excelUtil;
+
+        // 加载excel
+        try {
+            excelUtil = new ExcelUtil(excelPath, 0);
+        } catch (BaseException e) {
+            result.message.add(e.getMessage());
+            return result;
+        }
+
+        // excel所有数据
+        List<List<String>> excelAllData = excelUtil.getAllData();
+
+        if (excelAllData.size() == 0) {
+            result.message.add("excel数据为空");
+            return result;
+        }
+
+        // excel第一行标题
+        List<String> title = excelAllData.get(0);
+        // excel字段映射
+        List<String> excelFields = SWGDPARADatabase.getTableFields(tableName, "SOURCE_NAME");
+        // db字段映射
+        List<String> dbFields = SWGDPARADatabase.getTableFields(tableName, "TARGET_NAME");
+        // 多线程控制
+        CountDownLatch countDownLatch = new CountDownLatch(excelAllData.size() - 1);
+
+        // 让标题和excel字段映射完成一次匹配
+        for (String excelField : excelFields) {
+            boolean ok = false;
+
+            for (String t : title) {
+                if (StringUtil.isEmpty(t)) {
+                    result.message.add("excel存在为空的标题");
+                    return result;
+                }
+
+                if (t.equals(excelField)) {
+                    ok = true;
+                    break;
+                }
+            }
+
+            if (!ok) {
+                result.message.add("excel缺少字段：" + excelField);
+                return result;
+            }
+        }
+
+        // 遍历数据
+        for (int i = 1; i < excelAllData.size(); i++) {
+            int finalI = i;
+
+            Project.THREAD_POOL_EXECUTOR.execute(() -> {
+                // sql
+                String sql = "INSERT INTO " + SWGDPARADatabase.SCHEMA + "." + tableName;
+                // sql字段
+                String sqlField = "(PARAMS_VERSION, ";
+                // sql值
+                String sqlData = "(" + version + ", ";
+                // 单行数据
+                List<String> rowData = excelAllData.get(finalI);
+
+                for (int j = 0 ; j < excelFields.size(); j++) {
+                    // excel字段
+                    String excelField = excelFields.get(j);
+                    // db字段
+                    String dbField = dbFields.get(j);
+                    // excel单格数据
+                    String data = null;
+
+                    // 获取单格数据
+                    for (int n = 0; n < title.size(); n++) {
+                        if (title.get(n).equals(excelField)) {
+                            data = rowData.get(n);
+                        }
+                    }
+
+                    sqlField = StringUtil.append(sqlField, dbField, ", ");
+
+                    if (StringUtil.isEmpty(data)) {
+                        sqlData = StringUtil.append(sqlData, "NULL", ", ");
+                        continue;
+                    }
+
+                    // 字段类型
+                    String fieldType = SWGDPARADatabase.getFieldType(tableName, dbField);
+
+                    // 兼容日期格式
+                    if ("TIMESTAMP".equals(fieldType)) {
+                        data = parseDate(data);
+                        sqlData = StringUtil.append(sqlData, "TO_DATE('" + data + "','yyyy-mm-dd hh24:mi:ss')", ", ");
+                        continue;
+                    }
+
+                    data = data.replaceAll("'", "''");
+
+                    sqlData = StringUtil.append(sqlData, "'", data, "', ");
+                }
+
+                sqlField = sqlField.substring(0, sqlField.length() - 2) + ")";
+                sqlData = sqlData.substring(0, sqlData.length() - 2) + ")";
+                sql = StringUtil.append(sql, sqlField, " VALUES", sqlData);
+
+                log.info(sql);
+
+                // 插入数据
+                if (!SWGDPARADatabase.insert(sql)) {
+                    result.message.add(sql);
+                }
+
+                countDownLatch.countDown();
+            });
+        }
+
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        if (result.message.size() == 0) {
+            result.flag = true;
+            result.message.add("完成");
+        }
+
+        log.info(result.toString());
+
+        return result;
+    }
+
+    /**
      * 兼容日期
      *
      * @param date date
