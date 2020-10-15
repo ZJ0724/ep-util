@@ -87,31 +87,43 @@ public final class FileUtil {
      * @return 文件内容
      * */
     public static String getData(File file) {
-        if (!file.exists()) {
-            return null;
-        }
-
+        StringBuilder result = new StringBuilder();
         InputStream inputStream = null;
-        String result;
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
 
         try {
+            if (!file.exists()) {
+                return null;
+            }
             inputStream = new FileInputStream(file);
-            byte[] bytes = new byte[inputStream.available()];
-            inputStream.read(bytes);
-            result = new String(bytes, StandardCharsets.UTF_8);
+            inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            bufferedReader = new BufferedReader(inputStreamReader);
+            char[] chars = new char[1024];
+            int i = bufferedReader.read(chars);
+            while (i != -1) {
+                result.append(new String(chars, 0, i));
+                i = bufferedReader.read(chars);
+            }
         } catch (IOException e) {
-            result = null;
-        }
-
-        if (inputStream != null) {
+            throw new ErrorException(e.getMessage());
+        } finally {
             try {
-                inputStream.close();
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (inputStreamReader != null) {
+                    inputStreamReader.close();
+                }
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
             } catch (IOException e) {
-                throw new ErrorException(e.getMessage());
+                e.printStackTrace();
             }
         }
 
-        return result;
+        return result.toString();
     }
 
     /**
@@ -136,6 +148,17 @@ public final class FileUtil {
             } catch (IOException e) {
                 throw new ErrorException(e.getMessage());
             }
+        }
+    }
+
+    /**
+     * 删除文件
+     *
+     * @param file 文件
+     * */
+    public static void delete(File file) {
+        if (!file.delete()) {
+            throw new ErrorException("删除文件失败");
         }
     }
 

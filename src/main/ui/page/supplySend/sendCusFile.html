@@ -13,7 +13,11 @@
         <div id="body">
             <div class="center" style="margin-top: 50px;">
                 <div style="width: 500px;">
-                    <div class="input-group input-group-sm">
+                    <div>
+                        tip：协同导入标识：sendType: 1，协同导入userName和ediNo不能有值。
+                    </div>
+
+                    <div class="input-group input-group-sm" style="margin-top: 20px;">
                         <span class="input-group-addon">
                             第三方代码
                         </span>
@@ -25,7 +29,9 @@
                     </div>
 
                     <div style="margin-top: 5px;">
-                        <textarea v-model="data" style="max-width: 100%;min-width: 100%;min-height: 500px;" class="form-control" rows="3"></textarea>
+                        <label style="max-width: 100%;min-width: 100%;min-height: 500px;">
+                            <textarea v-model="data" style="max-width: 100%;min-width: 100%;min-height: 500px;" class="form-control" rows="3" ></textarea>
+                        </label>
                     </div>
 
                     <div style="margin-top: 20px;">

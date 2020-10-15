@@ -1,9 +1,11 @@
-package com.easipass.util.core.database;
+package com.easipass.util.core.component;
 
+import com.alibaba.fastjson.JSONObject;
+import com.easipass.util.core.BaseException;
 import com.easipass.util.core.C3p0Config;
 import com.easipass.util.core.Database;
+import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.exception.ErrorException;
-import com.easipass.util.core.exception.WarningException;
 import com.easipass.util.core.util.StringUtil;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import java.beans.PropertyVetoException;
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * SWGDPARADatabase(已弃用)
+ * SWGDPARA数据库
  *
  * @author ZJ
  * */
@@ -26,14 +28,14 @@ public final class SWGDPARADatabase extends Database {
     private static final ComboPooledDataSource COMBO_POOLED_DATA_SOURCE = new ComboPooledDataSource();
 
     /**
-     * SWGDPARA
+     * SCHEMA
      * */
-    public static final String SWGDPARA = "SWGDPARA";
+    public static final String SCHEMA = "SWGDPARA";
 
     /**
      * 构造函数
      */
-    public SWGDPARADatabase() throws WarningException {
+    public SWGDPARADatabase() {
         super(getConnection());
     }
 
@@ -42,7 +44,7 @@ public final class SWGDPARADatabase extends Database {
      *
      * @return Connection
      * */
-    private static Connection getConnection() throws WarningException {
+    private static Connection getConnection() {
         try {
             Class.forName("oracle.jdbc.OracleDriver");
             C3p0Config.getInstance().setData(COMBO_POOLED_DATA_SOURCE);
@@ -57,7 +59,27 @@ public final class SWGDPARADatabase extends Database {
 
             return COMBO_POOLED_DATA_SOURCE.getConnection();
         } catch (SQLException | ClassNotFoundException e) {
-            throw new WarningException(SWGDPARA + "连接失败");
+            throw new BaseException(SCHEMA + "连接失败") {};
+        }
+    }
+
+    /**
+     * 组名是否存在
+     *
+     * @param groupName 组名
+     *
+     * @return 存在返回true
+     * */
+    public static boolean groupNameIsExist(String groupName) {
+        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
+        ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SCHEMA + ".T_PARAMS_GROUP WHERE GROUP_NAME = ?", groupName);
+
+        try {
+            return resultSet.next();
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            swgdparaDatabase.close();
         }
     }
 
@@ -69,10 +91,10 @@ public final class SWGDPARADatabase extends Database {
      *
      * @return 所有的表名
      * */
-    public static List<String> getGroupTables(String groupName, String fieldName) throws WarningException {
+    public static List<String> getGroupTables(String groupName, String fieldName) {
         SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
         List<String> result = new ArrayList<>();
-        ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SWGDPARA + ".T_PARAMS_GROUP_TABLE WHERE GROUP_NAME = '" + groupName + "'");
+        ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SCHEMA + ".T_PARAMS_GROUP_TABLE WHERE GROUP_NAME = '" + groupName + "'");
 
         try {
             while (resultSet.next()) {
@@ -96,10 +118,10 @@ public final class SWGDPARADatabase extends Database {
      *
      * @return 字段集合
      * */
-    public static List<String> getTableFields(String tableName, String fieldName) throws WarningException {
+    public static List<String> getTableFields(String tableName, String fieldName) {
         SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
         List<String> result = new ArrayList<>();
-        ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SWGDPARA + ".T_PARAMS_MATCH WHERE TABLE_NAME = '" + tableName + "'");
+        ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SCHEMA + ".T_PARAMS_MATCH WHERE TABLE_NAME = '" + tableName + "'");
 
         try {
             while (resultSet.next()) {
@@ -122,17 +144,17 @@ public final class SWGDPARADatabase extends Database {
      *
      * @return 版本
      * */
-    public static String getTableVersion(String tableName) throws WarningException {
+    public static String getTableVersion(String tableName) {
         SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
         String version = "";
 
         try {
-            ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SWGDPARA + ".T_PARAMS_VERSION_CURRENT WHERE TABLE_NAME = '"+ tableName + "'");
+            ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SCHEMA + ".T_PARAMS_VERSION_CURRENT WHERE TABLE_NAME = '"+ tableName + "'");
 
             if (resultSet.next()) {
                 version = getFiledData(resultSet, "PARAMS_VERSION");
             } else {
-                ResultSet resultSet1 = swgdparaDatabase.query("SELECT * FROM " + SWGDPARA + ".T_PARAMS_VERSION WHERE TABLE_NAME = '" + tableName + "'");
+                ResultSet resultSet1 = swgdparaDatabase.query("SELECT * FROM " + SCHEMA + ".T_PARAMS_VERSION WHERE TABLE_NAME = '" + tableName + "'");
                 int v = 0;
 
                 while (resultSet1.next()) {
@@ -149,7 +171,7 @@ public final class SWGDPARADatabase extends Database {
             }
 
             if (StringUtil.isEmpty(version)) {
-                throw new WarningException(tableName + "未找到对应版本");
+                return null;
             }
         } catch (SQLException e) {
             throw new ErrorException(e.getMessage());
@@ -161,29 +183,29 @@ public final class SWGDPARADatabase extends Database {
     }
 
     /**
-     * 获取参数库表数据量
+     * 获取字段类型
      *
      * @param tableName 表名
+     * @param fieldName 字段名
      *
-     * @return 数据量
+     * @return 字段类型
      * */
-    public static int getTableCount(String tableName) throws WarningException {
-        String version = getTableVersion(tableName);
-
+    public static String getFieldType(String tableName, String fieldName) {
         SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
+        String result;
 
         try {
-            // 数量
-            String countS = getFiledData(swgdparaDatabase.query("SELECT COUNT(*) COUNT FROM " + SWGDPARA + "." + tableName + " WHERE PARAMS_VERSION = '" + version + "'"), "COUNT", true);
-
-            if (StringUtil.isEmpty(countS)) {
-                return 0;
-            }
-
-            return Integer.parseInt(countS);
+            ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SCHEMA + "." + tableName + " WHERE ROWNUM <= 1");
+            result = Database.getFieldType(resultSet, fieldName);
         } finally {
             swgdparaDatabase.close();
         }
+
+        if (StringUtil.isEmpty(result)) {
+            throw new ErrorException("表: " + tableName + " - " + fieldName + "未找到");
+        }
+
+        return result;
     }
 
     /**
@@ -193,62 +215,64 @@ public final class SWGDPARADatabase extends Database {
      *
      * @return sql能查到数据返回true
      * */
-    public static boolean dataIsExist(String sql) throws WarningException {
+    public static boolean dataIsExist(String sql) {
         SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
 
         try {
             ResultSet resultSet = swgdparaDatabase.query(sql);
-
             return resultSet.next();
-        } catch (SQLException e) {
+        }
+
+        catch (SQLException e) {
             throw new ErrorException(e.getMessage());
-        } finally {
+        }
+
+        catch (BaseException e) {
+            return false;
+        }
+
+        finally {
             swgdparaDatabase.close();
         }
     }
 
     /**
-     * 获取字段类型
+     * 获取表数据
      *
      * @param tableName 表名
-     * @param fieldName 字段名
+     * @param version 版本
      *
-     * @return 字段类型
+     * @return 表数据
      * */
-    public static String getFieldType(String tableName, String fieldName) throws WarningException {
+    public static List<JSONObject> getTableData(String tableName, String version) {
         SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-        String result;
-
         try {
-            ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SWGDPARA + "." + tableName + " WHERE ROWNUM <= 1");
-            result = Database.getFieldType(resultSet, fieldName);
+            return swgdparaDatabase.queryToJson("SELECT * FROM " + SCHEMA + "." + tableName + " WHERE PARAMS_VERSION = '" + version + "'");
+        } catch (BaseException e) {
+            return null;
         } finally {
             swgdparaDatabase.close();
         }
-
-        if (StringUtil.isEmpty(result)) {
-            throw new WarningException("表: " + tableName + " - " + fieldName + "未找到");
-        }
-
-        return result;
     }
 
     /**
-     * 组名是否存在
+     * 表是否存在
      *
-     * @param groupName 组名
+     * @param tableName 表名
      *
      * @return 存在返回true
      * */
-    public static boolean groupNameIsExist(String groupName) throws WarningException {
+    public static boolean tableIsExist(String tableName) {
         SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-        ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM SWGDPARA.T_PARAMS_GROUP WHERE GROUP_NAME = ?", groupName);
 
         try {
-            return resultSet.next();
-        } catch (SQLException e) {
-            throw new ErrorException(e.getMessage());
-        } finally {
+            swgdparaDatabase.query("SELECT * FROM " + SCHEMA + "." + tableName + " WHERE ROWNUM <= 1");
+            return true;
+        }
+        catch (BaseException e) {
+            return false;
+        }
+        finally {
             swgdparaDatabase.close();
         }
     }

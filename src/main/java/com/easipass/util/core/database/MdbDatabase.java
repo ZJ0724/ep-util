@@ -1,5 +1,7 @@
 package com.easipass.util.core.database;
 
+import com.alibaba.fastjson.JSONObject;
+import com.easipass.util.core.BaseException;
 import com.easipass.util.core.Database;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.SqlException;
@@ -9,6 +11,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * mdb数据库
@@ -73,17 +76,54 @@ public final class MdbDatabase extends Database {
      *
      * @return sql能查到数据返回true
      * */
-    public static boolean dataIsExist(String path, String sql) throws WarningException {
-        MdbDatabase mdbDatabase = new MdbDatabase(path);
+    public static boolean dataIsExist(String path, String sql) {
+        MdbDatabase mdbDatabase = null;
 
         try {
+            mdbDatabase = new MdbDatabase(path);
             ResultSet resultSet = mdbDatabase.query(sql);
-
             return resultSet.next();
-        } catch (SQLException e) {
+        }
+
+        catch (SQLException | WarningException e) {
             throw new ErrorException(e.getMessage());
-        } finally {
+        }
+
+        catch (BaseException e) {
+            return false;
+        }
+
+        finally {
+            if (mdbDatabase != null) {
+                mdbDatabase.close();
+            }
+        }
+    }
+
+    /**
+     * 获取表所有数据
+     *
+     * @param path mdb表路径
+     * @param tableName 表名
+     *
+     * @return 数据
+     * */
+    public static List<JSONObject> getTableData(String path, String tableName) {
+        MdbDatabase mdbDatabase = null;
+
+        try {
+            mdbDatabase = new MdbDatabase(path);
+            List<JSONObject> result = mdbDatabase.queryToJson("SELECT * FROM " + tableName);
             mdbDatabase.close();
+            return result;
+        } catch (WarningException e) {
+            throw new ErrorException(e.getMessage());
+        } catch (SqlException e) {
+            return null;
+        } finally {
+            if (mdbDatabase != null) {
+                mdbDatabase.close();
+            }
         }
     }
 

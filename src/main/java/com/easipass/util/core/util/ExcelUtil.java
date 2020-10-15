@@ -1,6 +1,6 @@
 package com.easipass.util.core.util;
 
-import com.easipass.util.core.exception.WarningException;
+import com.easipass.util.core.BaseException;
 import com.monitorjbl.xlsx.StreamingReader;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -30,7 +30,7 @@ public final class ExcelUtil {
      * @param path 路径
      * @param sheetIndex sheet序号
      * */
-    public ExcelUtil(String path, int sheetIndex) throws WarningException {
+    public ExcelUtil(String path, int sheetIndex) {
         FileInputStream fileInputStream = null;
 
         try {
@@ -45,7 +45,7 @@ public final class ExcelUtil {
                 this.data.add(strings);
             }
         } catch (IOException | org.apache.poi.EmptyFileException e) {
-            throw new WarningException(e.getMessage());
+            throw new BaseException(e.getMessage()) {};
         } finally {
             if (fileInputStream != null) {
                 try {
@@ -97,6 +97,15 @@ public final class ExcelUtil {
         }
 
         return rowData.get(cellIndex);
+    }
+
+    /**
+     * 获取所有数据
+     *
+     * @return 所有数据
+     * */
+    public List<List<String>> getAllData() {
+        return this.data;
     }
 
 }

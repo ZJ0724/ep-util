@@ -84,6 +84,7 @@ public class ExcelImportParamDbComparator extends ParamDbComparator {
                     for (int n = 0; n < oneRowData.size(); n++) {
                         if (oneRowData.get(n).equals(mdbFields.get(j))) {
                             cell = n;
+                            break;
                         }
                     }
 

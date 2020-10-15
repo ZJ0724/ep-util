@@ -1,5 +1,4 @@
 export default {
-
     // message信息弹窗
     message(message) {
         layui.use('layer', function () {
@@ -10,6 +9,7 @@ export default {
     // 打开弹窗
     popup(data) {
         let div = document.createElement("div");
+        let area = ["50%", "70%"];
 
         // list
         if (data instanceof Array) {
@@ -19,7 +19,9 @@ export default {
                 d.style.marginTop = "20px";
                 div.append(d);
             }
-        } else {
+        }
+        // \n
+        else if (data.indexOf("\n") !== -1) {
             // \n
             data = data + "";
             let dataList = data.split("\n");
@@ -29,13 +31,17 @@ export default {
                 div.append(d);
             }
         }
+        else {
+            div.innerHTML = data;
+            area = ["auto", "auto"];
+        }
 
         layui.use('layer', function () {
             layui.layer.open({
                 title: "",
+                area: area,
                 content: div.innerHTML
             });
         });
     }
-
 };
