@@ -136,6 +136,9 @@ public final class ParamDbService {
                                             continue;
                                         }
 
+                                        // 单引号处理
+                                        data = data.replaceAll("'", "''");
+
                                         // 字段类型
                                         String fieldType = SWGDPARADatabase.getFieldType(dbTableName, dbTableField);
 
