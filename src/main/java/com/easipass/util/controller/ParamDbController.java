@@ -6,7 +6,6 @@ import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.service.ParamDbService;
 import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.FileUtil;
-import com.easipass.util.core.util.StringUtil;
 import com.easipass.util.entity.Response;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,17 +26,14 @@ import java.io.InputStream;
 public class ParamDbController {
 
     /**
-     * 导入比对
+     * mdb导入比对
      *
      * @param groupName     组名
      * @param multipartFile 文件
      * @return Response
      */
-    @PostMapping("importComparator")
-    public Response importComparator(@RequestParam(value = "groupName", required = false) String groupName, @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
-        if (StringUtil.isEmpty(groupName)) {
-            return Response.returnFalse("组名不能为空");
-        }
+    @PostMapping("mdbImportComparator")
+    public Response mdbImportComparator(@RequestParam(value = "groupName", required = false) String groupName, @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
         if (multipartFile == null) {
             return Response.returnFalse("请选择文件");
         }
@@ -53,30 +49,20 @@ public class ParamDbController {
             throw new ErrorException(e.getMessage());
         }
 
-        ParamDbService paramDbService = new ParamDbService();
-        ParamDbService.Result result = paramDbService.importComparator(groupName, file.getAbsolutePath());
+        new ParamDbService().mdbImportComparatorOfTask(groupName, file.getAbsolutePath());
 
-        FileUtil.delete(file);
-
-        if (result.flag) {
-            return Response.returnTrue(result.message);
-        } else {
-            return Response.returnFalse(result.message);
-        }
+        return Response.returnTrue("已放入后台进行比对");
     }
 
     /**
-     * 导出比对
+     * mdb导出比对
      *
      * @param groupName     组名
      * @param multipartFile 文件
      * @return Response
      */
-    @PostMapping("exportComparator")
-    public Response exportComparator(@RequestParam(value = "groupName", required = false) String groupName, @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
-        if (StringUtil.isEmpty(groupName)) {
-            return Response.returnFalse("组名不能为空");
-        }
+    @PostMapping("mdbExportComparator")
+    public Response mdbExportComparator(@RequestParam(value = "groupName", required = false) String groupName, @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
         if (multipartFile == null) {
             return Response.returnFalse("请选择文件");
         }
@@ -92,20 +78,13 @@ public class ParamDbController {
             throw new ErrorException(e.getMessage());
         }
 
-        ParamDbService paramDbService = new ParamDbService();
-        ParamDbService.Result result = paramDbService.exportComparator(groupName, file.getAbsolutePath());
+        new ParamDbService().mdbExportComparatorOfTask(groupName, file.getAbsolutePath());
 
-        FileUtil.delete(file);
-
-        if (result.flag) {
-            return Response.returnTrue(result.message);
-        } else {
-            return Response.returnFalse(result.message);
-        }
+        return Response.returnTrue("已放入后台进行比对");
     }
 
     /**
-     * 导出比对
+     * excel导入比对
      *
      * @param tableName     表名
      * @param multipartFile 文件
@@ -113,9 +92,6 @@ public class ParamDbController {
      */
     @PostMapping("excelImportComparator")
     public Response excelImportComparator(@RequestParam(value = "tableName", required = false) String tableName, @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
-        if (StringUtil.isEmpty(tableName)) {
-            return Response.returnFalse("表名不能为空");
-        }
         if (multipartFile == null) {
             return Response.returnFalse("请选择文件");
         }
@@ -131,16 +107,9 @@ public class ParamDbController {
             throw new ErrorException(e.getMessage());
         }
 
-        ParamDbService paramDbService = new ParamDbService();
-        ParamDbService.Result result = paramDbService.excelImportComparator(tableName, file.getAbsolutePath());
+        new ParamDbService().excelImportComparatorOfTask(tableName, file.getAbsolutePath());
 
-        FileUtil.delete(file);
-
-        if (result.flag) {
-            return Response.returnTrue(result.message);
-        } else {
-            return Response.returnFalse(result.message);
-        }
+        return Response.returnTrue("已放入后台进行比对");
     }
 
     /**
@@ -152,9 +121,6 @@ public class ParamDbController {
      */
     @PostMapping("excelImport")
     public Response excelImport(@RequestParam(value = "tableName", required = false) String tableName, @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
-        if (StringUtil.isEmpty(tableName)) {
-            return Response.returnFalse("表名不能为空");
-        }
         if (multipartFile == null) {
             return Response.returnFalse("请选择文件");
         }
@@ -170,16 +136,9 @@ public class ParamDbController {
             throw new ErrorException(e.getMessage());
         }
 
-        ParamDbService paramDbService = new ParamDbService();
-        ParamDbService.Result result = paramDbService.excelImport(tableName, file.getAbsolutePath());
+        new ParamDbService().excelImportOfTask(tableName, file.getAbsolutePath());
 
-        FileUtil.delete(file);
-
-        if (result.flag) {
-            return Response.returnTrue(result.message);
-        } else {
-            return Response.returnFalse(result.message);
-        }
+        return Response.returnTrue("已放入后台进行比对");
     }
 
 }

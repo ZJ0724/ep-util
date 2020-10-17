@@ -1,5 +1,4 @@
 export default [
-
     {
         path: "/",
         name: "首页"
@@ -76,12 +75,12 @@ export default [
         name: "参数库",
         children: [
             {
-                path: "importParamDbComparison.html",
-                name: "导入比对"
+                path: "mdbImportParamDbComparison.html",
+                name: "mdb导入比对"
             },
             {
-                path: "exportParamDbComparison.html",
-                name: "导出比对"
+                path: "mdbExportParamDbComparison.html",
+                name: "mdb导出比对"
             },
             {
                 path: "excelImportParamDbComparison.html",
@@ -92,6 +91,10 @@ export default [
                 name: "excel导入"
             }
         ]
-    }
+    },
 
+    {
+        path: "task.html",
+        name: "任务列表"
+    }
 ]

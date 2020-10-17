@@ -7,10 +7,9 @@ export default {
     },
 
     // 打开弹窗
-    popup(data) {
+    popup(data, isEnlarge) {
         let div = document.createElement("div");
-        let area = ["50%", "70%"];
-
+        let area = isEnlarge ? ["50%", "70%"] : ["auto", "auto"];
         // list
         if (data instanceof Array) {
             for (let item of data) {
@@ -33,7 +32,6 @@ export default {
         }
         else {
             div.innerHTML = data;
-            area = ["auto", "auto"];
         }
 
         layui.use('layer', function () {

@@ -3,10 +3,10 @@ import baseServiceApi from "./baseServiceApi.js";
 export default {
     url: "paramDb2.0",
 
-    importComparator(groupName, file) {
+    mdbImportComparator(groupName, file) {
         return baseServiceApi.sendHttp({
             type: "POST",
-            url: `${this.url}/importComparator`,
+            url: `${this.url}/mdbImportComparator`,
             data: {
                 groupName: groupName,
                 file: file
@@ -15,10 +15,10 @@ export default {
         });
     },
 
-    exportComparator(groupName, file) {
+    mdbExportComparator(groupName, file) {
         return baseServiceApi.sendHttp({
             type: "POST",
-            url: `${this.url}/exportComparator`,
+            url: `${this.url}/mdbExportComparator`,
             data: {
                 groupName: groupName,
                 file: file
