@@ -32,15 +32,27 @@ public final class ExcelUtil {
      * */
     public ExcelUtil(String path, int sheetIndex) {
         FileInputStream fileInputStream = null;
-
         try {
             fileInputStream = new FileInputStream(new File(path));
             Workbook workbook = StreamingReader.builder().rowCacheSize(100).bufferSize(4096).open(fileInputStream);
             Sheet sheet = workbook.getSheetAt(sheetIndex);
+            int titleSize = 0;
             for (Row row : sheet) {
                 List<String> strings = new ArrayList<>();
-                for (Cell cell : row) {
-                    strings.add(cell.getStringCellValue());
+                for (int i = 0; i < row.getLastCellNum(); i++) {
+                    Cell cell = row.getCell(i);
+                    if (cell != null) {
+                        strings.add(cell.getStringCellValue());
+                    } else {
+                        strings.add("");
+                    }
+                }
+                if (titleSize == 0) {
+                    titleSize = strings.size();
+                }
+                int sSize = strings.size();
+                for (int i = 0; i < titleSize - sSize; i++) {
+                    strings.add("");
                 }
                 this.data.add(strings);
             }

@@ -18,7 +18,7 @@ import com.easipass.util.core.util.ExcelUtil;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        System.out.println(MdbDatabase.getTableCount("C:\\Users\\ZJ\\Desktop\\下载C:\\Users\\ZJ\\Desktop\\下载\\new20201015\\ClassifyDb.mdb", "classify"));
+        new ExcelUtil("C:\\Users\\14762\\Desktop\\下载\\new20201009\\规范申报_20201009.xlsx", 0);
     }
 
 }
