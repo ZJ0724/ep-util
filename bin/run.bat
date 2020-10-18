@@ -3,6 +3,6 @@
 cd %~dp0
 cd ..
 
-java -Xms600m -Xmx600m -jar lib/ep-util.jar
+java -Xms2G -Xmx2G -jar lib/ep-util.jar
 
 pause

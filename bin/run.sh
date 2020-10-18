@@ -14,6 +14,6 @@ if [ "${pid}" != "" ]; then
 fi
 
 # 启动
-nohup java -jar lib/ep-util.jar > /dev/null 2>&1 &
+nohup -Xms2G -Xmx2G java -jar lib/ep-util.jar > /dev/null 2>&1 &
 
 echo -e "\033[0;32;1m ep-util is run! \033[0m"
