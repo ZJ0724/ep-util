@@ -4,7 +4,6 @@ import com.easipass.util.api.service.BaseServiceApi;
 import com.easipass.util.core.service.SystemService;
 import com.easipass.util.entity.Response;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 
 /**
@@ -36,6 +35,17 @@ public class SystemController {
     @PostMapping("cleanErrorLog")
     public Response cleanErrorLog(@RequestBody Map<String, String> requestBody) {
         new SystemService().cleanErrorLog(requestBody.get("key"));
+        return Response.returnTrue();
+    }
+
+    /**
+     * 辣鸡回收
+     *
+     * @return Response
+     * */
+    @PostMapping("gc")
+    public Response gc() {
+        System.gc();
         return Response.returnTrue();
     }
 

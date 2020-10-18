@@ -48,6 +48,10 @@
 
                 <div style="white-space: pre-line;margin-top: 10px;" v-html="errorLog"></div>
             </div>
+
+            <div class="ep-panel" style="margin-top: 20px;">
+                <button @click="gc()">辣鸡回收</button>
+            </div>
         </div>
     </div>
 </body>
@@ -166,6 +170,10 @@
                         alertComponent.popup(message);
                     });
                 });
+            },
+
+            gc() {
+                systemApi.gc();
             }
         }
     });

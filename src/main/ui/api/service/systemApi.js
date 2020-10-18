@@ -14,5 +14,12 @@ export default {
             url: "system/cleanErrorLog",
             data: data
         });
+    },
+
+    gc() {
+        return baseServiceApi.sendHttp({
+            type: "POST",
+            url: "system/gc"
+        });
     }
 }

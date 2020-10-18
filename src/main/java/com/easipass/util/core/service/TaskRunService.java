@@ -38,7 +38,16 @@ public abstract class TaskRunService {
         final Task task = new Task(this.name);
         new TaskService().addTask(task);
 
-        Project.THREAD_POOL_EXECUTOR.execute(() -> task.end(this.run()));
+        Project.THREAD_POOL_EXECUTOR.execute(() -> {
+            String message = null;
+            try {
+                message = this.run();
+            } catch (Throwable e) {
+                message = e.getMessage();
+            } finally {
+                task.end(message);
+            }
+        });
     }
 
 }
