@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="/base.js"></script>
+    <script type="module" src="/main.js"></script>
+    <style>
+        .cell {
+            display: flex;
+            justify-content: center;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div id="main">
+        <navigation></navigation>
+
+        <div id="body">
+            <!-- 任务列表 -->
+            <div v-cloak>
+                <!-- 标题 -->
+                <div class="ep-panel" style="display: flex;margin-bottom: 40px;font-weight: bold;">
+                    <div style="width: 5%;" class="center">
+                        id
+                    </div>
+                    <div style="width: 14%;" class="center">
+                        任务名称
+                    </div>
+                    <div style="width: 14%;" class="center">
+                        状态
+                    </div>
+                    <div style="width: 14%;" class="center">
+                        开始时间
+                    </div>
+                    <div style="width: 14%;" class="center">
+                        结束时间
+                    </div>
+                    <div style="width: 25%;" class="center">
+                        信息
+                    </div>
+                    <div style="width: 14%;" class="center">
+                        操作
+                    </div>
+                </div>
+
+<!--                <div class="ep-panel" style="display: flex;">-->
+<!--                    <div style="width: 16%;">-->
+<!--                        比对参数库-->
+<!--                    </div>-->
+<!--                    <div style="width: 16%;">-->
+<!--                        进行中-->
+<!--                    </div>-->
+<!--                    <div style="width: 16%;">-->
+<!--                        2020-10-10 12:12:12-->
+<!--                    </div>-->
+<!--                    <div style="width: 16%;">-->
+<!--                        2020-10-10 12:12:12-->
+<!--                    </div>-->
+<!--                    <div style="width: 20%;">-->
+<!--                        比对完成-->
+<!--                    </div>-->
+<!--                    <div style="width: 16%;">-->
+<!--                        删除-->
+<!--                    </div>-->
+<!--                </div>-->
+                <div v-for="(item, key) in tasks" :key="key" style="display: flex;margin-top: 10px;" class="ep-panel">
+                    <div style="width: 5%;" class="cell">
+                        {{item.id}}
+                    </div>
+                    <div style="width: 14%;" class="cell">
+                        {{item.name}}
+                    </div>
+                    <div v-if="item.flag === '0'" style="width: 14%;color: #FF5722;" class="cell">
+                        进行中
+                    </div>
+                    <div v-if="item.flag === '1'" style="width: 14%;color: #5FB878;" class="cell">
+                        已完成
+                    </div>
+                    <div style="width: 14%;" class="cell">
+                        {{item.createTime}}
+                    </div>
+                    <div style="width: 14%;" class="cell">
+                        {{item.endTime}}
+                    </div>
+                    <div style="width: 25%;" class="cell">
+                        {{item.message}}
+                    </div>
+                    <div style="width: 14%;" class="cell">
+                        <div>
+                            <button @click="deleteTask(item.id)" class="btn btn-danger btn-sm" type="button">删除</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 无任务 -->
+                <div v-if="tasks.length === 0" style="margin-top: 10px;" class="ep-panel center">
+                    无任务
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script type="module">
+    import taskApi from "../api/service/taskApi.js";
+    import alertComponent from "../component/alertComponent.js";
+
+    new Vue({
+        el: "#main",
+
+        data: {
+            tasks:[]
+        },
+
+        methods: {
+            getTasks() {
+                let that = this;
+
+                taskApi.getTasks().then(function (data) {
+                    that.tasks = data;
+                });
+            },
+
+            deleteTask(id) {
+                let that = this;
+
+                taskApi.deleteTask({
+                    id: id
+                }).then(function () {
+                    that.getTasks();
+                }).catch(function (message) {
+                    alertComponent.message(message);
+                });
+            }
+        },
+
+        created() {
+            this.getTasks();
+        }
+    });
+</script>

@@ -7,42 +7,42 @@
     <script type="module" src="/main.js"></script>
 </head>
 <body>
-    <div id="main">
-        <navigation></navigation>
+<div id="main">
+    <navigation></navigation>
 
-        <div id="body">
-            <div style="padding: 0 25%;">
-                <div class="ep-panel">
-                    <div>
-                        组名
-                    </div>
+    <div id="body">
+        <div style="padding: 0 25%;">
+            <div class="ep-panel">
+                <div>
+                    表名
+                </div>
 
-                    <div style="margin-top: 10px;">
-                        <label style="width: 100%;">
-                            <input v-model="groupName" class="form-control input-sm" />
-                        </label>
-                    </div>
+                <div style="margin-top: 10px;">
+                    <label style="width: 100%;">
+                        <input v-model="tableName" class="form-control input-sm" />
+                    </label>
+                </div>
 
-                    <div style="margin-top: 20px;">
-                        选择文件
-                    </div>
+                <div style="margin-top: 20px;">
+                    选择文件
+                </div>
 
-                    <div style="margin-top: 10px;display: flex;">
-                        <label style="width: 90%;">
-                            <input v-model="fileName" class="form-control input-sm" disabled />
-                        </label>
-                        <div style="width: 10%;">
-                            <button @click="selectFileMethod()" style="width: 100%;" class="btn btn-default btn-sm">...</button>
-                        </div>
+                <div style="margin-top: 10px;display: flex;">
+                    <label style="width: 90%;">
+                        <input v-model="fileName" class="form-control input-sm" disabled />
+                    </label>
+                    <div style="width: 10%;">
+                        <button @click="selectFileMethod()" style="width: 100%;" class="btn btn-default btn-sm">...</button>
                     </div>
+                </div>
 
-                    <div style="margin-top: 20px;">
-                        <button @click="comparison()" style="width: 100%;" class="btn btn-primary">开始比对</button>
-                    </div>
+                <div style="margin-top: 20px;">
+                    <button @click="comparison()" style="width: 100%;" class="btn btn-primary">开始比对</button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>
 
@@ -55,7 +55,7 @@
         el: "#main",
 
         data: {
-            groupName: "",
+            tableName: "",
             file: null,
             fileName: ""
         },
@@ -79,7 +79,7 @@
             comparison() {
                 loadingComponent.open();
 
-                paramDbApi.importComparator(this.groupName, this.file).then(function (data) {
+                paramDbApi.excelImport(this.tableName, this.file).then(function (data) {
                     alertComponent.popup(data);
                 }).catch(function (data) {
                     alertComponent.popup(data);

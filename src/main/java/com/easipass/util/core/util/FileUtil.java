@@ -162,4 +162,13 @@ public final class FileUtil {
         }
     }
 
+    /**
+     * 删除文件
+     *
+     * @param filePath 文件路径
+     * */
+    public static void delete(String filePath) {
+        delete(new File(filePath));
+    }
+
 }
