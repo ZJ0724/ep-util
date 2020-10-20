@@ -4,6 +4,7 @@ import com.easipass.util.api.service.BaseServiceApi;
 import com.easipass.util.core.Project;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.service.ParamDbService;
+import com.easipass.util.core.service.TaskRunService;
 import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.FileUtil;
 import com.easipass.util.entity.Response;
@@ -49,7 +50,12 @@ public class ParamDbController {
             throw new ErrorException(e.getMessage());
         }
 
-        new ParamDbService().mdbImportComparatorOfTask(groupName, file.getAbsolutePath());
+        new TaskRunService("导入比对：" + groupName) {
+            @Override
+            public String run() {
+                return new ParamDbService().mdbImportComparator(groupName, file.getAbsolutePath(), true).toString();
+            }
+        }.start();
 
         return Response.returnTrue("已放入后台进行比对");
     }
@@ -78,7 +84,12 @@ public class ParamDbController {
             throw new ErrorException(e.getMessage());
         }
 
-        new ParamDbService().mdbExportComparatorOfTask(groupName, file.getAbsolutePath());
+        new TaskRunService("导出比对：" + groupName) {
+            @Override
+            public String run() {
+                return new ParamDbService().mdbExportComparator(groupName, file.getAbsolutePath(), true).toString();
+            }
+        }.start();
 
         return Response.returnTrue("已放入后台进行比对");
     }
@@ -107,7 +118,12 @@ public class ParamDbController {
             throw new ErrorException(e.getMessage());
         }
 
-        new ParamDbService().excelImportComparatorOfTask(tableName, file.getAbsolutePath());
+        new TaskRunService("excel导入比对：" + tableName) {
+            @Override
+            public String run() {
+                return new ParamDbService().excelImportComparator(tableName, file.getAbsolutePath(), true).toString();
+            }
+        }.start();
 
         return Response.returnTrue("已放入后台进行比对");
     }
@@ -136,7 +152,12 @@ public class ParamDbController {
             throw new ErrorException(e.getMessage());
         }
 
-        new ParamDbService().excelImportOfTask(tableName, file.getAbsolutePath());
+        new TaskRunService("excel导入：" + tableName) {
+            @Override
+            public String run() {
+                return new ParamDbService().excelImport(tableName, file.getAbsolutePath(), true).toString();
+            }
+        }.start();
 
         return Response.returnTrue("已放入后台进行比对");
     }
