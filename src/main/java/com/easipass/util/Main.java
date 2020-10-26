@@ -3,6 +3,7 @@ package com.easipass.util;
 import com.easipass.util.core.*;
 import com.easipass.util.core.config.Port;
 import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.util.ThreadUtil;
 import com.zj0724.util.springboot.ParameterCheck;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
@@ -37,9 +38,18 @@ public class Main {
         // 指定端口
         System.setProperty("server.port", Port.getInstance().getPort() + "");
 
+        // 开启springboot
         SpringApplication springApplication = new SpringApplication(Main.class);
         springApplication.setBannerMode(Banner.Mode.OFF);
         springApplication.run(args);
+
+        // 开启垃圾回收定时服务
+        new Thread(() -> {
+            while (true) {
+                System.gc();
+                ThreadUtil.sleep(60 * 60 * 100);
+            }
+        }, "gc-thread").start();
     }
 
 }

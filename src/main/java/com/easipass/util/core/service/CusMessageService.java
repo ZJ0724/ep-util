@@ -106,8 +106,8 @@ public final class CusMessageService {
                     // IE_TYPE
                     String ieType = getDbValue(databaseFormHead, "IE_TYPE");
 
-                    // 如果IE_TYPE为0，则DeclareName可以为null
-                    if ("0".equals(ieType)) {
+                    // 如果IE_TYPE为0,2，则DeclareName可以为null
+                    if ("2".equals(ieType) || "0".equals(ieType)) {
                         if ("".equals(nodeValue)) {
                             dbValue = "";
                         }
@@ -436,6 +436,95 @@ public final class CusMessageService {
             }
         }
 
+        // 比对原产地证等
+        List<JSONObject> databaseEcoList = SWGDDatabase.queryBySql("SELECT * FROM " + SWGDDatabase.SWGD + ".T_SWGD_FORM_ECO WHERE HEAD_ID = '" + databaseFormHead.get("ID") + "'");
+        List<Element> EcoRelationList = rootElement.elements("EcoRelation");
+
+        for (JSONObject jsonObject : databaseEcoList) {
+            // CERT_TYPE
+            String CERT_TYPE = jsonObject.getString("CERT_TYPE");
+
+            if (StringUtil.isEmpty(CERT_TYPE)) {
+                result.addMessage(formatMessage("原产地证", "数据库存在CERT_TYPE为空"));
+                continue;
+            }
+
+            // DEC_G_NO
+            String DEC_G_NO = jsonObject.getString("DEC_G_NO");
+
+            if (StringUtil.isEmpty(DEC_G_NO)) {
+                result.addMessage(formatMessage("原产地证", "数据库存在DEC_G_NO为空"));
+                continue;
+            }
+
+            // 找到对应的报文节点
+            Element EcoRelation = null;
+
+            for (Element element : EcoRelationList) {
+                // 报文中CertType
+                String CertType = getNodeValue(element, "CertType");
+
+                if (StringUtil.isEmpty(CertType)) {
+                    continue;
+                }
+
+                // 报文中DecGNo
+                String DecGNo = getNodeValue(element, "DecGNo");
+
+                if (StringUtil.isEmpty(DecGNo)) {
+                    continue;
+                }
+
+                // 取CertType第一位
+                CertType = CertType.substring(0, 1);
+
+                if (CertType.equals(CERT_TYPE) && DecGNo.equals(DEC_G_NO)) {
+                    EcoRelation = element;
+                    break;
+                }
+            }
+
+            if (EcoRelation == null) {
+                result.addMessage(formatMessage("原产地证", "报文未找到<CERT_TYPE>为" + CERT_TYPE));
+                continue;
+            }
+
+            // 拿到随附单证Y证，通过<>去截取
+            String CERT_CODE_1 = "";
+            String CERT_CODE_2 = "";
+
+            List<JSONObject> CERTIFICATE_Y_LIST = SWGDDatabase.queryBySql("SELECT * FROM " + SWGDDatabase.SWGD + ".T_SWGD_FORM_CERTIFICATE WHERE HEAD_ID = (SELECT ID FROM " + SWGDDatabase.SWGD + ".T_SWGD_FORM_HEAD WHERE EDI_NO = '" + ediNo + "') AND DOCU_CODE = 'Y'");
+
+            if (CERTIFICATE_Y_LIST.size() != 0) {
+                JSONObject CERTIFICATE_Y = CERTIFICATE_Y_LIST.get(0);
+                String CERT_CODE = getDbValue(CERTIFICATE_Y, "CERT_CODE");
+
+                if (!StringUtil.isEmpty(CERT_CODE)) {
+                    int i = CERT_CODE.indexOf(">");
+
+                    if (i != -1) {
+                        CERT_CODE_1 = CERT_CODE.substring(1, i);
+                        CERT_CODE_2 = CERT_CODE.substring(i + 1);
+                    }
+                }
+            }
+
+            for (NodeMapping nodeMapping : FormCusMessageNodeMapping.EcoRelationNodeMapping) {
+                // dbValue
+                String dbValue = getDbValue(jsonObject, nodeMapping.dbField);
+
+                // 特殊处理Y证
+                if ("CertType".equals(nodeMapping.node) && "Y".equals(CERT_TYPE)) {
+                    dbValue = dbValue + CERT_CODE_1;
+                }
+                if ("EcoCertNo".equals(nodeMapping.node) && "Y".equals(CERT_TYPE)) {
+                    dbValue = CERT_CODE_2;
+                }
+
+                result.comparison(getNodeValue(EcoRelation, nodeMapping.node), dbValue, nodeMapping, "原产地证");
+            }
+        }
+
         if (result.getMessages().size() == 0) {
             result.setFlag(true);
             result.addMessage("比对完成，无差异");
@@ -662,7 +751,7 @@ public final class CusMessageService {
         /**
          * 状态
          * */
-        private boolean flag;
+        private boolean flag = false;
 
         /**
          * 信息
@@ -1047,6 +1136,18 @@ public final class CusMessageService {
             DecRoyaltyFeeNodeMapping.add(new NodeMapping("IssueDateTime", "ISSUE_DATE_TIME", "合同/协议签约时间"));
             DecRoyaltyFeeNodeMapping.add(new NodeMapping("PeriodStartDate", "PERIOD_START_DATE", "本次支付对应的计提周期起始时间"));
             DecRoyaltyFeeNodeMapping.add(new NodeMapping("PeriodEndDate", "PERIOD_END_DATE", "本次支付对应的计提周期终止时间"));
+        }
+
+        /**
+         * 原产地证等
+         * */
+        public static final List<NodeMapping> EcoRelationNodeMapping = new ArrayList<>();
+
+        static {
+            EcoRelationNodeMapping.add(new NodeMapping("CertType", "CERT_TYPE", "随附单证代码"));
+            EcoRelationNodeMapping.add(new NodeMapping("EcoCertNo", "ECO_CERT_NO", "随附单证编号"));
+            EcoRelationNodeMapping.add(new NodeMapping("DecGNo", "DEC_G_NO", "表体序号"));
+            EcoRelationNodeMapping.add(new NodeMapping("EcoGNo", "ECO_G_NO", "单证项号"));
         }
 
     }
