@@ -695,7 +695,12 @@ public final class ParamDbService {
                             sqlField = StringUtil.append(sqlField, dbField, ", ");
 
                             if (StringUtil.isEmpty(data)) {
-                                sqlData = StringUtil.append(sqlData, "NULL", ", ");
+                                // 如果数据为空，又是主键，则补__00
+                                if (SWGDPARADatabase.myIsPrimaryKey(tableName, dbField)) {
+                                    sqlData = StringUtil.append(sqlData, "'__00'", ", ");
+                                } else {
+                                    sqlData = StringUtil.append(sqlData, "NULL", ", ");
+                                }
                                 continue;
                             }
 

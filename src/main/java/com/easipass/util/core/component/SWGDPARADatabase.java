@@ -351,4 +351,17 @@ public final class SWGDPARADatabase extends Database {
         }
     }
 
+    /**
+     * 是否是主键
+     *
+     * @param tableName 表名
+     * @param column 字段名
+     * */
+    public static boolean myIsPrimaryKey(String tableName, String column) {
+        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
+        boolean result = swgdparaDatabase.isPrimaryKey(tableName, column);
+        swgdparaDatabase.close();
+        return result;
+    }
+
 }

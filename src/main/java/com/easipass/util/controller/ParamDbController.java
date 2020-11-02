@@ -159,7 +159,7 @@ public class ParamDbController {
             }
         }.start();
 
-        return Response.returnTrue("已放入后台进行比对");
+        return Response.returnTrue("已放入后台进行导入");
     }
 
 }

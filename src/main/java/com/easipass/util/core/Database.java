@@ -73,7 +73,7 @@ public abstract class Database {
             preparedStatement.close();
             this.preparedStatements.remove(preparedStatement);
         } catch (SQLException e) {
-            throw new ErrorException(e.getMessage());
+            throw new ErrorException(e.getMessage() + sql);
         }
     }
 
@@ -232,6 +232,32 @@ public abstract class Database {
         }
 
         return null;
+    }
+
+    /**
+     * 表字段是否是主键
+     *
+     * @param tableName 表名
+     * @param column 字段名
+     *
+     * @return 是主键返回true
+     * */
+    public final boolean isPrimaryKey(String tableName, String column) {
+        try {
+            ResultSet resultSet = this.connection.getMetaData().getPrimaryKeys(null, null, tableName);
+
+            this.resultSets.add(resultSet);
+
+            while (resultSet.next()) {
+                if (resultSet.getString(4).equals(column)) {
+                    return true;
+                }
+            }
+
+            return false;
+        } catch (java.sql.SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
     }
 
 }
