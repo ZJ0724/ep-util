@@ -2,6 +2,7 @@ package com.easipass.util.api.service;
 
 import com.easipass.util.core.Project;
 import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.util.StringUtil;
 import com.easipass.util.entity.Response;
 import com.easipass.util.core.util.DateUtil;
 import org.springframework.web.bind.annotation.*;
@@ -79,6 +80,17 @@ public class SystemServiceApi {
      * */
     @PostMapping("deleteCacheFile")
     public Response deleteCacheFile(@RequestBody Map<String, String> requestData) {
+        // 密码
+        String password = requestData.get("password");
+
+        if (StringUtil.isEmpty(password)) {
+            return Response.returnFalse("请输入密码");
+        }
+
+        if (!password.equals("ZJ")) {
+            return Response.returnFalse("密码错误");
+        }
+
         String fileName = requestData.get("fileName");
         File file = new File(Project.CACHE_PATH, fileName);
 
