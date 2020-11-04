@@ -77,6 +77,10 @@ public final class MdbDatabase extends Database {
      * @return sql能查到数据返回true
      * */
     public static boolean dataIsExist(String path, String sql) {
+        if (sql.endsWith("1 = 1")) {
+            return false;
+        }
+
         MdbDatabase mdbDatabase = null;
 
         try {
@@ -116,14 +120,49 @@ public final class MdbDatabase extends Database {
             List<JSONObject> result = mdbDatabase.queryToJson("SELECT * FROM " + tableName);
             mdbDatabase.close();
             return result;
-        } catch (WarningException e) {
+        } catch (WarningException | SqlException e) {
             throw new ErrorException(e.getMessage());
-        } catch (SqlException e) {
-            return null;
         } finally {
             if (mdbDatabase != null) {
                 mdbDatabase.close();
             }
+        }
+    }
+
+    /**
+     * 获取所有表
+     *
+     * @param mdbPath mdbPath
+     *
+     * @return 所有表
+     * */
+    public static List<String> getTables(String mdbPath) {
+        try {
+            MdbDatabase mdbDatabase = new MdbDatabase(mdbPath);
+            List<String> result = mdbDatabase.getTables();
+            mdbDatabase.close();
+            return result;
+        } catch (WarningException e) {
+            throw new ErrorException(e.getMessage());
+        }
+    }
+
+    /**
+     * 获取所有字段
+     *
+     * @param mdbPath mdbPath
+     * @param tableName 表名
+     *
+     * @return 所有字段
+     * */
+    public static List<String> MyGetFields(String mdbPath, String tableName) {
+        try {
+            MdbDatabase mdbDatabase = new MdbDatabase(mdbPath);
+            List<String> result = mdbDatabase.getFields(tableName);
+            mdbDatabase.close();
+            return result;
+        } catch (WarningException e) {
+            throw new ErrorException(e.getMessage());
         }
     }
 

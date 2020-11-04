@@ -14,16 +14,6 @@
             <div style="padding: 0 25%;">
                 <div class="ep-panel">
                     <div>
-                        组名
-                    </div>
-
-                    <div style="margin-top: 10px;">
-                        <label style="width: 100%;">
-                            <input v-model="groupName" class="form-control input-sm" />
-                        </label>
-                    </div>
-
-                    <div style="margin-top: 20px;">
                         选择文件
                     </div>
 
@@ -55,7 +45,6 @@
         el: "#main",
 
         data: {
-            groupName: "parameterDb",
             file: null,
             fileName: ""
         },
@@ -79,7 +68,9 @@
             comparison() {
                 loadingComponent.open();
 
-                paramDbApi.mdbExportComparator(this.groupName, this.file).then(function (data) {
+                paramDbApi.mdbExportComparator({
+                    file: this.file
+                }).then(function (data) {
                     alertComponent.popup(data);
                 }).catch(function (data) {
                     alertComponent.popup(data);

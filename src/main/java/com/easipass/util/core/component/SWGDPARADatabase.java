@@ -6,6 +6,7 @@ import com.easipass.util.core.C3p0Config;
 import com.easipass.util.core.Database;
 import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.StringUtil;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import java.beans.PropertyVetoException;
@@ -63,25 +64,25 @@ public final class SWGDPARADatabase extends Database {
         }
     }
 
-    /**
-     * 组名是否存在
-     *
-     * @param groupName 组名
-     *
-     * @return 存在返回true
-     * */
-    public static boolean groupNameIsExist(String groupName) {
-        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-        ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SCHEMA + ".T_PARAMS_GROUP WHERE GROUP_NAME = ?", groupName);
-
-        try {
-            return resultSet.next();
-        } catch (SQLException e) {
-            throw new ErrorException(e.getMessage());
-        } finally {
-            swgdparaDatabase.close();
-        }
-    }
+//    /**
+//     * 组名是否存在
+//     *
+//     * @param groupName 组名
+//     *
+//     * @return 存在返回true
+//     * */
+//    public static boolean groupNameIsExist(String groupName) {
+//        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
+//        ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SCHEMA + ".T_PARAMS_GROUP WHERE GROUP_NAME = ?", groupName);
+//
+//        try {
+//            return resultSet.next();
+//        } catch (SQLException e) {
+//            throw new ErrorException(e.getMessage());
+//        } finally {
+//            swgdparaDatabase.close();
+//        }
+//    }
 
     /**
      * 获取分组上所有的表名
@@ -249,7 +250,7 @@ public final class SWGDPARADatabase extends Database {
         try {
             return swgdparaDatabase.queryToJson("SELECT * FROM " + SCHEMA + "." + tableName + " WHERE PARAMS_VERSION = '" + version + "'");
         } catch (BaseException e) {
-            return null;
+            throw new ErrorException(e.getMessage());
         } finally {
             swgdparaDatabase.close();
         }
@@ -315,14 +316,18 @@ public final class SWGDPARADatabase extends Database {
 
             // 加1后的版本
             String newVersion = (versionInt + 1) + "";
-            // ID
-            String id = versionData.get("ID") + "";
 
-            if (StringUtil.isEmpty(id)) {
+            // 获取下一个id
+            Integer newId = null;
+            List<JSONObject> data = swgdparaDatabase.queryToJson("SELECT ID FROM (SELECT * FROM " + SCHEMA + ".T_PARAMS_VERSION ORDER BY ID DESC) WHERE ROWNUM = 1");
+            if (data.size() != 1) {
+                newId = Integer.parseInt(data.get(0).getString("ID")) + 1;
+            }
+            if (newId == null) {
                 throw new ErrorException("id为null");
             }
 
-            swgdparaDatabase.update("UPDATE " + SWGDPARADatabase.SCHEMA + ".T_PARAMS_VERSION SET PARAMS_VERSION = '" + newVersion + "' WHERE ID = '" + id + "'");
+            swgdparaDatabase.update("INSERT INTO "+ SCHEMA +".T_PARAMS_VERSION(\"ID\", \"CREATE_TIME\", \"GROUP_NAME\", \"PARAMS_VERSION\", \"TABLE_NAME\", \"STATUS\") VALUES ('" + newId + "', TO_TIMESTAMP('" + DateUtil.getDate("yyyy-MM-dd HH:mm:ss") + "', 'SYYYY-MM-DD HH24:MI:SS:FF6'), 'auto', '" + newVersion + "', '" + tableName + "', '1')");
 
             return newVersion;
         } finally {
@@ -362,6 +367,20 @@ public final class SWGDPARADatabase extends Database {
         boolean result = swgdparaDatabase.isPrimaryKey(tableName, column);
         swgdparaDatabase.close();
         return result;
+    }
+
+    /**
+     * 获取所有字段
+     *
+     * @param tableName 表名
+     *
+     * @return 所有字段
+     * */
+    public static List<String> MyGetFields(String tableName) {
+        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
+        List<String> fields = swgdparaDatabase.getFields(SCHEMA + "." + tableName);
+        swgdparaDatabase.close();
+        return fields;
     }
 
 }

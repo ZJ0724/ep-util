@@ -260,4 +260,47 @@ public abstract class Database {
         }
     }
 
+    /**
+     * 获取所有表名
+     *
+     * @return 所有表名
+     * */
+    public final List<String> getTables() {
+        try {
+            ResultSet resultSet = this.connection.getMetaData().getTables(null, null, null, new String[]{"TABLE"});
+            List<String> result = new ArrayList<>();
+
+            this.resultSets.add(resultSet);
+
+            while (resultSet.next()) {
+                result.add(resultSet.getString(3));
+            }
+
+            return result;
+        } catch (java.sql.SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+    }
+
+    /**
+     * 获取所有字段
+     *
+     * @param tableName resultSet
+     *
+     * @return 所有字段
+     * */
+    public List<String> getFields(String tableName) {
+        try {
+            List<String> result = new ArrayList<>();
+            ResultSet resultSet = this.query("SELECT * FROM " + tableName + " WHERE ROWNUM = 1");
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            for (int i = 1 ; i <= metaData.getColumnCount(); i++) {
+                result.add(metaData.getColumnName(i));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+    }
+
 }

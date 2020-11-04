@@ -29,12 +29,11 @@ public class ParamDbController {
     /**
      * mdb导入比对
      *
-     * @param groupName     组名
      * @param multipartFile 文件
      * @return Response
      */
     @PostMapping("mdbImportComparator")
-    public Response mdbImportComparator(@RequestParam(value = "groupName", required = false) String groupName, @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
+    public Response mdbImportComparator(@RequestParam(value = "file", required = false) MultipartFile multipartFile) {
         if (multipartFile == null) {
             return Response.returnFalse("请选择文件");
         }
@@ -50,10 +49,10 @@ public class ParamDbController {
             throw new ErrorException(e.getMessage());
         }
 
-        new TaskRunService("导入比对：" + groupName) {
+        new TaskRunService("mdb导入比对：" + file.getName()) {
             @Override
             public String run() {
-                return new ParamDbService().mdbImportComparator(groupName, file.getAbsolutePath(), true).toString();
+                return new ParamDbService().mdbImportComparator(file.getAbsolutePath(), true).toString();
             }
         }.start();
 
@@ -63,12 +62,11 @@ public class ParamDbController {
     /**
      * mdb导出比对
      *
-     * @param groupName     组名
      * @param multipartFile 文件
      * @return Response
      */
     @PostMapping("mdbExportComparator")
-    public Response mdbExportComparator(@RequestParam(value = "groupName", required = false) String groupName, @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
+    public Response mdbExportComparator(@RequestParam(value = "file", required = false) MultipartFile multipartFile) {
         if (multipartFile == null) {
             return Response.returnFalse("请选择文件");
         }
@@ -84,10 +82,10 @@ public class ParamDbController {
             throw new ErrorException(e.getMessage());
         }
 
-        new TaskRunService("导出比对：" + groupName) {
+        new TaskRunService("mdb导出比对：" + file.getName()) {
             @Override
             public String run() {
-                return new ParamDbService().mdbExportComparator(groupName, file.getAbsolutePath(), true).toString();
+                return new ParamDbService().mdbExportComparator(file.getAbsolutePath(), true).toString();
             }
         }.start();
 
