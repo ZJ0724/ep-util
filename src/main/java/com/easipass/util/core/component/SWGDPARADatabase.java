@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.easipass.util.core.BaseException;
 import com.easipass.util.core.C3p0Config;
 import com.easipass.util.core.Database;
+import com.easipass.util.core.config.SWGDPARAConfig;
 import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.util.DateUtil;
@@ -47,16 +48,16 @@ public final class SWGDPARADatabase extends Database {
      * */
     private static Connection getConnection() {
         try {
-            Class.forName("oracle.jdbc.OracleDriver");
+            Class.forName(SWGDPARAConfig.CLASS_NAME);
             C3p0Config.getInstance().setData(COMBO_POOLED_DATA_SOURCE);
             try {
-                COMBO_POOLED_DATA_SOURCE.setDriverClass("oracle.jdbc.OracleDriver");
+                COMBO_POOLED_DATA_SOURCE.setDriverClass(SWGDPARAConfig.CLASS_NAME);
             } catch (PropertyVetoException e) {
                 throw new ErrorException(e.getMessage());
             }
-            COMBO_POOLED_DATA_SOURCE.setJdbcUrl("jdbc:oracle:thin:@192.168.130.216:1521:testeport");
-            COMBO_POOLED_DATA_SOURCE.setUser("devtester");
-            COMBO_POOLED_DATA_SOURCE.setPassword("easytester");
+            COMBO_POOLED_DATA_SOURCE.setJdbcUrl(SWGDPARAConfig.URL);
+            COMBO_POOLED_DATA_SOURCE.setUser(SWGDPARAConfig.USER_NAME);
+            COMBO_POOLED_DATA_SOURCE.setPassword(SWGDPARAConfig.PASSWORD);
 
             return COMBO_POOLED_DATA_SOURCE.getConnection();
         } catch (SQLException | ClassNotFoundException e) {
@@ -381,6 +382,18 @@ public final class SWGDPARADatabase extends Database {
         List<String> fields = swgdparaDatabase.getFields(SCHEMA + "." + tableName);
         swgdparaDatabase.close();
         return fields;
+    }
+
+    /**
+     * 插入数据
+     *
+     * @param tableName 表名
+     * @param jsonObject 数据
+     * */
+    public static void myInsert(String tableName, JSONObject jsonObject) {
+        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
+        swgdparaDatabase.insert(SCHEMA + "." + tableName, jsonObject);
+        swgdparaDatabase.close();
     }
 
 }

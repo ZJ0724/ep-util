@@ -682,6 +682,148 @@ public final class ParamDbService {
     }
 
     /**
+     * mdb导入
+     *
+     * @param mdbPath mdb文件路径
+     * @param isDeleteFile 比对完是否删除文件
+     *
+     * @return 比对结果
+     * */
+    public Result mdbImport(String mdbPath, boolean isDeleteFile) {
+        Result result = new Result();
+
+        try {
+            // 校验mdb文件是否正确
+            try {
+                MdbDatabase mdbDatabase = new MdbDatabase(mdbPath);
+                mdbDatabase.close();
+            } catch (WarningException e) {
+                result.message.add(e.getMessage());
+                return result;
+            }
+
+            // 获取mdb文件中的所有表
+            List<String> mdbTables = MdbDatabase.getTables(mdbPath);
+
+            // countDownLatch
+            CountDownLatch countDownLatch = new CountDownLatch(mdbTables.size());
+
+            // 遍历mdb文件中的所有表
+            for (int i = 0; i < mdbTables.size(); i++) {
+                final int finalI = i;
+
+                Project.THREAD_POOL_EXECUTOR.execute(() -> {
+                    try {
+                        // mdb表名
+                        String mdbTable = mdbTables.get(finalI);
+
+                        // 表映射
+                        ParamDbTableMapping paramDbTableMapping = ParamDbTableMappingConfig.getByResourceTableName(mdbTable);
+
+                        if (paramDbTableMapping == null) {
+                            result.message.add(mdbTable + "表未在配置中找到");
+                            return;
+                        }
+
+                        // 数据库表名
+                        String dbTable = paramDbTableMapping.getDbTableName();
+                        // 版本
+                        String version = SWGDPARADatabase.getTableVersion(dbTable);
+
+                        if (StringUtil.isEmpty(version)) {
+                            result.message.add(dbTable + ": 无版本号");
+                            return;
+                        }
+
+                        // 字段比较
+                        List<String> resourceTableFields = paramDbTableMapping.getResourceTableFields();
+                        List<String> dbTableFields = paramDbTableMapping.getDbTableFields();
+                        boolean mdbTableFieldCompare = fieldCompare(resourceTableFields, MdbDatabase.MyGetFields(mdbPath, mdbTable), result, "mdb文件" + mdbTable);
+                        boolean dbTableFieldCompare = fieldCompare(dbTableFields, SWGDPARADatabase.MyGetFields(dbTable), result, "数据库表" + dbTable);
+                        if (!mdbTableFieldCompare || !dbTableFieldCompare) {
+                            return;
+                        }
+
+                        // mdb表数据
+                        List<JSONObject> mdbTableData = MdbDatabase.getTableData(mdbPath, mdbTable);
+
+                        // 遍历数据多线程控制
+                        CountDownLatch countDownLatch1 = new CountDownLatch(mdbTableData.size());
+
+                        for (int j = 0; j < mdbTableData.size(); j++) {
+                            final int finalJ = j;
+
+                            Project.THREAD_POOL_EXECUTOR.execute(() -> {
+                                try {
+                                    // 单条mdb数据
+                                    JSONObject mdbData = mdbTableData.get(finalJ);
+
+                                    // 单条db数据
+                                    JSONObject dbData = dataTransformation(mdbData, paramDbTableMapping.getFields(), "key");
+
+                                    for (String dbField : dbTableFields) {
+                                        String data = dbData.getString(dbField);
+                                        // 字段类型
+                                        String fieldType = SWGDPARADatabase.getFieldType(dbTable, dbField);
+
+                                        // 如果是主键又是空，则补__00
+                                        if (SWGDPARADatabase.myIsPrimaryKey(dbTable, dbField) && StringUtil.isEmpty(data)) {
+                                            data = "__00";
+                                        } else if ("TIMESTAMP".equals(fieldType)) {
+                                            data = "TO_DATE('" + parseDate(data) + "','yyyy-mm-dd hh24:mi:ss')";
+                                        }
+
+                                        dbData.put(dbField, data);
+                                    }
+
+                                    log.info(dbData.toJSONString());
+
+                                    // 插入数据
+                                    SWGDPARADatabase.myInsert(dbTable, dbData);
+                                } catch (Throwable e) {
+                                    result.message.add(e.getMessage());
+                                } finally {
+                                    countDownLatch1.countDown();
+                                }
+                            });
+                        }
+
+                        try {
+                            countDownLatch1.await();
+                        } catch (InterruptedException e) {
+                            throw new ErrorException(e.getMessage());
+                        }
+                    } catch (Throwable e) {
+                        result.message.add(e.getMessage());
+                    } finally {
+                        countDownLatch.countDown();
+                    }
+                });
+            }
+
+            // 等待执行完成
+            try {
+                countDownLatch.await();
+            } catch (InterruptedException e) {
+                throw new ErrorException(e.getMessage());
+            }
+
+            if (result.message.size() == 0) {
+                result.flag = true;
+                result.message.add("比对完成，无差异");
+            }
+
+            log.info(result.toString());
+
+            return result;
+        } finally {
+            if (isDeleteFile) {
+                FileUtil.delete(mdbPath);
+            }
+        }
+    }
+
+    /**
      * 兼容日期
      *
      * @param date date
@@ -739,6 +881,33 @@ public final class ParamDbService {
         }
 
         return true;
+    }
+
+    /**
+     * 将数据字段进行转换
+     *
+     * @param jsonObject 被转换的数据
+     * @param fieldMap 要替换的字段映射
+     * @param type 基于key还是基于value
+     * */
+    private static JSONObject dataTransformation(JSONObject jsonObject, Map<String, String> fieldMap, String type) {
+        JSONObject result = new JSONObject(true);
+
+        if (StringUtil.isEmpty(type)) {
+            type = "key";
+        }
+        if (!type.equals("key") && !type.equals("value")) {
+            type = "key";
+        }
+
+        Set<Map.Entry<String, String>> entries = fieldMap.entrySet();
+        for (Map.Entry<String, String> entry : entries) {
+            String field = type.equals("key") ? entry.getKey() : entry.getValue();
+            String data = jsonObject.getString(type.equals("key") ? entry.getValue() : entry.getKey());
+            result.put(field, data);
+        }
+
+        return result;
     }
 
     /**

@@ -3,6 +3,7 @@ package com.easipass.util.core;
 import com.alibaba.fastjson.JSONObject;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.SqlException;
+import com.easipass.util.core.util.StringUtil;
 import java.sql.*;
 import java.util.*;
 
@@ -301,6 +302,33 @@ public abstract class Database {
         } catch (SQLException e) {
             throw new ErrorException(e.getMessage());
         }
+    }
+
+    /**
+     * 插入数据
+     *
+     * @param tableName 表名
+     * @param jsonObject 数据
+     * */
+    public final void insert(String tableName, JSONObject jsonObject) {
+        String sql = "INERT INTO " + tableName;
+        String fields = "(";
+        String values = " VALUES(";
+        Set<Map.Entry<String, Object>> entries = jsonObject.entrySet();
+        for (Map.Entry<String, Object> entry : entries) {
+            String field = entry.getKey();
+            String value = entry.getValue().toString();
+            if (!value.startsWith("TO_DATE")) {
+                value = StringUtil.append("'", value, "'");
+            }
+            fields = StringUtil.append(fields, field, ", ");
+            values = StringUtil.append(values, value, ", ");
+        }
+        fields = fields.substring(0, fields.length() - 2) + ")";
+        values = values.substring(0, values.length() - 2) + ")";
+        sql = sql + fields + values;
+        System.out.println(sql);
+//        this.update(sql);
     }
 
 }

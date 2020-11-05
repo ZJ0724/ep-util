@@ -160,4 +160,37 @@ public class ParamDbController {
         return Response.returnTrue("已放入后台进行导入");
     }
 
+    /**
+     * mdb导入
+     *
+     * @param multipartFile 文件
+     * @return Response
+     */
+    @PostMapping("mdbImport")
+    public Response mdbImport(@RequestParam(value = "file", required = false) MultipartFile multipartFile) {
+        if (multipartFile == null) {
+            return Response.returnFalse("请选择文件");
+        }
+
+        File file;
+
+        try {
+            InputStream inputStream = multipartFile.getInputStream();
+            file = new File(Project.CACHE_PATH, DateUtil.getTime() + "-" + multipartFile.getOriginalFilename());
+            FileUtil.createFile(file, inputStream);
+            inputStream.close();
+        } catch (IOException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        new TaskRunService("mdb导入：" + file.getName()) {
+            @Override
+            public String run() {
+                return new ParamDbService().mdbImport(file.getAbsolutePath(), true).toString();
+            }
+        }.start();
+
+        return Response.returnTrue("已放入后台进行导入");
+    }
+
 }

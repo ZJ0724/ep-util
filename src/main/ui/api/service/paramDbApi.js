@@ -43,5 +43,14 @@ export default {
             },
             dataType: "file"
         });
+    },
+
+    mdbImport(data) {
+        return baseServiceApi.sendHttp({
+            type: "POST",
+            url: `${this.url}/mdbImport`,
+            data: data,
+            dataType: "file"
+        });
     }
 }

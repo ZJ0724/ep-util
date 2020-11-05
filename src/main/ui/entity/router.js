@@ -89,6 +89,10 @@ export default [
             {
                 path: "excelImport.html",
                 name: "excel导入"
+            },
+            {
+                path: "mdbImport.html",
+                name: "mdb导入"
             }
         ]
     },
