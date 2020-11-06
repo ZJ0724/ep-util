@@ -68,9 +68,7 @@ public abstract class Database {
     public final void update(String sql, Object... params) {
         try {
             PreparedStatement preparedStatement = getPreparedStatement(sql, params);
-
             preparedStatement.execute();
-
             preparedStatement.close();
             this.preparedStatements.remove(preparedStatement);
         } catch (SQLException e) {
@@ -318,17 +316,13 @@ public abstract class Database {
         for (Map.Entry<String, Object> entry : entries) {
             String field = entry.getKey();
             String value = entry.getValue().toString();
-            if (!value.startsWith("TO_DATE")) {
-                value = StringUtil.append("'", value, "'");
-            }
             fields = StringUtil.append(fields, field, ", ");
             values = StringUtil.append(values, value, ", ");
         }
         fields = fields.substring(0, fields.length() - 2) + ")";
         values = values.substring(0, values.length() - 2) + ")";
         sql = sql + fields + values;
-        System.out.println(sql);
-//        this.update(sql);
+        this.update(sql);
     }
 
 }

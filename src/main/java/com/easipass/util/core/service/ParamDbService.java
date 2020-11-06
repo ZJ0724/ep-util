@@ -728,12 +728,7 @@ public final class ParamDbService {
                         // 数据库表名
                         String dbTable = paramDbTableMapping.getDbTableName();
                         // 版本
-                        String version = SWGDPARADatabase.getTableVersion(dbTable);
-
-                        if (StringUtil.isEmpty(version)) {
-                            result.message.add(dbTable + ": 无版本号");
-                            return;
-                        }
+                        String version = SWGDPARADatabase.versionAddOne(dbTable);
 
                         // 字段比较
                         List<String> resourceTableFields = paramDbTableMapping.getResourceTableFields();
@@ -761,6 +756,9 @@ public final class ParamDbService {
                                     // 单条db数据
                                     JSONObject dbData = dataTransformation(mdbData, paramDbTableMapping.getFields(), "key");
 
+                                    // 设置版本号
+                                    dbData.put("PARAMS_VERSION", "'" + version + "'");
+
                                     for (String dbField : dbTableFields) {
                                         String data = dbData.getString(dbField);
                                         // 字段类型
@@ -768,7 +766,7 @@ public final class ParamDbService {
 
                                         // 如果是主键又是空，则补__00
                                         if (SWGDPARADatabase.myIsPrimaryKey(dbTable, dbField) && StringUtil.isEmpty(data)) {
-                                            data = "__00";
+                                            data = "'__00'";
                                         } else if ("TIMESTAMP".equals(fieldType)) {
                                             data = "TO_DATE('" + parseDate(data) + "','yyyy-mm-dd hh24:mi:ss')";
                                         }
@@ -864,6 +862,9 @@ public final class ParamDbService {
     private static boolean fieldCompare(List<String> config, List<String> target, Result result, String tableName) {
         List<String> error = new ArrayList<>();
         for (String t : target) {
+            if ("PARAMS_VERSION".equals(t)) {
+                continue;
+            }
             boolean b = false;
             for (String c : config) {
                 if (c.equals(t)) {
@@ -904,7 +905,7 @@ public final class ParamDbService {
         for (Map.Entry<String, String> entry : entries) {
             String field = type.equals("key") ? entry.getKey() : entry.getValue();
             String data = jsonObject.getString(type.equals("key") ? entry.getValue() : entry.getKey());
-            result.put(field, data);
+            result.put(field, "'" + data + "'");
         }
 
         return result;

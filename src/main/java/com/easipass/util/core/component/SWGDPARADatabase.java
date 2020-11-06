@@ -290,33 +290,31 @@ public final class SWGDPARADatabase extends Database {
         SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
 
         try {
+            String newVersion;
+
             // 版本数据集合
             List<JSONObject> versionDataList = swgdparaDatabase.queryToJson("SELECT * FROM (SELECT * FROM " + SWGDPARADatabase.SCHEMA + ".T_PARAMS_VERSION WHERE TABLE_NAME = '" + tableName + "' ORDER BY PARAMS_VERSION DESC) WHERE ROWNUM <= 1");
 
             if (versionDataList.size() == 0) {
-                throw new ErrorException("未找到版本");
+                newVersion = "10000";
+            } else {
+                // 版本数据
+                JSONObject versionData = versionDataList.get(0);
+                // 版本
+                String version = versionData.get("PARAMS_VERSION") + "";
+
+                if (StringUtil.isEmpty(version)) {
+                    newVersion = "10000";
+                } else {
+                    int versionInt;
+                    try {
+                        versionInt = Integer.parseInt(version);
+                        newVersion = (versionInt + 1) + "";
+                    } catch (NumberFormatException e) {
+                        newVersion = "10000";
+                    }
+                }
             }
-
-            // 版本数据
-            JSONObject versionData = versionDataList.get(0);
-            // 版本
-            String version = versionData.get("PARAMS_VERSION") + "";
-
-            if (StringUtil.isEmpty(version)) {
-                throw new ErrorException("版本为null");
-            }
-
-            // 将版本转为int
-            int versionInt;
-
-            try {
-                versionInt = Integer.parseInt(version);
-            } catch (Exception e) {
-                throw new ErrorException("版本不是int");
-            }
-
-            // 加1后的版本
-            String newVersion = (versionInt + 1) + "";
 
             // 获取下一个id
             Integer newId = null;
@@ -325,7 +323,7 @@ public final class SWGDPARADatabase extends Database {
                 newId = Integer.parseInt(data.get(0).getString("ID")) + 1;
             }
             if (newId == null) {
-                throw new ErrorException("id为null");
+                newId = 1000;
             }
 
             swgdparaDatabase.update("INSERT INTO "+ SCHEMA +".T_PARAMS_VERSION(\"ID\", \"CREATE_TIME\", \"GROUP_NAME\", \"PARAMS_VERSION\", \"TABLE_NAME\", \"STATUS\") VALUES ('" + newId + "', TO_TIMESTAMP('" + DateUtil.getDate("yyyy-MM-dd HH:mm:ss") + "', 'SYYYY-MM-DD HH24:MI:SS:FF6'), 'auto', '" + newVersion + "', '" + tableName + "', '1')");

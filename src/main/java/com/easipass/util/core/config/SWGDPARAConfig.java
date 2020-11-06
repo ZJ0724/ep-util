@@ -10,7 +10,7 @@ public final class SWGDPARAConfig {
     /**
      * 环境
      * */
-    public static final String ENV = "DEV";
+    public static final String ENV = "";
 
     /**
      * 驱动类
