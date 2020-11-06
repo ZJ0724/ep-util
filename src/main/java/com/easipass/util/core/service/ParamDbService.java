@@ -767,8 +767,13 @@ public final class ParamDbService {
                                         // 如果是主键又是空，则补__00
                                         if (SWGDPARADatabase.myIsPrimaryKey(dbTable, dbField) && StringUtil.isEmpty(data)) {
                                             data = "'__00'";
-                                        } else if ("TIMESTAMP".equals(fieldType)) {
+                                        } else if ("TIMESTAMP".equals(fieldType) && !StringUtil.isEmpty(data)) {
                                             data = "TO_DATE('" + parseDate(data) + "','yyyy-mm-dd hh24:mi:ss')";
+                                        } else {
+                                            if (StringUtil.isEmpty(data)) {
+                                                continue;
+                                            }
+                                            data = "'" + data.replaceAll("'", "''") + "'";
                                         }
 
                                         dbData.put(dbField, data);
@@ -808,7 +813,7 @@ public final class ParamDbService {
 
             if (result.message.size() == 0) {
                 result.flag = true;
-                result.message.add("比对完成，无差异");
+                result.message.add("导入完成");
             }
 
             log.info(result.toString());
@@ -829,7 +834,7 @@ public final class ParamDbService {
      * @return date
      * */
     private static String parseDate(String date) {
-        String[] dates = new String[]{"yyyy-MM-dd HH:mm:ss.000000", "yyyy-MM-dd HH:mm:ss", "yyyy/MM/dd HH:mm:ss"};
+        String[] dates = new String[]{"yyyy-MM-dd HH:mm:ss.000000", "yyyy-MM-dd HH:mm:ss", "yyyy/MM/dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss.0"};
         Date date1 = null;
 
         for (String d : dates) {
@@ -905,7 +910,7 @@ public final class ParamDbService {
         for (Map.Entry<String, String> entry : entries) {
             String field = type.equals("key") ? entry.getKey() : entry.getValue();
             String data = jsonObject.getString(type.equals("key") ? entry.getValue() : entry.getKey());
-            result.put(field, "'" + data + "'");
+            result.put(field, data);
         }
 
         return result;

@@ -315,7 +315,14 @@ public abstract class Database {
         Set<Map.Entry<String, Object>> entries = jsonObject.entrySet();
         for (Map.Entry<String, Object> entry : entries) {
             String field = entry.getKey();
-            String value = entry.getValue().toString();
+            Object ObjectValue = entry.getValue();
+            if (ObjectValue == null) {
+                continue;
+            }
+            String value = ObjectValue.toString();
+            if (StringUtil.isEmpty(value)) {
+                continue;
+            }
             fields = StringUtil.append(fields, field, ", ");
             values = StringUtil.append(values, value, ", ");
         }

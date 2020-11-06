@@ -10,7 +10,7 @@ public final class SWGDPARAConfig {
     /**
      * 环境
      * */
-    public static final String ENV = "";
+    public static final String ENV = "DEV";
 
     /**
      * 驱动类
@@ -38,7 +38,7 @@ public final class SWGDPARAConfig {
             CLASS_NAME = "oracle.jdbc.OracleDriver";
             URL = "jdbc:oracle:thin:@192.168.131.52:1521:dev12c";
             USER_NAME = "SWGDPARA";
-            PASSWORD = "easiapss";
+            PASSWORD = "easipass";
         } else {
             CLASS_NAME = "oracle.jdbc.OracleDriver";
             URL = "jdbc:oracle:thin:@192.168.130.216:1521:testeport";

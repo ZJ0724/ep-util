@@ -286,7 +286,7 @@ public final class SWGDPARADatabase extends Database {
      *
      * @return 加1后的版本
      * */
-    public static String versionAddOne(String tableName) {
+    public synchronized static String versionAddOne(String tableName) {
         SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
 
         try {
@@ -317,13 +317,14 @@ public final class SWGDPARADatabase extends Database {
             }
 
             // 获取下一个id
-            Integer newId = null;
+            Long newId = null;
             List<JSONObject> data = swgdparaDatabase.queryToJson("SELECT ID FROM (SELECT * FROM " + SCHEMA + ".T_PARAMS_VERSION ORDER BY ID DESC) WHERE ROWNUM = 1");
-            if (data.size() != 1) {
-                newId = Integer.parseInt(data.get(0).getString("ID")) + 1;
+            if (data.size() == 1) {
+                String id = data.get(0).getString("ID");
+                newId = Long.parseLong(id) + 1;
             }
             if (newId == null) {
-                newId = 1000;
+                newId = 100L;
             }
 
             swgdparaDatabase.update("INSERT INTO "+ SCHEMA +".T_PARAMS_VERSION(\"ID\", \"CREATE_TIME\", \"GROUP_NAME\", \"PARAMS_VERSION\", \"TABLE_NAME\", \"STATUS\") VALUES ('" + newId + "', TO_TIMESTAMP('" + DateUtil.getDate("yyyy-MM-dd HH:mm:ss") + "', 'SYYYY-MM-DD HH24:MI:SS:FF6'), 'auto', '" + newVersion + "', '" + tableName + "', '1')");
