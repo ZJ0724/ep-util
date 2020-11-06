@@ -309,7 +309,7 @@ public abstract class Database {
      * @param jsonObject 数据
      * */
     public final void insert(String tableName, JSONObject jsonObject) {
-        String sql = "INERT INTO " + tableName;
+        String sql = "INSERT INTO " + tableName;
         String fields = "(";
         String values = " VALUES(";
         Set<Map.Entry<String, Object>> entries = jsonObject.entrySet();
