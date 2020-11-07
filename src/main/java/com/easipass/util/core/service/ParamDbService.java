@@ -18,6 +18,9 @@ import org.slf4j.LoggerFactory;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 参数库服务
@@ -741,48 +744,61 @@ public final class ParamDbService {
 
                         // mdb表数据
                         List<JSONObject> mdbTableData = MdbDatabase.getTableData(mdbPath, mdbTable);
-
+                        // db表数据
+                        List<Map<String, Object>> dbTableData = new ArrayList<>();
                         // 遍历数据多线程控制
                         CountDownLatch countDownLatch1 = new CountDownLatch(mdbTableData.size());
+                        ThreadPoolExecutor threadPoolExecutor1 = new ThreadPoolExecutor(10, 10, 1000, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>());
 
                         for (int j = 0; j < mdbTableData.size(); j++) {
                             final int finalJ = j;
-
-                            Project.THREAD_POOL_EXECUTOR.execute(() -> {
+                            threadPoolExecutor1.execute(() -> {
                                 try {
                                     // 单条mdb数据
                                     JSONObject mdbData = mdbTableData.get(finalJ);
 
                                     // 单条db数据
-                                    JSONObject dbData = dataTransformation(mdbData, paramDbTableMapping.getFields(), "key");
+                                    Map<String, Object> dbData = dataTransformation(mdbData, paramDbTableMapping.getFields(), "key");
 
                                     // 设置版本号
                                     dbData.put("PARAMS_VERSION", "'" + version + "'");
 
+                                    // 遍历数据多线程控制
+                                    CountDownLatch countDownLatch2 = new CountDownLatch(dbTableFields.size());
+                                    ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(80, 80, 1000, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>());
                                     for (String dbField : dbTableFields) {
-                                        String data = dbData.getString(dbField);
-                                        // 字段类型
-                                        String fieldType = SWGDPARADatabase.getFieldType(dbTable, dbField);
+                                        threadPoolExecutor.execute(() -> {
+                                            try {
+                                                String data = dbData.get(dbField).toString();
+                                                // 字段类型
+                                                String fieldType = SWGDPARADatabase.getFieldType(dbTable, dbField);
 
-                                        // 如果是主键又是空，则补__00
-                                        if (SWGDPARADatabase.myIsPrimaryKey(dbTable, dbField) && StringUtil.isEmpty(data)) {
-                                            data = "'__00'";
-                                        } else if ("TIMESTAMP".equals(fieldType) && !StringUtil.isEmpty(data)) {
-                                            data = "TO_DATE('" + parseDate(data) + "','yyyy-mm-dd hh24:mi:ss')";
-                                        } else {
-                                            if (StringUtil.isEmpty(data)) {
-                                                continue;
+                                                // 如果是主键又是空，则补__00
+                                                if (SWGDPARADatabase.myIsPrimaryKey(dbTable, dbField) && StringUtil.isEmpty(data)) {
+                                                    data = "'__00'";
+                                                } else if ("TIMESTAMP".equals(fieldType) && !StringUtil.isEmpty(data)) {
+                                                    data = "TO_DATE('" + parseDate(data) + "','yyyy-mm-dd hh24:mi:ss')";
+                                                } else {
+                                                    if (StringUtil.isEmpty(data)) {
+                                                        return;
+                                                    }
+                                                    data = "'" + data.replaceAll("'", "''") + "'";
+                                                }
+                                                dbData.put(dbField, data);
+                                            } finally {
+                                                countDownLatch2.countDown();
                                             }
-                                            data = "'" + data.replaceAll("'", "''") + "'";
-                                        }
-
-                                        dbData.put(dbField, data);
+                                        });
+                                    }
+                                    try {
+                                        countDownLatch2.await();
+                                    } catch (InterruptedException e) {
+                                        throw new ErrorException(e.getMessage());
                                     }
 
-                                    log.info(dbData.toJSONString());
+                                    log.info(dbData.toString());
 
-                                    // 插入数据
-                                    SWGDPARADatabase.myInsert(dbTable, dbData);
+                                    dbTableData.add(dbData);
                                 } catch (Throwable e) {
                                     result.message.add(e.getMessage());
                                 } finally {
@@ -796,6 +812,9 @@ public final class ParamDbService {
                         } catch (InterruptedException e) {
                             throw new ErrorException(e.getMessage());
                         }
+
+                        // 插入数据
+                        SWGDPARADatabase.myInsert(dbTable, dbTableData);
                     } catch (Throwable e) {
                         result.message.add(e.getMessage());
                     } finally {
@@ -896,8 +915,8 @@ public final class ParamDbService {
      * @param fieldMap 要替换的字段映射
      * @param type 基于key还是基于value
      * */
-    private static JSONObject dataTransformation(JSONObject jsonObject, Map<String, String> fieldMap, String type) {
-        JSONObject result = new JSONObject(true);
+    private static Map<String, Object> dataTransformation(JSONObject jsonObject, Map<String, String> fieldMap, String type) {
+        Map<String, Object> result = new HashMap<>();
 
         if (StringUtil.isEmpty(type)) {
             type = "key";

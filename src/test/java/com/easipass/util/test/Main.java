@@ -3,36 +3,44 @@ package com.easipass.util.test;
 import com.easipass.util.core.component.SWGDPARADatabase;
 import com.easipass.util.core.database.MdbDatabase;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
 
 
-//        MdbDatabase mdbDatabase = new MdbDatabase("E:\\ZJ\\epProject\\参数库\\release\\Update\\Data\\parameterDb.mdb");
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("1", "1");
+        map.put("2", "1");
+        map.put("3", "1");
 
-//        mdbDatabase.test();
 
-//        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-//
-//        System.out.println(swgdparaDatabase.getFields("SWGDPARA.CIQ_ORG"));
+        Set<Map.Entry<String, String>> entries = map.entrySet();
 
-        int[] a = new int[]{5, 2, 3, 43345, 3423, 234, 2, 123123, 123123, 1123123123};//4
-
-        System.out.println(Arrays.toString(a));
-
-        for (int i = 0 ;i < a.length; i++) {//3,0123
-            for (int j = i + 1;j < a.length; j++) {//1234
-                if (a[i] > a[j]) {
-                    int temp = a[i];
-                    a[i] = a[j];
-                    a[j] = temp;
-                }
-            }
+        for (Map.Entry<String, String> entry : entries) {
+            System.out.println("key:" + entry.getKey());
+            System.out.println("value:" + entry.getValue());
         }
 
-        System.out.println(Arrays.toString(a));
+        Set<String> keys = map.keySet();
+
+        for (String key : keys) {
+            System.out.println("key:" + key);
+        }
+
+        Collection<String> values = map.values();
+        for (String v : values) {
+            System.out.println("value:" + v);
+        }
+
+        // 迭代器
+        Iterator<Map.Entry<String, String>> iterator1 = entries.iterator();
+        while (iterator1.hasNext()) {
+            Map.Entry<String, String> next = iterator1.next();
+            System.out.println("key:" + next.getKey());
+            System.out.println("value:" + next.getValue());
+        }
 
     }
 

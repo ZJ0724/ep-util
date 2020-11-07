@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * SWGDPARA数据库
@@ -34,6 +35,23 @@ public final class SWGDPARADatabase extends Database {
      * */
     public static final String SCHEMA = "SWGDPARA";
 
+    static {
+        try {
+            Class.forName(SWGDPARAConfig.CLASS_NAME);
+            C3p0Config.getInstance().setData(COMBO_POOLED_DATA_SOURCE);
+            try {
+                COMBO_POOLED_DATA_SOURCE.setDriverClass(SWGDPARAConfig.CLASS_NAME);
+            } catch (PropertyVetoException e) {
+                throw new ErrorException(e.getMessage());
+            }
+            COMBO_POOLED_DATA_SOURCE.setJdbcUrl(SWGDPARAConfig.URL);
+            COMBO_POOLED_DATA_SOURCE.setUser(SWGDPARAConfig.USER_NAME);
+            COMBO_POOLED_DATA_SOURCE.setPassword(SWGDPARAConfig.PASSWORD);
+        } catch (ClassNotFoundException e) {
+            throw new ErrorException(e.getMessage());
+        }
+    }
+
     /**
      * 构造函数
      */
@@ -48,20 +66,9 @@ public final class SWGDPARADatabase extends Database {
      * */
     private static Connection getConnection() {
         try {
-            Class.forName(SWGDPARAConfig.CLASS_NAME);
-            C3p0Config.getInstance().setData(COMBO_POOLED_DATA_SOURCE);
-            try {
-                COMBO_POOLED_DATA_SOURCE.setDriverClass(SWGDPARAConfig.CLASS_NAME);
-            } catch (PropertyVetoException e) {
-                throw new ErrorException(e.getMessage());
-            }
-            COMBO_POOLED_DATA_SOURCE.setJdbcUrl(SWGDPARAConfig.URL);
-            COMBO_POOLED_DATA_SOURCE.setUser(SWGDPARAConfig.USER_NAME);
-            COMBO_POOLED_DATA_SOURCE.setPassword(SWGDPARAConfig.PASSWORD);
-
             return COMBO_POOLED_DATA_SOURCE.getConnection();
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new BaseException(SCHEMA + "连接失败") {};
+        } catch (SQLException e) {
+            throw new BaseException(SCHEMA + "连接失败" + e.getMessage()) {};
         }
     }
 
@@ -206,7 +213,6 @@ public final class SWGDPARADatabase extends Database {
         if (StringUtil.isEmpty(result)) {
             throw new ErrorException("表: " + tableName + " - " + fieldName + "未找到");
         }
-
         return result;
     }
 
@@ -387,11 +393,11 @@ public final class SWGDPARADatabase extends Database {
      * 插入数据
      *
      * @param tableName 表名
-     * @param jsonObject 数据
+     * @param data 数据
      * */
-    public static void myInsert(String tableName, JSONObject jsonObject) {
+    public static void myInsert(String tableName, List<Map<String, Object>> data) {
         SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-        swgdparaDatabase.insert(SCHEMA + "." + tableName, jsonObject);
+        swgdparaDatabase.insertV2(SCHEMA + "." + tableName, data);
         swgdparaDatabase.close();
     }
 

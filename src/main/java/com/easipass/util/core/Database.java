@@ -332,4 +332,56 @@ public abstract class Database {
         this.update(sql);
     }
 
+    /**
+     * 插入数据2.0
+     *
+     * @param tableName 表名
+     * @param data 数据
+     * */
+    public final void insertV2(String tableName, List<Map<String, Object>> data) {
+        try {
+            this.connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        PreparedStatement preparedStatement = this.getPreparedStatement("");
+
+        for (Map<String, Object> d : data) {
+            String sql = "INSERT INTO " + tableName;
+
+            String fields = "(";
+            String values = " VALUES(";
+            Set<Map.Entry<String, Object>> entries = d.entrySet();
+            for (Map.Entry<String, Object> entry : entries) {
+                String field = entry.getKey();
+                Object ObjectValue = entry.getValue();
+                if (ObjectValue == null) {
+                    continue;
+                }
+                String value = ObjectValue.toString();
+                if (StringUtil.isEmpty(value)) {
+                    continue;
+                }
+                fields = StringUtil.append(fields, field, ", ");
+                values = StringUtil.append(values, value, ", ");
+            }
+            fields = fields.substring(0, fields.length() - 2) + ")";
+            values = values.substring(0, values.length() - 2) + ")";
+            sql = sql + fields + values;
+            try {
+                preparedStatement.addBatch(sql);
+            } catch (java.sql.SQLException e) {
+                throw new ErrorException(e.getMessage());
+            }
+        }
+
+        try {
+            preparedStatement.executeBatch();
+            this.connection.commit();
+        } catch (java.sql.SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+    }
+
 }
