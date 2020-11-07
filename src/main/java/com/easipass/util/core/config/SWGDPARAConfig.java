@@ -10,7 +10,7 @@ public final class SWGDPARAConfig {
     /**
      * 环境
      * */
-    public static final String ENV = "DEV";
+    public static final String ENV = "LOCAL";
 
     /**
      * 驱动类
@@ -39,6 +39,11 @@ public final class SWGDPARAConfig {
             URL = "jdbc:oracle:thin:@192.168.131.52:1521:dev12c";
             USER_NAME = "SWGDPARA";
             PASSWORD = "easipass";
+        } else if (ENV.equals("LOCAL")) {
+            CLASS_NAME = "oracle.jdbc.OracleDriver";
+            URL = "jdbc:oracle:thin:@localhost:1521:oracle";
+            USER_NAME = "SWGDPARA";
+            PASSWORD = "123";
         } else {
             CLASS_NAME = "oracle.jdbc.OracleDriver";
             URL = "jdbc:oracle:thin:@192.168.130.216:1521:testeport";

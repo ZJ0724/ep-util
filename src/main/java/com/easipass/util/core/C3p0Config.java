@@ -19,11 +19,6 @@ public final class C3p0Config {
     private final int initialPoolSize;
 
     /**
-     * 最大超时时间
-     * */
-    private final int maxIdleTime;
-
-    /**
      * 最大连接数
      * */
     private final int maxPoolSize;
@@ -32,16 +27,6 @@ public final class C3p0Config {
      * 最小连接数
      * */
     private final int minPoolSize;
-
-    /**
-     * 最大Statements数
-     * */
-    private final int maxStatements;
-
-    /**
-     * 获取连接超时时间
-     * */
-    private final int checkoutTimeout;
 
     /**
      * 配置文件
@@ -72,9 +57,6 @@ public final class C3p0Config {
         this.initialPoolSize = Integer.parseInt(properties.get("initialPoolSize").toString());
         this.maxPoolSize = Integer.parseInt(properties.get("maxPoolSize").toString());
         this.minPoolSize = Integer.parseInt(properties.get("minPoolSize").toString());
-        this.maxIdleTime = Integer.parseInt(properties.get("maxIdleTime").toString());
-        this.maxStatements = Integer.parseInt(properties.get("maxStatements").toString());
-        this.checkoutTimeout = Integer.parseInt(properties.get("checkoutTimeout").toString());
     }
 
     /**
@@ -95,9 +77,6 @@ public final class C3p0Config {
         comboPooledDataSource.setInitialPoolSize(this.initialPoolSize);
         comboPooledDataSource.setMaxPoolSize(this.maxPoolSize);
         comboPooledDataSource.setMinPoolSize(this.minPoolSize);
-        comboPooledDataSource.setMaxIdleTime(this.maxIdleTime);
-        comboPooledDataSource.setMaxStatements(this.maxStatements);
-        comboPooledDataSource.setCheckoutTimeout(this.checkoutTimeout);
     }
 
 }
