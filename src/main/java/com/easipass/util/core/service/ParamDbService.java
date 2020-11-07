@@ -3,7 +3,6 @@ package com.easipass.util.core.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.easipass.util.core.BaseException;
-import com.easipass.util.core.config.Project;
 import com.easipass.util.core.component.SWGDPARADatabase;
 import com.easipass.util.core.config.ParamDbTableMappingConfig;
 import com.easipass.util.core.database.MdbDatabase;
@@ -13,9 +12,9 @@ import com.easipass.util.core.exception.WarningException;
 import com.easipass.util.core.util.ExcelUtil;
 import com.easipass.util.core.util.FileUtil;
 import com.easipass.util.core.util.StringUtil;
+import com.easipass.util.core.util.ThreadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -34,6 +33,11 @@ public final class ParamDbService {
      * 日志
      * */
     private static final Logger log = LoggerFactory.getLogger(ParamDbService.class);
+
+    /**
+     * 线程池
+     * */
+    public static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = ThreadUtil.getThreadPoolExecutor(200);
 
     /**
      * mdb导入比对
@@ -66,7 +70,7 @@ public final class ParamDbService {
             for (int i = 0; i < mdbTables.size(); i++) {
                 final int finalI = i;
 
-                Project.THREAD_POOL_EXECUTOR.execute(() -> {
+                THREAD_POOL_EXECUTOR.execute(() -> {
                     try {
                         // mdb表名
                         String mdbTable = mdbTables.get(finalI);
@@ -105,7 +109,7 @@ public final class ParamDbService {
                         for (int j = 0; j < mdbTableData.size(); j++) {
                             int finalJ = j;
 
-                            Project.THREAD_POOL_EXECUTOR.execute(() -> {
+                            THREAD_POOL_EXECUTOR.execute(() -> {
                                 try {
                                     // 单条数据
                                     JSONObject jsonObject = mdbTableData.get(finalJ);
@@ -210,14 +214,14 @@ public final class ParamDbService {
     public Result mdbExportComparator(String mdbPath) {
         Result result = new Result();
 
-//        // 校验mdb文件是否正确
-//        try {
-//            MdbDatabase mdbDatabase = new MdbDatabase(mdbPath);
-//            mdbDatabase.close();
-//        } catch (WarningException e) {
-//            result.message.add(e.getMessage());
-//            return result;
-//        }
+        // 校验mdb文件是否正确
+        try {
+            MdbDatabase mdbDatabase = new MdbDatabase(mdbPath);
+            mdbDatabase.close();
+        } catch (WarningException e) {
+            result.message.add(e.getMessage());
+            return result;
+        }
 //
 //        // 获取mdb文件中的所有表
 //        List<String> mdbTables = MdbDatabase.getTables(mdbPath);
@@ -430,7 +434,7 @@ public final class ParamDbService {
             for (int i = 1; i < excelAllData.size(); i++) {
                 int finalI = i;
 
-                Project.THREAD_POOL_EXECUTOR.execute(() -> {
+                THREAD_POOL_EXECUTOR.execute(() -> {
                     try {
                         // sql
                         String sql = "SELECT * FROM " + SWGDPARADatabase.SCHEMA + "." + tableName + " WHERE 1 = 1 AND PARAMS_VERSION = '" + version + "'";
@@ -584,7 +588,7 @@ public final class ParamDbService {
             for (int i = 1; i < excelAllData.size(); i++) {
                 int finalI = i;
 
-                Project.THREAD_POOL_EXECUTOR.execute(() -> {
+                THREAD_POOL_EXECUTOR.execute(() -> {
                     try {
                         // sql
                         String sql = "INSERT INTO " + SWGDPARADatabase.SCHEMA + "." + tableName;
@@ -708,7 +712,7 @@ public final class ParamDbService {
             for (int i = 0; i < mdbTables.size(); i++) {
                 final int finalI = i;
 
-                Project.THREAD_POOL_EXECUTOR.execute(() -> {
+                THREAD_POOL_EXECUTOR.execute(() -> {
                     try {
                         // mdb表名
                         String mdbTable = mdbTables.get(finalI);

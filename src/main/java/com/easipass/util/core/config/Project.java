@@ -6,9 +6,6 @@ import com.easipass.util.core.util.FileUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 项目
@@ -41,11 +38,6 @@ public final class Project {
      * 系统类型
      * */
     public static final SystemType SYSTEM_TYPE = System.getProperty("os.name").contains("Windows") ? SystemType.WINDOWS : System.getProperty("os.name").contains("Linux") ? SystemType.LINUX : null;
-
-    /**
-     * 线程池
-     * */
-    public static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(200, 200, 1000, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>());
 
     /**
      * 缓存目录
