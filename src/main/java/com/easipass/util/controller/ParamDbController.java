@@ -3,6 +3,7 @@ package com.easipass.util.controller;
 import com.easipass.util.api.service.BaseServiceApi;
 import com.easipass.util.core.config.Project;
 import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.service.CacheFileService;
 import com.easipass.util.core.service.ParamDbService;
 import com.easipass.util.core.service.TaskRunService;
 import com.easipass.util.core.util.DateUtil;
@@ -25,6 +26,16 @@ import java.io.InputStream;
 @RestController
 @RequestMapping(BaseServiceApi.URL + "paramDb2.0")
 public class ParamDbController {
+
+    /**
+     * cacheFileService
+     * */
+    private final CacheFileService cacheFileService = new CacheFileService();
+
+    /**
+     * paramDbService
+     * */
+    private final ParamDbService paramDbService = new ParamDbService();
 
     /**
      * mdb导入比对
@@ -71,21 +82,25 @@ public class ParamDbController {
             return Response.returnFalse("请选择文件");
         }
 
-        File file;
-
+        String fileName = multipartFile.getName();
+        String newFileName;
         try {
             InputStream inputStream = multipartFile.getInputStream();
-            file = new File(Project.CACHE_PATH, DateUtil.getTime() + "-" + multipartFile.getOriginalFilename());
-            FileUtil.createFile(file, inputStream);
+            newFileName = cacheFileService.add(fileName, inputStream);
             inputStream.close();
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
 
-        new TaskRunService("mdb导出比对：" + file.getName()) {
+        new TaskRunService("mdb导出比对：" + fileName) {
             @Override
             public String run() {
-                return new ParamDbService().mdbExportComparator(file.getAbsolutePath(), true).toString();
+                return paramDbService.mdbExportComparator(new File(Project.CACHE_PATH, newFileName).getAbsolutePath()).toString();
+            }
+
+            @Override
+            public void afterRun() {
+                cacheFileService.delete(newFileName);
             }
         }.start();
 

@@ -24,13 +24,14 @@ public final class CacheFileService {
      * @param fileName 文件名
      * @param inputStream 文件流
      *
-     * @return 文件绝对路径
+     * @return 新文件名
      * */
     public String add(String fileName, InputStream inputStream) {
         File file = new File(Project.CACHE_PATH, DateUtil.getTime() + "-" + fileName);
+        String newFileName = file.getName();
         FileUtil.createFile(file, inputStream);
-        Project.CACHE_FILE.add(file.getName());
-        return file.getAbsolutePath();
+        Project.CACHE_FILE.add(fileName);
+        return newFileName;
     }
 
     /**
