@@ -1,7 +1,7 @@
 package com.easipass.util.api.websocket;
 
 import com.easipass.util.core.ParamDbComparator;
-import com.easipass.util.core.Project;
+import com.easipass.util.core.config.Project;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.paramDbComparator.ExportParamDbComparator;
 import org.slf4j.Logger;

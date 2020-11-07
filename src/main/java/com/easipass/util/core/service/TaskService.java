@@ -1,7 +1,7 @@
 package com.easipass.util.core.service;
 
 import com.easipass.util.core.BaseException;
-import com.easipass.util.core.Project;
+import com.easipass.util.core.config.Project;
 import com.easipass.util.core.entity.Task;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.util.StringUtil;

@@ -3,7 +3,7 @@ package com.easipass.util.core.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.easipass.util.core.BaseException;
-import com.easipass.util.core.Project;
+import com.easipass.util.core.config.Project;
 import com.easipass.util.core.component.SWGDPARADatabase;
 import com.easipass.util.core.config.ParamDbTableMappingConfig;
 import com.easipass.util.core.database.MdbDatabase;

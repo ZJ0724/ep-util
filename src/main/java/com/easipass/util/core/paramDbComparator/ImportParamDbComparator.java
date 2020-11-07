@@ -2,7 +2,7 @@ package com.easipass.util.core.paramDbComparator;
 
 import com.easipass.util.core.Database;
 import com.easipass.util.core.ParamDbComparator;
-import com.easipass.util.core.Project;
+import com.easipass.util.core.config.Project;
 import com.easipass.util.core.database.MdbDatabase;
 import com.easipass.util.core.database.SWGDPARADatabase;
 import com.easipass.util.core.exception.ErrorException;

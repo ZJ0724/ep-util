@@ -1,6 +1,6 @@
 package com.easipass.util.api.service;
 
-import com.easipass.util.core.Project;
+import com.easipass.util.core.config.Project;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.util.StringUtil;
 import com.easipass.util.entity.Response;

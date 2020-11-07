@@ -2,6 +2,7 @@ package com.easipass.util;
 
 import com.easipass.util.core.*;
 import com.easipass.util.core.config.Port;
+import com.easipass.util.core.config.Project;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.util.ThreadUtil;
 import com.zj0724.util.springboot.ParameterCheck;

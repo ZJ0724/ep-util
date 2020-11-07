@@ -1,6 +1,6 @@
 package com.easipass.util.api.service;
 
-import com.easipass.util.core.Project;
+import com.easipass.util.core.config.Project;
 import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.FileUtil;
 import com.easipass.util.entity.Response;

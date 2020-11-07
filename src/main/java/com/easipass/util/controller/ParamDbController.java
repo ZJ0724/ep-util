@@ -1,7 +1,7 @@
 package com.easipass.util.controller;
 
 import com.easipass.util.api.service.BaseServiceApi;
-import com.easipass.util.core.Project;
+import com.easipass.util.core.config.Project;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.service.ParamDbService;
 import com.easipass.util.core.service.TaskRunService;

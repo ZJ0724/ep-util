@@ -2,16 +2,13 @@ package com.easipass.util.core.component;
 
 import com.alibaba.fastjson.JSONObject;
 import com.easipass.util.core.BaseException;
-import com.easipass.util.core.C3p0Config;
 import com.easipass.util.core.Database;
-import com.easipass.util.core.config.SWGDPARAConfig;
+import com.easipass.util.core.config.SWGDPARAFileConfig;
 import com.easipass.util.core.database.SWGDDatabase;
+import com.easipass.util.core.entity.DatabaseInfo;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.StringUtil;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-import java.beans.PropertyVetoException;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -26,9 +23,9 @@ import java.util.Map;
 public final class SWGDPARADatabase extends Database {
 
     /**
-     * c3p0连接池
+     * 连接池
      * */
-    private static final ComboPooledDataSource COMBO_POOLED_DATA_SOURCE = new ComboPooledDataSource();
+    public static final DataBaseConnectionPool dataBaseConnectionPool;
 
     /**
      * SCHEMA
@@ -36,40 +33,14 @@ public final class SWGDPARADatabase extends Database {
     public static final String SCHEMA = "SWGDPARA";
 
     static {
-        try {
-            Class.forName(SWGDPARAConfig.CLASS_NAME);
-            C3p0Config.getInstance().setData(COMBO_POOLED_DATA_SOURCE);
-            try {
-                COMBO_POOLED_DATA_SOURCE.setDriverClass(SWGDPARAConfig.CLASS_NAME);
-            } catch (PropertyVetoException e) {
-                throw new ErrorException(e.getMessage());
-            }
-            COMBO_POOLED_DATA_SOURCE.setJdbcUrl(SWGDPARAConfig.URL);
-            COMBO_POOLED_DATA_SOURCE.setUser(SWGDPARAConfig.USER_NAME);
-            COMBO_POOLED_DATA_SOURCE.setPassword(SWGDPARAConfig.PASSWORD);
-        } catch (ClassNotFoundException e) {
-            throw new ErrorException(e.getMessage());
-        }
+        dataBaseConnectionPool = new DataBaseConnectionPool(new DatabaseInfo(SWGDPARAFileConfig.currentFile));
     }
 
     /**
      * 构造函数
      */
     public SWGDPARADatabase() {
-        super(getConnection());
-    }
-
-    /**
-     * 获取连接
-     *
-     * @return Connection
-     * */
-    private static Connection getConnection() {
-        try {
-            return COMBO_POOLED_DATA_SOURCE.getConnection();
-        } catch (SQLException e) {
-            throw new BaseException(SCHEMA + "连接失败" + e.getMessage()) {};
-        }
+        super(dataBaseConnectionPool.getConnection());
     }
 
 //    /**

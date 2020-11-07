@@ -2,6 +2,7 @@ package com.easipass.util.core;
 
 import com.easipass.util.api.websocket.DaKaLogWebsocketApi;
 import com.easipass.util.core.config.DaKaConfig;
+import com.easipass.util.core.config.Project;
 import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.ThreadUtil;
 import org.slf4j.Logger;

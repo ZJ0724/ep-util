@@ -1,6 +1,6 @@
 package com.easipass.util.core.service;
 
-import com.easipass.util.core.Project;
+import com.easipass.util.core.config.Project;
 import com.easipass.util.core.entity.Task;
 
 /**

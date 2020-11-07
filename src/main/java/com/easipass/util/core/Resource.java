@@ -1,5 +1,7 @@
 package com.easipass.util.core;
 
+import com.easipass.util.core.config.Project;
+
 /**
  * 资源
  *

@@ -1,6 +1,7 @@
 package com.easipass.util.core;
 
 import com.easipass.util.core.config.DaKaConfig;
+import com.easipass.util.core.config.Project;
 import com.easipass.util.core.util.ConsoleUtil;
 import com.easipass.util.core.exception.ErrorException;
 import com.zj0724.uiAuto.WebDriver;
