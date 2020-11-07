@@ -21,18 +21,12 @@ public final class AccessDatabase {
     public final JdbcTemplate jdbcTemplate;
 
     /**
-     * 数据库信息
-     * */
-    public final DatabaseInfo databaseInfo;
-
-    /**
      * 构造函数
      *
      * @param accessFilePath access文件路径
      * */
     public AccessDatabase(String accessFilePath) {
-        databaseInfo = new DatabaseInfo("jdbc:ucanaccess://" + accessFilePath);
-        dataBaseConnectionPool = new DataBaseConnectionPool(databaseInfo);
+        dataBaseConnectionPool = new DataBaseConnectionPool(new DatabaseInfo("jdbc:ucanaccess://" + accessFilePath));
         jdbcTemplate = new JdbcTemplate(dataBaseConnectionPool.getDataSource());
     }
 

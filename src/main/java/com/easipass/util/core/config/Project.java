@@ -62,4 +62,9 @@ public final class Project {
      * */
     public static final List<Task> TASKS = new ArrayList<>();
 
+    /**
+     * 缓存文件
+     * */
+    public static final List<String> CACHE_FILE = new ArrayList<>();
+
 }
