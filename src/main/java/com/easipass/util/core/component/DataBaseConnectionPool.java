@@ -30,6 +30,8 @@ public final class DataBaseConnectionPool {
             comboPooledDataSource.setInitialPoolSize(C3p0Config.initialPoolSize);
             comboPooledDataSource.setMinPoolSize(C3p0Config.minPoolSize);
             comboPooledDataSource.setMaxPoolSize(C3p0Config.maxPoolSize);
+            comboPooledDataSource.setMaxIdleTime(C3p0Config.maxIdleTime);
+            comboPooledDataSource.setCheckoutTimeout(C3p0Config.checkoutTimeout);
             comboPooledDataSource.setDriverClass(databaseInfo.getDriverClass());
             comboPooledDataSource.setJdbcUrl(databaseInfo.getJdbcUrl());
             comboPooledDataSource.setUser(databaseInfo.getUser());

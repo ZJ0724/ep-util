@@ -65,11 +65,6 @@ public enum Resource {
     DA_KA(Project.CONFIG_PATH + "/config/daKa"),
 
     /**
-     * c3p0配置文件
-     * */
-    C3P0(Project.ROOT_PATH + "/config/c3p0"),
-
-    /**
      * application配置文件
      * */
     APPLICATION_PROPERTIES(Project.ROOT_PATH + "/config/application.properties"),
