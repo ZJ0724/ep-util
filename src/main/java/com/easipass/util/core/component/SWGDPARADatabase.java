@@ -1,17 +1,11 @@
 package com.easipass.util.core.component;
 
-import com.alibaba.fastjson.JSONObject;
-import com.easipass.util.core.BaseException;
-import com.easipass.util.core.Database;
 import com.easipass.util.core.config.SWGDPARAFileConfig;
-import com.easipass.util.core.database.SWGDDatabase;
 import com.easipass.util.core.entity.DatabaseInfo;
-import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.exception.InfoException;
 import com.easipass.util.core.util.DateUtil;
-import com.easipass.util.core.util.StringUtil;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import com.easipass.util.core.util.JdbcUtil;
+import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 import java.util.Map;
 
@@ -20,12 +14,22 @@ import java.util.Map;
  *
  * @author ZJ
  * */
-public final class SWGDPARADatabase extends Database {
+public final class SWGDPARADatabase {
 
     /**
      * 连接池
      * */
-    public static final DataBaseConnectionPool dataBaseConnectionPool;
+    private static final DataBaseConnectionPool DATA_BASE_CONNECTION_POOL;
+
+    /**
+     * 单例
+     * */
+    private static final SWGDPARADatabase SWGDPARA_DATABASE = new SWGDPARADatabase();
+
+    /**
+     * JdbcTemplate
+     * */
+    private static final JdbcTemplate JDBC_TEMPLATE;
 
     /**
      * SCHEMA
@@ -33,88 +37,22 @@ public final class SWGDPARADatabase extends Database {
     public static final String SCHEMA = "SWGDPARA";
 
     static {
-        dataBaseConnectionPool = new DataBaseConnectionPool(new DatabaseInfo(SWGDPARAFileConfig.currentFile));
+        DATA_BASE_CONNECTION_POOL = new DataBaseConnectionPool(new DatabaseInfo(SWGDPARAFileConfig.currentFile));
+        JDBC_TEMPLATE = new JdbcTemplate(DATA_BASE_CONNECTION_POOL.getDataSource());
     }
 
     /**
      * 构造函数
      */
-    public SWGDPARADatabase() {
-        super(dataBaseConnectionPool.getConnection());
-    }
-
-//    /**
-//     * 组名是否存在
-//     *
-//     * @param groupName 组名
-//     *
-//     * @return 存在返回true
-//     * */
-//    public static boolean groupNameIsExist(String groupName) {
-//        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-//        ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SCHEMA + ".T_PARAMS_GROUP WHERE GROUP_NAME = ?", groupName);
-//
-//        try {
-//            return resultSet.next();
-//        } catch (SQLException e) {
-//            throw new ErrorException(e.getMessage());
-//        } finally {
-//            swgdparaDatabase.close();
-//        }
-//    }
+    private SWGDPARADatabase() {}
 
     /**
-     * 获取分组上所有的表名
+     * 获取单例
      *
-     * @param groupName 组名
-     * @param fieldName 要查找的字段
-     *
-     * @return 所有的表名
+     * @return 单例
      * */
-    public static List<String> getGroupTables(String groupName, String fieldName) {
-        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-        List<String> result = new ArrayList<>();
-        ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SCHEMA + ".T_PARAMS_GROUP_TABLE WHERE GROUP_NAME = '" + groupName + "'");
-
-        try {
-            while (resultSet.next()) {
-                String tableName = SWGDDatabase.getFiledData(resultSet, fieldName);
-                result.add(tableName);
-            }
-        } catch (SQLException e) {
-            throw new ErrorException(e.getMessage());
-        } finally {
-            swgdparaDatabase.close();
-        }
-
-        return result;
-    }
-
-    /**
-     * 获取表所有映射字段
-     *
-     * @param tableName 表名
-     * @param fieldName 字段名
-     *
-     * @return 字段集合
-     * */
-    public static List<String> getTableFields(String tableName, String fieldName) {
-        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-        List<String> result = new ArrayList<>();
-        ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SCHEMA + ".T_PARAMS_MATCH WHERE TABLE_NAME = '" + tableName + "'");
-
-        try {
-            while (resultSet.next()) {
-                String filed = SWGDDatabase.getFiledData(resultSet, fieldName);
-                result.add(filed);
-            }
-        } catch (SQLException e) {
-            throw new ErrorException(e.getMessage());
-        } finally {
-            swgdparaDatabase.close();
-        }
-
-        return result;
+    public static SWGDPARADatabase getInstance() {
+        return SWGDPARA_DATABASE;
     }
 
     /**
@@ -124,42 +62,17 @@ public final class SWGDPARADatabase extends Database {
      *
      * @return 版本
      * */
-    public static String getTableVersion(String tableName) {
-        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-        String version = "";
+    public String getTableVersion(String tableName) {
+        String result;
+        List<Map<String, Object>> versions = JDBC_TEMPLATE.queryForList("SELECT PARAMS_VERSION FROM (SELECT * FROM " + SCHEMA + ".T_PARAMS_VERSION WHERE TABLE_NAME = ? AND STATUS = '1' ORDER BY PARAMS_VERSION DESC) WHERE ROWNUM = 1", tableName);
 
-        try {
-            ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SCHEMA + ".T_PARAMS_VERSION_CURRENT WHERE TABLE_NAME = '"+ tableName + "'");
-
-            if (resultSet.next()) {
-                version = getFiledData(resultSet, "PARAMS_VERSION");
-            } else {
-                ResultSet resultSet1 = swgdparaDatabase.query("SELECT * FROM " + SCHEMA + ".T_PARAMS_VERSION WHERE TABLE_NAME = '" + tableName + "'");
-                int v = 0;
-
-                while (resultSet1.next()) {
-                    int v1 = Integer.parseInt(getFiledData(resultSet1, "PARAMS_VERSION"));
-
-                    if (v1 > v) {
-                        v = v1;
-                    }
-                }
-
-                if (v != 0) {
-                    version = v + "";
-                }
-            }
-
-            if (StringUtil.isEmpty(version)) {
-                return null;
-            }
-        } catch (SQLException e) {
-            throw new ErrorException(e.getMessage());
-        } finally {
-            swgdparaDatabase.close();
+        if (versions.size() == 1) {
+            result = versions.get(0).get("PARAMS_VERSION").toString();
+        } else  {
+            throw new InfoException("未找到版本号：" + tableName);
         }
 
-        return version;
+        return result;
     }
 
     /**
@@ -170,21 +83,8 @@ public final class SWGDPARADatabase extends Database {
      *
      * @return 字段类型
      * */
-    public static String getFieldType(String tableName, String fieldName) {
-        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-        String result;
-
-        try {
-            ResultSet resultSet = swgdparaDatabase.query("SELECT * FROM " + SCHEMA + "." + tableName + " WHERE ROWNUM <= 1");
-            result = Database.getFieldType(resultSet, fieldName);
-        } finally {
-            swgdparaDatabase.close();
-        }
-
-        if (StringUtil.isEmpty(result)) {
-            throw new ErrorException("表: " + tableName + " - " + fieldName + "未找到");
-        }
-        return result;
+    public String getFieldType(String tableName, String fieldName) {
+        return JdbcUtil.getFieldType(DATA_BASE_CONNECTION_POOL.getDataSource(), SCHEMA + "." + tableName, fieldName);
     }
 
     /**
@@ -194,25 +94,9 @@ public final class SWGDPARADatabase extends Database {
      *
      * @return sql能查到数据返回true
      * */
-    public static boolean dataIsExist(String sql) {
-        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-
-        try {
-            ResultSet resultSet = swgdparaDatabase.query(sql);
-            return resultSet.next();
-        }
-
-        catch (SQLException e) {
-            throw new ErrorException(e.getMessage());
-        }
-
-        catch (BaseException e) {
-            return false;
-        }
-
-        finally {
-            swgdparaDatabase.close();
-        }
+    public boolean dataIsExist(String sql) {
+        List<Map<String, Object>> list = JDBC_TEMPLATE.queryForList(sql);
+        return list.size() != 0;
     }
 
     /**
@@ -223,37 +107,8 @@ public final class SWGDPARADatabase extends Database {
      *
      * @return 表数据
      * */
-    public static List<JSONObject> getTableData(String tableName, String version) {
-        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-        try {
-            return swgdparaDatabase.queryToJson("SELECT * FROM " + SCHEMA + "." + tableName + " WHERE PARAMS_VERSION = '" + version + "'");
-        } catch (BaseException e) {
-            throw new ErrorException(e.getMessage());
-        } finally {
-            swgdparaDatabase.close();
-        }
-    }
-
-    /**
-     * 表是否存在
-     *
-     * @param tableName 表名
-     *
-     * @return 存在返回true
-     * */
-    public static boolean tableIsExist(String tableName) {
-        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-
-        try {
-            swgdparaDatabase.query("SELECT * FROM " + SCHEMA + "." + tableName + " WHERE ROWNUM <= 1");
-            return true;
-        }
-        catch (BaseException e) {
-            return false;
-        }
-        finally {
-            swgdparaDatabase.close();
-        }
+    public List<Map<String, Object>> getTableData(String tableName, String version) {
+        return JDBC_TEMPLATE.queryForList("SELECT * FROM " + SCHEMA + "." + tableName + " WHERE PARAMS_VERSION = ?", version);
     }
 
     /**
@@ -263,113 +118,63 @@ public final class SWGDPARADatabase extends Database {
      *
      * @return 加1后的版本
      * */
-    public synchronized static String versionAddOne(String tableName) {
-        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-
+    public synchronized String versionAddOne(String tableName) {
+        String currentVersion = null;
+        String version;
         try {
-            String newVersion;
-
-            // 版本数据集合
-            List<JSONObject> versionDataList = swgdparaDatabase.queryToJson("SELECT * FROM (SELECT * FROM " + SWGDPARADatabase.SCHEMA + ".T_PARAMS_VERSION WHERE TABLE_NAME = '" + tableName + "' ORDER BY PARAMS_VERSION DESC) WHERE ROWNUM <= 1");
-
-            if (versionDataList.size() == 0) {
-                newVersion = "10000";
-            } else {
-                // 版本数据
-                JSONObject versionData = versionDataList.get(0);
-                // 版本
-                String version = versionData.get("PARAMS_VERSION") + "";
-
-                if (StringUtil.isEmpty(version)) {
-                    newVersion = "10000";
-                } else {
-                    int versionInt;
-                    try {
-                        versionInt = Integer.parseInt(version);
-                        newVersion = (versionInt + 1) + "";
-                    } catch (NumberFormatException e) {
-                        newVersion = "10000";
-                    }
-                }
-            }
-
-            // 获取下一个id
-            Long newId = null;
-            List<JSONObject> data = swgdparaDatabase.queryToJson("SELECT ID FROM (SELECT * FROM " + SCHEMA + ".T_PARAMS_VERSION ORDER BY ID DESC) WHERE ROWNUM = 1");
-            if (data.size() == 1) {
-                String id = data.get(0).getString("ID");
-                newId = Long.parseLong(id) + 1;
-            }
-            if (newId == null) {
-                newId = 100L;
-            }
-
-            swgdparaDatabase.update("INSERT INTO "+ SCHEMA +".T_PARAMS_VERSION(\"ID\", \"CREATE_TIME\", \"GROUP_NAME\", \"PARAMS_VERSION\", \"TABLE_NAME\", \"STATUS\") VALUES ('" + newId + "', TO_TIMESTAMP('" + DateUtil.getDate("yyyy-MM-dd HH:mm:ss") + "', 'SYYYY-MM-DD HH24:MI:SS:FF6'), 'auto', '" + newVersion + "', '" + tableName + "', '1')");
-
-            return newVersion;
-        } finally {
-            swgdparaDatabase.close();
+            version = getTableVersion(tableName);
+        } catch (Exception e) {
+            version = null;
         }
-    }
-
-    /**
-     * 插入数据
-     *
-     * @param sql sql
-     *
-     * @return 插入成功返回true
-     * */
-    public static boolean insert(String sql) {
-        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-
-        try {
-            swgdparaDatabase.update(sql);
-            return true;
-        } catch (BaseException e) {
-            return false;
+        List<Map<String, Object>> currentVersionList = JDBC_TEMPLATE.queryForList("SELECT PARAMS_VERSION FROM " + SCHEMA + "." + "T_PARAMS_VERSION_CURRENT WHERE TABLE_NAME = ?", tableName);
+        if (currentVersionList.size() == 1) {
+            currentVersion = currentVersionList.get(0).get("PARAMS_VERSION").toString();
         }
-        finally {
-            swgdparaDatabase.close();
+        Integer currentVersionInteger = null;
+        Integer versionInteger = null;
+        Integer newVersion = null;
+        if (currentVersion != null) {
+            currentVersionInteger = Integer.parseInt(currentVersion);
         }
+        if (version != null) {
+            versionInteger = Integer.parseInt(version);
+        }
+        if (currentVersionInteger == null && versionInteger == null) {
+            newVersion = 10000;
+        } else if (currentVersionInteger == null) {
+            newVersion = versionInteger + 1;
+        } else if (versionInteger == null) {
+            newVersion = currentVersionInteger + 1;
+        } else if (currentVersionInteger > versionInteger) {
+            newVersion = currentVersionInteger + 1;
+        }
+        if (newVersion == null) {
+            throw new InfoException("版本为null");
+        }
+
+
+        List<Map<String, Object>> idList = JDBC_TEMPLATE.queryForList("SELECT ID FROM (SELECT * FROM " + SCHEMA + ".T_PARAMS_VERSION ORDER BY ID DESC) WHERE ROWNUM = 1");
+        long newId;
+        if (idList.size() == 1) {
+            newId = Long.parseLong(idList.get(0).get("ID").toString());
+        } else {
+            newId = 100L;
+        }
+        newId = newId + 1;
+
+        JDBC_TEMPLATE.update("INSERT INTO "+ SCHEMA + ".T_PARAMS_VERSION(\"ID\", \"CREATE_TIME\", \"GROUP_NAME\", \"PARAMS_VERSION\", \"TABLE_NAME\", \"STATUS\") VALUES ('" + newId + "', TO_TIMESTAMP('" + DateUtil.getDate("yyyy-MM-dd HH:mm:ss") + "', 'SYYYY-MM-DD HH24:MI:SS:FF6'), 'auto', '" + newVersion + "', '" + tableName + "', '1')");
+
+        return newVersion + "";
     }
 
     /**
      * 是否是主键
      *
      * @param tableName 表名
-     * @param column 字段名
+     * @param filedName 字段名
      * */
-    public static boolean myIsPrimaryKey(String tableName, String column) {
-        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-        boolean result = swgdparaDatabase.isPrimaryKey(tableName, column);
-        swgdparaDatabase.close();
-        return result;
-    }
-
-    /**
-     * 获取所有字段
-     *
-     * @param tableName 表名
-     *
-     * @return 所有字段
-     * */
-    public static List<String> MyGetFields(String tableName) {
-        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-        List<String> fields = swgdparaDatabase.getFields(SCHEMA + "." + tableName);
-        swgdparaDatabase.close();
-        return fields;
-    }
-
-    /**
-     * 插入数据
-     *
-     * @param tableName 表名
-     * @param data 数据
-     * */
-    public static void myInsert(String tableName, List<Map<String, Object>> data) {
-        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-        swgdparaDatabase.insertV2(SCHEMA + "." + tableName, data);
-        swgdparaDatabase.close();
+    public boolean isPrimaryKey(String tableName, String filedName) {
+        return JdbcUtil.isPrimaryKey(DATA_BASE_CONNECTION_POOL.getDataSource(), tableName, filedName);
     }
 
 }

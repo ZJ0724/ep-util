@@ -49,21 +49,25 @@ public class ParamDbController {
             return Response.returnFalse("请选择文件");
         }
 
-        File file;
-
+        String fileName = multipartFile.getOriginalFilename();
+        String newFileName;
         try {
             InputStream inputStream = multipartFile.getInputStream();
-            file = new File(Project.CACHE_PATH, DateUtil.getTime() + "-" + multipartFile.getOriginalFilename());
-            FileUtil.createFile(file, inputStream);
+            newFileName = cacheFileService.add(fileName, inputStream);
             inputStream.close();
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
 
-        new TaskRunService("mdb导入比对：" + file.getName()) {
+        new TaskRunService("mdb导入比对：" + fileName) {
             @Override
             public String run() {
-                return new ParamDbService().mdbImportComparator(file.getAbsolutePath(), true).toString();
+                return paramDbService.mdbImportComparator(new File(Project.CACHE_PATH, newFileName).getAbsolutePath()).toString();
+            }
+
+            @Override
+            public void afterRun() {
+                cacheFileService.delete(newFileName);
             }
         }.start();
 
@@ -82,7 +86,7 @@ public class ParamDbController {
             return Response.returnFalse("请选择文件");
         }
 
-        String fileName = multipartFile.getName();
+        String fileName = multipartFile.getOriginalFilename();
         String newFileName;
         try {
             InputStream inputStream = multipartFile.getInputStream();

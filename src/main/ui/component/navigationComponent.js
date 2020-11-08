@@ -18,7 +18,8 @@ export default (function () {
                     </div>
                     <ul v-if="item.children !== undefined" class="dropdown-menu">
                         <li style="padding: 5px; 0" v-for="(child, j) in item.children" :key="j">
-                            <a :href="page + item.path + child.path">{{child.name}}</a>
+                            <a v-if="child.path !== undefined" :href="page + item.path + child.path">{{child.name}}</a>
+                            <div v-else style="border: 1px #ddd solid;margin: 0 20px;transform: scaleY(0.5);"></div>
                         </li>
                     </ul>
                 </div>
