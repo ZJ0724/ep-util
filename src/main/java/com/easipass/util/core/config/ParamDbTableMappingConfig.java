@@ -1,6 +1,8 @@
 package com.easipass.util.core.config;
 
 import com.easipass.util.core.entity.ParamDbTableMapping;
+import com.easipass.util.core.exception.InfoException;
+
 import java.util.*;
 
 /**
@@ -785,7 +787,7 @@ public final class ParamDbTableMappingConfig {
             }
         }
 
-        return null;
+        throw new InfoException(resourceTableName + "表未在配置中找到");
     }
 
     /**

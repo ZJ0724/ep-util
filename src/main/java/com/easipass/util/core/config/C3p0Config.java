@@ -10,7 +10,7 @@ public final class C3p0Config {
     /**
      * 初始连接数
      * */
-    public static final int initialPoolSize = 0;
+    public static final int initialPoolSize = 10;
 
     /**
      * 最大连接数
@@ -20,12 +20,12 @@ public final class C3p0Config {
     /**
      * 最小连接数
      * */
-    public static final int minPoolSize = 0;
+    public static final int minPoolSize = 10;
 
     /**
      * 空闲多少时间不使用回收
      * */
-    public static final int maxIdleTime = 60;
+    public static final int maxIdleTime = 0;
 
     /**
      * 获取连接超时时间

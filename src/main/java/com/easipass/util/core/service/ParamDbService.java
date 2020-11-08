@@ -2,15 +2,11 @@ package com.easipass.util.core.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.easipass.util.core.BaseException;
 import com.easipass.util.core.component.AccessDatabase;
 import com.easipass.util.core.component.SWGDPARADatabase;
 import com.easipass.util.core.config.ParamDbTableMappingConfig;
 import com.easipass.util.core.entity.ParamDbTableMapping;
 import com.easipass.util.core.exception.ErrorException;
-import com.easipass.util.core.exception.WarningException;
-import com.easipass.util.core.util.ExcelUtil;
-import com.easipass.util.core.util.FileUtil;
 import com.easipass.util.core.util.StringUtil;
 import com.easipass.util.core.util.ThreadUtil;
 import org.slf4j.Logger;
@@ -18,9 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 参数库服务
@@ -37,7 +31,7 @@ public final class ParamDbService {
     /**
      * 线程池
      * */
-    public static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = ThreadUtil.getThreadPoolExecutor(200);
+    public static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = ThreadUtil.getThreadPoolExecutor(100);
 
     /**
      * mdb导入比对
@@ -47,148 +41,103 @@ public final class ParamDbService {
      * @return 比对结果
      * */
     public Result mdbImportComparator(String mdbPath) {
+        // 结果
         Result result = new Result();
         // mdb数据库
         AccessDatabase accessDatabase = new AccessDatabase(mdbPath);
+        // mdb文件中的所有表
+        List<String> mdbTables = accessDatabase.getTables();
+        // 多线程控制
+        CountDownLatch countDownLatch = new CountDownLatch(mdbTables.size());
+        // SWGDPARA数据库
+        SWGDPARADatabase swgdparaDatabase = SWGDPARADatabase.getInstance();
 
+        for (String mdbTableName : mdbTables) {
+            THREAD_POOL_EXECUTOR.execute(() -> {
+                try {
+                    // 表映射配置
+                    ParamDbTableMapping paramDbTableMapping = ParamDbTableMappingConfig.getByResourceTableName(mdbTableName);
+                    // 数据库表名
+                    String dbTableName = paramDbTableMapping.getDbTableName();
+                    // 版本
+                    String version = swgdparaDatabase.getTableVersion(dbTableName);
+                    // mdb表数据
+                    List<Map<String, Object>> mdbTableData = accessDatabase.getTableData(mdbTableName);
+                    // 多线程遍历单条数据控制
+                    CountDownLatch countDownLatch1 = new CountDownLatch(mdbTableData.size());
+                    // 字段映射集合
+                    Set<Map.Entry<String, String>> fieldMappingList = paramDbTableMapping.getFields().entrySet();
 
+                    for (Map<String, Object> data : mdbTableData) {
+                        THREAD_POOL_EXECUTOR.execute(() -> {
+                            try {
+                                // sql
+                                String sql = "SELECT * FROM " + SWGDPARADatabase.SCHEMA + "." + paramDbTableMapping.getDbTableName() + " WHERE 1 = 1 AND PARAMS_VERSION = '" + version + "'";
 
-//
-//        // 获取mdb文件中的所有表
-//        List<String> mdbTables = MdbDatabase.getTables(mdbPath);
-//
-//        // countDownLatch
-//        CountDownLatch countDownLatch = new CountDownLatch(mdbTables.size());
-//
-//        // 遍历mdb文件中的所有表
-//        for (int i = 0; i < mdbTables.size(); i++) {
-//            final int finalI = i;
-//
-//            THREAD_POOL_EXECUTOR.execute(() -> {
-//                try {
-//                    // mdb表名
-//                    String mdbTable = mdbTables.get(finalI);
-//
-//                    // 表映射
-//                    ParamDbTableMapping paramDbTableMapping = ParamDbTableMappingConfig.getByResourceTableName(mdbTable);
-//
-//                    if (paramDbTableMapping == null) {
-//                        result.message.add(mdbTable + "表未在配置中找到");
-//                        return;
-//                    }
-//
-//                    // 数据库表名
-//                    String dbTable = paramDbTableMapping.getDbTableName();
-//                    // 版本
-//                    String version = SWGDPARADatabase.getTableVersion(dbTable);
-//
-//                    if (StringUtil.isEmpty(version)) {
-//                        result.message.add(dbTable + ": 无版本号");
-//                        return;
-//                    }
-//
-//                    // 字段比较
-//                    boolean mdbTableFieldCompare = fieldCompare(paramDbTableMapping.getResourceTableFields(), MdbDatabase.MyGetFields(mdbPath, mdbTable), result, "mdb文件" + mdbTable);
-//                    boolean dbTableFieldCompare = fieldCompare(paramDbTableMapping.getDbTableFields(), SWGDPARADatabase.MyGetFields(dbTable), result, "数据库表" + dbTable);
-//                    if (!mdbTableFieldCompare || !dbTableFieldCompare) {
-//                        return;
-//                    }
-//
-//                    // mdb表数据
-//                    List<JSONObject> mdbTableData = MdbDatabase.getTableData(mdbPath, mdbTable);
-//
-//                    // 遍历数据多线程控制
-//                    CountDownLatch countDownLatch1 = new CountDownLatch(mdbTableData.size());
-//
-//                    for (int j = 0; j < mdbTableData.size(); j++) {
-//                        int finalJ = j;
-//
-//                        THREAD_POOL_EXECUTOR.execute(() -> {
-//                            try {
-//                                // 单条数据
-//                                JSONObject jsonObject = mdbTableData.get(finalJ);
-//                                // sql
-//                                String sql = "SELECT * FROM " + SWGDPARADatabase.SCHEMA + "." + paramDbTableMapping.getDbTableName() + " WHERE 1 = 1 AND PARAMS_VERSION = '" + version + "'";
-//
-//                                // 遍历字段映射
-//                                Set<String> dbFields = paramDbTableMapping.getFields().keySet();
-//                                for (String dbField : dbFields) {
-//                                    // mdb字段
-//                                    String mdbTableField = paramDbTableMapping.getFields().get(dbField);
-//                                    // 字段值
-//                                    String data = jsonObject.getString(mdbTableField);
-//
-//                                    // COMPLEX.CODE_S
-//                                    if ("COMPLEX".equals(dbTable)) {
-//                                        if ("CODE_S".equals(dbField)) {
-//                                            if (StringUtil.isEmptyAll(data)) {
-//                                                data = "__00";
-//                                            }
+                                for (Map.Entry<String, String> fieldMapping : fieldMappingList) {
+                                    // mdb字段名
+                                    String mdbFieldName = fieldMapping.getValue();
+                                    // 数据库字段名
+                                    String dbFieldName = fieldMapping.getKey();
+                                    // mdb字段对应的数据
+                                    Object mdbFieldData = data.get(mdbFieldName);
+                                    // 数据库字段类型
+//                                    String dbFieldType = swgdparaDatabase.getFieldType(dbTableName, dbFieldName);
+//                                    // 数据库字段是否是主键
+//                                    boolean dbFieldIsPrimaryKey = swgdparaDatabase.isPrimaryKey(dbTableName, dbFieldName);
+                                    // 数据库字段值
+                                    String dbFieldData = mdbFieldData == null ? "NULL" : mdbFieldData.toString();
+
+                                    if (StringUtil.isEmpty(dbFieldData)) {
+                                        // 如果数据库字段是主键，并且字段值是空，这补__00
+//                                        if (dbFieldIsPrimaryKey) {
+//                                            dbFieldData = "'__00'";
 //                                        }
-//                                    }
-//
-//                                    // null
-//                                    if (StringUtil.isEmptyAll(data)) {
-//                                        continue;
-//                                    }
-//
-//                                    // 单引号处理
-//                                    data = data.replaceAll("'", "''");
-//
-//                                    // 字段类型
-//                                    String fieldType = SWGDPARADatabase.getFieldType(dbTable, dbField);
-//
-//                                    // 兼容日期格式
-//                                    if ("TIMESTAMP".equals(fieldType)) {
-//                                        data = parseDate(data);
-//                                        sql = StringUtil.append(sql, " AND ", dbField, " = ", "TO_DATE('" + data + "','yyyy-mm-dd hh24:mi:ss')");
-//                                        continue;
-//                                    }
-//
-//                                    sql = StringUtil.append(sql, " AND ", dbField, " = '", data, "'");
-//                                }
-//
-//                                log.info(sql);
-//
-//                                // 查找数据是否存在
-//                                if (!SWGDPARADatabase.dataIsExist(sql)) {
-//                                    result.message.add(sql);
-//                                }
-//                            } catch (Throwable e) {
-//                                result.message.add(e.getMessage());
-//                            } finally {
-//                                countDownLatch1.countDown();
-//                            }
-//                        });
-//                    }
-//
-//                    try {
-//                        countDownLatch1.await();
-//                    } catch (InterruptedException e) {
-//                        throw new ErrorException(e.getMessage());
-//                    }
-//                } catch (Throwable e) {
-//                    result.message.add(e.getMessage());
-//                } finally {
-//                    countDownLatch.countDown();
-//                }
-//            });
-//        }
-//
-//        // 等待执行完成
-//        try {
-//            countDownLatch.await();
-//        } catch (InterruptedException e) {
-//            throw new ErrorException(e.getMessage());
-//        }
-//
-//        if (result.message.size() == 0) {
-//            result.flag = true;
-//            result.message.add("比对完成，无差异");
-//        }
+                                        dbFieldData = "'" + dbFieldData + "'";
+                                    } else {
+                                        // 单引号处理
+                                        dbFieldData = dbFieldData.replaceAll("'", "''");
+
+//                                        // 兼容日期格式
+//                                        if ("TIMESTAMP".equals(dbFieldType)) {
+//                                            dbFieldData = "TO_DATE('" + parseDate(dbFieldData) + "','yyyy-mm-dd hh24:mi:ss')";
+//                                        } else {
+//                                            dbFieldData = "'" + dbFieldData + "'";
+//                                        }
+                                        dbFieldData = "'" + dbFieldData + "'";
+                                    }
+
+                                    sql = StringUtil.append(sql, " AND ", dbFieldName, " = ", dbFieldData);
+                                }
+
+                                log.info(sql);
+
+                                // 查找数据是否存在
+                                if (!swgdparaDatabase.dataIsExist(sql)) {
+                                    result.addMessage(sql);
+                                }
+                            } catch (Throwable e) {
+                                result.addMessage(e.getMessage());
+                            } finally {
+                                countDownLatch1.countDown();
+                            }
+                        });
+                    }
+
+                    // 等待
+                    ThreadUtil.await(countDownLatch1);
+                } catch (Throwable e) {
+                    result.addMessage(e.getMessage());
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+
+        // 等待
+        ThreadUtil.await(countDownLatch);
 
         log.info(result.toString());
-
         return result;
     }
 
@@ -929,7 +878,16 @@ public final class ParamDbService {
         /**
          * 信息
          * */
-        public List<String> message = new ArrayList<>();
+        private final List<String> message = new ArrayList<>();
+
+        /**
+         * 添加信息
+         *
+         * @param message 信息
+         * */
+        private void addMessage(String message) {
+            this.message.add(message);
+        }
 
         @Override
         public String toString() {

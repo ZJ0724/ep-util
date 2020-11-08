@@ -65,6 +65,20 @@ public final class StringUtil {
     /**
      * 判断是否为null
      *
+     * @param o 数据
+     *
+     * @return 是null返回true
+     * */
+    public static boolean isEmpty(Object o) {
+        if (o == null) {
+            return true;
+        }
+        return isEmpty(o.toString());
+    }
+
+    /**
+     * 判断是否为null
+     *
      * @param s 数据
      *
      * @return 是null返回true

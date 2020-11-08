@@ -26,10 +26,10 @@ public final class SWGDPARADatabase {
      * */
     private static final SWGDPARADatabase SWGDPARA_DATABASE = new SWGDPARADatabase();
 
-    /**
-     * JdbcTemplate
-     * */
-    private static final JdbcTemplate JDBC_TEMPLATE;
+//    /**
+//     * JdbcTemplate
+//     * */
+//    private static final JdbcTemplate JDBC_TEMPLATE;
 
     /**
      * SCHEMA
@@ -38,7 +38,7 @@ public final class SWGDPARADatabase {
 
     static {
         DATA_BASE_CONNECTION_POOL = new DataBaseConnectionPool(new DatabaseInfo(SWGDPARAFileConfig.currentFile));
-        JDBC_TEMPLATE = new JdbcTemplate(DATA_BASE_CONNECTION_POOL.getDataSource());
+//        JDBC_TEMPLATE = new JdbcTemplate(DATA_BASE_CONNECTION_POOL.getDataSource());
     }
 
     /**
@@ -64,6 +64,7 @@ public final class SWGDPARADatabase {
      * */
     public String getTableVersion(String tableName) {
         String result;
+        JdbcTemplate JDBC_TEMPLATE = new JdbcTemplate(DATA_BASE_CONNECTION_POOL.getDataSource());
         List<Map<String, Object>> versions = JDBC_TEMPLATE.queryForList("SELECT PARAMS_VERSION FROM (SELECT * FROM " + SCHEMA + ".T_PARAMS_VERSION WHERE TABLE_NAME = ? AND STATUS = '1' ORDER BY PARAMS_VERSION DESC) WHERE ROWNUM = 1", tableName);
 
         if (versions.size() == 1) {
@@ -95,6 +96,7 @@ public final class SWGDPARADatabase {
      * @return sql能查到数据返回true
      * */
     public boolean dataIsExist(String sql) {
+        JdbcTemplate JDBC_TEMPLATE = new JdbcTemplate(DATA_BASE_CONNECTION_POOL.getDataSource());
         List<Map<String, Object>> list = JDBC_TEMPLATE.queryForList(sql);
         return list.size() != 0;
     }
@@ -108,6 +110,7 @@ public final class SWGDPARADatabase {
      * @return 表数据
      * */
     public List<Map<String, Object>> getTableData(String tableName, String version) {
+        JdbcTemplate JDBC_TEMPLATE = new JdbcTemplate(DATA_BASE_CONNECTION_POOL.getDataSource());
         return JDBC_TEMPLATE.queryForList("SELECT * FROM " + SCHEMA + "." + tableName + " WHERE PARAMS_VERSION = ?", version);
     }
 
@@ -126,6 +129,7 @@ public final class SWGDPARADatabase {
         } catch (Exception e) {
             version = null;
         }
+        JdbcTemplate JDBC_TEMPLATE = new JdbcTemplate(DATA_BASE_CONNECTION_POOL.getDataSource());
         List<Map<String, Object>> currentVersionList = JDBC_TEMPLATE.queryForList("SELECT PARAMS_VERSION FROM " + SCHEMA + "." + "T_PARAMS_VERSION_CURRENT WHERE TABLE_NAME = ?", tableName);
         if (currentVersionList.size() == 1) {
             currentVersion = currentVersionList.get(0).get("PARAMS_VERSION").toString();
