@@ -66,7 +66,11 @@ public final class ParamDbService {
                     // 多线程遍历单条数据控制
                     CountDownLatch countDownLatch1 = new CountDownLatch(mdbTableData.size());
                     // 字段映射集合
-                    Set<Map.Entry<String, String>> fieldMappingList = paramDbTableMapping.getFields().entrySet();
+                    Set<Map.Entry<String, String>> fieldMappingList = paramDbTableMapping.getFieldMapping().entrySet();
+                    // 字段类型
+                    Map<String, String> dbFieldTypeMapping = paramDbTableMapping.getDbFieldTypeMapping();
+                    // 是否是主键
+                    Map<String, Boolean> dbFieldIsPrimaryKeyMapping = paramDbTableMapping.getDbFieldIsPrimaryKeyMapping();
 
                     for (Map<String, Object> data : mdbTableData) {
                         THREAD_POOL_EXECUTOR.execute(() -> {
@@ -82,32 +86,35 @@ public final class ParamDbService {
                                     // mdb字段对应的数据
                                     Object mdbFieldData = data.get(mdbFieldName);
                                     // 数据库字段类型
-//                                    String dbFieldType = swgdparaDatabase.getFieldType(dbTableName, dbFieldName);
-//                                    // 数据库字段是否是主键
-//                                    boolean dbFieldIsPrimaryKey = swgdparaDatabase.isPrimaryKey(dbTableName, dbFieldName);
+                                    String dbFieldType = dbFieldTypeMapping.get(dbFieldName);
+                                    // 数据库字段是否是主键
+                                    boolean dbFieldIsPrimaryKey = dbFieldIsPrimaryKeyMapping.get(dbFieldName);
                                     // 数据库字段值
-                                    String dbFieldData = mdbFieldData == null ? "NULL" : mdbFieldData.toString();
+                                    String dbFieldData = mdbFieldData.toString();
 
                                     if (StringUtil.isEmpty(dbFieldData)) {
                                         // 如果数据库字段是主键，并且字段值是空，这补__00
-//                                        if (dbFieldIsPrimaryKey) {
-//                                            dbFieldData = "'__00'";
-//                                        }
-                                        dbFieldData = "'" + dbFieldData + "'";
+                                        if (dbFieldIsPrimaryKey) {
+                                            dbFieldData = "'__00'";
+                                        }
                                     } else {
                                         // 单引号处理
                                         dbFieldData = dbFieldData.replaceAll("'", "''");
 
-//                                        // 兼容日期格式
-//                                        if ("TIMESTAMP".equals(dbFieldType)) {
-//                                            dbFieldData = "TO_DATE('" + parseDate(dbFieldData) + "','yyyy-mm-dd hh24:mi:ss')";
-//                                        } else {
-//                                            dbFieldData = "'" + dbFieldData + "'";
-//                                        }
-                                        dbFieldData = "'" + dbFieldData + "'";
+                                        // 兼容日期格式
+                                        if ("TIMESTAMP".equals(dbFieldType)) {
+                                            dbFieldData = "TO_DATE('" + parseDate(dbFieldData) + "','yyyy-mm-dd hh24:mi:ss')";
+                                        } else {
+                                            dbFieldData = "'" + dbFieldData + "'";
+                                        }
                                     }
 
-                                    sql = StringUtil.append(sql, " AND ", dbFieldName, " = ", dbFieldData);
+                                    sql = StringUtil.append(sql, " AND ", dbFieldName);
+                                    if (StringUtil.isEmpty(dbFieldData)) {
+                                        sql = StringUtil.append(sql, " IS NULL");
+                                    } else {
+                                        sql = StringUtil.append(sql, " = ", dbFieldData);
+                                    }
                                 }
 
                                 log.info(sql);
@@ -136,6 +143,11 @@ public final class ParamDbService {
 
         // 等待
         ThreadUtil.await(countDownLatch);
+
+        if (result.message.size() == 0) {
+            result.flag = true;
+            result.addMessage("比对完成，无差异");
+        }
 
         log.info(result.toString());
         return result;
@@ -878,7 +890,7 @@ public final class ParamDbService {
         /**
          * 信息
          * */
-        private final List<String> message = new ArrayList<>();
+        public final List<String> message = new ArrayList<>();
 
         /**
          * 添加信息

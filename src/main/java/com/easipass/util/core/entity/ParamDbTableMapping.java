@@ -1,5 +1,6 @@
 package com.easipass.util.core.entity;
 
+import com.easipass.util.core.component.SWGDPARADatabase;
 import java.util.*;
 
 /**
@@ -25,7 +26,17 @@ public final class ParamDbTableMapping {
      * key：数据库字段
      * value：资源字段
      * */
-    private final Map<String, String> fields = new LinkedHashMap<>();
+    private final Map<String, String> fieldMapping = new LinkedHashMap<>();
+
+    /**
+     * 字段类型映射
+     */
+    private final Map<String, String> dbFieldTypeMapping = new HashMap<>();
+
+    /**
+     * 字段是否是主键映射
+     */
+    private final Map<String, Boolean> dbFieldIsPrimaryKeyMapping = new HashMap<>();
 
     /**
      * 构造函数
@@ -38,37 +49,14 @@ public final class ParamDbTableMapping {
         this.dbTableName = dbTableName;
         this.resourceTableName = resourceTableName;
         Set<Map.Entry<String, String>> entries = fields.entrySet();
+        SWGDPARADatabase swgdparaDatabase = SWGDPARADatabase.getInstance();
         for (Map.Entry<String, String> entry : entries) {
-            this.fields.put(entry.getKey(), entry.getValue());
+            String key = entry.getKey();
+            String value = entry.getValue();
+            this.fieldMapping.put(key, value);
+            this.dbFieldTypeMapping.put(key, swgdparaDatabase.getFieldType(dbTableName, key));
+            this.dbFieldIsPrimaryKeyMapping.put(key, swgdparaDatabase.isPrimaryKey(dbTableName, key));
         }
-    }
-
-    /**
-     * 获取数据库表所有字段
-     *
-     * @return 数据库表所有字段
-     * */
-    public List<String> getDbTableFields() {
-        List<String> result = new ArrayList<>();
-        Set<Map.Entry<String, String>> entries = this.fields.entrySet();
-        for (Map.Entry<String, String> entry : entries) {
-            result.add(entry.getKey());
-        }
-        return result;
-    }
-
-    /**
-     * 获取资源表所有字段
-     *
-     * @return 资源表所有字段
-     * */
-    public List<String> getResourceTableFields() {
-        List<String> result = new ArrayList<>();
-        Set<Map.Entry<String, String>> entries = this.fields.entrySet();
-        for (Map.Entry<String, String> entry : entries) {
-            result.add(entry.getValue());
-        }
-        return result;
     }
 
     public String getDbTableName() {
@@ -79,8 +67,16 @@ public final class ParamDbTableMapping {
         return resourceTableName;
     }
 
-    public Map<String, String> getFields() {
-        return fields;
+    public Map<String, String> getFieldMapping() {
+        return fieldMapping;
+    }
+
+    public Map<String, String> getDbFieldTypeMapping() {
+        return dbFieldTypeMapping;
+    }
+
+    public Map<String, Boolean> getDbFieldIsPrimaryKeyMapping() {
+        return dbFieldIsPrimaryKeyMapping;
     }
 
 }

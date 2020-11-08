@@ -2,7 +2,6 @@ package com.easipass.util.core.component;
 
 import com.easipass.util.core.entity.DatabaseInfo;
 import com.easipass.util.core.util.JdbcUtil;
-import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 import java.util.Map;
 
@@ -19,18 +18,12 @@ public final class AccessDatabase {
     private final DataBaseConnectionPool dataBaseConnectionPool;
 
     /**
-     * JdbcTemplate
-     * */
-    private final JdbcTemplate jdbcTemplate;
-
-    /**
      * 构造函数
      *
      * @param accessFilePath access文件路径
      * */
     public AccessDatabase(String accessFilePath) {
         dataBaseConnectionPool = new DataBaseConnectionPool(new DatabaseInfo("jdbc:ucanaccess://" + accessFilePath));
-        jdbcTemplate = new JdbcTemplate(dataBaseConnectionPool.getDataSource());
         dataBaseConnectionPool.getConnection();
     }
 
@@ -42,7 +35,7 @@ public final class AccessDatabase {
      * @return sql能查到数据返回true
      * */
     public boolean dataIsExist(String sql) {
-        return jdbcTemplate.queryForList(sql).size() != 0;
+        return JdbcUtil.queryForList(dataBaseConnectionPool.getDataSource(), sql).size() != 0;
     }
 
     /**
@@ -53,7 +46,7 @@ public final class AccessDatabase {
      * @return 数据
      * */
     public List<Map<String, Object>> getTableData(String tableName) {
-        return jdbcTemplate.queryForList("SELECT * FROM " + tableName);
+        return JdbcUtil.queryForList(dataBaseConnectionPool.getDataSource(), "SELECT * FROM " + tableName);
     }
 
     /**

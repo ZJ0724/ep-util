@@ -2,12 +2,11 @@ package com.easipass.util.core.util;
 
 import com.easipass.util.core.exception.InfoException;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * jdbc工具类
@@ -146,6 +145,69 @@ public final class JdbcUtil {
         } finally {
             close(connection);
             close(resultSet);
+        }
+    }
+
+    /**
+     * 通过sql查询
+     *
+     * @param dataSource 数据源
+     * @param sql sql
+     *
+     * @return 数据
+     * */
+    public static List<Map<String, Object>> queryForList(DataSource dataSource, String sql) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+            ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+            int columnCount = resultSetMetaData.getColumnCount();
+            List<String> columns = new ArrayList<>();
+            for (int i = 1; i <= columnCount; i++) {
+                columns.add(resultSetMetaData.getColumnName(i));
+            }
+            while (resultSet.next()) {
+                Map<String, Object> map = new LinkedHashMap<>();
+                for (String column : columns) {
+                    map.put(column, resultSet.getObject(column));
+                }
+                result.add(map);
+            }
+            return result;
+        } catch (java.sql.SQLException e) {
+            throw new InfoException(e.getMessage());
+        } finally {
+            close(connection);
+            close(preparedStatement);
+            close(resultSet);
+        }
+    }
+
+    /**
+     * 更新
+     *
+     * @param dataSource 数据源
+     * @param sql sql
+     * */
+    public static void update(DataSource dataSource, String sql) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.execute();
+        } catch (java.sql.SQLException e) {
+            throw new InfoException(e.getMessage());
+        } finally {
+            close(connection);
+            close(preparedStatement);
         }
     }
 

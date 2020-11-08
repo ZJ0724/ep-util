@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
 
 
-        System.out.println(SWGDPARADatabase.getInstance().isPrimaryKey("USE_TO", "PARAMS_VERSION"));
+        System.out.println(SWGDPARADatabase.getInstance().getTableData("USE_TO", "10000"));
     }
 
 }
