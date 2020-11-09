@@ -58,4 +58,15 @@ public final class AccessDatabase {
         return JdbcUtil.getTables(this.dataBaseConnectionPool.getDataSource());
     }
 
+    /**
+     * 获取表的所有字段
+     *
+     * @param tableName 表名
+     *
+     * @return 表的所有字段
+     * */
+    public List<String> getFields(String tableName) {
+        return JdbcUtil.getFields(this.dataBaseConnectionPool.getDataSource(), tableName);
+    }
+
 }

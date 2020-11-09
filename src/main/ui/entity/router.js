@@ -79,12 +79,12 @@ export default [
                 name: "mdb导入比对"
             },
             {
-                path: "mdbExportParamDbComparison.html",
-                name: "mdb导出比对"
-            },
-            {
                 path: "excelImportParamDbComparison.html",
                 name: "excel导入比对"
+            },
+            {
+                path: "mdbExportParamDbComparison.html",
+                name: "mdb导出比对"
             },
             {},
             {

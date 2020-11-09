@@ -1,12 +1,14 @@
 package com.easipass.util.core.service;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.easipass.util.core.component.AccessDatabase;
+import com.easipass.util.core.component.Excel;
 import com.easipass.util.core.component.SWGDPARADatabase;
 import com.easipass.util.core.config.ParamDbTableMappingConfig;
 import com.easipass.util.core.entity.ParamDbTableMapping;
 import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.exception.InfoException;
+import com.easipass.util.core.util.ListUtil;
 import com.easipass.util.core.util.StringUtil;
 import com.easipass.util.core.util.ThreadUtil;
 import org.slf4j.Logger;
@@ -55,6 +57,11 @@ public final class ParamDbService {
         for (String mdbTableName : mdbTables) {
             THREAD_POOL_EXECUTOR.execute(() -> {
                 try {
+                    // 验证表是否还在使用
+                    if (ParamDbTableMappingConfig.tableIsNotUse(mdbTableName)) {
+                        return;
+                    }
+
                     // 表映射配置
                     ParamDbTableMapping paramDbTableMapping = ParamDbTableMappingConfig.getByResourceTableName(mdbTableName);
                     // 数据库表名
@@ -65,12 +72,16 @@ public final class ParamDbService {
                     List<Map<String, Object>> mdbTableData = accessDatabase.getTableData(mdbTableName);
                     // 多线程遍历单条数据控制
                     CountDownLatch countDownLatch1 = new CountDownLatch(mdbTableData.size());
-                    // 字段映射集合
-                    Set<Map.Entry<String, String>> fieldMappingList = paramDbTableMapping.getFieldMapping().entrySet();
                     // 字段类型
                     Map<String, String> dbFieldTypeMapping = paramDbTableMapping.getDbFieldTypeMapping();
                     // 是否是主键
                     Map<String, Boolean> dbFieldIsPrimaryKeyMapping = paramDbTableMapping.getDbFieldIsPrimaryKeyMapping();
+                    // mdb表所有字段
+                    List<String> mdbTableFields = accessDatabase.getFields(mdbTableName);
+
+                    // 验证字段
+                    fieldCompare(mdbTableFields, paramDbTableMapping.getResourceFields());
+                    fieldCompare(swgdparaDatabase.getFields(dbTableName), paramDbTableMapping.getDbFields());
 
                     for (Map<String, Object> data : mdbTableData) {
                         THREAD_POOL_EXECUTOR.execute(() -> {
@@ -78,13 +89,11 @@ public final class ParamDbService {
                                 // sql
                                 String sql = "SELECT * FROM " + SWGDPARADatabase.SCHEMA + "." + paramDbTableMapping.getDbTableName() + " WHERE 1 = 1 AND PARAMS_VERSION = '" + version + "'";
 
-                                for (Map.Entry<String, String> fieldMapping : fieldMappingList) {
-                                    // mdb字段名
-                                    String mdbFieldName = fieldMapping.getValue();
+                                for (String mdbTableField : mdbTableFields) {
                                     // 数据库字段名
-                                    String dbFieldName = fieldMapping.getKey();
+                                    String dbFieldName = paramDbTableMapping.getDbFieldByResource(mdbTableField);
                                     // mdb字段对应的数据
-                                    Object mdbFieldData = data.get(mdbFieldName);
+                                    Object mdbFieldData = data.get(mdbTableField);
                                     // 数据库字段类型
                                     String dbFieldType = dbFieldTypeMapping.get(dbFieldName);
                                     // 数据库字段是否是主键
@@ -92,7 +101,7 @@ public final class ParamDbService {
                                     // 数据库字段值
                                     String dbFieldData = mdbFieldData.toString();
 
-                                    if (StringUtil.isEmpty(dbFieldData)) {
+                                    if (StringUtil.isEmptyAll(dbFieldData)) {
                                         // 如果数据库字段是主键，并且字段值是空，这补__00
                                         if (dbFieldIsPrimaryKey) {
                                             dbFieldData = "'__00'";
@@ -110,7 +119,7 @@ public final class ParamDbService {
                                     }
 
                                     sql = StringUtil.append(sql, " AND ", dbFieldName);
-                                    if (StringUtil.isEmpty(dbFieldData)) {
+                                    if (StringUtil.isEmptyAll(dbFieldData)) {
                                         sql = StringUtil.append(sql, " IS NULL");
                                     } else {
                                         sql = StringUtil.append(sql, " = ", dbFieldData);
@@ -150,6 +159,134 @@ public final class ParamDbService {
         }
 
         log.info(result.toString());
+        return result;
+    }
+
+    /**
+     * excel导入比对
+     *
+     * @param tableName 表名
+     * @param excelPath excel路径
+     *
+     * @return 比对结果
+     * */
+    public Result excelImportComparator(String tableName, String excelPath) {
+        // 结果
+        Result result = new Result();
+
+        // 表是否还在使用
+        if (ParamDbTableMappingConfig.tableIsNotUse(tableName)) {
+            result.addMessage(tableName + "已弃用");
+            return result;
+        }
+
+        // excel
+        Excel excel = new Excel(excelPath, 0);
+        // excel所有数据
+        List<List<String>> excelData = excel.getAllData();
+
+        // 验证excel数据不能为空
+        if (excelData.size() == 0) {
+            result.addMessage("excel数据为空");
+            return result;
+        }
+
+        // 映射
+        ParamDbTableMapping paramDbTableMapping = ParamDbTableMappingConfig.getByDbTableName(tableName);
+        // excel字段
+        List<String> excelFields = excelData.get(0);
+        // SWGDPARA数据库
+        SWGDPARADatabase swgdparaDatabase = SWGDPARADatabase.getInstance();
+
+        // 字段验证
+        fieldCompare(excelFields, paramDbTableMapping.getResourceFields());
+        fieldCompare(swgdparaDatabase.getFields(tableName), paramDbTableMapping.getDbFields());
+
+        // 版本
+        String version = swgdparaDatabase.getTableVersion(tableName);
+        // 多线程控制
+        CountDownLatch countDownLatch = new CountDownLatch(excelData.size() - 1);
+        // 数据库字段类型映射
+        Map<String, String> dbFieldTypeMapping = paramDbTableMapping.getDbFieldTypeMapping();
+        // 数据库字段是否是主键映射
+        Map<String, Boolean> dbFieldIsPrimaryKeyMapping = paramDbTableMapping.getDbFieldIsPrimaryKeyMapping();
+
+        for (int i = 1; i < excelData.size(); i++) {
+            final int finalI = i;
+            THREAD_POOL_EXECUTOR.execute(() -> {
+                try {
+                    // 单条excel数据
+                    List<String> data = excelData.get(finalI);
+                    // sql
+                    String sql = "SELECT * FROM " + SWGDPARADatabase.SCHEMA + "." + paramDbTableMapping.getDbTableName() + " WHERE 1 = 1 AND PARAMS_VERSION = '" + version + "'";
+
+                    for (String excelField : excelFields) {
+                        // 数据库字段名
+                        String dbFieldName = paramDbTableMapping.getDbFieldByResource(excelField);
+                        // mdb字段对应的数据
+                        Object mdbFieldData = data.get(ListUtil.getIndex(excelFields, excelField));
+                        // 数据库字段类型
+                        String dbFieldType = dbFieldTypeMapping.get(dbFieldName);
+                        // 数据库字段是否是主键
+                        boolean dbFieldIsPrimaryKey = dbFieldIsPrimaryKeyMapping.get(dbFieldName);
+                        // 数据库字段值
+                        String dbFieldData = mdbFieldData.toString();
+
+                        if (StringUtil.isEmpty(dbFieldData)) {
+                            // 如果数据库字段是主键，并且字段值是空，这补__00
+                            if (dbFieldIsPrimaryKey) {
+                                dbFieldData = "'__00'";
+                            }
+                        } else {
+                            // 单引号处理
+                            dbFieldData = dbFieldData.replaceAll("'", "''");
+
+                            // 兼容日期格式
+                            if ("TIMESTAMP".equals(dbFieldType)) {
+                                dbFieldData = "TO_DATE('" + parseDate(dbFieldData) + "','yyyy-mm-dd hh24:mi:ss')";
+                            }
+
+                            // \N处理
+                            else if ("\\N".equals(dbFieldData)) {
+                                dbFieldData = "";
+                            }
+
+                            else {
+                                dbFieldData = "'" + dbFieldData + "'";
+                            }
+                        }
+
+                        sql = StringUtil.append(sql, " AND ", dbFieldName);
+                        if (StringUtil.isEmpty(dbFieldData)) {
+                            sql = StringUtil.append(sql, " IS NULL");
+                        } else {
+                            sql = StringUtil.append(sql, " = ", dbFieldData);
+                        }
+                    }
+
+                    log.info(sql);
+
+                    // 查找数据是否存在
+                    if (!swgdparaDatabase.dataIsExist(sql)) {
+                        result.addMessage(sql);
+                    }
+                } catch (Throwable e) {
+                    result.addMessage(e.getMessage());
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+
+        ThreadUtil.await(countDownLatch);
+
+        if (result.message.size() == 0) {
+            result.flag = true;
+            result.addMessage("比对完成，无差异");
+        }
+
+        log.info(result.toString());
+
         return result;
     }
 
@@ -303,160 +440,6 @@ public final class ParamDbService {
         log.info(result.toString());
 
         return result;
-    }
-
-    /**
-     * excel导入比对
-     *
-     * @param tableName 表名
-     * @param excelPath excel路径
-     * @param isDeleteFile 比对完是否删除文件
-     *
-     * @return 比对结果
-     * */
-    public Result excelImportComparator(String tableName, String excelPath, boolean isDeleteFile) {
-//        Result result = new Result();
-//
-//        try {
-//            if (StringUtil.isEmpty(tableName)) {
-//                result.message.add("表名不能为空");
-//                return result;
-//            }
-//
-//            // 映射
-//            ParamDbTableMapping paramDbTableMapping = ParamDbTableMappingConfig.getByDbTableName(tableName);
-//            if (paramDbTableMapping == null) {
-//                result.message.add(tableName + "表未在配置中找到");
-//                return result;
-//            }
-//
-//            // 版本
-//            String version = SWGDPARADatabase.getTableVersion(tableName);
-//
-//            if (StringUtil.isEmpty(version)) {
-//                result.message.add(tableName + ": 无版本号");
-//                return result;
-//            }
-//
-//            // excel
-//            ExcelUtil excelUtil;
-//
-//            // 加载excel
-//            try {
-//                excelUtil = new ExcelUtil(excelPath, 0);
-//            } catch (BaseException e) {
-//                result.message.add(e.getMessage());
-//                return result;
-//            }
-//
-//            // excel所有数据
-//            List<List<String>> excelAllData = excelUtil.getAllData();
-//
-//            if (excelAllData.size() == 0) {
-//                result.message.add("excel数据为空");
-//                return result;
-//            }
-//
-//            // 字段比较
-//            List<String> excelFields = paramDbTableMapping.getResourceTableFields();
-//            boolean excelFieldCompare = fieldCompare(excelFields, excelAllData.get(0), result, "excel文件");
-//            boolean dbTableFieldCompare = fieldCompare(paramDbTableMapping.getDbTableFields(), SWGDPARADatabase.MyGetFields(tableName), result, "数据库表" + tableName);
-//            if (!excelFieldCompare || !dbTableFieldCompare) {
-//                return result;
-//            }
-//
-//            // 多线程控制
-//            CountDownLatch countDownLatch = new CountDownLatch(excelAllData.size() - 1);
-//            // 字段映射集合
-//            Set<Map.Entry<String, String>> entries = paramDbTableMapping.getFields().entrySet();
-//
-//            // 遍历数据
-//            for (int i = 1; i < excelAllData.size(); i++) {
-//                int finalI = i;
-//
-//                THREAD_POOL_EXECUTOR.execute(() -> {
-//                    try {
-//                        // sql
-//                        String sql = "SELECT * FROM " + SWGDPARADatabase.SCHEMA + "." + tableName + " WHERE 1 = 1 AND PARAMS_VERSION = '" + version + "'";
-//                        // 单行数据
-//                        List<String> rowData = excelAllData.get(finalI);
-//
-//                        for (Map.Entry<String, String> entry : entries) {
-//                            // excel字段
-//                            String excelField = entry.getValue();
-//                            // db字段
-//                            String dbField = entry.getKey();
-//                            // excel单格数据
-//                            String data = null;
-//
-//                            // 获取单格数据
-//                            for (int n = 0; n < excelFields.size(); n++) {
-//                                if (excelFields.get(n).equals(excelField)) {
-//                                    data = rowData.get(n);
-//                                }
-//                            }
-//
-//                            // null
-//                            if (StringUtil.isEmptyAll(data)) {
-//                                continue;
-//                            }
-//
-//                            data = data.replaceAll("'", "''");
-//
-//                            // \N
-//                            if ("\\N".equals(data)) {
-//                                continue;
-//                            }
-//
-//                            // 字段类型
-//                            String fieldType = SWGDPARADatabase.getFieldType(tableName, dbField);
-//
-//                            // 兼容日期格式
-//                            if ("TIMESTAMP".equals(fieldType)) {
-//                                data = parseDate(data);
-//
-//                                sql = StringUtil.append(sql, " AND ", dbField, " = ", "TO_DATE('" + data + "','yyyy-mm-dd hh24:mi:ss')");
-//                                continue;
-//                            }
-//
-//                            sql = StringUtil.append(sql, " AND ", dbField, " = '", data, "'");
-//                        }
-//
-//                        log.info(sql);
-//
-//                        // 查找数据是否存在
-//                        if (!SWGDPARADatabase.dataIsExist(sql)) {
-//                            result.message.add(sql);
-//                        }
-//                    } catch (Throwable e) {
-//                        result.message.add(e.getMessage());
-//                    } finally {
-//                        countDownLatch.countDown();
-//                    }
-//                });
-//            }
-//
-//            try {
-//                countDownLatch.await();
-//            } catch (InterruptedException e) {
-//                throw new ErrorException(e.getMessage());
-//            }
-//
-//            if (result.message.size() == 0) {
-//                result.flag = true;
-//                result.message.add("比对完成，无差异");
-//            }
-//
-//            log.info(result.toString());
-//
-//            return result;
-//        } finally {
-//            // 判断是否删除文件
-//            if (isDeleteFile) {
-//                FileUtil.delete(excelPath);
-//            }
-//        }
-        return null;
     }
 
     /**
@@ -816,19 +799,12 @@ public final class ParamDbService {
     /**
      * 字段比较
      *
-     * @param config config配置中的字段
      * @param target 原字段
-     * @param result 比对结果
-     * @param tableName 表名
-     *
-     * @return 比对正确，返回true
+     * @param config config配置中的字段
      * */
-    private static boolean fieldCompare(List<String> config, List<String> target, Result result, String tableName) {
+    private static void fieldCompare(List<String> target, List<String> config) {
         List<String> error = new ArrayList<>();
         for (String t : target) {
-            if ("PARAMS_VERSION".equals(t)) {
-                continue;
-            }
             boolean b = false;
             for (String c : config) {
                 if (c.equals(t)) {
@@ -841,38 +817,8 @@ public final class ParamDbService {
             }
         }
         if (error.size() != 0) {
-            result.message.add(tableName + "缺少字段配置：" + error);
-            return false;
+            throw new InfoException("配置缺少字段映射：" + error);
         }
-
-        return true;
-    }
-
-    /**
-     * 将数据字段进行转换
-     *
-     * @param jsonObject 被转换的数据
-     * @param fieldMap 要替换的字段映射
-     * @param type 基于key还是基于value
-     * */
-    private static Map<String, Object> dataTransformation(JSONObject jsonObject, Map<String, String> fieldMap, String type) {
-        Map<String, Object> result = new HashMap<>();
-
-        if (StringUtil.isEmpty(type)) {
-            type = "key";
-        }
-        if (!type.equals("key") && !type.equals("value")) {
-            type = "key";
-        }
-
-        Set<Map.Entry<String, String>> entries = fieldMap.entrySet();
-        for (Map.Entry<String, String> entry : entries) {
-            String field = type.equals("key") ? entry.getKey() : entry.getValue();
-            String data = jsonObject.getString(type.equals("key") ? entry.getValue() : entry.getKey());
-            result.put(field, data);
-        }
-
-        return result;
     }
 
     /**

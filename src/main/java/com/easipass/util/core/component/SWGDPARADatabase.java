@@ -171,4 +171,15 @@ public final class SWGDPARADatabase {
         return JdbcUtil.isPrimaryKey(DATA_BASE_CONNECTION_POOL.getDataSource(), tableName, filedName);
     }
 
+    /**
+     * 获取表的所有字段
+     *
+     * @param tableName 表名
+     *
+     * @return 表的所有字段
+     * */
+    public List<String> getFields(String tableName) {
+        return JdbcUtil.getFields(DATA_BASE_CONNECTION_POOL.getDataSource(), SCHEMA + "." + tableName);
+    }
+
 }

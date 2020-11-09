@@ -1,6 +1,7 @@
-package com.easipass.util.core.util;
+package com.easipass.util.core.component;
 
 import com.easipass.util.core.BaseException;
+import com.easipass.util.core.util.StringUtil;
 import com.monitorjbl.xlsx.StreamingReader;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -13,11 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * excel工具
+ * excel
  *
  * @author ZJ
  * */
-public final class ExcelUtil {
+public final class Excel {
 
     /**
      * 数据集合
@@ -30,7 +31,7 @@ public final class ExcelUtil {
      * @param path 路径
      * @param sheetIndex sheet序号
      * */
-    public ExcelUtil(String path, int sheetIndex) {
+    public Excel(String path, int sheetIndex) {
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(new File(path));
@@ -42,9 +43,12 @@ public final class ExcelUtil {
                 for (int i = 0; i < row.getLastCellNum(); i++) {
                     Cell cell = row.getCell(i);
                     if (cell != null) {
-                        strings.add(cell.getStringCellValue());
-                    } else {
-                        strings.add("");
+                        String cellData = cell.getStringCellValue();
+                        if (StringUtil.isEmpty(cellData)) {
+                            break;
+                        } else {
+                            strings.add(cellData);
+                        }
                     }
                 }
                 if (titleSize == 0) {

@@ -42,9 +42,7 @@ public final class JdbcUtil {
         } catch (java.sql.SQLException e) {
             throw new InfoException(e.getMessage());
         } finally {
-            close(connection);
-            close(preparedStatement);
-            close(resultSet);
+            close(connection, preparedStatement, resultSet);
         }
     }
 
@@ -53,40 +51,16 @@ public final class JdbcUtil {
      *
      * @param connection 连接
      * */
-    public static void close(Connection connection) {
-        try {
-            if (connection != null) {
-                connection.close();
-            }
-        } catch (java.sql.SQLException e) {
-            throw new InfoException(e.getMessage());
-        }
-    }
-
-    /**
-     * 关闭资源
-     *
-     * @param preparedStatement preparedStatement
-     * */
-    public static void close(PreparedStatement preparedStatement) {
-        try {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-        } catch (java.sql.SQLException e) {
-            throw new InfoException(e.getMessage());
-        }
-    }
-
-    /**
-     * 关闭资源
-     *
-     * @param resultSet preparedStatement
-     * */
-    public static void close(ResultSet resultSet) {
+    public static void close(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
         try {
             if (resultSet != null) {
                 resultSet.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
             }
         } catch (java.sql.SQLException e) {
             throw new InfoException(e.getMessage());
@@ -117,8 +91,7 @@ public final class JdbcUtil {
         } catch (java.sql.SQLException e) {
             throw new InfoException(e.getMessage());
         } finally {
-            close(connection);
-            close(resultSet);
+            close(connection,null, resultSet);
         }
     }
 
@@ -143,8 +116,7 @@ public final class JdbcUtil {
         } catch (java.sql.SQLException e) {
             throw new InfoException(e.getMessage());
         } finally {
-            close(connection);
-            close(resultSet);
+            close(connection, null, resultSet);
         }
     }
 
@@ -183,9 +155,7 @@ public final class JdbcUtil {
         } catch (java.sql.SQLException e) {
             throw new InfoException(e.getMessage());
         } finally {
-            close(connection);
-            close(preparedStatement);
-            close(resultSet);
+            close(connection, preparedStatement, resultSet);
         }
     }
 
@@ -206,8 +176,36 @@ public final class JdbcUtil {
         } catch (java.sql.SQLException e) {
             throw new InfoException(e.getMessage());
         } finally {
-            close(connection);
-            close(preparedStatement);
+            close(connection, preparedStatement, null);
+        }
+    }
+
+    /**
+     * 获取所有字段
+     *
+     * @param dataSource 数据源
+     * @param tableName 表名
+     *
+     * @return 所有字段
+     * */
+    public static List<String> getFields(DataSource dataSource, String tableName) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            connection = dataSource.getConnection();
+            preparedStatement = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE ROWNUM = 1");
+            resultSet = preparedStatement.executeQuery();
+            List<String> result = new ArrayList<>();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            for (int i = 1 ; i <= metaData.getColumnCount(); i++) {
+                result.add(metaData.getColumnName(i));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new InfoException(e.getMessage());
+        } finally {
+            close(connection, preparedStatement, resultSet);
         }
     }
 

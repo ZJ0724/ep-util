@@ -2,7 +2,7 @@ package com.easipass.util.core.config;
 
 import com.easipass.util.core.entity.ParamDbTableMapping;
 import com.easipass.util.core.exception.InfoException;
-
+import com.easipass.util.core.util.StringUtil;
 import java.util.*;
 
 /**
@@ -771,6 +771,49 @@ public final class ParamDbTableMappingConfig {
         LinkedHashMap<String, String> YLXQ_CHECK = new LinkedHashMap<>();
         YLXQ_CHECK.put("HS", "HS");
         MAPPINGS.add(new ParamDbTableMapping("YLXQ_CHECK", "YLQX_check", YLXQ_CHECK));
+
+        LinkedHashMap<String, String> T_SWGD_AGREEMENT_TYPE = new LinkedHashMap<>();
+        T_SWGD_AGREEMENT_TYPE.put("AGREEMENT_ID", "AGREEMENT_ID");
+        T_SWGD_AGREEMENT_TYPE.put("AGREEMENT_NAME", "AGREEMENT_NAME");
+        MAPPINGS.add(new ParamDbTableMapping("T_SWGD_AGREEMENT_TYPE", null, T_SWGD_AGREEMENT_TYPE));
+
+        LinkedHashMap<String, String> T_SWGD_DECLARATION_AGREEMENT = new LinkedHashMap<>();
+        T_SWGD_DECLARATION_AGREEMENT.put("CODE_TS", "CODE_TS");
+        T_SWGD_DECLARATION_AGREEMENT.put("AGREEMENT_ID", "AGREEMENT_ID");
+        T_SWGD_DECLARATION_AGREEMENT.put("COUNTRY_CODE", "COUNTRY_CODE");
+        T_SWGD_DECLARATION_AGREEMENT.put("BEGIN_DATE", "BEGIN_DATE");
+        T_SWGD_DECLARATION_AGREEMENT.put("G_NAME", "G_NAME");
+        T_SWGD_DECLARATION_AGREEMENT.put("END_DATE", "END_DATE");
+        T_SWGD_DECLARATION_AGREEMENT.put("DUTY_TYPE", "DUTY_TYPE");
+        T_SWGD_DECLARATION_AGREEMENT.put("DUTY_RATE", "DUTY_RATE");
+        T_SWGD_DECLARATION_AGREEMENT.put("COM_V_RATE", "COM_V_RATE");
+        T_SWGD_DECLARATION_AGREEMENT.put("COM_Q_RATE", "COM_Q_RATE");
+        T_SWGD_DECLARATION_AGREEMENT.put("COM_UNIT_FLAG", "COM_UNIT_FLAG");
+        T_SWGD_DECLARATION_AGREEMENT.put("COM_CTL_PRICE", "COM_CTL_PRICE");
+        T_SWGD_DECLARATION_AGREEMENT.put("COM_CTL_CURR", "COM_CTL_CURR");
+        T_SWGD_DECLARATION_AGREEMENT.put("NOTE_S", "NOTE_S");
+        T_SWGD_DECLARATION_AGREEMENT.put("REG_TYPE", "REG_TYPE");
+        T_SWGD_DECLARATION_AGREEMENT.put("REG_RATE", "REG_RATE");
+        T_SWGD_DECLARATION_AGREEMENT.put("REG_Q_RATE", "REG_Q_RATE");
+        T_SWGD_DECLARATION_AGREEMENT.put("REG_LOW_Q_RATE", "REG_LOW_Q_RATE");
+        T_SWGD_DECLARATION_AGREEMENT.put("REG_CTL_PRICE", "REG_CTL_PRICE");
+        T_SWGD_DECLARATION_AGREEMENT.put("REG_CTL_CURR", "REG_CTL_CURR");
+        T_SWGD_DECLARATION_AGREEMENT.put("TAX_TYPE", "TAX_TYPE");
+        T_SWGD_DECLARATION_AGREEMENT.put("TAX_RATE", "TAX_RATE");
+        T_SWGD_DECLARATION_AGREEMENT.put("OUT_TYPE", "OUT_TYPE");
+        T_SWGD_DECLARATION_AGREEMENT.put("OUT_RATE", "OUT_RATE");
+        MAPPINGS.add(new ParamDbTableMapping("T_SWGD_DECLARATION_AGREEMENT", null, T_SWGD_DECLARATION_AGREEMENT));
+    }
+
+    /**
+     * 不再使用的表
+     * */
+    public static final Set<String> NOT_USE_TABLE = new HashSet<>();
+
+    static {
+        NOT_USE_TABLE.add("USER_TO");
+        NOT_USE_TABLE.add("SH_REPLYFASTERR");
+        NOT_USE_TABLE.add("SH_REPLYERROR");
     }
 
     /**
@@ -782,11 +825,11 @@ public final class ParamDbTableMappingConfig {
      * */
     public static ParamDbTableMapping getByResourceTableName(String resourceTableName) {
         for (ParamDbTableMapping paramDbTableMapping : MAPPINGS) {
-            if (paramDbTableMapping.getResourceTableName().equals(resourceTableName)) {
+            String resourceTableName1 = paramDbTableMapping.getResourceTableName();
+            if (!StringUtil.isEmpty(resourceTableName1) && resourceTableName1.equals(resourceTableName)) {
                 return paramDbTableMapping;
             }
         }
-
         throw new InfoException(resourceTableName + "表未在配置中找到");
     }
 
@@ -799,12 +842,24 @@ public final class ParamDbTableMappingConfig {
      * */
     public static ParamDbTableMapping getByDbTableName(String dbTableName) {
         for (ParamDbTableMapping paramDbTableMapping : MAPPINGS) {
-            if (paramDbTableMapping.getDbTableName().equals(dbTableName)) {
+            String dbTableName1 = paramDbTableMapping.getDbTableName();
+            if (!StringUtil.isEmpty(dbTableName1) && dbTableName1.equals(dbTableName)) {
                 return paramDbTableMapping;
             }
         }
 
-        return null;
+        throw new InfoException(dbTableName + "表未在配置中找到");
+    }
+
+    /**
+     * 查询表是否不在使用
+     *
+     * @param tableName 表名
+     *
+     * @return 表名不在使用返回true
+     * */
+    public static boolean tableIsNotUse(String tableName) {
+        return NOT_USE_TABLE.contains(tableName);
     }
 
 }

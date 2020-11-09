@@ -124,21 +124,29 @@ public class ParamDbController {
             return Response.returnFalse("请选择文件");
         }
 
-        File file;
+        if (tableName == null) {
+            return Response.returnFalse("请输入表名");
+        }
 
+        String fileName = multipartFile.getOriginalFilename();
+        String newFileName;
         try {
             InputStream inputStream = multipartFile.getInputStream();
-            file = new File(Project.CACHE_PATH, DateUtil.getTime() + "-" + multipartFile.getOriginalFilename());
-            FileUtil.createFile(file, inputStream);
+            newFileName = cacheFileService.add(fileName, inputStream);
             inputStream.close();
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
 
-        new TaskRunService("excel导入比对：" + tableName) {
+        new TaskRunService("mdb导出比对：" + fileName) {
             @Override
             public String run() {
-                return new ParamDbService().excelImportComparator(tableName, file.getAbsolutePath(), true).toString();
+                return paramDbService.excelImportComparator(tableName, new File(Project.CACHE_PATH, newFileName).getAbsolutePath()).toString();
+            }
+
+            @Override
+            public void afterRun() {
+                cacheFileService.delete(newFileName);
             }
         }.start();
 
