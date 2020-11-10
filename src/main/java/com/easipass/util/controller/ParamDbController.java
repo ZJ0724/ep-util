@@ -6,8 +6,6 @@ import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.service.CacheFileService;
 import com.easipass.util.core.service.ParamDbService;
 import com.easipass.util.core.service.TaskRunService;
-import com.easipass.util.core.util.DateUtil;
-import com.easipass.util.core.util.FileUtil;
 import com.easipass.util.entity.Response;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -207,21 +205,25 @@ public class ParamDbController {
             return Response.returnFalse("请选择文件");
         }
 
-        File file;
-
+        String fileName = multipartFile.getOriginalFilename();
+        String newFileName;
         try {
             InputStream inputStream = multipartFile.getInputStream();
-            file = new File(Project.CACHE_PATH, DateUtil.getTime() + "-" + multipartFile.getOriginalFilename());
-            FileUtil.createFile(file, inputStream);
+            newFileName = cacheFileService.add(fileName, inputStream);
             inputStream.close();
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
 
-        new TaskRunService("mdb导入：" + file.getName()) {
+        new TaskRunService("excel导入：" + fileName) {
             @Override
             public String run() {
-                return new ParamDbService().mdbImport(file.getAbsolutePath(), true).toString();
+                return paramDbService.mdbImport(new File(Project.CACHE_PATH, newFileName).getAbsolutePath()).toString();
+            }
+
+            @Override
+            public void afterRun() {
+                cacheFileService.delete(newFileName);
             }
         }.start();
 

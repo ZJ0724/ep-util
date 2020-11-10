@@ -258,13 +258,12 @@ public final class JdbcUtil {
                     Object filedData = map.get(field);
                     if (filedData instanceof Date) {
                         Date date = (Date) filedData;
-                        preparedStatement.setDate(index, new java.sql.Date(date.getTime()));
+                        preparedStatement.setTimestamp(index, new Timestamp(date.getTime()));
                     } else {
                         preparedStatement.setObject(index, filedData);
                     }
                 }
                 preparedStatement.addBatch();
-
                 if (i != 0 && i % 1000 == 0) {
                     preparedStatement.executeBatch();
                     connection.commit();
