@@ -37,26 +37,34 @@ public final class Excel {
             fileInputStream = new FileInputStream(new File(path));
             Workbook workbook = StreamingReader.builder().rowCacheSize(100).bufferSize(4096).open(fileInputStream);
             Sheet sheet = workbook.getSheetAt(sheetIndex);
-            int titleSize = 0;
+            int index = 0;
+            Integer titleSize = null;
             for (Row row : sheet) {
+                index++;
                 List<String> strings = new ArrayList<>();
-                for (int i = 0; i < row.getLastCellNum(); i++) {
-                    Cell cell = row.getCell(i);
-                    if (cell != null) {
+                if (index == 1) {
+                    for (Cell cell : row) {
                         String cellData = cell.getStringCellValue();
                         if (StringUtil.isEmpty(cellData)) {
                             break;
-                        } else {
+                        }
+                        strings.add(cellData);
+                    }
+                    titleSize = strings.size();
+                } else {
+                    if (titleSize != null) {
+                        for (int i = 0; i < titleSize; i++) {
+                            Cell cell = row.getCell(i);
+                            String cellData = "";
+                            if (cell != null) {
+                                String c = cell.getStringCellValue();
+                                if (c != null) {
+                                    cellData = c;
+                                }
+                            }
                             strings.add(cellData);
                         }
                     }
-                }
-                if (titleSize == 0) {
-                    titleSize = strings.size();
-                }
-                int sSize = strings.size();
-                for (int i = 0; i < titleSize - sSize; i++) {
-                    strings.add("");
                 }
                 this.data.add(strings);
             }

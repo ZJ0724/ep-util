@@ -2,6 +2,8 @@ package com.easipass.util.core.service;
 
 import com.easipass.util.core.entity.Task;
 import com.easipass.util.core.util.ThreadUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -10,6 +12,11 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author ZJ
  * */
 public abstract class TaskRunService {
+
+    /**
+     * 日志
+     * */
+    private static final Logger log = LoggerFactory.getLogger(TaskRunService.class);
 
     /**
      * 线程池
@@ -54,6 +61,7 @@ public abstract class TaskRunService {
             try {
                 message = this.run();
             } catch (Throwable e) {
+                log.info(e.getMessage(), e);
                 message = e.getMessage();
             } finally {
                 this.afterRun();

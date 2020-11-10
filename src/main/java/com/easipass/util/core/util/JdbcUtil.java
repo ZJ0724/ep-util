@@ -3,10 +3,8 @@ package com.easipass.util.core.util;
 import com.easipass.util.core.exception.InfoException;
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.Date;
 
 /**
  * jdbc工具类
@@ -206,6 +204,79 @@ public final class JdbcUtil {
             throw new InfoException(e.getMessage());
         } finally {
             close(connection, preparedStatement, resultSet);
+        }
+    }
+
+    /**
+     * 插入数据
+     *
+     * @param dataSource 数据源
+     * @param tableName 表名
+     * @param data 数据
+     * */
+    public static void inert(DataSource dataSource, String tableName, List<Map<String, Object>> data) {
+        if (data.size() == 0) {
+            return;
+        }
+
+        String sql = "INSERT INTO " + tableName + "(";
+        Set<String> fields = data.get(0).keySet();
+        int fieldsSize = fields.size();
+        String value = " VALUES (";
+        int index = 0;
+
+        for (String field : fields) {
+            index++;
+
+            String end;
+
+            if (index == fieldsSize) {
+                end = ")";
+            } else {
+                end = ", ";
+            }
+
+            sql = StringUtil.append(sql, field, end);
+            value = StringUtil.append(value, "?", end);
+        }
+        sql = StringUtil.append(sql, value);
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+            preparedStatement = connection.prepareStatement(sql);
+            int dataSize = data.size();
+
+            for (int i = 0; i < dataSize; i++) {
+                Map<String, Object> map = data.get(i);
+                index = 0;
+                for (String field : fields) {
+                    index++;
+                    Object filedData = map.get(field);
+                    if (filedData instanceof Date) {
+                        Date date = (Date) filedData;
+                        preparedStatement.setDate(index, new java.sql.Date(date.getTime()));
+                    } else {
+                        preparedStatement.setObject(index, filedData);
+                    }
+                }
+                preparedStatement.addBatch();
+
+                if (i != 0 && i % 1000 == 0) {
+                    preparedStatement.executeBatch();
+                    connection.commit();
+                    preparedStatement.clearBatch();
+                }
+            }
+            preparedStatement.executeBatch();
+            connection.commit();
+        } catch (SQLException e) {
+            throw new InfoException(e.getMessage() + sql);
+        } finally {
+            close(connection, preparedStatement, null);
         }
     }
 

@@ -146,7 +146,6 @@ public final class SWGDPARADatabase {
             throw new InfoException("版本为null");
         }
 
-
         List<Map<String, Object>> idList = JdbcUtil.queryForList(DATA_BASE_CONNECTION_POOL.getDataSource(), "SELECT ID FROM (SELECT * FROM " + SCHEMA + ".T_PARAMS_VERSION ORDER BY ID DESC) WHERE ROWNUM = 1");
         long newId;
         if (idList.size() == 1) {
@@ -180,6 +179,16 @@ public final class SWGDPARADatabase {
      * */
     public List<String> getFields(String tableName) {
         return JdbcUtil.getFields(DATA_BASE_CONNECTION_POOL.getDataSource(), SCHEMA + "." + tableName);
+    }
+
+    /**
+     * 插入数据
+     *
+     * @param tableName 表名
+     * @param data 数据
+     * */
+    public void insert(String tableName, List<Map<String, Object>> data) {
+        JdbcUtil.inert(DATA_BASE_CONNECTION_POOL.getDataSource(), SCHEMA + "." + tableName, data);
     }
 
 }

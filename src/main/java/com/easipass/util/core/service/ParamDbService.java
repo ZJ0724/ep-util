@@ -8,6 +8,7 @@ import com.easipass.util.core.config.ParamDbTableMappingConfig;
 import com.easipass.util.core.entity.ParamDbTableMapping;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.InfoException;
+import com.easipass.util.core.util.DateUtil;
 import com.easipass.util.core.util.ListUtil;
 import com.easipass.util.core.util.StringUtil;
 import com.easipass.util.core.util.ThreadUtil;
@@ -433,164 +434,134 @@ public final class ParamDbService {
      * excel导入
      * @param tableName 表名
      * @param excelPath excel路径
-     * @param isDeleteFile 比对完是否删除文件
      *
      * @return 比对结果
      * */
-    public Result excelImport(String tableName, String excelPath, boolean isDeleteFile) {
-//        Result result = new Result();
-//
-//        try {
-//            if (StringUtil.isEmpty(tableName)) {
-//                result.message.add("表名不能为空");
-//                return result;
-//            }
-//
-//            // 映射
-//            ParamDbTableMapping paramDbTableMapping = ParamDbTableMappingConfig.getByDbTableName(tableName);
-//            if (paramDbTableMapping == null) {
-//                result.message.add(tableName + "表未在配置中找到");
-//                return result;
-//            }
-//
-//            // 获取新版本
-//            String version;
-//
-//            try {
-//                version = SWGDPARADatabase.versionAddOne(tableName);
-//            } catch (ErrorException e) {
-//                result.message.add(tableName + ": " + e.getMessage());
-//                return result;
-//            }
-//
-//            // excel
-//            ExcelUtil excelUtil;
-//
-//            // 加载excel
-//            try {
-//                excelUtil = new ExcelUtil(excelPath, 0);
-//            } catch (BaseException e) {
-//                result.message.add(e.getMessage());
-//                return result;
-//            }
-//
-//            // excel所有数据
-//            List<List<String>> excelAllData = excelUtil.getAllData();
-//
-//            if (excelAllData.size() == 0) {
-//                result.message.add("excel数据为空");
-//                return result;
-//            }
-//
-//            // 字段比较
-//            List<String> excelFields = paramDbTableMapping.getResourceTableFields();
-//            boolean excelFieldCompare = fieldCompare(excelFields, excelAllData.get(0), result, "excel文件");
-//            boolean dbTableFieldCompare = fieldCompare(paramDbTableMapping.getDbTableFields(), SWGDPARADatabase.MyGetFields(tableName), result, "数据库表" + tableName);
-//            if (!excelFieldCompare || !dbTableFieldCompare) {
-//                return result;
-//            }
-//
-//            // 多线程控制
-//            CountDownLatch countDownLatch = new CountDownLatch(excelAllData.size() - 1);
-//            // 字段映射集合
-//            Set<Map.Entry<String, String>> entries = paramDbTableMapping.getFields().entrySet();
-//
-//            // 遍历数据
-//            for (int i = 1; i < excelAllData.size(); i++) {
-//                int finalI = i;
-//
-//                THREAD_POOL_EXECUTOR.execute(() -> {
-//                    try {
-//                        // sql
-//                        String sql = "INSERT INTO " + SWGDPARADatabase.SCHEMA + "." + tableName;
-//                        // sql字段
-//                        String sqlField = "(PARAMS_VERSION, ";
-//                        // sql值
-//                        String sqlData = "(" + version + ", ";
-//                        // 单行数据
-//                        List<String> rowData = excelAllData.get(finalI);
-//
-//                        for (Map.Entry<String, String> entry : entries) {
-//                            // excel字段
-//                            String excelField = entry.getValue();
-//                            // db字段
-//                            String dbField = entry.getKey();
-//                            // excel单格数据
-//                            String data = null;
-//
-//                            // 获取单格数据
-//                            for (int n = 0; n < excelFields.size(); n++) {
-//                                if (excelFields.get(n).equals(excelField)) {
-//                                    data = rowData.get(n);
-//                                }
-//                            }
-//
-//                            sqlField = StringUtil.append(sqlField, dbField, ", ");
-//
-//                            if (StringUtil.isEmpty(data)) {
-//                                // 如果数据为空，又是主键，则补__00
-//                                if (SWGDPARADatabase.myIsPrimaryKey(tableName, dbField)) {
-//                                    sqlData = StringUtil.append(sqlData, "'__00'", ", ");
-//                                } else {
-//                                    sqlData = StringUtil.append(sqlData, "NULL", ", ");
-//                                }
-//                                continue;
-//                            }
-//
-//                            // 字段类型
-//                            String fieldType = SWGDPARADatabase.getFieldType(tableName, dbField);
-//
-//                            // 兼容日期格式
-//                            if ("TIMESTAMP".equals(fieldType)) {
-//                                data = parseDate(data);
-//                                sqlData = StringUtil.append(sqlData, "TO_DATE('" + data + "','yyyy-mm-dd hh24:mi:ss')", ", ");
-//                                continue;
-//                            }
-//
-//                            data = data.replaceAll("'", "''");
-//
-//                            sqlData = StringUtil.append(sqlData, "'", data, "', ");
-//                        }
-//
-//                        sqlField = sqlField.substring(0, sqlField.length() - 2) + ")";
-//                        sqlData = sqlData.substring(0, sqlData.length() - 2) + ")";
-//                        sql = StringUtil.append(sql, sqlField, " VALUES", sqlData);
-//
-//                        log.info(sql);
-//
-//                        // 插入数据
-//                        if (!SWGDPARADatabase.insert(sql)) {
-//                            result.message.add(sql);
-//                        }
-//                    } catch (Throwable e) {
-//                        result.message.add(e.getMessage());
-//                    } finally {
-//                        countDownLatch.countDown();
-//                    }
-//                });
-//            }
-//
-//            try {
-//                countDownLatch.await();
-//            } catch (InterruptedException e) {
-//                throw new ErrorException(e.getMessage());
-//            }
-//
-//            if (result.message.size() == 0) {
-//                result.flag = true;
-//                result.message.add("完成");
-//            }
-//
-//            log.info(result.toString());
-//
-//            return result;
-//        } finally {
-//            // 判断是否删除文件
-//            if (isDeleteFile) {
-//                FileUtil.delete(excelPath);
-//            }
-//        }
-        return null;
+    public Result excelImport(String tableName, String excelPath) {
+        // 结果
+        Result result = new Result();
+
+        // 表是否还在使用
+        if (ParamDbTableMappingConfig.tableIsNotUse(tableName)) {
+            result.addMessage(tableName + "已弃用");
+            return result;
+        }
+
+        // excel
+        Excel excel = new Excel(excelPath, 0);
+        // excel所有数据
+        List<List<String>> excelData = excel.getAllData();
+
+        // 验证excel数据不能为空
+        if (excelData.size() == 0) {
+            result.addMessage("excel数据为空");
+            return result;
+        }
+
+        // 映射
+        ParamDbTableMapping paramDbTableMapping = ParamDbTableMappingConfig.getByDbTableName(tableName);
+        // excel字段
+        List<String> excelFields = excelData.get(0);
+        // SWGDPARA数据库
+        SWGDPARADatabase swgdparaDatabase = SWGDPARADatabase.getInstance();
+
+        // 字段验证
+        fieldCompare(excelFields, paramDbTableMapping.getResourceFields());
+        fieldCompare(swgdparaDatabase.getFields(tableName), paramDbTableMapping.getDbFields());
+
+        // 版本
+        String version = swgdparaDatabase.versionAddOne(tableName);
+        // 多线程控制
+        CountDownLatch countDownLatch = new CountDownLatch(excelData.size() - 1);
+        // 数据库字段类型映射
+        Map<String, String> dbFieldTypeMapping = paramDbTableMapping.getDbFieldTypeMapping();
+        // 数据库字段是否是主键映射
+        Map<String, Boolean> dbFieldIsPrimaryKeyMapping = paramDbTableMapping.getDbFieldIsPrimaryKeyMapping();
+        // excel字段长度
+        int excelFieldsSize = excelFields.size();
+        // 要插入的数据
+        List<Map<String, Object>> insertDataList = new Vector<>();
+
+        for (int i = 1; i < excelData.size(); i++) {
+            final int finalI = i;
+            THREAD_POOL_EXECUTOR.execute(() -> {
+                try {
+                    // 单条excel数据
+                    List<String> data = excelData.get(finalI);
+                    // 单条要插入的数据
+                    Map<String, Object> insertData = new HashMap<>();
+
+                    // 版本
+                    insertData.put("PARAMS_VERSION", version);
+
+                    for (int j = 0; j < excelFieldsSize; j++) {
+                        // excel字段名
+                        String excelFieldName = excelFields.get(j);
+                        // 数据库字段名
+                        String dbFieldName = paramDbTableMapping.getDbFieldByResource(excelFieldName);
+                        // 数据库字段值
+                        Object dbFieldData = data.get(j);
+                        // 数据库字段类型
+                        String dbFieldType = dbFieldTypeMapping.get(dbFieldName);
+                        // 数据库字段是否是主键
+                        boolean dbFieldIsPrimaryKey = dbFieldIsPrimaryKeyMapping.get(dbFieldName);
+
+                        // 如果是主键，并且数据为空，则补__00
+                        if (dbFieldIsPrimaryKey && StringUtil.isEmpty(dbFieldData)) {
+                            dbFieldData = "__00";
+                        }
+
+                        if (!StringUtil.isEmpty(dbFieldData)) {
+                            // \N默认为NULL
+                            if ("\\N".equals(dbFieldData)) {
+                                dbFieldData = null;
+                            }
+
+                            // 兼容日期字段
+                            if ("TIMESTAMP".equals(dbFieldType)) {
+                                dbFieldData = parseDateToDate(dbFieldData);
+                            }
+                        } else {
+                            dbFieldData = null;
+                        }
+
+                        synchronized (this) {
+                            insertData.put(dbFieldName, dbFieldData);
+                        }
+                    }
+
+                    synchronized (this) {
+                        if (!dataIsExist(insertDataList, insertData)) {
+                            insertDataList.add(insertData);
+                        }
+                    }
+                } catch (Throwable e) {
+                    log.info(e.getMessage(), e);
+                    result.addMessage(e.getMessage());
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+
+        // 等待
+        ThreadUtil.await(countDownLatch);
+
+        // 插入数据
+        swgdparaDatabase.insert(tableName, insertDataList);
+
+        // 比对数据数量
+        if (insertDataList.size() != excelData.size() - 1) {
+            result.addMessage("导入完成，但数量不一致；已导入：" + insertDataList.size() + "，总共：" + (excelData.size() - 1));
+        }
+
+        if (result.message.size() == 0) {
+            result.flag = true;
+            result.addMessage("导入完成");
+        }
+
+        log.info(result.toString());
+        return result;
     }
 
     /**
@@ -784,6 +755,26 @@ public final class ParamDbService {
     }
 
     /**
+     * 兼容日期
+     *
+     * @param date date
+     *
+     * @return date
+     * */
+    private static Date parseDateToDate(Object date) {
+        if (date == null) {
+            return null;
+        }
+        String newDate = parseDate(date.toString());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            return simpleDateFormat.parse(newDate);
+        } catch (java.text.ParseException e) {
+            throw new ErrorException(e.getMessage() + "：" + newDate);
+        }
+    }
+
+    /**
      * 字段比较
      *
      * @param target 原字段
@@ -806,6 +797,39 @@ public final class ParamDbService {
         if (error.size() != 0) {
             throw new InfoException("配置缺少字段映射：" + error);
         }
+    }
+
+    /**
+     * 校验数据是否存在
+     *
+     * @param D 所有数据
+     * @param CD 要校验的数据
+     *
+     * @return 如果根据校验数据遍历字段在所有数据中存在，返回true
+     * */
+    private static boolean dataIsExist(List<Map<String, Object>> D, Map<String, Object> CD) {
+        if (D.size() == 0) {
+            return false;
+        }
+        Set<String> keySet = CD.keySet();
+        for (Map<String, Object> map : D) {
+            for (String key : keySet) {
+                Object o1 = CD.get(key);
+                Object o2 = map.get(key);
+                String o1S = o1 == null ? "" : o1.toString();
+                String o2S = o2 == null ? "" : o2.toString();
+                if (o1 instanceof Date) {
+                    o1S = DateUtil.format((Date) o1, "yyyy-MM-dd HH:mm:ss");
+                }
+                if (o2 instanceof Date) {
+                    o2S = DateUtil.format((Date) o2, "yyyy-MM-dd HH:mm:ss");
+                }
+                if (!o1S.equals(o2S)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
