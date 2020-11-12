@@ -6,12 +6,11 @@ import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.service.CacheFileService;
 import com.easipass.util.core.service.ParamDbService;
 import com.easipass.util.core.service.TaskRunService;
+import com.easipass.util.core.util.HttpUtil;
 import com.easipass.util.entity.Response;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -228,6 +227,18 @@ public class ParamDbController {
         }.start();
 
         return Response.returnTrue("已放入后台进行导入");
+    }
+
+    /**
+     * mdb导出
+     *
+     * @param httpServletResponse httpServletResponse
+     * */
+    @GetMapping("mdbExport")
+    public void mdbExport(HttpServletResponse httpServletResponse) {
+        String path = paramDbService.mdbExport();
+        HttpUtil.downLoadFile(path, httpServletResponse, "parameterdb.mdb");
+        cacheFileService.delete(new File(path).getName());
     }
 
 }

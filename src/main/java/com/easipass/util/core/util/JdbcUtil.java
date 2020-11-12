@@ -151,7 +151,7 @@ public final class JdbcUtil {
             }
             return result;
         } catch (java.sql.SQLException e) {
-            throw new InfoException(e.getMessage());
+            throw new InfoException(e.getMessage() + "：" + sql);
         } finally {
             close(connection, preparedStatement, resultSet);
         }

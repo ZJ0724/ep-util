@@ -41,15 +41,22 @@ public final class ParamDbTableMapping {
     private final Map<String, Boolean> dbFieldIsPrimaryKeyMapping = new HashMap<>();
 
     /**
+     * 是否需要导出
+     * */
+    private final boolean isExport;
+
+    /**
      * 构造函数
      *
      * @param dbTableName 表名
      * @param resourceTableName 资源表名
      * @param fields 字段
+     * @param isExport 是否需要导出
      * */
-    public ParamDbTableMapping(String dbTableName, String resourceTableName, LinkedHashMap<String, String> fields) {
+    public ParamDbTableMapping(String dbTableName, String resourceTableName, LinkedHashMap<String, String> fields, boolean isExport) {
         this.dbTableName = dbTableName;
         this.resourceTableName = resourceTableName;
+        this.isExport = isExport;
         fields.put("PARAMS_VERSION", null);
         Set<Map.Entry<String, String>> entries = fields.entrySet();
         SWGDPARADatabase swgdparaDatabase = SWGDPARADatabase.getInstance();
@@ -60,6 +67,17 @@ public final class ParamDbTableMapping {
             this.dbFieldTypeMapping.put(key, swgdparaDatabase.getFieldType(dbTableName, key));
             this.dbFieldIsPrimaryKeyMapping.put(key, swgdparaDatabase.isPrimaryKey(dbTableName, key));
         }
+    }
+
+    /**
+     * 构造函数
+     *
+     * @param dbTableName 表名
+     * @param resourceTableName 资源表名
+     * @param fields 字段
+     * */
+    public ParamDbTableMapping(String dbTableName, String resourceTableName, LinkedHashMap<String, String> fields) {
+        this(dbTableName, resourceTableName, fields, true);
     }
 
     /**
@@ -142,6 +160,10 @@ public final class ParamDbTableMapping {
 
     public Map<String, Boolean> getDbFieldIsPrimaryKeyMapping() {
         return dbFieldIsPrimaryKeyMapping;
+    }
+
+    public boolean isExport() {
+        return isExport;
     }
 
 }

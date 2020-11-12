@@ -77,6 +77,9 @@ export default (function () {
 
                     if (index === "3") {
                         for (let child of routerChildren) {
+                            if (child.path === undefined) {
+                                continue;
+                            }
                             let path = child.path.replace(/\//g, "");
                             if (value === path) {
                                 let name = child.name;

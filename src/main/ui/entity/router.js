@@ -94,6 +94,11 @@ export default [
             {
                 path: "mdbImport.html",
                 name: "mdb导入"
+            },
+            {},
+            {
+                path: "mdbExport.html",
+                name: "mdb导出"
             }
         ]
     },

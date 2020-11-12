@@ -5,15 +5,14 @@ import com.easipass.util.core.component.AccessDatabase;
 import com.easipass.util.core.component.Excel;
 import com.easipass.util.core.component.SWGDPARADatabase;
 import com.easipass.util.core.config.ParamDbTableMappingConfig;
+import com.easipass.util.core.config.Project;
 import com.easipass.util.core.entity.ParamDbTableMapping;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.InfoException;
-import com.easipass.util.core.util.DateUtil;
-import com.easipass.util.core.util.ListUtil;
-import com.easipass.util.core.util.StringUtil;
-import com.easipass.util.core.util.ThreadUtil;
+import com.easipass.util.core.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -699,6 +698,154 @@ public final class ParamDbService {
 
         log.info(result.toString());
         return result;
+    }
+
+    /**
+     * mdb导出
+     *
+     * @return mdb文件路径
+     * */
+    public String mdbExport() {
+        // mdb文件
+        File mdbFile = new File(Project.CACHE_PATH, new CacheFileService().add("export.mdb", null));
+
+        // mdb数据库
+        AccessDatabase mdbDatabase = AccessDatabase.create(mdbFile.getAbsolutePath());
+        // 需要导出的表
+        List<ParamDbTableMapping> exportTableMappings = ParamDbTableMappingConfig.getExportMapping();
+        // 多线程控制
+        CountDownLatch countDownLatch = new CountDownLatch(exportTableMappings.size());
+        // 错误异常
+        List<Throwable> errorMessage = new ArrayList<>();
+
+        // 建表
+        for (ParamDbTableMapping exportTableMapping : exportTableMappings) {
+            THREAD_POOL_EXECUTOR.execute(() -> {
+                try {
+                    // mdb表名
+                    String mdbTableName = exportTableMapping.getResourceTableName();
+                    // mdb字段
+                    List<String> mdbFields = exportTableMapping.getResourceFields();
+                    // 建表字段
+                    Map<String, Class<?>> fields = new LinkedHashMap<>();
+
+                    for (String mdbField : mdbFields) {
+                        fields.put(mdbField, String.class);
+                    }
+
+                    mdbDatabase.createTable(mdbTableName, fields);
+                } catch (Throwable e) {
+                    errorMessage.add(e);
+                } finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+
+        // 等待
+        ThreadUtil.await(countDownLatch);
+
+        // 判断是否有异常
+        if (errorMessage.size() != 0) {
+            errorMessage.get(0).printStackTrace();
+            throw new InfoException("存在异常");
+        }
+
+        // SWGDPARA数据库
+        SWGDPARADatabase swgdparaDatabase = SWGDPARADatabase.getInstance();
+        // 多线程控制
+        CountDownLatch countDownLatch1 = new CountDownLatch(exportTableMappings.size());
+
+        for (ParamDbTableMapping exportTableMapping : exportTableMappings) {
+            THREAD_POOL_EXECUTOR.execute(() -> {
+                try {
+                    // 数据库表名
+                    String dbTableName = exportTableMapping.getDbTableName();
+                    // 版本
+                    String tableVersion = swgdparaDatabase.getTableVersion(dbTableName);
+                    // 表数据
+                    List<Map<String, Object>> tableData = swgdparaDatabase.getTableData(dbTableName, tableVersion);
+                    // 是否是主键映射
+                    Map<String, Boolean> dbFieldIsPrimaryKeyMapping = exportTableMapping.getDbFieldIsPrimaryKeyMapping();
+                    // 要插入的数据
+                    List<Object[]> insertDataList = new Vector<>();
+                    // 多线程控制
+                    CountDownLatch countDownLatch2 = new CountDownLatch(tableData.size());
+                    // mdb字段
+                    List<String> mdbFields = exportTableMapping.getResourceFields();
+                    // mdb表名
+                    String mdbTableName = exportTableMapping.getResourceTableName();
+                    // 数据库字段类型映射
+                    Map<String, String> dbFieldTypeMapping = exportTableMapping.getDbFieldTypeMapping();
+
+                    for (Map<String, Object> data : tableData) {
+                        THREAD_POOL_EXECUTOR.execute(() -> {
+                            try {
+                                // 单条要插入的数据
+                                Object[] insertData = new Object[mdbFields.size()];
+
+                                for (int i = 0 ; i < mdbFields.size(); i++) {
+                                    // mdb字段
+                                    String mdbField = mdbFields.get(i);
+                                    // 数据库字段
+                                    String dbField = exportTableMapping.getDbFieldByResource(mdbField);
+                                    // 数据库字段值
+                                    Object dbFieldData = data.get(dbField);
+                                    // 数据库字段是否是主键
+                                    boolean dbFieldIsPrimaryKey = dbFieldIsPrimaryKeyMapping.get(dbField);
+                                    // mdb字段值
+                                    String mdbFieldData = dbFieldData == null ? null : dbFieldData.toString();
+                                    // 数据库字段类型
+                                    String dbFieldTyp = dbFieldTypeMapping.get(dbField);
+
+                                    if (dbFieldIsPrimaryKey && "__00".equals(mdbFieldData)) {
+                                        mdbFieldData = null;
+                                    }
+
+                                    if (!StringUtil.isEmpty(mdbFieldData)) {
+                                        // 兼容日期
+                                        if ("TIMESTAMP".equals(dbFieldTyp)) {
+                                            if (mdbFieldData.length() == 19) {
+                                                mdbFieldData = "00" + mdbFieldData;
+                                            }
+                                        }
+                                    }
+
+                                    insertData[i] = mdbFieldData == null ? "" : mdbFieldData;
+                                }
+
+                                insertDataList.add(insertData);
+                            } catch (Throwable e) {
+                                errorMessage.add(e);
+                            } finally {
+                                countDownLatch2.countDown();
+                            }
+                        });
+                    }
+
+                    // 等待
+                    ThreadUtil.await(countDownLatch2);
+
+                    // 插入
+                    mdbDatabase.insert(mdbTableName, insertDataList);
+                } catch (Throwable e) {
+                    errorMessage.add(e);
+                } finally {
+                    countDownLatch1.countDown();
+                }
+            });
+        }
+
+        // 等待
+        ThreadUtil.await(countDownLatch1);
+
+        // 判断是否有异常
+        if (errorMessage.size() != 0) {
+            errorMessage.get(0).printStackTrace();
+            throw new InfoException("存在异常");
+        }
+
+        return mdbFile.getAbsolutePath();
     }
 
     /**

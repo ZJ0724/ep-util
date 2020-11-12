@@ -29,8 +29,11 @@ public final class CacheFileService {
     public String add(String fileName, InputStream inputStream) {
         File file = new File(Project.CACHE_PATH, DateUtil.getTime() + "-" + fileName);
         String newFileName = file.getName();
-        FileUtil.createFile(file, inputStream);
-        Project.CACHE_FILE.add(fileName);
+        if (inputStream != null) {
+            FileUtil.createFile(file, inputStream);
+
+        }
+        Project.CACHE_FILE.add(newFileName);
         return newFileName;
     }
 

@@ -775,7 +775,7 @@ public final class ParamDbTableMappingConfig {
         LinkedHashMap<String, String> T_SWGD_AGREEMENT_TYPE = new LinkedHashMap<>();
         T_SWGD_AGREEMENT_TYPE.put("AGREEMENT_ID", "AGREEMENT_ID");
         T_SWGD_AGREEMENT_TYPE.put("AGREEMENT_NAME", "AGREEMENT_NAME");
-        MAPPINGS.add(new ParamDbTableMapping("T_SWGD_AGREEMENT_TYPE", null, T_SWGD_AGREEMENT_TYPE));
+        MAPPINGS.add(new ParamDbTableMapping("T_SWGD_AGREEMENT_TYPE", null, T_SWGD_AGREEMENT_TYPE, false));
 
         LinkedHashMap<String, String> T_SWGD_DECLARATION_AGREEMENT = new LinkedHashMap<>();
         T_SWGD_DECLARATION_AGREEMENT.put("CODE_TS", "CODE_TS");
@@ -802,7 +802,7 @@ public final class ParamDbTableMappingConfig {
         T_SWGD_DECLARATION_AGREEMENT.put("TAX_RATE", "TAX_RATE");
         T_SWGD_DECLARATION_AGREEMENT.put("OUT_TYPE", "OUT_TYPE");
         T_SWGD_DECLARATION_AGREEMENT.put("OUT_RATE", "OUT_RATE");
-        MAPPINGS.add(new ParamDbTableMapping("T_SWGD_DECLARATION_AGREEMENT", null, T_SWGD_DECLARATION_AGREEMENT));
+        MAPPINGS.add(new ParamDbTableMapping("T_SWGD_DECLARATION_AGREEMENT", null, T_SWGD_DECLARATION_AGREEMENT, false));
     }
 
     /**
@@ -860,6 +860,21 @@ public final class ParamDbTableMappingConfig {
      * */
     public static boolean tableIsNotUse(String tableName) {
         return NOT_USE_TABLE.contains(tableName);
+    }
+
+    /**
+     * 获取需要导出的表映射
+     *
+     * @return 需要导出的表
+     * */
+    public static List<ParamDbTableMapping> getExportMapping() {
+        List<ParamDbTableMapping> result = new ArrayList<>();
+        for (ParamDbTableMapping paramDbTableMapping : MAPPINGS) {
+            if (paramDbTableMapping.isExport()) {
+                result.add(paramDbTableMapping);
+            }
+        }
+        return result;
     }
 
 }

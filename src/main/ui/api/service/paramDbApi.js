@@ -52,5 +52,9 @@ export default {
             data: data,
             dataType: "file"
         });
+    },
+
+    mdbExport() {
+        return baseServiceApi.downLoad(`${this.url}/mdbExport`);
     }
 }
