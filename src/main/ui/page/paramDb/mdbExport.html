@@ -20,6 +20,7 @@
 <script type="module">
     import paramDbApi from "../../api/service/paramDbApi.js";
     import loadingComponent from "../../component/loadingComponent.js";
+    import alertComponent from "../../component/alertComponent.js";
 
     new Vue({
         el: "#main",
@@ -27,7 +28,9 @@
         methods: {
             download() {
                 loadingComponent.open();
-                paramDbApi.mdbExport().then(function () {
+                paramDbApi.mdbExport().catch(function (message) {
+                    alertComponent.popup(message);
+                }).finally(function () {
                     loadingComponent.close();
                 });
             }

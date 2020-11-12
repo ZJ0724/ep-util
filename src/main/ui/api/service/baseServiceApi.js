@@ -66,13 +66,19 @@ let baseServiceApi = {
 
     // 下载
     downLoad(url) {
-        return new Promise((successCallback) => {
+        return new Promise((successCallback, errorCallback) => {
             let http = new XMLHttpRequest();
             http.open("get", "/api/" + url);
             http.responseType = "blob";
 
             http.onload = function () {
                 if (http.status === 200) {
+                    // 下载失败
+                    if (http.response.type !== "application/octet-stream") {
+                        errorCallback("下载失败");
+                        return;
+                    }
+
                     let fileReader = new FileReader();
                     fileReader.onload = function (e) {
                         let a = document.createElement("a");
