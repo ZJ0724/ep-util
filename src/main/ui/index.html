@@ -49,16 +49,27 @@
                 <div style="white-space: pre-line;margin-top: 10px;" v-html="errorLog"></div>
             </div>
 
-<!--            <div class="ep-panel" style="margin-top: 20px;">-->
-<!--                <button @click="gc()">辣鸡回收</button>-->
-<!--            </div>-->
+            <div class="ep-panel" style="margin-top: 20px;">
+                <div style="font-weight: bold;width: 50%;">
+                    SWGDPARA数据库配置
+                </div>
+                <div style="margin-top: 10px;">
+                    <div v-for="(value, key, index) in SWGDPARAConfig" style="display: flex;margin-top: 5px;" :key="index">
+                        <div style="width: 50%;">
+                            {{key}}
+                        </div>
+                        <div style="width: 50%;display: flex;flex-direction: row-reverse;">
+                            {{value}}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
 </html>
 
 <script type="module">
-
     import systemServiceApi from "./api/service/systemServiceApi.js";
     import systemApi from "./api/service/systemApi.js";
     import alertComponent from "./component/alertComponent.js";
@@ -74,7 +85,9 @@
 
             cache: [],
 
-            errorLog: ""
+            errorLog: "",
+
+            SWGDPARAConfig: {}
         },
 
         mounted() {
@@ -91,6 +104,8 @@
             that.getCache();
 
             that.getErrorLog();
+
+            that.getSWGDDatabaseConfig();
         },
 
         components: {
@@ -177,8 +192,15 @@
 
             gc() {
                 systemApi.gc();
+            },
+
+            getSWGDDatabaseConfig() {
+                let currentThis = this;
+
+                systemApi.getSWGDPARAConfig().then(function (data) {
+                    currentThis.SWGDPARAConfig = data;
+                });
             }
         }
     });
-
 </script>

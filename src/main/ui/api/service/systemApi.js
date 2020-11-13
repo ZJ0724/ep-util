@@ -1,6 +1,8 @@
 import baseServiceApi from "./baseServiceApi.js";
 
 export default {
+    uri: "system",
+
     getErrorLog() {
         return baseServiceApi.sendHttp({
             type: "GET",
@@ -20,6 +22,13 @@ export default {
         return baseServiceApi.sendHttp({
             type: "POST",
             url: "system/gc"
+        });
+    },
+
+    getSWGDPARAConfig() {
+        return baseServiceApi.sendHttp({
+            type: "GET",
+            url: `${this.uri}/getSWGDPARAConfig`
         });
     }
 }
