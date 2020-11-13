@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="/base.js"></script>
+    <script type="module" src="/main.js"></script>
+</head>
+<body>
+<div id="main">
+    <navigation></navigation>
+    <div id="body">
+        <div style="margin: 0 25%;">
+            <div class="ep-panel">
+                <div class="title">
+                    选择代理委托数据
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <div>
+                        ediNo
+                    </div>
+
+                    <div  style="margin-top: 10px;">
+                        <label style="width: 100%;">
+                            <input v-model="ediNo" class="form-control input-sm" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ep-panel" style="margin-top: 50px;">
+                <div class="title">
+                    回执数据
+                </div>
+
+                <input-component :value.sync="channel" style="margin-top: 20px;" text="channel（状态）"></input-component>
+
+                <input-component :value.sync="note" style="margin-top: 20px;" text="note（备注）"></input-component>
+            </div>
+
+            <div style="margin-top: 50px;">
+                <button @click="upload()" style="width: 100%;" class="btn btn-primary">上传</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script type="module">
+    import CusResultApi from "../../api/service/CusResultApi.js";
+    import loadingComponent from "../../component/loadingComponent.js";
+    import alertComponent from "../../component/alertComponent.js";
+
+    new Vue({
+        el: "#main",
+
+        data: {
+            ediNo: "",
+            channel: "",
+            note: ""
+        },
+
+        methods: {
+            upload() {
+                loadingComponent.open();
+
+                CusResultApi.uploadNewAgentCusResult({
+                    ediNo: this.ediNo,
+                    channel: this.channel,
+                    message: this.note
+                }).then(function (message) {
+                    alertComponent.popup(message);
+                }).catch(function (message) {
+                    alertComponent.popup(message);
+                }).finally(function () {
+                    loadingComponent.close();
+                });
+            }
+        }
+    });
+</script>

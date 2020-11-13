@@ -1,9 +1,8 @@
 package com.easipass.util.core.util;
 
 import com.easipass.util.core.exception.ErrorException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import com.easipass.util.core.exception.InfoException;
+import java.io.*;
 
 /**
  * IO流工具
@@ -43,6 +42,21 @@ public final class IOUtil {
             outputStream.close();
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
+        }
+    }
+
+    /**
+     * 获取输入流
+     *
+     * @param filePath 文件路径
+     *
+     * @return 输入流
+     * */
+    public static InputStream getInputStream(String filePath) {
+        try {
+            return new FileInputStream(new File(filePath));
+        } catch (IOException e) {
+            throw new InfoException(e.getMessage());
         }
     }
 

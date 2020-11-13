@@ -51,8 +51,10 @@ public final class ChromeDriver {
 
     /**
      * 构造函数
+     *
+     * @param isShow 是否显示浏览器
      * */
-    public ChromeDriver() {
+    public ChromeDriver(boolean isShow) {
         File file = new File(resource.getPath());
 
         if (!file.exists()) {
@@ -60,12 +62,19 @@ public final class ChromeDriver {
         }
 
         try {
-            this.webDriver = new ChromeWebDriver(file);
+            this.webDriver = new ChromeWebDriver(file, !isShow);
         } catch (WebDriverException e) {
             throw new ErrorException(e.getMessage());
         }
 
         log.info("打开谷歌驱动");
+    }
+
+    /**
+     * 构造函数
+     * */
+    public ChromeDriver() {
+        this(false);
     }
 
     /**
@@ -114,6 +123,15 @@ public final class ChromeDriver {
     }
 
     /**
+     * 获取驱动
+     *
+     * @return 驱动
+     * */
+    public WebDriver getWebDriver() {
+        return this.webDriver;
+    }
+
+    /**
      * 关闭进程
      * */
     public static void kill() {
@@ -126,6 +144,33 @@ public final class ChromeDriver {
         }
 
         ConsoleUtil.kill(new File(resource.getPath()).getName());
+    }
+
+    /**
+     * 执行新代理委托回执回收
+     * */
+    public static void swgdAgentRecvNew() {
+        ChromeDriver chromeDriver = null;
+
+        try {
+            chromeDriver = new ChromeDriver();
+            WebDriver webDriver = chromeDriver.getWebDriver();
+            webDriver.url("http://192.168.120.83:9909/console");
+            webDriver.findElementByCssSelector("input[tabindex='1']").sendKey("admin");
+            webDriver.findElementByCssSelector("input[tabindex='2']").sendKey("admin");
+            webDriver.findElementByCssSelector("button[tabindex='3']").click();
+            webDriver.await(1000);
+            webDriver.findElementByXpath("//span[text()=' Servers']").parent().parent().prev().children(1).click();
+            webDriver.findElementByXpath("//span[text()=' node.server']").click();
+            webDriver.findElementByCssSelector("body > table > tbody > tr:nth-child(1) > td > table > tbody > tr > td:nth-child(3) > table > tbody > tr > td:nth-child(2) > div > img").click();
+            webDriver.findElementByCssSelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td > div > div > div:nth-child(3) > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > div > div > table > tbody > tr:nth-child(2) > td > div > div:nth-child(1) > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(20) > td:nth-child(4) > table > tbody > tr > td:nth-child(3) > button").click();
+        } catch (Throwable e) {
+            throw new ErrorException(e.getMessage());
+        } finally {
+            if (chromeDriver != null) {
+                chromeDriver.close();
+            }
+        }
     }
 
 }

@@ -40,6 +40,10 @@ export default [
             {
                 path: "upload.html",
                 name: "上传回执"
+            },
+            {
+                path: "uploadNew.html",
+                name: "上传回执（新）"
             }
         ]
     },

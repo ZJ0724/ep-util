@@ -6,6 +6,7 @@ import com.easipass.util.core.component.DataBaseConnectionPool;
 import com.easipass.util.core.entity.DatabaseInfo;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.SearchException;
+import com.easipass.util.core.util.JdbcUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.sql.ResultSet;
@@ -417,6 +418,15 @@ public final class SWGDDatabase extends Database {
         } finally {
             swgdDatabase.close();
         }
+    }
+
+    /**
+     * update
+     *
+     * @param sql sql
+     * */
+    public static void update(String sql) {
+        JdbcUtil.update(dataBaseConnectionPool.getDataSource(), sql);
     }
 
 }

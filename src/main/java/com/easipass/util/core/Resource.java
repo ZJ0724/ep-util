@@ -17,7 +17,7 @@ public enum Resource {
     /**
      * 谷歌驱动-windows
      * */
-    CHROME_DRIVER_WINDOWS(Project.ROOT_PATH + "/resources/chromeDriver/windows.exe"),
+    CHROME_DRIVER_WINDOWS(Project.ROOT_PATH + "/resources/chromeDriver/ep-util-chromedriver.exe"),
 
     /**
      * 报关单通讯回执
