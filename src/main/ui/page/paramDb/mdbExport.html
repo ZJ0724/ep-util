@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="/base.js"></script>
+    <script type="module" src="/main.js"></script>
+</head>
+<body>
+    <div id="main">
+        <navigation></navigation>
+
+        <div id="body">
+            <button @click="download()" style="width: 100%;" class="btn btn-primary">下载</button>
+        </div>
+    </div>
+</body>
+</html>
+
+<script type="module">
+    import paramDbApi from "../../api/service/paramDbApi.js";
+    import loadingComponent from "../../component/loadingComponent.js";
+    import alertComponent from "../../component/alertComponent.js";
+
+    new Vue({
+        el: "#main",
+
+        methods: {
+            download() {
+                loadingComponent.open();
+                paramDbApi.mdbExport().catch(function (message) {
+                    alertComponent.popup(message);
+                }).finally(function () {
+                    loadingComponent.close();
+                });
+            }
+        }
+    });
+</script>

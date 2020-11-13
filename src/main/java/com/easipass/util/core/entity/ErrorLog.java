@@ -1,6 +1,6 @@
 package com.easipass.util.core.entity;
 
-import com.easipass.util.core.Project;
+import com.easipass.util.core.config.Project;
 import com.easipass.util.core.util.FileUtil;
 import java.io.File;
 

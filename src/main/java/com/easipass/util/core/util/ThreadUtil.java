@@ -1,6 +1,10 @@
 package com.easipass.util.core.util;
 
 import com.easipass.util.core.exception.ErrorException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 线程工具
@@ -16,6 +20,30 @@ public class ThreadUtil {
         try {
             Thread.sleep(millisecond);
         } catch (InterruptedException e) {
+            throw new ErrorException(e.getMessage());
+        }
+    }
+
+    /**
+     * 获取一个线程池
+     *
+     * @param num 线程数量
+     *
+     * @return 线程池
+     * */
+    public static ThreadPoolExecutor getThreadPoolExecutor(int num) {
+        return new ThreadPoolExecutor(num, num, 1000, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>());
+    }
+
+    /**
+     * 线程等待
+     *
+     * @param countDownLatch countDownLatch
+     * */
+    public static void await(CountDownLatch countDownLatch) {
+        try {
+            countDownLatch.await();
+        } catch (java.lang.InterruptedException e) {
             throw new ErrorException(e.getMessage());
         }
     }

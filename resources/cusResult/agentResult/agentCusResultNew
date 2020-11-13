@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<DxpMsg ver="1.0" Id="ID01" xmlns="http://www.chinaport.gov.cn/dxp" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<TransInfo>
+		<CopMsgId></CopMsgId>
+		<SenderId></SenderId>
+		<ReceiverIds>
+			<ReceiverId></ReceiverId>
+		</ReceiverIds>
+		<CreatTime></CreatTime>
+		<MsgType></MsgType>
+	</TransInfo>
+	<Data>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/Pgo8SW1wb3J0QWdyUmVzcG9uc2U+Cgk8UmVzcG9uc2VJbmZvPgoJCTxSZXNwb25zZUNvZGU+PC9SZXNwb25zZUNvZGU+CgkJPFJlc3BvbnNlTWVzc2FnZT48L1Jlc3BvbnNlTWVzc2FnZT4KCTwvUmVzcG9uc2VJbmZvPgoJPENvbnNpZ25Obz48L0NvbnNpZ25Obz4KPC9JbXBvcnRBZ3JSZXNwb25zZT4=</Data>
+	<AddInfo>
+		<FileName></FileName>
+		<IcCard></IcCard>
+		<BizKey>
+			<Key name="RetType"></Key>
+			<Key name="DealFlag"></Key>
+		</BizKey>
+	</AddInfo>
+</DxpMsg>

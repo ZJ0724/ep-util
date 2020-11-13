@@ -1,16 +1,14 @@
 package com.easipass.util.core.database;
 
 import com.alibaba.fastjson.JSONObject;
-import com.easipass.util.core.C3p0Config;
 import com.easipass.util.core.Database;
-import com.easipass.util.core.exception.ConnectionFailException;
+import com.easipass.util.core.component.DataBaseConnectionPool;
+import com.easipass.util.core.entity.DatabaseInfo;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.SearchException;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.easipass.util.core.util.JdbcUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.beans.PropertyVetoException;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -24,21 +22,9 @@ import java.util.List;
 public final class SWGDDatabase extends Database {
 
     /**
-     * c3p0连接池
+     * 连接池
      * */
-    private static final ComboPooledDataSource COMBO_POOLED_DATA_SOURCE = new ComboPooledDataSource();
-
-    static {
-        C3p0Config.getInstance().setData(COMBO_POOLED_DATA_SOURCE);
-        try {
-            COMBO_POOLED_DATA_SOURCE.setDriverClass("oracle.jdbc.OracleDriver");
-        } catch (PropertyVetoException e) {
-            throw new ErrorException(e.getMessage());
-        }
-        COMBO_POOLED_DATA_SOURCE.setJdbcUrl("jdbc:oracle:thin:@192.168.130.216:1521:testeport");
-        COMBO_POOLED_DATA_SOURCE.setUser("devtester");
-        COMBO_POOLED_DATA_SOURCE.setPassword("easytester");
-    }
+    public static final DataBaseConnectionPool dataBaseConnectionPool;
 
     /**
      * log
@@ -50,11 +36,15 @@ public final class SWGDDatabase extends Database {
      * */
     public static final String SWGD = "SWGD";
 
+    static {
+        dataBaseConnectionPool = new DataBaseConnectionPool(new DatabaseInfo("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@192.168.130.216:1521:testeport", "devtester", "easytester"));
+    }
+
     /**
      * 构造函数
      */
     public SWGDDatabase() {
-        super(getConnection());
+        super(dataBaseConnectionPool.getConnection());
     }
 
     /**
@@ -397,21 +387,6 @@ public final class SWGDDatabase extends Database {
     }
 
     /**
-     * 获取连接
-     *
-     * @return Connection
-     * */
-    private static Connection getConnection() {
-        try {
-            // 验证driverCLass
-            Class.forName("oracle.jdbc.OracleDriver");
-            return COMBO_POOLED_DATA_SOURCE.getConnection();
-        } catch (SQLException |ClassNotFoundException e) {
-            throw new ConnectionFailException("SWGD数据库连接失败");
-        }
-    }
-
-    /**
      * 获取表头
      *
      * @param ediNo ediNo
@@ -443,6 +418,15 @@ public final class SWGDDatabase extends Database {
         } finally {
             swgdDatabase.close();
         }
+    }
+
+    /**
+     * update
+     *
+     * @param sql sql
+     * */
+    public static void update(String sql) {
+        JdbcUtil.update(dataBaseConnectionPool.getDataSource(), sql);
     }
 
 }

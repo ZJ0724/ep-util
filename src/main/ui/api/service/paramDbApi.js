@@ -3,26 +3,20 @@ import baseServiceApi from "./baseServiceApi.js";
 export default {
     url: "paramDb2.0",
 
-    mdbImportComparator(groupName, file) {
+    mdbImportComparator(data) {
         return baseServiceApi.sendHttp({
             type: "POST",
             url: `${this.url}/mdbImportComparator`,
-            data: {
-                groupName: groupName,
-                file: file
-            },
+            data: data,
             dataType: "file"
         });
     },
 
-    mdbExportComparator(groupName, file) {
+    mdbExportComparator(data) {
         return baseServiceApi.sendHttp({
             type: "POST",
             url: `${this.url}/mdbExportComparator`,
-            data: {
-                groupName: groupName,
-                file: file
-            },
+            data: data,
             dataType: "file"
         });
     },
@@ -49,5 +43,18 @@ export default {
             },
             dataType: "file"
         });
+    },
+
+    mdbImport(data) {
+        return baseServiceApi.sendHttp({
+            type: "POST",
+            url: `${this.url}/mdbImport`,
+            data: data,
+            dataType: "file"
+        });
+    },
+
+    mdbExport() {
+        return baseServiceApi.downLoad(`${this.url}/mdbExport`);
     }
 }

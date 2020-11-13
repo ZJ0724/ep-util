@@ -3,6 +3,7 @@ package com.easipass.util.core;
 import com.alibaba.fastjson.JSONObject;
 import com.easipass.util.core.exception.ErrorException;
 import com.easipass.util.core.exception.SqlException;
+import com.easipass.util.core.util.StringUtil;
 import java.sql.*;
 import java.util.*;
 
@@ -67,9 +68,7 @@ public abstract class Database {
     public final void update(String sql, Object... params) {
         try {
             PreparedStatement preparedStatement = getPreparedStatement(sql, params);
-
             preparedStatement.execute();
-
             preparedStatement.close();
             this.preparedStatements.remove(preparedStatement);
         } catch (SQLException e) {
@@ -258,6 +257,79 @@ public abstract class Database {
         } catch (java.sql.SQLException e) {
             throw new ErrorException(e.getMessage());
         }
+    }
+
+    /**
+     * 获取所有表名
+     *
+     * @return 所有表名
+     * */
+    public final List<String> getTables() {
+        try {
+            ResultSet resultSet = this.connection.getMetaData().getTables(null, null, null, new String[]{"TABLE"});
+            List<String> result = new ArrayList<>();
+
+            this.resultSets.add(resultSet);
+
+            while (resultSet.next()) {
+                result.add(resultSet.getString(3));
+            }
+
+            return result;
+        } catch (java.sql.SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+    }
+
+    /**
+     * 获取所有字段
+     *
+     * @param tableName resultSet
+     *
+     * @return 所有字段
+     * */
+    public List<String> getFields(String tableName) {
+        try {
+            List<String> result = new ArrayList<>();
+            ResultSet resultSet = this.query("SELECT * FROM " + tableName + " WHERE ROWNUM = 1");
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            for (int i = 1 ; i <= metaData.getColumnCount(); i++) {
+                result.add(metaData.getColumnName(i));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new ErrorException(e.getMessage());
+        }
+    }
+
+    /**
+     * 插入数据
+     *
+     * @param tableName 表名
+     * @param jsonObject 数据
+     * */
+    public final void insert(String tableName, JSONObject jsonObject) {
+        String sql = "INSERT INTO " + tableName;
+        String fields = "(";
+        String values = " VALUES(";
+        Set<Map.Entry<String, Object>> entries = jsonObject.entrySet();
+        for (Map.Entry<String, Object> entry : entries) {
+            String field = entry.getKey();
+            Object ObjectValue = entry.getValue();
+            if (ObjectValue == null) {
+                continue;
+            }
+            String value = ObjectValue.toString();
+            if (StringUtil.isEmpty(value)) {
+                continue;
+            }
+            fields = StringUtil.append(fields, field, ", ");
+            values = StringUtil.append(values, value, ", ");
+        }
+        fields = fields.substring(0, fields.length() - 2) + ")";
+        values = values.substring(0, values.length() - 2) + ")";
+        sql = sql + fields + values;
+        this.update(sql);
     }
 
 }

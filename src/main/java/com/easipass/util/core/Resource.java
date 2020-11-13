@@ -1,5 +1,7 @@
 package com.easipass.util.core;
 
+import com.easipass.util.core.config.Project;
+
 /**
  * 资源
  *
@@ -15,7 +17,7 @@ public enum Resource {
     /**
      * 谷歌驱动-windows
      * */
-    CHROME_DRIVER_WINDOWS(Project.ROOT_PATH + "/resources/chromeDriver/windows.exe"),
+    CHROME_DRIVER_WINDOWS(Project.ROOT_PATH + "/resources/chromeDriver/ep-util-chromedriver.exe"),
 
     /**
      * 报关单通讯回执
@@ -61,11 +63,6 @@ public enum Resource {
      * 打卡配置路径
      * */
     DA_KA(Project.CONFIG_PATH + "/config/daKa"),
-
-    /**
-     * c3p0配置文件
-     * */
-    C3P0(Project.ROOT_PATH + "/config/c3p0"),
 
     /**
      * application配置文件

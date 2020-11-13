@@ -1,6 +1,7 @@
-package com.easipass.util.core.util;
+package com.easipass.util.core.component;
 
 import com.easipass.util.core.BaseException;
+import com.easipass.util.core.util.StringUtil;
 import com.monitorjbl.xlsx.StreamingReader;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -13,11 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * excel工具
+ * excel
  *
  * @author ZJ
  * */
-public final class ExcelUtil {
+public final class Excel {
 
     /**
      * 数据集合
@@ -30,29 +31,40 @@ public final class ExcelUtil {
      * @param path 路径
      * @param sheetIndex sheet序号
      * */
-    public ExcelUtil(String path, int sheetIndex) {
+    public Excel(String path, int sheetIndex) {
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(new File(path));
             Workbook workbook = StreamingReader.builder().rowCacheSize(100).bufferSize(4096).open(fileInputStream);
             Sheet sheet = workbook.getSheetAt(sheetIndex);
-            int titleSize = 0;
+            int index = 0;
+            Integer titleSize = null;
             for (Row row : sheet) {
+                index++;
                 List<String> strings = new ArrayList<>();
-                for (int i = 0; i < row.getLastCellNum(); i++) {
-                    Cell cell = row.getCell(i);
-                    if (cell != null) {
-                        strings.add(cell.getStringCellValue());
-                    } else {
-                        strings.add("");
+                if (index == 1) {
+                    for (Cell cell : row) {
+                        String cellData = cell.getStringCellValue();
+                        if (StringUtil.isEmpty(cellData)) {
+                            break;
+                        }
+                        strings.add(cellData);
                     }
-                }
-                if (titleSize == 0) {
                     titleSize = strings.size();
-                }
-                int sSize = strings.size();
-                for (int i = 0; i < titleSize - sSize; i++) {
-                    strings.add("");
+                } else {
+                    if (titleSize != null) {
+                        for (int i = 0; i < titleSize; i++) {
+                            Cell cell = row.getCell(i);
+                            String cellData = "";
+                            if (cell != null) {
+                                String c = cell.getStringCellValue();
+                                if (c != null) {
+                                    cellData = c;
+                                }
+                            }
+                            strings.add(cellData);
+                        }
+                    }
                 }
                 this.data.add(strings);
             }

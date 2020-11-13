@@ -1,18 +1,16 @@
 package com.easipass.util.controller;
 
 import com.easipass.util.api.service.BaseServiceApi;
-import com.easipass.util.core.Project;
+import com.easipass.util.core.config.Project;
 import com.easipass.util.core.exception.ErrorException;
+import com.easipass.util.core.service.CacheFileService;
 import com.easipass.util.core.service.ParamDbService;
 import com.easipass.util.core.service.TaskRunService;
-import com.easipass.util.core.util.DateUtil;
-import com.easipass.util.core.util.FileUtil;
+import com.easipass.util.core.util.HttpUtil;
 import com.easipass.util.entity.Response;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,33 +25,46 @@ import java.io.InputStream;
 public class ParamDbController {
 
     /**
+     * cacheFileService
+     * */
+    private final CacheFileService cacheFileService = new CacheFileService();
+
+    /**
+     * paramDbService
+     * */
+    private final ParamDbService paramDbService = new ParamDbService();
+
+    /**
      * mdb导入比对
      *
-     * @param groupName     组名
      * @param multipartFile 文件
      * @return Response
      */
     @PostMapping("mdbImportComparator")
-    public Response mdbImportComparator(@RequestParam(value = "groupName", required = false) String groupName, @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
+    public Response mdbImportComparator(@RequestParam(value = "file", required = false) MultipartFile multipartFile) {
         if (multipartFile == null) {
             return Response.returnFalse("请选择文件");
         }
 
-        File file;
-
+        String fileName = multipartFile.getOriginalFilename();
+        String newFileName;
         try {
             InputStream inputStream = multipartFile.getInputStream();
-            file = new File(Project.CACHE_PATH, DateUtil.getTime() + "-" + multipartFile.getOriginalFilename());
-            FileUtil.createFile(file, inputStream);
+            newFileName = cacheFileService.add(fileName, inputStream);
             inputStream.close();
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
 
-        new TaskRunService("导入比对：" + groupName) {
+        new TaskRunService("mdb导入比对：" + fileName) {
             @Override
             public String run() {
-                return new ParamDbService().mdbImportComparator(groupName, file.getAbsolutePath(), true).toString();
+                return paramDbService.mdbImportComparator(new File(Project.CACHE_PATH, newFileName).getAbsolutePath()).toString();
+            }
+
+            @Override
+            public void afterRun() {
+                cacheFileService.delete(newFileName);
             }
         }.start();
 
@@ -63,31 +74,34 @@ public class ParamDbController {
     /**
      * mdb导出比对
      *
-     * @param groupName     组名
      * @param multipartFile 文件
      * @return Response
      */
     @PostMapping("mdbExportComparator")
-    public Response mdbExportComparator(@RequestParam(value = "groupName", required = false) String groupName, @RequestParam(value = "file", required = false) MultipartFile multipartFile) {
+    public Response mdbExportComparator(@RequestParam(value = "file", required = false) MultipartFile multipartFile) {
         if (multipartFile == null) {
             return Response.returnFalse("请选择文件");
         }
 
-        File file;
-
+        String fileName = multipartFile.getOriginalFilename();
+        String newFileName;
         try {
             InputStream inputStream = multipartFile.getInputStream();
-            file = new File(Project.CACHE_PATH, DateUtil.getTime() + "-" + multipartFile.getOriginalFilename());
-            FileUtil.createFile(file, inputStream);
+            newFileName = cacheFileService.add(fileName, inputStream);
             inputStream.close();
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
 
-        new TaskRunService("导出比对：" + groupName) {
+        new TaskRunService("mdb导出比对：" + fileName) {
             @Override
             public String run() {
-                return new ParamDbService().mdbExportComparator(groupName, file.getAbsolutePath(), true).toString();
+                return paramDbService.mdbExportComparator(new File(Project.CACHE_PATH, newFileName).getAbsolutePath()).toString();
+            }
+
+            @Override
+            public void afterRun() {
+                cacheFileService.delete(newFileName);
             }
         }.start();
 
@@ -107,21 +121,29 @@ public class ParamDbController {
             return Response.returnFalse("请选择文件");
         }
 
-        File file;
+        if (tableName == null) {
+            return Response.returnFalse("请输入表名");
+        }
 
+        String fileName = multipartFile.getOriginalFilename();
+        String newFileName;
         try {
             InputStream inputStream = multipartFile.getInputStream();
-            file = new File(Project.CACHE_PATH, DateUtil.getTime() + "-" + multipartFile.getOriginalFilename());
-            FileUtil.createFile(file, inputStream);
+            newFileName = cacheFileService.add(fileName, inputStream);
             inputStream.close();
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
 
-        new TaskRunService("excel导入比对：" + tableName) {
+        new TaskRunService("mdb导出比对：" + fileName) {
             @Override
             public String run() {
-                return new ParamDbService().excelImportComparator(tableName, file.getAbsolutePath(), true).toString();
+                return paramDbService.excelImportComparator(tableName, new File(Project.CACHE_PATH, newFileName).getAbsolutePath()).toString();
+            }
+
+            @Override
+            public void afterRun() {
+                cacheFileService.delete(newFileName);
             }
         }.start();
 
@@ -141,25 +163,82 @@ public class ParamDbController {
             return Response.returnFalse("请选择文件");
         }
 
-        File file;
+        if (tableName == null) {
+            return Response.returnFalse("请输入表名");
+        }
 
+        String fileName = multipartFile.getOriginalFilename();
+        String newFileName;
         try {
             InputStream inputStream = multipartFile.getInputStream();
-            file = new File(Project.CACHE_PATH, DateUtil.getTime() + "-" + multipartFile.getOriginalFilename());
-            FileUtil.createFile(file, inputStream);
+            newFileName = cacheFileService.add(fileName, inputStream);
             inputStream.close();
         } catch (IOException e) {
             throw new ErrorException(e.getMessage());
         }
 
-        new TaskRunService("excel导入：" + tableName) {
+        new TaskRunService("excel导入：" + fileName) {
             @Override
             public String run() {
-                return new ParamDbService().excelImport(tableName, file.getAbsolutePath(), true).toString();
+                return paramDbService.excelImport(tableName, new File(Project.CACHE_PATH, newFileName).getAbsolutePath()).toString();
+            }
+
+            @Override
+            public void afterRun() {
+                cacheFileService.delete(newFileName);
             }
         }.start();
 
         return Response.returnTrue("已放入后台进行导入");
+    }
+
+    /**
+     * mdb导入
+     *
+     * @param multipartFile 文件
+     * @return Response
+     */
+    @PostMapping("mdbImport")
+    public Response mdbImport(@RequestParam(value = "file", required = false) MultipartFile multipartFile) {
+        if (multipartFile == null) {
+            return Response.returnFalse("请选择文件");
+        }
+
+        String fileName = multipartFile.getOriginalFilename();
+        String newFileName;
+        try {
+            InputStream inputStream = multipartFile.getInputStream();
+            newFileName = cacheFileService.add(fileName, inputStream);
+            inputStream.close();
+        } catch (IOException e) {
+            throw new ErrorException(e.getMessage());
+        }
+
+        new TaskRunService("excel导入：" + fileName) {
+            @Override
+            public String run() {
+                return paramDbService.mdbImport(new File(Project.CACHE_PATH, newFileName).getAbsolutePath()).toString();
+            }
+
+            @Override
+            public void afterRun() {
+                cacheFileService.delete(newFileName);
+            }
+        }.start();
+
+        return Response.returnTrue("已放入后台进行导入");
+    }
+
+    /**
+     * mdb导出
+     *
+     * @param httpServletResponse httpServletResponse
+     * */
+    @GetMapping("mdbExport")
+    public void mdbExport(HttpServletResponse httpServletResponse) {
+        String path = paramDbService.mdbExport();
+        HttpUtil.downLoadFile(path, httpServletResponse, "parameterdb.mdb");
+        cacheFileService.delete(new File(path).getName());
     }
 
 }

@@ -1,7 +1,10 @@
 package com.easipass.util.core.service;
 
-import com.easipass.util.core.Project;
 import com.easipass.util.core.entity.Task;
+import com.easipass.util.core.util.ThreadUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 执行任务服务
@@ -9,6 +12,16 @@ import com.easipass.util.core.entity.Task;
  * @author ZJ
  * */
 public abstract class TaskRunService {
+
+    /**
+     * 日志
+     * */
+    private static final Logger log = LoggerFactory.getLogger(TaskRunService.class);
+
+    /**
+     * 线程池
+     * */
+    private static final ThreadPoolExecutor THREAD_POOL_EXECUTOR = ThreadUtil.getThreadPoolExecutor(10);
 
     /**
      * 任务名
@@ -32,19 +45,26 @@ public abstract class TaskRunService {
     public abstract String run();
 
     /**
+     * 任务执行完回调
+     * */
+    public void afterRun() {}
+
+    /**
      * 开始任务
      * */
     public final void start() {
         final Task task = new Task(this.name);
         new TaskService().addTask(task);
 
-        Project.THREAD_POOL_EXECUTOR.execute(() -> {
+        THREAD_POOL_EXECUTOR.execute(() -> {
             String message = null;
             try {
                 message = this.run();
             } catch (Throwable e) {
+                log.info(e.getMessage(), e);
                 message = e.getMessage();
             } finally {
+                this.afterRun();
                 task.end(message);
             }
         });

@@ -40,6 +40,10 @@ export default [
             {
                 path: "upload.html",
                 name: "上传回执"
+            },
+            {
+                path: "uploadNew.html",
+                name: "上传回执（新）"
             }
         ]
     },
@@ -79,16 +83,26 @@ export default [
                 name: "mdb导入比对"
             },
             {
-                path: "mdbExportParamDbComparison.html",
-                name: "mdb导出比对"
-            },
-            {
                 path: "excelImportParamDbComparison.html",
                 name: "excel导入比对"
             },
             {
+                path: "mdbExportParamDbComparison.html",
+                name: "mdb导出比对"
+            },
+            {},
+            {
                 path: "excelImport.html",
                 name: "excel导入"
+            },
+            {
+                path: "mdbImport.html",
+                name: "mdb导入"
+            },
+            {},
+            {
+                path: "mdbExport.html",
+                name: "mdb导出"
             }
         ]
     },

@@ -124,4 +124,17 @@ public final class DateUtil {
         return null;
     }
 
+    /**
+     * 将日期转换成指定格式
+     *
+     * @param date 日期
+     * @param s 日期格式
+     *
+     * @return 转换后的日期格式
+     * */
+    public static String format(Date date, String s) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(s);
+        return simpleDateFormat.format(date);
+    }
+
 }

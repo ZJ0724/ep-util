@@ -1,17 +1,11 @@
 package com.easipass.util.test;
 
-import com.easipass.util.core.component.SWGDPARADatabase;
+import com.easipass.util.core.ChromeDriver;
 
 public class Main {
 
-    public static void main(String[] args) {
-        SWGDPARADatabase swgdparaDatabase = new SWGDPARADatabase();
-
-
-        System.out.println(swgdparaDatabase.isPrimaryKey("CIQ_CODE", "HS_CODE"));
-
-        swgdparaDatabase.close();
-
+    public static void main(String[] args) throws Exception {
+        ChromeDriver.swgdAgentRecvNew();
     }
 
 }
