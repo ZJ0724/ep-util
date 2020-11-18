@@ -1,5 +1,6 @@
 package com.easipass.util.core.util;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,6 +90,17 @@ public final class StringUtil {
         }
 
         return s.replaceAll(" ", "").replaceAll("\n", "").replaceAll("\r", "").equals("");
+    }
+
+    /**
+     * 将double转成string
+     *
+     * @param d d
+     *
+     * @return string
+     * */
+    public static String doubleToString(Double d) {
+        return new BigDecimal(d).toPlainString();
     }
 
 }

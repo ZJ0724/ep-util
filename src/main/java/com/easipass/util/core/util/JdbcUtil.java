@@ -259,6 +259,8 @@ public final class JdbcUtil {
                     if (filedData instanceof Date) {
                         Date date = (Date) filedData;
                         preparedStatement.setTimestamp(index, new Timestamp(date.getTime()));
+                    } else if (filedData instanceof Double) {
+                        preparedStatement.setObject(index, StringUtil.doubleToString((Double) filedData));
                     } else {
                         preparedStatement.setObject(index, filedData);
                     }
@@ -278,5 +280,72 @@ public final class JdbcUtil {
             close(connection, preparedStatement, null);
         }
     }
+
+//    /**
+//     * 插入数据（debug）
+//     *
+//     * @param dataSource 数据源
+//     * @param tableName 表名
+//     * @param data 数据
+//     * */
+//    public static void inert_debug(DataSource dataSource, String tableName, List<Map<String, Object>> data) {
+//        if (data.size() == 0) {
+//            return;
+//        }
+//
+//        String sql = "INSERT INTO " + tableName + "(";
+//        Set<String> fields = data.get(0).keySet();
+//        int fieldsSize = fields.size();
+//        String value = " VALUES (";
+//        int index = 0;
+//
+//        for (String field : fields) {
+//            index++;
+//
+//            String end;
+//
+//            if (index == fieldsSize) {
+//                end = ")";
+//            } else {
+//                end = ", ";
+//            }
+//
+//            sql = StringUtil.append(sql, field, end);
+//            value = StringUtil.append(value, "?", end);
+//        }
+//        sql = StringUtil.append(sql, value);
+//
+//        Connection connection = null;
+//        PreparedStatement preparedStatement = null;
+//        Map<String, Object> backupsMap = null;
+//
+//        try {
+//            connection = dataSource.getConnection();
+//            preparedStatement = connection.prepareStatement(sql);
+//
+//            for (Map<String, Object> map : data) {
+//                backupsMap = map;
+//                index = 0;
+//                for (String field : fields) {
+//                    index++;
+//                    Object filedData = map.get(field);
+//                    if (filedData instanceof Date) {
+//                        Date date = (Date) filedData;
+//                        preparedStatement.setTimestamp(index, new Timestamp(date.getTime()));
+//                    } else if (filedData instanceof Double) {
+//                        String d = StringUtil.doubleToString((Double) filedData);
+//                        preparedStatement.setObject(index, d);
+//                    } else {
+//                        preparedStatement.setObject(index, filedData);
+//                    }
+//                }
+//                preparedStatement.execute();
+//            }
+//        } catch (SQLException e) {
+//            throw new InfoException(e.getMessage() + backupsMap);
+//        } finally {
+//            close(connection, preparedStatement, null);
+//        }
+//    }
 
 }
