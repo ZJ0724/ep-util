@@ -645,6 +645,9 @@ public final class ParamDbService {
                                         if ("TIMESTAMP".equals(dbFieldType)) {
                                             dbFieldData = parseDateToDate(dbFieldData);
                                         }
+                                        if (StringUtil.isEmptyAll(dbFieldData.toString())) {
+                                            dbFieldData = null;
+                                        }
                                     } else {
                                         dbFieldData = null;
                                     }

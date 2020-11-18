@@ -1,7 +1,7 @@
 package com.easipass.util.core.entity;
 
 /**
- * 回执接口
+ * 回执
  *
  * @author ZJ
  * */

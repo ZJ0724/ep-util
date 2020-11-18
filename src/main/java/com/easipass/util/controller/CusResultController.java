@@ -2,7 +2,6 @@ package com.easipass.util.controller;
 
 import com.easipass.util.api.service.BaseServiceApi;
 import com.easipass.util.core.entity.AgentCusResultNew;
-import com.easipass.util.core.entity.CusResult;
 import com.easipass.util.core.service.CusResultService;
 import com.easipass.util.entity.Response;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +28,7 @@ public class CusResultController {
      * */
     @PostMapping("uploadNewAgentCusResult")
     public Response uploadNewAgentCusResult(@RequestBody Map<String, String> requestBody) {
-        CusResult cusResult = new AgentCusResultNew(requestBody.get("ediNo"), requestBody.get("channel"), requestBody.get("message"));
+        AgentCusResultNew cusResult = new AgentCusResultNew(requestBody.get("ediNo"), requestBody.get("channel"), requestBody.get("message"));
 
         CusResultService cusResultService = new CusResultService();
         cusResultService.uploadNewAgentCusResult(cusResult);
