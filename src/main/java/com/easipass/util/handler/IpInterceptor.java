@@ -30,6 +30,7 @@ public final class IpInterceptor implements HandlerInterceptor, WebMvcConfigurer
         hostSet.add("192.168.12.241:10000");
         hostSet.add("192.168.137.100:8002");
         hostSet.add("192.168.74.100:8002");
+        hostSet.add("192.168.1.120:8002");
     }
 
     @Override
