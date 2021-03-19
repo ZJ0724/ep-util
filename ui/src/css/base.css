@@ -1,0 +1,30 @@
+@import "panel.css";
+
+html, body, #main {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+* {
+    font-size: 14px;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #546E7A;
+}
+
+.font {
+    font-size: 14px;
+    color: #303133;
+}

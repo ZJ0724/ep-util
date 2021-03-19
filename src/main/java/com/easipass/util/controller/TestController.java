@@ -1,21 +1,17 @@
 package com.easipass.util.controller;
 
-import com.easipass.util.entity.Response;
+import com.easipass.util.entity.cusresult.CustomsDeclarationCusResult;
+import com.easipass.util.service.CusResultService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("test")
+@RequestMapping("/test")
 public class TestController {
 
-    @GetMapping("test")
-    public Response test(@RequestParam("a") String a) {
-        if (a.equals("1")) {
-            throw new RuntimeException("错误异常");
-        }
-        return Response.returnTrue();
-    }
+    @Resource
+    private CusResultService cusResultService;
 
 }
