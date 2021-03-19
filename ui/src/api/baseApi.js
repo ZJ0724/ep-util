@@ -1,4 +1,4 @@
-let host = process.env.NODE_ENV === "development" ? "http://localhost:9002/ep-util/api" : "/ep-util/api";
+let host = process.env.NODE_ENV === "development" ? "http://localhost:8002/ep-util/api" : "/ep-util/api";
 
 export default {
     send(option) {
