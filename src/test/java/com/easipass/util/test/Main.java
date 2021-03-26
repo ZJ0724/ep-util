@@ -5,6 +5,7 @@ import com.easipass.util.service.ConfigService;
 import com.easipass.util.service.CusResultService;
 import com.easipass.util.service.impl.ConfigServiceImpl;
 import com.easipass.util.service.impl.CusResultServiceImpl;
+import com.zj0724.common.component.Sftp;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +24,9 @@ public final class Main {
 
     }
 
-    public static void main(String[] args) {}
+    public static void main(String[] args) {
+        Sftp sftp = new Sftp("192.168.131.211", 2333, "cusclient_test", "easipass");
+        System.out.println(123);
+    }
 
 }
