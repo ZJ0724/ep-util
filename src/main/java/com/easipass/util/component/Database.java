@@ -1,0 +1,175 @@
+package com.easipass.util.component;
+
+import com.easipass.util.config.BaseConfig;
+import com.easipass.util.entity.AbstractPO;
+import com.easipass.util.entity.po.Column;
+import com.easipass.util.entity.po.Table;
+import com.zj0724.common.component.jdbc.AccessDatabaseJdbc;
+import com.zj0724.common.entity.QueryResult;
+import com.zj0724.common.util.ClassUtil;
+import com.zj0724.common.entity.Query;
+import com.zj0724.common.exception.ErrorException;
+import com.zj0724.common.util.MapUtil;
+import com.zj0724.common.util.ObjectUtil;
+import com.zj0724.common.util.SqlUtil;
+import java.lang.reflect.Field;
+import java.util.*;
+
+/**
+ * 数据库
+ *
+ * @author ZJ
+ * */
+public final class Database<T extends AbstractPO> {
+
+    private final Class<T> c;
+
+    private final String tableName;
+
+    private static final List<Database<? extends AbstractPO>> DATABASE_LIST = new ArrayList<>();
+
+    static {
+        if (!BaseConfig.DATABASE_FILE.exists()) {
+            AccessDatabaseJdbc.create(com.healthmarketscience.jackcess.Database.FileFormat.V2016, BaseConfig.DATABASE_FILE.getAbsolutePath()).close();
+        }
+    }
+
+    private Database(Class<T> c) {
+        this.c = c;
+
+        Table table = c.getAnnotation(Table.class);
+        if (table == null) {
+            throw new ErrorException(c.getName() + "未配置@Table");
+        }
+        tableName = table.name();
+
+        List<Field> fields = ClassUtil.getAllFields(this.c);
+        Map<String, AccessDatabaseJdbc.FieldType> fieldTypeMap = new LinkedHashMap<>();
+        for (Field field : fields) {
+            Column annotation = field.getAnnotation(Column.class);
+            if (annotation == null) {
+                throw new ErrorException(field.getName() + "未配置@Column");
+            }
+            fieldTypeMap.put(annotation.name(), annotation.type());
+        }
+
+        AccessDatabaseJdbc accessDatabaseJdbc = new AccessDatabaseJdbc(BaseConfig.DATABASE_FILE.getAbsolutePath());
+        try {
+            accessDatabaseJdbc.reloadTable(tableName, fieldTypeMap);
+        } finally {
+            accessDatabaseJdbc.close();
+        }
+    }
+
+    /**
+     * 查询
+     *
+     * @param query query
+     *
+     * @return QueryResult
+     * */
+    public QueryResult<T> query(Query query) {
+        QueryResult<T> queryResult = new QueryResult<>();
+        AccessDatabaseJdbc accessDatabaseJdbc = new AccessDatabaseJdbc(BaseConfig.DATABASE_FILE.getAbsolutePath());
+        try {
+            QueryResult<Map<String, Object>> data = accessDatabaseJdbc.query(this.tableName, query);
+            queryResult.setCount(data.getCount());
+            List<T> tList = new ArrayList<>();
+            List<Map<String, Object>> mapList = data.getData();
+            for (Map<String, Object> map : mapList) {
+                map = mapToField(map, this.c);
+                tList.add(MapUtil.parseObject(map, this.c));
+            }
+            queryResult.setData(tList);
+            return queryResult;
+        } finally {
+            accessDatabaseJdbc.close();
+        }
+    }
+
+    /**
+     * 新增
+     *
+     * @param t t
+     * */
+    public void insert(T t) {
+        AccessDatabaseJdbc accessDatabaseJdbc = new AccessDatabaseJdbc(BaseConfig.DATABASE_FILE.getAbsolutePath());
+        try {
+            Map<String, Object> map = mapToColumn(ObjectUtil.parseMap(t), c);
+            String sql = SqlUtil.parseInsertSql(map, c.getAnnotation(Table.class).name());
+            accessDatabaseJdbc.execute(sql);
+        } finally {
+            accessDatabaseJdbc.close();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public synchronized static <E extends AbstractPO> Database<E> getDatabase(Class<E> c) {
+        for (Database<?> database : DATABASE_LIST) {
+            if (database.c == c) {
+                return (Database<E>) database;
+            }
+        }
+        Database<E> database = new Database<>(c);
+        DATABASE_LIST.add(database);
+        System.out.println("新的database: " + c.getName());
+        return database;
+    }
+
+    /**
+     * 将map的key转换成column注解的值
+     *
+     * @param map map
+     * @param c c
+     *
+     * @return 新的map
+     * */
+    private static Map<String, Object> mapToColumn(Map<?, ?> map, Class<? extends AbstractPO> c) {
+        Map<String, Object> result = new HashMap<>();
+        Set<? extends Map.Entry<?, ?>> entries = map.entrySet();
+        List<Field> allFields = ClassUtil.getAllFields(c);
+        for (Map.Entry<?, ?> entry : entries) {
+            String newKey = null;
+            for (Field field : allFields) {
+                if (field.getName().equals(entry.getKey())) {
+                    newKey = field.getAnnotation(Column.class).name();
+                    break;
+                }
+            }
+            if (newKey == null) {
+                throw new ErrorException("map转换出错：" + entry.getKey());
+            }
+            result.put(newKey, entry.getValue());
+        }
+        return result;
+    }
+
+    /**
+     * 将map的key转换成类的值
+     *
+     * @param map map
+     * @param c c
+     *
+     * @return 新的map
+     * */
+    private static Map<String, Object> mapToField(Map<String, Object> map, Class<? extends AbstractPO> c) {
+        Map<String, Object> result = new HashMap<>();
+        Set<Map.Entry<String, Object>> entries = map.entrySet();
+        List<Field> allFields = ClassUtil.getAllFields(c);
+        for (Map.Entry<String, Object> entry : entries) {
+            String newKey = null;
+            for (Field field : allFields) {
+                if (field.getAnnotation(Column.class).name().equals(entry.getKey())) {
+                    newKey = field.getName();
+                    break;
+                }
+            }
+            if (newKey == null) {
+                throw new ErrorException("map转换出错：" + entry.getKey());
+            }
+            result.put(newKey, entry.getValue());
+        }
+        return result;
+    }
+
+}

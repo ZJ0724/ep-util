@@ -1,8 +1,10 @@
 .idea
 .git
-target
+.gradle
+build
 .release
-EpUtilServer.iml
-epUtil.iml
-log
-ep-util.iml
+out
+
+ui/node_modules
+ui/package-lock.json
+ui/build

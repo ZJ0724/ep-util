@@ -1,39 +1,34 @@
 package com.easipass.util.controller;
 
-import com.easipass.util.api.service.BaseServiceApi;
-import com.easipass.util.core.entity.AgentCusResultNew;
-import com.easipass.util.core.service.CusResultService;
-import com.easipass.util.entity.Response;
+import com.easipass.util.entity.CusResult;
+import com.easipass.util.service.CusResultService;
+import com.zj0724.common.exception.InfoException;
+import com.zj0724.common.util.ObjectUtil;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import javax.annotation.Resource;
 import java.util.Map;
 
-/**
- * CusResultController
- *
- * @author ZJ
- * */
 @RestController
-@RequestMapping(BaseServiceApi.URL + "cusResult")
-public class CusResultController {
+@RequestMapping(BaseController.API + "/cusResult")
+public final class CusResultController {
 
-    /**
-     * 上传新代理委托回执
-     *
-     * @param requestBody requestBody
-     *
-     * @return 响应
-     * */
-    @PostMapping("uploadNewAgentCusResult")
-    public Response uploadNewAgentCusResult(@RequestBody Map<String, String> requestBody) {
-        AgentCusResultNew cusResult = new AgentCusResultNew(requestBody.get("ediNo"), requestBody.get("channel"), requestBody.get("message"));
+    @Resource
+    private CusResultService cusResultService;
 
-        CusResultService cusResultService = new CusResultService();
-        cusResultService.uploadNewAgentCusResult(cusResult);
+    @PostMapping("uploadCustomsDeclaration")
+    public Response uploadCustomsDeclaration(@RequestBody(required = false) Map<String, Object> requestBody) {
+        if (requestBody == null) {
+            throw new InfoException("请求参数缺失");
+        }
+        String customsDeclarationNumber = requestBody.get("customsDeclarationNumber") == null ? null : requestBody.get("customsDeclarationNumber").toString();
+        CusResult tongXunCusResult = requestBody.get("tongXunCusResult") == null ? null : ObjectUtil.parse(requestBody.get("tongXunCusResult"), CusResult.class);
+        CusResult yeWuCusResult = requestBody.get("yeWuCusResult") == null ? null : ObjectUtil.parse(requestBody.get("yeWuCusResult"), CusResult.class);
 
-        return Response.returnTrue("上传成功");
+        cusResultService.uploadCustomsDeclaration(customsDeclarationNumber, tongXunCusResult, yeWuCusResult);
+        return Response.returnTrue();
     }
 
 }

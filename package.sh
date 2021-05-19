@@ -1,26 +1,25 @@
-#!/bin/bash
+#!/bin/sh
 
-# 存放目录
-releasePath=".release"
-# 应用名
-projectName="ep-util"
-# 版本
-version="$(cat version)"
-# 包名
-packageName="${projectName}-${version}"
-# 编译目录
-buildPath="target/build"
+version="6.1.0"
+appName="ep-util"
 
-# 重新生成存放目录
-rm -rf ${releasePath}
-mkdir ${releasePath}
+# 前端
+cd ui
+./package.sh
+cd ..
+rm -rf src/main/resources/static/*
+cp -r ui/build/* src/main/resources/static
 
-# 清空maven
-mvn clean
+# 后端
+rm -rf build
+./gradlew build -x test
 
-# 打包
-mvn package
+mkdir -p build/${appName}
+cp -r build/libs/ep-util.jar build/${appName}
+cp -r config build/${appName}
+cp -r bin build/${appName}
+cp -r chromedriver build/${appName}
 
-# 打包
-tar -zcvf ${releasePath}/${packageName}.tar.gz -C ${buildPath} ${projectName}
-tar -cvf ${releasePath}/${packageName}.zip -C ${buildPath} ${projectName}
+cd build
+zip -q -r ${appName}-${version}.zip ${appName}
+cd ..
