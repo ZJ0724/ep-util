@@ -1,6 +1,6 @@
 #!/bin/sh
 
-version="6.1.0"
+version="6.2.0"
 appName="ep-util"
 
 # 前端
