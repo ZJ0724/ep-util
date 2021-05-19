@@ -7,6 +7,7 @@ import com.easipass.util.entity.CusResult;
  *
  * @author ZJ
  * */
+@Deprecated
 public final class CustomsDeclarationCusResult extends CusResult {
 
     /**

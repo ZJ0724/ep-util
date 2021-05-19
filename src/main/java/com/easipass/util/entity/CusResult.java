@@ -5,7 +5,7 @@ package com.easipass.util.entity;
  *
  * @author ZJ
  * */
-public abstract class CusResult {
+public class CusResult {
 
     /**
      * 代码

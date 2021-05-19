@@ -31,6 +31,24 @@ public final class SWGDDatabaseUtil {
         }
     }
 
+    /**
+     * 获取报关单数据
+     *
+     * @param ediNo ediNo
+     *
+     * @return Map<String, Object>
+     * */
+    public static Map<String, Object> getFormHead(String ediNo) {
+        List<Map<String, Object>> formHeadList = query("SELECT SEQ_NO FROM T_SWGD_FORM_HEAD WHERE EDI_NO = '" + ediNo + "'");
+        if (formHeadList.size() == 0) {
+            return null;
+        }
+        if (formHeadList.size() > 1) {
+            throw new InfoException("存在多个相同编号的报关单");
+        }
+        return formHeadList.get(0);
+    }
+
     private static Jdbc getJdbc() {
         ConfigService configService = Main.APPLICATION_CONTEXT.getBean(ConfigService.class);
         ConfigPO hostConfigPO = configService.getByCode(ConfigPO.Code.SWGD_DATABASE_HOST);

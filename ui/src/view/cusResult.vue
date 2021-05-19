@@ -10,7 +10,7 @@
                     单号（ediNo、preEntryId）
                 </div>
                 <div style="margin-top: 10px;">
-                    <ep-input v-model="cusResultUpload.data.customsDeclarationNumber"></ep-input>
+                    <ep-input class="errorInput" v-model="cusResultUpload.data.customsDeclarationNumber"></ep-input>
                 </div>
             </div>
 
