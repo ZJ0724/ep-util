@@ -5,6 +5,7 @@ import com.easipass.util.entity.AbstractPO;
 import com.easipass.util.entity.po.Column;
 import com.easipass.util.entity.po.Table;
 import com.zj0724.common.component.jdbc.AccessDatabaseJdbc;
+import com.zj0724.common.entity.QueryResult;
 import com.zj0724.common.util.ClassUtil;
 import com.zj0724.common.entity.Query;
 import com.zj0724.common.exception.ErrorException;
@@ -71,7 +72,7 @@ public final class Database<T extends AbstractPO> {
         QueryResult<T> queryResult = new QueryResult<>();
         AccessDatabaseJdbc accessDatabaseJdbc = new AccessDatabaseJdbc(BaseConfig.DATABASE_FILE.getAbsolutePath());
         try {
-            com.zj0724.common.entity.QueryResult data = accessDatabaseJdbc.query(this.tableName, query);
+            QueryResult<Map<String, Object>> data = accessDatabaseJdbc.query(this.tableName, query);
             queryResult.setCount(data.getCount());
             List<T> tList = new ArrayList<>();
             List<Map<String, Object>> mapList = data.getData();
@@ -123,11 +124,11 @@ public final class Database<T extends AbstractPO> {
      *
      * @return 新的map
      * */
-    private static Map<String, Object> mapToColumn(Map<String, Object> map, Class<? extends AbstractPO> c) {
+    private static Map<String, Object> mapToColumn(Map<?, ?> map, Class<? extends AbstractPO> c) {
         Map<String, Object> result = new HashMap<>();
-        Set<Map.Entry<String, Object>> entries = map.entrySet();
+        Set<? extends Map.Entry<?, ?>> entries = map.entrySet();
         List<Field> allFields = ClassUtil.getAllFields(c);
-        for (Map.Entry<String, Object> entry : entries) {
+        for (Map.Entry<?, ?> entry : entries) {
             String newKey = null;
             for (Field field : allFields) {
                 if (field.getName().equals(entry.getKey())) {
@@ -169,30 +170,6 @@ public final class Database<T extends AbstractPO> {
             result.put(newKey, entry.getValue());
         }
         return result;
-    }
-
-    public static final class QueryResult<T> {
-
-        private Long count;
-
-        private List<T> data;
-
-        public Long getCount() {
-            return count;
-        }
-
-        public void setCount(Long count) {
-            this.count = count;
-        }
-
-        public List<T> getData() {
-            return data;
-        }
-
-        public void setData(List<T> data) {
-            this.data = data;
-        }
-
     }
 
 }

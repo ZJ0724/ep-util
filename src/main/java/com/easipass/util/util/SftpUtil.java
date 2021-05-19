@@ -3,7 +3,7 @@ package com.easipass.util.util;
 import com.easipass.util.Main;
 import com.easipass.util.entity.po.ConfigPO;
 import com.easipass.util.service.ConfigService;
-import com.zj0724.common.component.Sftp;
+import com.zj0724.common.component.ftp.Sftp;
 import com.zj0724.common.exception.InfoException;
 import com.zj0724.common.util.StringUtil;
 

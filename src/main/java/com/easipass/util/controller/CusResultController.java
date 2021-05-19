@@ -24,8 +24,8 @@ public final class CusResultController {
             throw new InfoException("请求参数缺失");
         }
         String customsDeclarationNumber = requestBody.get("customsDeclarationNumber") == null ? null : requestBody.get("customsDeclarationNumber").toString();
-        CusResult tongXunCusResult = requestBody.get("tongXunCusResult") == null ? null : ObjectUtil.parseObject(requestBody.get("tongXunCusResult"), CusResult.class);
-        CusResult yeWuCusResult = requestBody.get("yeWuCusResult") == null ? null : ObjectUtil.parseObject(requestBody.get("yeWuCusResult"), CusResult.class);
+        CusResult tongXunCusResult = requestBody.get("tongXunCusResult") == null ? null : ObjectUtil.parse(requestBody.get("tongXunCusResult"), CusResult.class);
+        CusResult yeWuCusResult = requestBody.get("yeWuCusResult") == null ? null : ObjectUtil.parse(requestBody.get("yeWuCusResult"), CusResult.class);
 
         cusResultService.uploadCustomsDeclaration(customsDeclarationNumber, tongXunCusResult, yeWuCusResult);
         return Response.returnTrue();

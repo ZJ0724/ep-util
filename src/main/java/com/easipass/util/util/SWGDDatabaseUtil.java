@@ -39,7 +39,7 @@ public final class SWGDDatabaseUtil {
      * @return Map<String, Object>
      * */
     public static Map<String, Object> getFormHead(String ediNo) {
-        List<Map<String, Object>> formHeadList = query("SELECT SEQ_NO FROM T_SWGD_FORM_HEAD WHERE EDI_NO = '" + ediNo + "'");
+        List<Map<String, Object>> formHeadList = query("SELECT * FROM T_SWGD_FORM_HEAD WHERE EDI_NO = '" + ediNo + "'");
         if (formHeadList.size() == 0) {
             return null;
         }

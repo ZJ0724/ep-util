@@ -1,12 +1,20 @@
-let host = process.env.NODE_ENV === "development" ? "http://localhost:8002/ep-util/api" : "/ep-util/api";
+import {http} from "../util/zj0724common.js";
+import baseConfig from "../config/baseConfig.js";
 
 export default {
-    send(option) {
-        return new Promise(function (successCallback, errorCallback) {
-            _send(option).then((response) => {
-                let responseJson = JSON.parse(response);
+    send(data) {
+        return new Promise((successCallback, errorCallback) => {
+            data.url = baseConfig.server + "/" + data.url;
+            if (data.type === "POST") {
+                if (data.header === undefined) {
+                    data.header = {};
+                }
+                data.header["content-type"] = "application/json";
+            }
+            http.send(data).then((response) => {
+                let responseJson = JSON.parse(response.toString());
                 let flag = responseJson.flag;
-                let errorCode = responseJson.errorCode;
+                // let errorCode = responseJson.errorCode;
                 let errorMessage = responseJson.errorMessage;
                 let data = responseJson.data;
 
@@ -19,150 +27,3 @@ export default {
         });
     }
 };
-
-function _send(option) {
-    return new Promise(function (s) {
-        function isEmpty(data) {
-            return data === undefined || data === null || data === "";
-        }
-
-        function isObject(data) {
-            return typeof data === "object";
-        }
-
-        function isFile(data) {
-            return data.__proto__ === File.prototype;
-        }
-
-        let url = option.url,
-            type = option.type,
-            header = option.header;
-        if (type === "get") {
-            type = "GET";
-        }
-        if (type === "post") {
-            type = "POST";
-        }
-        if (isEmpty(header)) {
-            header = {};
-        }
-
-        let urlData = option.urlData;
-        let data = option.data;
-
-        let check = option.check;
-        if (isEmpty(check)) {
-            check = {};
-        }
-        let urlCheck = check.urlData,
-            dataCheck = check.data;
-
-        let sendData = {
-            url: null,
-            data: null
-        };
-
-        // 参数校验
-        if (!isEmpty(urlCheck) && isObject(urlCheck)) {
-            if (!isEmpty(urlData) && isObject(urlData)) {
-                sendData.url = {};
-                for (let key in urlCheck) {
-                    if (urlCheck.hasOwnProperty(key)) {
-                        let v = urlData[key];
-                        if (!isEmpty(v)) {
-                            sendData.url[key] = v;
-                        }
-                    }
-                }
-            }
-        } else {
-            if (!isEmpty(urlData) && isObject(urlData)) {
-                sendData.url = urlData;
-            }
-        }
-
-        if (!isEmpty(dataCheck) && isObject(dataCheck)) {
-            if (!isEmpty(data) && isObject(data)) {
-                sendData.data = {};
-                for (let key in dataCheck) {
-                    if (dataCheck.hasOwnProperty(key)) {
-                        let v = data[key];
-                        if (!isEmpty(v)) {
-                            sendData.data[key] = v;
-                        }
-                    }
-                }
-            }
-        } else {
-            if (!isEmpty(data) && isObject(data)) {
-                sendData.data = data;
-            }
-        }
-
-        // 是否存在文件
-        let isExistFile = false;
-        if (sendData.data !== null) {
-            for (let key in sendData.data) {
-                if (sendData.data.hasOwnProperty(key)) {
-                    if (isFile(sendData.data[key])) {
-                        isExistFile = true;
-                    }
-                }
-            }
-        }
-        if (isExistFile) {
-            let formData = new FormData();
-            for (let key in sendData.data) {
-                if (sendData.data.hasOwnProperty(key)) {
-                    formData.append(key, sendData.data[key]);
-                }
-            }
-            sendData.data = formData;
-        } else {
-            if (type !== "GET") {
-                header["content-type"] = "application/json";
-            }
-            if (sendData.data !== null) {
-                sendData.data = JSON.stringify(sendData.data);
-            }
-        }
-
-        // 装配url参数
-        if (sendData.url !== null) {
-            let u = sendData.url.length === 0 ? "" : "?";
-            for (let key in sendData.url) {
-                if (sendData.url.hasOwnProperty(key)) {
-                    let value = sendData.url[key];
-                    if (!isEmpty(value)) {
-                        u = u + key + "=" + sendData.url[key] + "&";
-                    }
-                }
-            }
-            if (u !== "") {
-                u = u.substring(0, u.length - 1);
-            }
-            url = url + u;
-        }
-
-
-        // 发送
-        let http = new XMLHttpRequest();
-        http.open(type, host + url);
-        for (let key in header) {
-            if (header.hasOwnProperty(key)) {
-                http.setRequestHeader(key, header[key]);
-            }
-        }
-        if (sendData.data !== null) {
-            http.send(sendData.data);
-        } else {
-            http.send();
-        }
-
-        http.onreadystatechange = function () {
-            if (http.status === 200 && http.readyState === 4) {
-                s(http.response);
-            }
-        }
-    });
-}

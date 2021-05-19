@@ -4,6 +4,7 @@ import com.easipass.util.component.Database;
 import com.easipass.util.entity.po.ConfigPO;
 import com.easipass.util.service.ConfigService;
 import com.zj0724.common.entity.Query;
+import com.zj0724.common.entity.QueryResult;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public final class ConfigServiceImpl implements ConfigService {
         Database<ConfigPO> configPODatabase = Database.getDatabase(ConfigPO.class);
         Query query = new Query();
         query.addFilter("CODE", code.name());
-        Database.QueryResult<ConfigPO> query1 = configPODatabase.query(query);
+        QueryResult<ConfigPO> query1 = configPODatabase.query(query);
         List<ConfigPO> data = query1.getData();
         if (data.size() == 0) {
             return null;

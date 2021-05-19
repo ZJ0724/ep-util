@@ -2,7 +2,7 @@
   "name": "ep-util",
   "description": "",
   "dependencies": {
-    "ep-ui": "^2.4.1",
+    "ep-ui": "^2.5.7",
     "vue": "^2.6.12",
     "vue-router": "^3.4.8",
     "vue-wechat-title": "^2.0.7"

@@ -1,48 +1,51 @@
 <template>
-    <div>
-        <div v-loading="cusResultUpload.loading" class="panel">
-            <div class="title">
-                上传回执
+    <div v-loading="loading">
+        <div class="panel">
+            <div class="title-2">
+                EDI_NO
+                <ep-input v-model="customsDeclarationNumber" style="margin-top: 20px;"></ep-input>
+            </div>
+
+            <div style="display: flex;margin-top: 50px;">
+                <div class="title-2" style="display: flex;align-items: center;">
+                    通讯回执
+                </div>
+                <div style="margin-left: 10px;">
+                    <ep-checkbox v-model="tongXunCusResult.display"></ep-checkbox>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                code
+                <ep-input :disabled="!tongXunCusResult.display" v-model="tongXunCusResult.code" style="margin-top: 10px;"></ep-input>
+            </div>
+
+            <div style="margin-top: 20px;">
+                note
+                <ep-input :disabled="!tongXunCusResult.display" v-model="tongXunCusResult.note" style="margin-top: 10px;"></ep-input>
+            </div>
+
+            <div style="display: flex;margin-top: 50px;">
+                <div class="title-2" style="display: flex;align-items: center;">
+                    业务回执
+                </div>
+                <div style="margin-left: 10px;">
+                    <ep-checkbox v-model="yeWuCusResult.display"></ep-checkbox>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                code
+                <ep-input :disabled="!yeWuCusResult.display" v-model="yeWuCusResult.code" style="margin-top: 10px;"></ep-input>
+            </div>
+
+            <div style="margin-top: 20px;">
+                note
+                <ep-input :disabled="!yeWuCusResult.display" v-model="yeWuCusResult.note" style="margin-top: 10px;"></ep-input>
             </div>
 
             <div style="margin-top: 50px;">
-                <div>
-                    单号（ediNo、preEntryId）
-                </div>
-                <div style="margin-top: 10px;">
-                    <ep-input class="errorInput" v-model="cusResultUpload.data.customsDeclarationNumber"></ep-input>
-                </div>
-            </div>
-
-            <div style="margin-top: 20px;">
-                <div>
-                    回执代码
-                </div>
-                <div style="margin-top: 10px;">
-                    <ep-input v-model="cusResultUpload.data.code"></ep-input>
-                </div>
-            </div>
-
-            <div style="margin-top: 20px;">
-                <div>
-                    备注
-                </div>
-                <div style="margin-top: 10px;">
-                    <ep-input v-model="cusResultUpload.data.note"></ep-input>
-                </div>
-            </div>
-
-            <div style="margin-top: 20px;">
-                <ep-button @click="() => {
-                    cusResultUpload.loading = true;
-                    cusResultUploadMethod().then(() => {
-                        alterUtil.success('成功');
-                    }).catch((m) => {
-                        alterUtil.error(m);
-                    }).finally(() => {
-                        cusResultUpload.loading = false;
-                    });
-                }" style="width: 100%;" type="primary">确定</ep-button>
+                <ep-button @click="uploadAction()" style="width: 100%;" type="primary">上传</ep-button>
             </div>
         </div>
     </div>
@@ -57,26 +60,51 @@
 
         data() {
             return {
-                // 上传回执
-                cusResultUpload: {
-                    // 加载
-                    loading: false,
+                loading: false,
 
-                    data: {
-                        customsDeclarationNumber: "",
-                        code: "",
-                        note: ""
-                    }
+                customsDeclarationNumber: "",
+
+                tongXunCusResult: {
+                    display: true,
+                    code: "0",
+                    note: "通讯回执"
                 },
 
-                alterUtil
+                yeWuCusResult: {
+                    display: true,
+                    code: "",
+                    note: ""
+                }
             };
         },
 
         methods: {
-            async cusResultUploadMethod() {
-                return await cusResultApi.uploadCustomsDeclaration(this.cusResultUpload.data).catch((m) => {
+            async uploadCustomsDeclaration() {
+                let req = {
+                    customsDeclarationNumber: this.customsDeclarationNumber,
+                    tongXunCusResult: this.tongXunCusResult,
+                    yeWuCusResult: this.yeWuCusResult
+                };
+                if (!this.tongXunCusResult.display) {
+                    req.tongXunCusResult = null;
+                }
+                if (!this.yeWuCusResult.display) {
+                    req.yeWuCusResult = null;
+                }
+
+                return await cusResultApi.uploadCustomsDeclaration(req).catch((m) => {
                     return Promise.reject(m);
+                });
+            },
+
+            uploadAction() {
+                this.loading = true;
+                this.uploadCustomsDeclaration().then(() => {
+                    alterUtil.success("成功");
+                }).catch((m) => {
+                    alterUtil.error(m);
+                }).finally(() => {
+                    this.loading = false;
                 });
             }
         }

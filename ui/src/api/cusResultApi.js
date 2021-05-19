@@ -1,6 +1,6 @@
 import baseApi from "./baseApi.js";
 
-const u = "/cusResult"
+const u = "/cusResult";
 
 export default {
     uploadCustomsDeclaration(data) {
@@ -10,9 +10,15 @@ export default {
             data: data,
             check: {
                 data: {
-                    customsDeclarationNumber: "",
-                    code: "",
-                    note: ""
+                    customsDeclarationNumber: String,
+                    tongXunCusResult: {
+                        code: String,
+                        note: String
+                    },
+                    yeWuCusResult: {
+                        code: String,
+                        note: String
+                    }
                 }
             }
         });

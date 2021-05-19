@@ -8,8 +8,9 @@ html, body, #main {
     border: 0;
 }
 
-* {
+div {
     font-size: 14px;
+    color: #606266;
 }
 
 .center {
@@ -24,7 +25,8 @@ html, body, #main {
     color: #546E7A;
 }
 
-.font {
-    font-size: 14px;
-    color: #303133;
+.title-2 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #546E7A;
 }
