@@ -153,18 +153,7 @@ public final class CusResultServiceImpl implements CusResultService {
         // seqNo
         String seqNo = formHead.get("SEQ_NO") == null ? null : formHead.get("SEQ_NO").toString();
         if (StringUtil.isEmpty(seqNo)) {
-            // 上传通讯回执
-            uploadTongXunCustomsDeclaration(customsDeclarationNumber, null, sftp, webDriver, uploadPath);
-        }
-
-        // 再次获取seqNo
-        formHead = SWGDDatabaseUtil.getFormHead(customsDeclarationNumber);
-        if (formHead == null) {
-            throw new InfoException("报关单数据不存在");
-        }
-        seqNo = formHead.get("SEQ_NO") == null ? null : formHead.get("SEQ_NO").toString();
-        if (StringUtil.isEmpty(seqNo)) {
-            throw new InfoException("SEQ_NO为空");
+            seqNo = "seqNo00000000" + customsDeclarationNumber.substring(customsDeclarationNumber.length() - 5);
         }
 
         // 回执数据
