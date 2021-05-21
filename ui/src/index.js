@@ -6,6 +6,7 @@ import index from "./view/index.vue";
 import VueRouter from "vue-router";
 import home from "./view/home.vue";
 import cusResult from "./view/cusResult.vue";
+import addUser from "./view/addUser.vue";
 
 new Vue({
     el: "#main",
@@ -27,6 +28,10 @@ new Vue({
             {
                 path: "/cusResult",
                 component: cusResult
+            },
+            {
+                path: "/addUser",
+                component: addUser
             }
         ]
     })
