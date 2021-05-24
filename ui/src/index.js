@@ -4,7 +4,6 @@ import index from "./view/index.vue";
 
 // 路由
 import VueRouter from "vue-router";
-import home from "./view/home.vue";
 import cusResult from "./view/cusResult.vue";
 import addUser from "./view/addUser.vue";
 
@@ -19,11 +18,7 @@ new Vue({
         routes: [
             {
                 path: "/",
-                redirect: "/home"
-            },
-            {
-                path: "/home",
-                component: home
+                redirect: "/cusResult"
             },
             {
                 path: "/cusResult",
