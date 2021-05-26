@@ -6,9 +6,10 @@
                 ep-util
             </div>
             <div>
-                <ep-menu style="background-color: rgb(57, 61, 73);box-shadow: none;" is-horizontal class="ep-menu-demo" :default-index="path">
+                <ep-menu theme="green" style="background-color: rgb(57, 61, 73);box-shadow: none;" is-horizontal class="ep-menu-demo" :default-index="path">
                     <ep-menu-item @click="switchMenu('/cusResult')" index="/cusResult">报关单回执</ep-menu-item>
                     <ep-menu-item @click="switchMenu('/addUser')" index="/addUser">新建用户</ep-menu-item>
+                    <ep-menu-item @click="switchMenu('/thirdParty')" index="/thirdParty">第三方接口调试</ep-menu-item>
                 </ep-menu>
             </div>
         </div>

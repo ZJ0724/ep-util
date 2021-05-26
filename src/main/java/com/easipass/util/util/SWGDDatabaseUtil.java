@@ -32,6 +32,24 @@ public final class SWGDDatabaseUtil {
     }
 
     /**
+     * 查询唯一数据
+     *
+     * @param sql sql
+     *
+     * @return Map<String, Object>
+     * */
+    public static Map<String, Object> queryOne(String sql) {
+        List<Map<String, Object>> query = query(sql);
+        if (query.size() > 1) {
+            throw new InfoException("查询数据不唯一");
+        }
+        if (query.size() == 0) {
+            return null;
+        }
+        return query.get(0);
+    }
+
+    /**
      * 获取报关单数据
      *
      * @param ediNo ediNo
