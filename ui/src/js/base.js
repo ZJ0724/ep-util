@@ -11,3 +11,7 @@ import "ionicons-npm/css/ionicons.css";
 import "ep-ui/theme/lib/epui.min.css";
 import epUi from "ep-ui";
 Vue.use(epUi);
+
+// bin-code-editor
+import CodeEditor from "bin-code-editor";
+Vue.use(CodeEditor);

@@ -23,11 +23,12 @@ export default {
     },
 
     popup(message) {
-        // Vue.prototype.$confirm({
-        //     word: message,
-        //     callback (errorInfo) {}
-        // })
-        window.alert(message);
+        Vue.prototype.$notify({
+            title: "提示",
+            type: "success",
+            message: message,
+            duration: 0
+        });
     },
 
     confirm(message) {

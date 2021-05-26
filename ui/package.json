@@ -2,6 +2,7 @@
   "name": "ep-util",
   "description": "",
   "dependencies": {
+    "bin-code-editor": "^0.9.0",
     "ep-ui": "^2.5.7",
     "vue": "^2.6.12",
     "vue-router": "^3.4.8",

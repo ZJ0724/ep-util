@@ -30,3 +30,7 @@ div {
     font-weight: bold;
     color: #546E7A;
 }
+
+p {
+    word-wrap: break-word;
+}
