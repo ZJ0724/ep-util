@@ -34,3 +34,7 @@ div {
 p {
     word-wrap: break-word;
 }
+
+.ep-select-drop {
+    max-width: none !important;
+}

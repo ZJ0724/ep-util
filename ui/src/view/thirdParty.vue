@@ -97,7 +97,9 @@
             },
 
             formatAction() {
-                this.send.requestData = JSON.stringify(JSON.parse(this.send.requestData),null,2);
+                try {
+                    this.send.requestData = JSON.stringify(JSON.parse(this.send.requestData),null,2);
+                } catch (e) {}
             }
         }
     }
