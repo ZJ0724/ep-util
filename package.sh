@@ -12,7 +12,7 @@ cp -r ui/build/* src/main/resources/static
 
 # 后端
 rm -rf build
-./gradlew build -x test
+chmod 777 gradlew && ./gradlew build -x test
 
 mkdir -p build/${appName}
 cp -r build/libs/ep-util.jar build/${appName}
