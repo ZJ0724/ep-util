@@ -23,5 +23,3 @@ cd build
 zip -q -r ${appName}-${version}.zip ${appName}
 tar -zcvf ${appName}.tar.gz ${appName}
 cd ..
-
-# test2
