@@ -18,8 +18,8 @@ mkdir -p build/${appName}
 cp -r build/libs/ep-util.jar build/${appName}
 cp -r config build/${appName}
 cp -r bin build/${appName}
-cp -r chromedriver build/${appName}
 
 cd build
 zip -q -r ${appName}-${version}.zip ${appName}
+tar -zcvf ${appName}.tar.gz ${appName}
 cd ..

@@ -1,10 +1,10 @@
 package com.easipass.util.service.impl;
 
-import com.easipass.util.config.BaseConfig;
 import com.easipass.util.entity.CusResult;
 import com.easipass.util.entity.po.ConfigPO;
 import com.easipass.util.service.ConfigService;
 import com.easipass.util.service.CusResultService;
+import com.easipass.util.util.ChromeDriverUtil;
 import com.easipass.util.util.SWGDDatabaseUtil;
 import com.easipass.util.util.SftpUtil;
 import com.zj0724.common.component.ftp.Sftp;
@@ -14,7 +14,6 @@ import com.zj0724.common.util.DateUtil;
 import com.zj0724.common.util.StringUtil;
 import com.zj0724.uiAuto.Selector;
 import com.zj0724.uiAuto.WebDriver;
-import com.zj0724.uiAuto.webDriver.ChromeWebDriver;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.Date;
@@ -48,7 +47,7 @@ public final class CusResultServiceImpl implements CusResultService {
         // sftp
         Sftp uploadCusResultSftp = SftpUtil.getUploadCusResultSftp();
         // 谷歌驱动
-        WebDriver webDriver = new ChromeWebDriver(BaseConfig.CHROME_DRIVER);
+        WebDriver webDriver = ChromeDriverUtil.getChromeDriver();
 
         try {
             // 上传通讯回执

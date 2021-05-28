@@ -12,9 +12,6 @@ public final class BaseConfig {
 
     public static final File DATABASE_FILE = new File(CACHE_PATH, "database.accdb");
 
-    /**
-     * 谷歌驱动
-     * */
-    public static final File CHROME_DRIVER = new File(ROOT_PATH, "chromedriver/chromedriver.exe");
+    public static final String SELENIUM_SERVER = "http://192.168.74.100:4444/wd/hub";
 
 }
