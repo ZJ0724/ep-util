@@ -7,6 +7,7 @@ import VueRouter from "vue-router";
 import cusResult from "./view/cusResult.vue";
 import addUser from "./view/addUser.vue";
 import thirdParty from "./view/thirdParty.vue";
+import config from "./view/config.vue";
 
 new Vue({
     el: "#main",
@@ -32,6 +33,10 @@ new Vue({
             {
                 path: "/thirdParty",
                 component: thirdParty
+            },
+            {
+                path: "/config",
+                component: config
             }
         ]
     })

@@ -14,6 +14,9 @@ public final class ConfigPO extends AbstractPO {
     @Column(name = "CODE", type = FieldType.VARCHAR)
     private String code;
 
+    @Column(name = "NOTE", type = FieldType.VARCHAR)
+    private String note;
+
     @Column(name = "DATA", type = FieldType.VARCHAR)
     private String data;
 
@@ -23,6 +26,14 @@ public final class ConfigPO extends AbstractPO {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public String getData() {
@@ -35,55 +46,46 @@ public final class ConfigPO extends AbstractPO {
 
     public enum Code {
 
-        /**
-         * SWGD数据库地址
-         * */
-        SWGD_DATABASE_HOST,
+        SWGD_DATABASE_HOST("SWGD数据库地址"),
 
-        /**
-         * SWGD数据库端口
-         * */
-        SWGD_DATABASE_PORT,
+        SWGD_DATABASE_PORT("SWGD数据库端口"),
 
-        /**
-         * SWGD数据库sid
-         * */
-        SWGD_DATABASE_SID,
+        SWGD_DATABASE_SID("SWGD数据库sid"),
 
-        /**
-         * SWGD数据库账号
-         * */
-        SWGD_DATABASE_USERNAME,
+        SWGD_DATABASE_USERNAME("SWGD数据库账号"),
 
-        /**
-         * SWGD数据库密码
-         * */
-        SWGD_DATABASE_PASSWORD,
+        SWGD_DATABASE_PASSWORD("SWGD数据库密码"),
 
-        /**
-         * 上传回执sftp地址
-         * */
-        UPLOAD_CUS_RESULT_SFTP_HOST,
+        UPLOAD_CUS_RESULT_SFTP_HOST("上传回执sftp地址"),
 
-        /**
-         * 上传回执sftp端口
-         * */
-        UPLOAD_CUS_RESULT_SFTP_PORT,
+        UPLOAD_CUS_RESULT_SFTP_PORT("上传回执sftp端口"),
 
-        /**
-         * 上传回执sftp账号
-         * */
-        UPLOAD_CUS_RESULT_SFTP_USERNAME,
+        UPLOAD_CUS_RESULT_SFTP_USERNAME("上传回执sftp账号"),
 
-        /**
-         * 上传回执sftp密码
-         * */
-        UPLOAD_CUS_RESULT_SFTP_PASSWORD,
+        UPLOAD_CUS_RESULT_SFTP_PASSWORD("上传回执sftp密码"),
 
-        /**
-         * 上传回执sftp路径
-         * */
-        UPLOAD_CUS_RESULT_SFTP_PATH;
+        UPLOAD_CUS_RESULT_SFTP_PATH("上传回执sftp路径"),
+
+        SELENIUM_SERVER("selenium服务地址");
+
+        private final String note;
+
+        Code(String note) {
+            this.note = note;
+        }
+
+        public String getNote() {
+            return note;
+        }
+
+        public static Code getByCode(String code) {
+            for (Code code1 : Code.values()) {
+                if (code1.name().equals(code)) {
+                    return code1;
+                }
+            }
+            return null;
+        }
 
     }
 

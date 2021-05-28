@@ -6,12 +6,10 @@ import com.easipass.util.entity.po.Column;
 import com.easipass.util.entity.po.Table;
 import com.zj0724.common.component.jdbc.AccessDatabaseJdbc;
 import com.zj0724.common.entity.QueryResult;
-import com.zj0724.common.util.ClassUtil;
+import com.zj0724.common.exception.InfoException;
+import com.zj0724.common.util.*;
 import com.zj0724.common.entity.Query;
 import com.zj0724.common.exception.ErrorException;
-import com.zj0724.common.util.MapUtil;
-import com.zj0724.common.util.ObjectUtil;
-import com.zj0724.common.util.SqlUtil;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -87,17 +85,84 @@ public final class Database<T extends AbstractPO> {
         }
     }
 
+    public QueryResult<T> query() {
+        return query(null);
+    }
+
     /**
-     * 新增
+     * 保存
      *
      * @param t t
      * */
-    public void insert(T t) {
+    public void save(T t) {
+        if (t == null) {
+            return;
+        }
         AccessDatabaseJdbc accessDatabaseJdbc = new AccessDatabaseJdbc(BaseConfig.DATABASE_FILE.getAbsolutePath());
         try {
-            Map<String, Object> map = mapToColumn(ObjectUtil.parseMap(t), c);
-            String sql = SqlUtil.parseInsertSql(map, c.getAnnotation(Table.class).name());
+            if (t.getId() == null) {
+                Map<String, Object> map = mapToColumn(ObjectUtil.parseMap(t), c);
+                String sql = SqlUtil.parseInsertSql(map, c.getAnnotation(Table.class).name());
+                accessDatabaseJdbc.execute(sql);
+            } else {
+                update(t.getId(), t);
+            }
+        } finally {
+            accessDatabaseJdbc.close();
+        }
+    }
+
+    /**
+     * 通过id修改
+     *
+     * @param id id
+     * @param t t
+     * */
+    public void update(Long id, T t) {
+        if (id == null) {
+            throw new InfoException("id不能为空");
+        }
+        List<Field> fields = ClassUtil.getFields(t.getClass());
+        String sql = "UPDATE " + tableName + " SET ";
+        for (Field field : fields) {
+            String value;
+            Object o;
+            try {
+                field.setAccessible(true);
+                o = field.get(t);
+            } catch (Exception e) {
+                throw new InfoException(e.getMessage());
+            }
+            if (o == null) {
+                value = "NULL";
+            } else {
+                value = "'"+ o + "'";
+            }
+            sql = StringUtil.append(sql, field.getName(), " = ", value, ", ");
+        }
+        sql = sql.substring(0, sql.length() - 2);
+        sql = StringUtil.append(sql, " WHERE ID = " + id);
+
+        AccessDatabaseJdbc accessDatabaseJdbc = new AccessDatabaseJdbc(BaseConfig.DATABASE_FILE.getAbsolutePath());
+        try {
             accessDatabaseJdbc.execute(sql);
+        } finally {
+            accessDatabaseJdbc.close();
+        }
+    }
+
+    /**
+     * 通过id删除
+     *
+     * @param id id
+     * */
+    public void deleteById(Long id) {
+        if (id == null) {
+            throw new InfoException("id不能为空");
+        }
+        AccessDatabaseJdbc accessDatabaseJdbc = new AccessDatabaseJdbc(BaseConfig.DATABASE_FILE.getAbsolutePath());
+        try {
+            accessDatabaseJdbc.execute("DELETE FROM " + tableName + " WHERE ID = " + id);
         } finally {
             accessDatabaseJdbc.close();
         }
