@@ -5,7 +5,7 @@ appName="ep-util"
 
 # 前端
 cd ui
-./package.sh
+chmod 777 package.sh && ./package.sh
 cd ..
 rm -rf src/main/resources/static/*
 cp -r ui/build/* src/main/resources/static
