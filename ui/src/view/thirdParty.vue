@@ -9,7 +9,7 @@
             </div>
 
             <div style="margin-top: 50px;">
-                请求地址
+                请求地址<ep-button @click="thirdPartyUrlPopup.open()" style="margin-left: 10px;" size="small">维护</ep-button>
                 <ep-select @change="urlChangeAction()" @open="getThirdPartyUrls()" style="margin-top: 20px;" v-model="send.url" filterable>
                     <ep-select-item v-for="(thirdPartyUrl, key) in thirdPartyUrls" :key="key" :index="thirdPartyUrl.url" :label="thirdPartyUrl.note + ' [' +thirdPartyUrl.url + ']'"></ep-select-item>
                 </ep-select>
@@ -29,6 +29,75 @@
                 <ep-button @click="sendAction()" style="width: 100%;" type="primary">确定</ep-button>
             </div>
         </div>
+
+        <!-- 编辑url弹框 -->
+        <ep-modal title="维护" v-model="thirdPartyUrlPopup.show" width="1000px">
+            <div>
+                <div>
+                    <ep-button @click="saveThirdPartyUrlPopup.open()" size="small" type="primary">新增</ep-button>
+                </div>
+
+                <ep-table :data="thirdPartyUrls" style="margin-top: 10px;">
+                    <ep-table-item column="url" title="url"></ep-table-item>
+                    <ep-table-item column="note" title="备注"></ep-table-item>
+                    <ep-table-item column="requestData" title="请求参数"></ep-table-item>
+                    <ep-table-item column="action" title="操作">
+                        <template slot-scope="props">
+                            <ep-button @click="saveThirdPartyUrlPopup.open(props.row)" type="text">编辑</ep-button>
+                            <ep-button @click="() => {
+                                deleteThirdPartyUrl.id = props.row.id;
+                                deleteThirdPartyUrlApi().then(() => {
+                                    alterUtil.success('成功');
+                                    getThirdPartyUrls();
+                                }).catch((m) => {
+                                    alterUtil.error(m);
+                                });
+                            }" style="color: #FF4D4F;" type="text">删除</ep-button>
+                        </template>
+                    </ep-table-item>
+                </ep-table>
+            </div>
+        </ep-modal>
+
+        <!-- 编辑url弹框 -->
+        <ep-modal :title="saveThirdPartyUrlPopup.title" v-model="saveThirdPartyUrlPopup.show" width="700px">
+            <div>
+                <div style="display: flex;">
+                    <div style="display: flex;align-items: center;" class="saveThirdPartyUrlPopup-width">
+                        url
+                    </div>
+                    <div style="width: 100%;">
+                        <ep-input v-model="saveThirdPartyUrl.url" size="small" style="width: 100%;"></ep-input>
+                    </div>
+                </div>
+
+                <div style="display: flex;margin-top: 20px;">
+                    <div style="display: flex;align-items: center;" class="saveThirdPartyUrlPopup-width">
+                        note
+                    </div>
+                    <div style="width: 100%;">
+                        <ep-input v-model="saveThirdPartyUrl.note" size="small" style="width: 100%;"></ep-input>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    请求参数
+                    <ep-input style="margin-top: 10px;" type="textarea" v-model="saveThirdPartyUrl.requestData"></ep-input>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <ep-button size="small" @click="() => {
+                        saveThirdPartyUrlApi().then(() => {
+                            alterUtil.success('成功');
+                            getThirdPartyUrls();
+                            saveThirdPartyUrlPopup.show = false;
+                        }).catch((m) => {
+                            alterUtil.error(m);
+                        });
+                    }" type="primary" style="width: 100%;">确定</ep-button>
+                </div>
+            </div>
+        </ep-modal>
     </div>
 </template>
 
@@ -36,13 +105,20 @@
     import thirdPartyApi from "../api/thirdPartyApi.js";
     import alterUtil from "../util/alterUtil.js";
     import thirdPartyUrlApi from "../api/thirdPartyUrlApi.js";
+    import {variable} from "../util/zj0724common.js";
 
     export default {
         name: "thirdParty.vue",
 
         data() {
+            let current = this;
+
             return {
                 loading: false,
+
+                users: [],
+
+                thirdPartyUrls: [],
 
                 send: {
                     userCode: "",
@@ -50,11 +126,45 @@
                     requestData: ""
                 },
 
-                users: [],
+                saveThirdPartyUrl: {
+                    id: null,
+                    url: "",
+                    note: "",
+                    requestData: ""
+                },
 
-                thirdPartyUrls: [],
+                deleteThirdPartyUrl: {
+                    id: null
+                },
 
-                window
+                thirdPartyUrlPopup: {
+                    show: false,
+
+                    open() {
+                        this.show = true;
+                        current.getThirdPartyUrls();
+                    }
+                },
+
+                saveThirdPartyUrlPopup: {
+                    show: false,
+
+                    title: "",
+
+                    open(data) {
+                        this.show = true;
+                        variable.clean(current.saveThirdPartyUrl);
+                        if (variable.isEmpty(data)) {
+                            this.title = "新增";
+                        } else {
+                            variable.assignment(current.saveThirdPartyUrl, data);
+                            this.title = "编辑";
+                        }
+                    }
+                },
+
+                window,
+                alterUtil
             };
         },
 
@@ -74,6 +184,18 @@
             getThirdPartyUrls() {
                 thirdPartyUrlApi.getAll().then((data) => {
                     this.thirdPartyUrls = data;
+                });
+            },
+
+            async saveThirdPartyUrlApi() {
+                return await thirdPartyUrlApi.save(this.saveThirdPartyUrl).catch((m) => {
+                    return Promise.reject(m);
+                });
+            },
+
+            async deleteThirdPartyUrlApi() {
+                return await thirdPartyUrlApi.delete(this.deleteThirdPartyUrl).catch((m) => {
+                    return Promise.reject(m);
                 });
             },
 
@@ -104,3 +226,9 @@
         }
     }
 </script>
+
+<style scoped>
+    .saveThirdPartyUrlPopup-width {
+        width: 40px;
+    }
+</style>

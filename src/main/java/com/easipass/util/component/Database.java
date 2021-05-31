@@ -139,7 +139,7 @@ public final class Database<T extends AbstractPO> {
             } else {
                 value = "'"+ o + "'";
             }
-            sql = StringUtil.append(sql, field.getName(), " = ", value, ", ");
+            sql = StringUtil.append(sql, field.getAnnotation(Column.class).name(), " = ", value, ", ");
         }
         sql = sql.substring(0, sql.length() - 2);
         sql = StringUtil.append(sql, " WHERE ID = " + id);

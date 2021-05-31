@@ -14,4 +14,18 @@ public interface ThirdPartyUrlService {
      * */
     List<ThirdPartyUrlPO> getAll();
 
+    /**
+     * 添加
+     *
+     * @param thirdPartyUrlPO thirdPartyUrlPO
+     * */
+    void save(ThirdPartyUrlPO thirdPartyUrlPO);
+
+    /**
+     * 删除
+     *
+     * @param id id
+     * */
+    void delete(Long id);
+
 }
