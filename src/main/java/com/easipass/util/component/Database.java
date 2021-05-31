@@ -102,6 +102,7 @@ public final class Database<T extends AbstractPO> {
         try {
             if (t.getId() == null) {
                 Map<String, Object> map = mapToColumn(ObjectUtil.parseMap(t), c);
+                map.put("ID", getNextId());
                 String sql = SqlUtil.parseInsertSql(map, c.getAnnotation(Table.class).name());
                 accessDatabaseJdbc.execute(sql);
             } else {
@@ -163,6 +164,29 @@ public final class Database<T extends AbstractPO> {
         AccessDatabaseJdbc accessDatabaseJdbc = new AccessDatabaseJdbc(BaseConfig.DATABASE_FILE.getAbsolutePath());
         try {
             accessDatabaseJdbc.execute("DELETE FROM " + tableName + " WHERE ID = " + id);
+        } finally {
+            accessDatabaseJdbc.close();
+        }
+    }
+
+    /**
+     * 获取下一个id
+     *
+     * @return 下一个id
+     * */
+    private Long getNextId() {
+        AccessDatabaseJdbc accessDatabaseJdbc = new AccessDatabaseJdbc(BaseConfig.DATABASE_FILE.getAbsolutePath());
+        try {
+            List<Map<String, Object>> list = accessDatabaseJdbc.queryBySql("SELECT * FROM " + tableName + " ORDER BY ID DESC");
+            if (list.size() == 0) {
+                return 1L;
+            }
+            Map<String, Object> map = list.get(0);
+            Object id = map.get("ID");
+            if (id == null) {
+                throw new InfoException("id 为 null");
+            }
+            return Long.parseLong(id.toString()) + 1;
         } finally {
             accessDatabaseJdbc.close();
         }

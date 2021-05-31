@@ -10,7 +10,7 @@ import com.zj0724.common.component.jdbc.AccessDatabaseJdbc;
  * */
 public abstract class AbstractPO {
 
-    @Column(name = "ID", type = AccessDatabaseJdbc.FieldType.AUTO_NUMBER)
+    @Column(name = "ID", type = AccessDatabaseJdbc.FieldType.NUMBER)
     private Long id;
 
     public Long getId() {

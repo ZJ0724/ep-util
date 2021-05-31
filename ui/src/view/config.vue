@@ -2,7 +2,8 @@
     <div>
         <div class="panel">
             <ep-table :data="configs">
-                <ep-table-item column="code" title="code" tooltip-show></ep-table-item>
+                <ep-table-item column="id" title="id"></ep-table-item>
+                <ep-table-item column="code" title="code"></ep-table-item>
                 <ep-table-item column="note" title="备注"></ep-table-item>
                 <ep-table-item column="data" title="值"></ep-table-item>
                 <ep-table-item column="action" title="操作">
