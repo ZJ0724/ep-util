@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-loading="loading">
         <div class="panel">
             <ep-table :data="configs">
                 <ep-table-item column="code" title="code"></ep-table-item>
@@ -15,7 +15,7 @@
 
         <!-- 编辑弹框 -->
         <ep-modal title="编辑" v-model="configUpdatePopup.show" width="500px">
-            <div>
+            <div v-loading="configUpdatePopup.loading">
                 <div style="display: flex;">
                     <div style="white-space: normal;display: flex;align-items: center;">
                         值
@@ -45,6 +45,8 @@
             let current = this;
 
             return {
+                loading: false,
+
                 configs: [],
 
                 save: {
@@ -57,6 +59,8 @@
                 configUpdatePopup: {
                     show: false,
 
+                    loading: false,
+
                     open(data) {
                         this.show = true;
                         variable.assignment(current.save, data);
@@ -67,8 +71,11 @@
 
         methods: {
             getConfigApi() {
+                this.loading = true;
                 configApi.getAll().then((data) => {
                     this.configs = data;
+                }).finally(() => {
+                    this.loading = false;
                 });
             },
 
@@ -79,12 +86,15 @@
             },
 
             saveAction() {
+                this.configUpdatePopup.loading = true;
                 this.saveApi().then(() => {
                     alterUtil.success("成功");
                     this.configUpdatePopup.show = false;
                     this.getConfigApi();
                 }).catch((m) => {
                     alterUtil.error(m);
+                }).finally(() => {
+                    this.configUpdatePopup.loading = false;
                 });
             }
         },

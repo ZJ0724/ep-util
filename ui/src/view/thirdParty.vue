@@ -30,9 +30,9 @@
             </div>
         </div>
 
-        <!-- 编辑url弹框 -->
+        <!-- 维护弹框 -->
         <ep-modal title="维护" v-model="thirdPartyUrlPopup.show" width="1000px">
-            <div>
+            <div v-loading="thirdPartyUrlPopup.loading">
                 <div>
                     <ep-button @click="saveThirdPartyUrlPopup.open()" size="small" type="primary">新增</ep-button>
                 </div>
@@ -48,7 +48,7 @@
                                 deleteThirdPartyUrl.id = props.row.id;
                                 deleteThirdPartyUrlApi().then(() => {
                                     alterUtil.success('成功');
-                                    getThirdPartyUrls();
+                                    thirdPartyUrlPopup.init();
                                 }).catch((m) => {
                                     alterUtil.error(m);
                                 });
@@ -61,7 +61,7 @@
 
         <!-- 编辑url弹框 -->
         <ep-modal :title="saveThirdPartyUrlPopup.title" v-model="saveThirdPartyUrlPopup.show" width="700px">
-            <div>
+            <div v-loading="saveThirdPartyUrlPopup.loading">
                 <div style="display: flex;">
                     <div style="display: flex;align-items: center;" class="saveThirdPartyUrlPopup-width">
                         url
@@ -87,12 +87,15 @@
 
                 <div style="margin-top: 20px;">
                     <ep-button size="small" @click="() => {
+                        saveThirdPartyUrlPopup.loading = true;
                         saveThirdPartyUrlApi().then(() => {
                             alterUtil.success('成功');
-                            getThirdPartyUrls();
                             saveThirdPartyUrlPopup.show = false;
+                            thirdPartyUrlPopup.init();
                         }).catch((m) => {
                             alterUtil.error(m);
+                        }).finally(() => {
+                            saveThirdPartyUrlPopup.loading = false;
                         });
                     }" type="primary" style="width: 100%;">确定</ep-button>
                 </div>
@@ -140,14 +143,25 @@
                 thirdPartyUrlPopup: {
                     show: false,
 
+                    loading: false,
+
                     open() {
                         this.show = true;
-                        current.getThirdPartyUrls();
+                        this.init();
+                    },
+
+                    init() {
+                        this.loading = true;
+                        current.getThirdPartyUrls().finally(() => {
+                            this.loading = false;
+                        });
                     }
                 },
 
                 saveThirdPartyUrlPopup: {
                     show: false,
+
+                    loading: false,
 
                     title: "",
 
@@ -181,8 +195,8 @@
                 });
             },
 
-            getThirdPartyUrls() {
-                thirdPartyUrlApi.getAll().then((data) => {
+            async getThirdPartyUrls() {
+                return await thirdPartyUrlApi.getAll().then((data) => {
                     this.thirdPartyUrls = data;
                 });
             },
