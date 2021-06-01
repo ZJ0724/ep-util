@@ -227,7 +227,11 @@
             urlChangeAction() {
                 for (let item of this.thirdPartyUrls) {
                     if (item.url === this.send.url) {
-                        this.send.requestData = item.requestData;
+                        let requestData = "";
+                        if (item.requestData !== null) {
+                            requestData = item.requestData;
+                        }
+                        this.send.requestData = requestData;
                     }
                 }
             },
