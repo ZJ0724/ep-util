@@ -201,7 +201,9 @@ public final class CusResultServiceImpl implements CusResultService {
         swgdRecvRun(webDriver);
 
         // N回执清空SEQ_NO, CUS_CIQ_NO
-        SWGDDatabaseUtil.execute("UPDATE SWGD.T_SWGD_FORM_HEAD SET SEQ_NO = NULL, CUS_CIQ_NO = NULL WHERE EDI_NO = '" + formHead.get("EDI_NO") + "'");
+        if ("N".equals(cusResult.getCode())) {
+            SWGDDatabaseUtil.execute("UPDATE SWGD.T_SWGD_FORM_HEAD SET SEQ_NO = NULL, CUS_CIQ_NO = NULL WHERE EDI_NO = '" + formHead.get("EDI_NO") + "'");
+        }
     }
 
     /**
