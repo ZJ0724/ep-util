@@ -107,6 +107,14 @@
                     this.loading = false;
                 });
             }
+        },
+
+        watch: {
+            "yeWuCusResult.code": function () {
+                if (this.yeWuCusResult.code === "N") {
+                    this.yeWuCusResult.note = "|00000001|";
+                }
+            }
         }
     }
 </script>

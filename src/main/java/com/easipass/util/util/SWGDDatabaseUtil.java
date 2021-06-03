@@ -67,6 +67,20 @@ public final class SWGDDatabaseUtil {
         return formHeadList.get(0);
     }
 
+    /**
+     * 执行sql
+     *
+     * @param sql sql
+     * */
+    public static void execute(String sql) {
+        Jdbc jdbc = getJdbc();
+        try {
+            jdbc.execute(sql);
+        } finally {
+            jdbc.close();
+        }
+    }
+
     private static Jdbc getJdbc() {
         ConfigService configService = Main.APPLICATION_CONTEXT.getBean(ConfigService.class);
         ConfigPO hostConfigPO = configService.getByCode(ConfigPO.Code.SWGD_DATABASE_HOST);
