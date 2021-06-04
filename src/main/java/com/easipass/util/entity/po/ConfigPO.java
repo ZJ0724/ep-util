@@ -66,7 +66,9 @@ public final class ConfigPO extends AbstractPO {
 
         UPLOAD_CUS_RESULT_SFTP_PATH("上传回执sftp路径"),
 
-        SELENIUM_SERVER("selenium服务地址");
+        SELENIUM_SERVER("selenium服务地址"),
+
+        SELENIUM_IS_SHOW("是否显示浏览器");
 
         private final String note;
 

@@ -14,6 +14,7 @@ public final class ChromeDriverUtil {
 
     public static WebDriver getChromeDriver() {
         ConfigService configService = Main.APPLICATION_CONTEXT.getBean(ConfigService.class);
+
         ConfigPO configPO = configService.getByCode(ConfigPO.Code.SELENIUM_SERVER);
         if (configPO == null) {
             throw new InfoException("selenium服务地址未配置");
@@ -22,10 +23,17 @@ public final class ChromeDriverUtil {
         if (StringUtil.isEmpty(seleniumServer)) {
             throw new InfoException("selenium服务地址未配置");
         }
+
+        boolean isShow = false;
+        ConfigPO byCode = configService.getByCode(ConfigPO.Code.SELENIUM_IS_SHOW);
+        if (byCode != null) {
+            isShow = "1".equals(byCode.getData());
+        }
+
         if (seleniumServer.startsWith("http")) {
-            return new RemoteWebDriver(seleniumServer, DriverType.CHROME);
+            return new RemoteWebDriver(seleniumServer, DriverType.CHROME, isShow);
         } else {
-            return new ChromeWebDriver(seleniumServer, false);
+            return new ChromeWebDriver(seleniumServer, isShow);
         }
     }
 
