@@ -8,7 +8,10 @@
 
             <div style="margin-top: 20px;">
                 code
-                <ep-input v-model="upload.cusResult.code" style="margin-top: 10px;"></ep-input>
+                <ep-select style="width: 100%;margin-top: 10px;" v-model="upload.cusResult.code">
+                    <ep-select-item index="1" label="成功"></ep-select-item>
+                    <ep-select-item index="999" label="失败"></ep-select-item>
+                </ep-select>
             </div>
 
             <div style="margin-top: 20px;">
