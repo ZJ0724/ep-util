@@ -31,4 +31,14 @@ public final class CusResultController {
         return Response.returnTrue();
     }
 
+    @PostMapping("uploadAgentResult")
+    public Response uploadAgentResult(@RequestBody(required = false) Map<String, Object> requestBody) {
+        String customsDeclarationNumber = requestBody.get("customsDeclarationNumber") == null ? null : requestBody.get("customsDeclarationNumber").toString();
+        CusResult cusResult = requestBody.get("cusResult") == null ? null : ObjectUtil.parse(requestBody.get("cusResult"), CusResult.class);
+
+        cusResultService.uploadAgentResult(customsDeclarationNumber, cusResult);
+
+        return Response.returnTrue();
+    }
+
 }

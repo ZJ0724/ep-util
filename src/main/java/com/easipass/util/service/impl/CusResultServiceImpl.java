@@ -11,8 +11,8 @@ import com.zj0724.common.component.ftp.Sftp;
 import com.zj0724.common.exception.InfoException;
 import com.zj0724.common.util.Base64Util;
 import com.zj0724.common.util.DateUtil;
+import com.zj0724.common.util.MapUtil;
 import com.zj0724.common.util.StringUtil;
-import com.zj0724.uiAuto.Selector;
 import com.zj0724.uiAuto.WebDriver;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -61,6 +61,90 @@ public final class CusResultServiceImpl implements CusResultService {
             }
         } finally {
             uploadCusResultSftp.close();
+            webDriver.close();
+        }
+    }
+
+    @Override
+    public void uploadAgentResult(String customsDeclarationNumber, CusResult cusResult) {
+        // 校验
+        if (StringUtil.isEmpty(customsDeclarationNumber)) {
+            throw new InfoException("报关单号不能为空");
+        }
+        if (cusResult == null) {
+            throw new InfoException("回执信息为空");
+        }
+        String code = cusResult.getCode();
+        String note = cusResult.getNote();
+        if (StringUtil.isEmpty(code)) {
+            throw new InfoException("code不能为空");
+        }
+        if (StringUtil.isEmpty(note)) {
+            throw new InfoException("note不能为空");
+        }
+
+        // 获取代理委托上传路径
+        ConfigPO configPO = configService.getByCode(ConfigPO.Code.UPLOAD_AGENT_RESULT_SFTP_PATH);
+        String agentUploadPath = null;
+        if (configPO != null) {
+            agentUploadPath = configPO.getData();
+        }
+        if (StringUtil.isEmpty(agentUploadPath)) {
+            throw new InfoException("上传代理委托回执路径为空");
+        }
+
+        // 查询agent信息
+        Map<String, Object> agentData = SWGDDatabaseUtil.queryOne("SELECT * FROM SWGD.T_SWGD_AGENT_LIST WHERE EDI_NO = '" + customsDeclarationNumber + "'");
+        if (agentData == null) {
+            throw new InfoException("未查询到数据：" + customsDeclarationNumber);
+        }
+
+        // 校验userName不能为空
+        if (StringUtil.isEmpty(agentData.get("USER_NAME"))) {
+            throw new InfoException("USER_NAME为空");
+        }
+
+        // 校验fileName不能为空
+        String fileName = MapUtil.getValue(agentData, "FILE_NAME", String.class);
+        if (StringUtil.isEmpty(fileName)) {
+            throw new InfoException("FILE_NAME为空");
+        }
+
+        // 回执信息
+        String resultData;
+        if ("999".equals(code)) {
+            resultData = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                    "<ImportAgrResponse>\n" +
+                    "\t<ResponseInfo>\n" +
+                    "\t\t<ResponseMessage>" + note + "</ResponseMessage>\n" +
+                    "\t</ResponseInfo>\n" +
+                    "</ImportAgrResponse>";
+        } else {
+            // 获取代理委托编号
+            String ConsignNo = "000" + customsDeclarationNumber;
+            resultData = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                    "<ImportAgrResponse>\n" +
+                    "\t<ResponseInfo>\n" +
+                    "\t\t<ResponseCode>" + code + "</ResponseCode>\n" +
+                    "\t\t<ResponseMessage>" + note + "</ResponseMessage>\n" +
+                    "\t</ResponseInfo>\n" +
+                    "\t<ConsignNo>" + ConsignNo + "</ConsignNo>\n" +
+                    "</ImportAgrResponse>";
+        }
+
+        // 上传
+        Sftp uploadCusResultSftp = SftpUtil.getUploadCusResultSftp();
+        try {
+            uploadCusResultSftp.upload(agentUploadPath, fileName, resultData);
+        } finally {
+            uploadCusResultSftp.close();
+        }
+
+        // run
+        WebDriver webDriver = ChromeDriverUtil.getChromeDriver();
+        try {
+            ChromeDriverUtil.agentRun(webDriver);
+        } finally {
             webDriver.close();
         }
     }
@@ -130,7 +214,7 @@ public final class CusResultServiceImpl implements CusResultService {
 
         // 上传
         sftp.upload(uploadPath, "tongXunCusResult_" + customsDeclarationNumber, cusResultData);
-        swgdRecvRun(webDriver);
+        ChromeDriverUtil.swgdRecvRun(webDriver);
     }
 
     /**
@@ -198,30 +282,11 @@ public final class CusResultServiceImpl implements CusResultService {
 
         // 上传
         sftp.upload(uploadPath, "yeWuCusResult_" + customsDeclarationNumber, cusResultData);
-        swgdRecvRun(webDriver);
+        ChromeDriverUtil.swgdRecvRun(webDriver);
 
         // N回执清空SEQ_NO, CUS_CIQ_NO
         if ("N".equals(cusResult.getCode())) {
             SWGDDatabaseUtil.execute("UPDATE SWGD.T_SWGD_FORM_HEAD SET SEQ_NO = NULL, CUS_CIQ_NO = NULL WHERE EDI_NO = '" + formHead.get("EDI_NO") + "'");
-        }
-    }
-
-    /**
-     * 点击RecvRun
-     *
-     * @param webDriver webDriver
-     * */
-    private static void swgdRecvRun(WebDriver webDriver) {
-        try {
-            webDriver.open("http://192.168.120.83:9909/console");
-            webDriver.findElement(Selector.byCssSelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(1) > td:nth-child(2) > input")).sendKey("admin");
-            webDriver.findElement(Selector.byCssSelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td:nth-child(2) > input")).sendKey("admin");
-            webDriver.findElement(Selector.byCssSelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td > table > tbody > tr > td > table > tbody > tr:nth-child(3) > td > button")).click();
-            webDriver.findElement(Selector.byCssSelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td > div > div > div:nth-child(1) > table > tbody > tr > td > div > div:nth-child(2) > div > div:nth-child(2) > table > tbody > tr > td:nth-child(1) > img")).click();
-            webDriver.findElement(Selector.byCssSelector("#gwt-uid-26 > span")).click();
-            webDriver.findElement(Selector.byCssSelector("body > table > tbody > tr:nth-child(2) > td > table > tbody > tr > td > div > div > div:nth-child(3) > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > div > div > table > tbody > tr:nth-child(2) > td > div > div:nth-child(1) > table > tbody > tr:nth-child(2) > td > table > tbody > tr:nth-child(5) > td:nth-child(4) > table > tbody > tr > td:nth-child(3) > button")).click();
-        } catch (Exception e) {
-            throw new InfoException(e.getMessage());
         }
     }
 

@@ -15,4 +15,11 @@ public interface CusResultService {
      * */
     void uploadCustomsDeclaration(String customsDeclarationNumber, CusResult tongXunCusResult, CusResult yeWuCusResult);
 
+    /**
+     * 上传代理委托回执
+     *
+     * @param cusResult cusResult
+     * */
+    void uploadAgentResult(String customsDeclarationNumber, CusResult cusResult);
+
 }

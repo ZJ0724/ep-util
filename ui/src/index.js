@@ -8,6 +8,7 @@ import cusResult from "./view/cusResult.vue";
 import addUser from "./view/addUser.vue";
 import thirdParty from "./view/thirdParty.vue";
 import config from "./view/config.vue";
+import agentResult from "./view/agentResult.vue";
 
 new Vue({
     el: "#main",
@@ -25,6 +26,10 @@ new Vue({
             {
                 path: "/cusResult",
                 component: cusResult
+            },
+            {
+                path: "/agentResult",
+                component: agentResult
             },
             {
                 path: "/addUser",

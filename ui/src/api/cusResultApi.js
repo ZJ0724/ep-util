@@ -22,5 +22,22 @@ export default {
                 }
             }
         });
+    },
+
+    uploadAgentResult(data) {
+        return baseApi.send({
+            url: `${u}/uploadAgentResult`,
+            type: "POST",
+            data: data,
+            check: {
+                data: {
+                    customsDeclarationNumber: String,
+                    cusResult: {
+                        code: String,
+                        note: String
+                    }
+                }
+            }
+        });
     }
 };
