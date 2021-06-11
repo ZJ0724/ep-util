@@ -17,7 +17,11 @@
 
             <div style="margin-top: 20px;">
                 code
-                <ep-input :disabled="!tongXunCusResult.display" v-model="tongXunCusResult.code" style="margin-top: 10px;"></ep-input>
+                <ep-select style="margin-top: 10px;" v-model="tongXunCusResult.code">
+                    <ep-select-item index="0" label="0 [成功]"></ep-select-item>
+                    <ep-select-item index="1" label="1 [失败]"></ep-select-item>
+                </ep-select>
+<!--                <ep-input :disabled="!tongXunCusResult.display" v-model="tongXunCusResult.code" style="margin-top: 10px;"></ep-input>-->
             </div>
 
             <div style="margin-top: 20px;">
@@ -67,7 +71,7 @@
                 tongXunCusResult: {
                     display: true,
                     code: "0",
-                    note: "通讯回执"
+                    note: "通讯回执备注"
                 },
 
                 yeWuCusResult: {
