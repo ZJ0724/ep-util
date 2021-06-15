@@ -32,7 +32,7 @@
 
         <!-- 维护弹框 -->
         <ep-modal title="维护" v-model="thirdPartyUrlPopup.show" width="1000px">
-            <div v-loading="thirdPartyUrlPopup.loading">
+            <div v-loading="thirdPartyUrlPopup.loading" style="max-height: 700px;overflow: auto;">
                 <div>
                     <ep-button @click="saveThirdPartyUrlPopup.open()" size="small" type="primary">新增</ep-button>
                 </div>
