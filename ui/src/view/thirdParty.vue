@@ -17,6 +17,15 @@
 
             <div style="margin-top: 50px;">
                 <div>
+                    请求头
+                </div>
+                <div style="margin-top: 20px;">
+                    <ep-input v-model="send.header"></ep-input>
+                </div>
+            </div>
+
+            <div style="margin-top: 50px;">
+                <div>
                     请求数据
                 </div>
                 <div style="display: flex;flex-direction: row-reverse;">
@@ -126,6 +135,7 @@
                 send: {
                     userCode: "",
                     url: "",
+                    header: "",
                     requestData: ""
                 },
 
@@ -184,7 +194,20 @@
 
         methods: {
             async sendApi() {
-                return await thirdPartyApi.send(this.send).catch((m) => {
+                let req = variable.clone(this.send);
+                if (!variable.isEmpty(req.header)) {
+                    try {
+                        req.header = JSON.parse(req.header);
+                        if (!variable.isObject(req.header)) {
+                            return Promise.reject("请求头错误");
+                        }
+                    } catch (e) {
+                        return Promise.reject("请求头错误");
+                    }
+                } else {
+                    req.header = null;
+                }
+                return await thirdPartyApi.send(req).catch((m) => {
                     return Promise.reject(m);
                 });
             },

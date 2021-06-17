@@ -17,7 +17,7 @@ import java.util.Map;
 public final class ThirdPartyServiceImpl implements ThirdPartyService {
 
     @Override
-    public String send(String userCode, String url, String requestData) {
+    public String send(String userCode, String url, Map<String, String> header, String requestData) {
         // 参数校验
         if (StringUtil.isEmpty(userCode)) {
             throw new InfoException("用户代码不能为空");
@@ -86,6 +86,16 @@ public final class ThirdPartyServiceImpl implements ThirdPartyService {
         http1.addHeader("X-SWGD-PublicKey", publicKey);
         http1.addHeader("X-SWGD-Sender", userCode);
         http1.addHeader("X-SWGD-Sign", sign);
+        // 额外的请求头
+        if (header != null) {
+            for (String key : header.keySet()) {
+                String value = header.get(key);
+                if (!StringUtil.isEmpty(value)) {
+                    http1.addHeader(key, value);
+                }
+            }
+        }
+
         Map<String, Object> map1 = new HashMap<>();
         map1.put("data", aes);
         return http1.send(JsonUtil.toJsonString(map1));

@@ -14,10 +14,12 @@ public final class ThirdPartyController {
     private ThirdPartyService thirdPartyService;
 
     @PostMapping("send")
+    @SuppressWarnings("unchecked")
     public Response send(@RequestBody(required = false) Map<String, Object> requestBody) {
         return Response.returnTrue(thirdPartyService.send(
                 MapUtil.getValue(requestBody, "userCode", String.class),
                 MapUtil.getValue(requestBody, "url", String.class),
+                (Map<String, String>) MapUtil.getValue(requestBody, "header", Map.class),
                 MapUtil.getValue(requestBody, "requestData", String.class)));
     }
 

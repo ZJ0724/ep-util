@@ -12,6 +12,7 @@ export default {
                 data: {
                     userCode: String,
                     url: String,
+                    header: Object,
                     requestData: String
                 }
             }
