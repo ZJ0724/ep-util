@@ -12,6 +12,9 @@ public final class ThirdPartyUrlPO extends AbstractPO {
     @Column(name = "NOTE", type = AccessDatabaseJdbc.FieldType.VARCHAR)
     private String note;
 
+    @Column(name = "REQUEST_HEADER", type = AccessDatabaseJdbc.FieldType.VARCHAR)
+    private String requestHeader;
+
     @Column(name = "REQUEST_DATA", type = AccessDatabaseJdbc.FieldType.LONG_VARCHAR)
     private String requestData;
 
@@ -29,6 +32,14 @@ public final class ThirdPartyUrlPO extends AbstractPO {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getRequestHeader() {
+        return requestHeader;
+    }
+
+    public void setRequestHeader(String requestHeader) {
+        this.requestHeader = requestHeader;
     }
 
     public String getRequestData() {

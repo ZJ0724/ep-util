@@ -12,7 +12,7 @@ export default {
                 data: {
                     userCode: String,
                     url: String,
-                    header: Object,
+                    requestHeader: Object,
                     requestData: String
                 }
             }

@@ -20,7 +20,7 @@
                     请求头
                 </div>
                 <div style="margin-top: 20px;">
-                    <ep-input v-model="send.header"></ep-input>
+                    <ep-input v-model="send.requestHeader"></ep-input>
                 </div>
             </div>
 
@@ -49,6 +49,7 @@
                 <ep-table :data="thirdPartyUrls" style="margin-top: 10px;">
                     <ep-table-item column="url" title="url"></ep-table-item>
                     <ep-table-item column="note" title="备注"></ep-table-item>
+                    <ep-table-item column="requestHeader" title="请求头"></ep-table-item>
                     <ep-table-item column="requestData" title="请求参数"></ep-table-item>
                     <ep-table-item column="action" title="操作">
                         <template slot-scope="props">
@@ -86,6 +87,15 @@
                     </div>
                     <div style="width: 100%;">
                         <ep-input v-model="saveThirdPartyUrl.note" size="small" style="width: 100%;"></ep-input>
+                    </div>
+                </div>
+
+                <div style="display: flex;margin-top: 20px;">
+                    <div style="display: flex;align-items: center;" class="saveThirdPartyUrlPopup-width">
+                        请求头
+                    </div>
+                    <div style="width: 100%;">
+                        <ep-input v-model="saveThirdPartyUrl.requestHeader" size="small" style="width: 100%;"></ep-input>
                     </div>
                 </div>
 
@@ -135,7 +145,7 @@
                 send: {
                     userCode: "",
                     url: "",
-                    header: "",
+                    requestHeader: "",
                     requestData: ""
                 },
 
@@ -143,6 +153,7 @@
                     id: null,
                     url: "",
                     note: "",
+                    requestHeader: "",
                     requestData: ""
                 },
 
@@ -195,17 +206,17 @@
         methods: {
             async sendApi() {
                 let req = variable.clone(this.send);
-                if (!variable.isEmpty(req.header)) {
+                if (!variable.isEmpty(req.requestHeader)) {
                     try {
-                        req.header = JSON.parse(req.header);
-                        if (!variable.isObject(req.header)) {
+                        req.requestHeader = JSON.parse(req.requestHeader);
+                        if (!variable.isObject(req.requestHeader)) {
                             return Promise.reject("请求头错误");
                         }
                     } catch (e) {
                         return Promise.reject("请求头错误");
                     }
                 } else {
-                    req.header = null;
+                    req.requestHeader = null;
                 }
                 return await thirdPartyApi.send(req).catch((m) => {
                     return Promise.reject(m);
@@ -255,6 +266,12 @@
                             requestData = item.requestData;
                         }
                         this.send.requestData = requestData;
+
+                        let requestHeader = "";
+                        if (item.requestHeader !== null) {
+                            requestHeader = item.requestHeader;
+                        }
+                        this.send.requestHeader = requestHeader;
                     }
                 }
             },

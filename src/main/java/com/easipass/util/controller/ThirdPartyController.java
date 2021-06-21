@@ -19,7 +19,7 @@ public final class ThirdPartyController {
         return Response.returnTrue(thirdPartyService.send(
                 MapUtil.getValue(requestBody, "userCode", String.class),
                 MapUtil.getValue(requestBody, "url", String.class),
-                (Map<String, String>) MapUtil.getValue(requestBody, "header", Map.class),
+                (Map<String, String>) MapUtil.getValue(requestBody, "requestHeader", Map.class),
                 MapUtil.getValue(requestBody, "requestData", String.class)));
     }
 

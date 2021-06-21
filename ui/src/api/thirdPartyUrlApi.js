@@ -20,6 +20,7 @@ export default {
                     id: Number,
                     url: String,
                     note: String,
+                    requestHeader: String,
                     requestData: String
                 }
             }

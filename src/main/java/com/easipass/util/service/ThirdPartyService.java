@@ -12,12 +12,12 @@ public interface ThirdPartyService {
      *
      * @param userCode 用户代码
      * @param url 请求地址
-     * @param header 请求头
+     * @param requestHeader 请求头
      * @param requestData 请求数据
      *
      * @return 响应数据
      * */
-    String send(String userCode, String url, Map<String, String> header, String requestData);
+    String send(String userCode, String url, Map<String, String> requestHeader, String requestData);
 
     /**
      * 获取用户
