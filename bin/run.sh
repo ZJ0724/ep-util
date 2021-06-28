@@ -10,5 +10,5 @@ if [ "${pid}" != "" ]; then
     exit 0
 fi
 
-nohup java -Xmx512m -Xms512m -jar ${projectName}.jar > /dev/null 2>&1 &
+nohup java -Xmx${rom} -Xms${rom} -jar ${projectName}.jar > /dev/null 2>&1 &
 echo -e "\033[0;32;1m ${projectName} is run! \033[0m"
