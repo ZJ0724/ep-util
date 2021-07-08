@@ -4,7 +4,7 @@ import baseConfig from "../config/baseConfig.js";
 export default {
     send(data) {
         return new Promise((successCallback, errorCallback) => {
-            data.url = baseConfig.server + "/" + data.url;
+            data.url = baseConfig.server + data.url;
             if (data.type === "POST") {
                 if (data.header === undefined) {
                     data.header = {};
