@@ -25,11 +25,17 @@ new Vue({
             },
             {
                 path: "/cusResult",
-                component: cusResult
+                component: cusResult,
+                meta: {
+                    title:"报关单回执"
+                }
             },
             {
                 path: "/agentResult",
-                component: agentResult
+                component: agentResult,
+                meta: {
+                    title:"代理委托回执"
+                }
             },
             {
                 path: "/addUser",
@@ -37,11 +43,17 @@ new Vue({
             },
             {
                 path: "/thirdParty",
-                component: thirdParty
+                component: thirdParty,
+                meta: {
+                    title:"第三方接口调试"
+                }
             },
             {
                 path: "/config",
-                component: config
+                component: config,
+                meta: {
+                    title:"配置"
+                }
             }
         ]
     })
